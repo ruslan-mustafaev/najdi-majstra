@@ -19,34 +19,21 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack }) => {
   const masterName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Majster';
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pt-16">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      <div className="bg-white shadow-sm border-b fixed top-16 left-0 right-0 z-30">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <button
-                onClick={onBack}
-                className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                <ArrowLeft size={20} />
-                <span>{language === 'sk' ? 'Späť' : 'Back'}</span>
-              </button>
               <h1 className="text-2xl font-bold text-gray-900">
                 {language === 'sk' ? 'Dashboard Majstra' : 'Master Dashboard'}
               </h1>
             </div>
-            <button
-              onClick={handleSignOut}
-              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
-            >
-              {language === 'sk' ? 'Odhlásiť sa' : 'Sign Out'}
-            </button>
           </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 mt-20">
         {/* Welcome Section */}
         <div className="bg-gradient-to-r from-[#4169e1] to-[#5a7bff] text-white rounded-xl p-6 mb-8">
           <div className="flex items-center space-x-4">

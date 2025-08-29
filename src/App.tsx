@@ -186,9 +186,12 @@ const AppContent: React.FC = () => {
   // Show master dashboard if user is authenticated and is a master
   if (user && (user.user_metadata?.user_type === 'master' || pendingUserType === 'master')) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <MasterDashboard onBack={() => setPendingUserType(null)} />
-      </div>
+      <>
+        <Header />
+        <div className="min-h-screen bg-gray-50">
+          <MasterDashboard onBack={() => setPendingUserType(null)} />
+        </div>
+      </>
     );
   }
 
