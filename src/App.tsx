@@ -174,12 +174,6 @@ const AppContent: React.FC = () => {
     );
   }
 
-      <div className="min-h-screen bg-gray-50">
-        <MasterDashboard onBack={() => setUserType(null)} />
-      </div>
-    );
-  }
-
   // Show search results page
   if (showSearchResults) {
     const filteredMasters = filterMasters(mockMasters, searchFilters);
