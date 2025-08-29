@@ -4,9 +4,10 @@ import { useAuth } from '../hooks/useAuth';
 
 interface MasterDashboardProps {
   onBack: () => void;
+  onProfileUpdate?: (updatedData: any) => void;
 }
 
-export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack }) => {
+export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProfileUpdate }) => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<'profile' | 'calendar' | 'projects' | 'payments'>('profile');
   const [editingField, setEditingField] = useState<string | null>(null);
@@ -133,6 +134,12 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack }) => {
   const handleSave = () => {
     setEditingField(null);
     setHasChanges(false);
+    
+    // Notify parent component about profile updates
+    if (onProfileUpdate) {
+      onProfileUpdate(profileData);
+    }
+    
     console.log('Saving profile:', profileData);
   };
 
