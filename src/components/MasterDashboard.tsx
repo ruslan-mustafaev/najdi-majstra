@@ -1000,8 +1000,19 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                 </div>
 
                 <div className="mt-6 flex justify-end">
-                  <button className="bg-[#4169e1] text-white py-2 px-6 rounded-lg font-medium hover:bg-[#3558d4] transition-colors">
-                    Uložiť rozvrh
+                  <button 
+                    onClick={handleSave}
+                    disabled={isSaving}
+                    className="bg-[#4169e1] text-white py-2 px-6 rounded-lg font-medium hover:bg-[#3558d4] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center space-x-2"
+                  >
+                    {isSaving ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                        <span>Ukladám...</span>
+                      </>
+                    ) : (
+                      <span>Uložiť rozvrh</span>
+                    )}
                   </button>
                 </div>
               </div>

@@ -264,13 +264,28 @@ const AppContent: React.FC = () => {
           onBack={() => {
             setPendingUserType(null);
           }}
-          onProfileUpdate={(updatedData) => {
-            // Update the master profile when dashboard data changes
-            if (masterProfileData) {
-              setMasterProfileData({
-                ...masterProfileData,
-                ...updatedData
+          onProfileUpdate={(profileData) => {
+            // Create full master profile from dashboard data
+            if (user) {
+              const fullProfile = createMasterProfileFromUser({
+                ...user,
+                user_metadata: {
+                  ...user.user_metadata,
+                  ...profileData,
+                  full_name: profileData.name,
+                  profession: profileData.profession,
+                  phone: profileData.contact?.phone,
+                  location: profileData.location,
+                  description: profileData.description,
+                  experience: profileData.experience,
+                  hourly_rate: profileData.hourlyRate,
+                  team_size: profileData.teamSize,
+                  service_types: profileData.serviceTypes,
+                  website: profileData.contact?.website,
+                  social_media: profileData.contact?.socialMedia
+                }
               });
+              setMasterProfileData(fullProfile);
             }
           }}
         />
