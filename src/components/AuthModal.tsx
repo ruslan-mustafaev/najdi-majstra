@@ -9,6 +9,7 @@ interface AuthModalProps {
   initialMode?: 'login' | 'register';
   userType?: 'client' | 'master';
   onAuthSuccess?: (userType: 'client' | 'master') => void;
+  onRegistrationSuccess?: (email: string) => void;
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({ 
@@ -16,7 +17,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   onClose, 
   initialMode = 'login',
   userType,
-  onAuthSuccess
+  onAuthSuccess,
+  onRegistrationSuccess
 }) => {
   const { signIn, signUp } = useAuth();
   const { language } = useLanguage();
@@ -30,7 +32,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     email: '',
     password: '',
     confirmPassword: '',
-    fullName: '',
+    firstName: '',
+    lastName: '',
     phone: '',
     location: '',
     userType: userType || 'client' as 'client' | 'master'
@@ -53,7 +56,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         email: '',
         password: '',
         confirmPassword: '',
-        fullName: '',
+        firstName: '',
+        lastName: '',
         phone: '',
         location: '',
         userType: userType || 'client'
@@ -77,8 +81,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }
 
     if (mode === 'register') {
-      if (!formData.fullName) {
-        setError(language === 'sk' ? 'Meno je povinné' : 'Full name is required');
+      if (!formData.firstName || !formData.lastName) {
+        setError(language === 'sk' ? 'Meno a priezvisko sú povinné' : 'First name and last name are required');
         return false;
       }
       if (formData.password !== formData.confirmPassword) {
@@ -117,7 +121,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         }
       } else {
         const userData = {
-          full_name: formData.fullName,
+          first_name: formData.firstName,
+          last_name: formData.lastName,
+          full_name: `${formData.firstName} ${formData.lastName}`,
           phone: formData.phone,
           location: formData.location,
           user_type: formData.userType
@@ -133,11 +139,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         } else {
           setSuccess(language === 'sk' ? 'Registrácia úspešná! Skontrolujte email pre potvrdenie.' : 'Registration successful! Check your email for confirmation.');
           setTimeout(() => {
-            onClose();
-            if (onAuthSuccess) {
-              onAuthSuccess(formData.userType);
+            if (onRegistrationSuccess) {
+              onRegistrationSuccess(formData.email);
+            } else {
+              onClose();
             }
-          }, 3000);
+          }, 2000);
         }
       }
     } catch (err) {
@@ -155,7 +162,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       email: '',
       password: '',
       confirmPassword: '',
-      fullName: '',
+      firstName: '',
+      lastName: '',
       phone: '',
       location: '',
       userType: 'client'
@@ -225,22 +233,63 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             </div>
           )}
 
-          {/* Full Name (Register only) */}
+          {/* First Name (Register only) */}
           {mode === 'register' && (
-            <div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-gray-700 text-sm font-medium mb-2">
+                  {language === 'sk' ? 'Meno' : 'First Name'}
+                </label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                  <input
+                    type="text"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleInputChange}
+                    className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#4169e1] focus:border-transparent outline-none"
+                    placeholder={language === 'sk' ? 'Vaše meno' : 'Your first name'}
+                    required={mode === 'register'}
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-gray-700 text-sm font-medium mb-2">
+                  {language === 'sk' ? 'Priezvisko' : 'Last Name'}
+                </label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                  <input
+                    type="text"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleInputChange}
+                    className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#4169e1] focus:border-transparent outline-none"
+                    placeholder={language === 'sk' ? 'Vaše priezvisko' : 'Your last name'}
+                    required={mode === 'register'}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Full Name Display (Register only) - Hidden field for backward compatibility */}
+          {mode === 'register' && (
+            <div className="hidden">
               <label className="block text-gray-700 text-sm font-medium mb-2">
-                {language === 'sk' ? 'Celé meno' : 'Full Name'}
+                {language === 'sk' ? 'Celé meno' : 'Full Name'} 
               </label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
                 <input
                   type="text"
-                  name="fullName"
-                  value={formData.fullName}
+                  name="fullName" 
+                  value={`${formData.firstName} ${formData.lastName}`}
                   onChange={handleInputChange}
                   className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#4169e1] focus:border-transparent outline-none"
-                  placeholder={language === 'sk' ? 'Vaše meno a priezvisko' : 'Your full name'}
-                  required={mode === 'register'}
+                  placeholder={language === 'sk' ? 'Vaše meno a priezvisko' : 'Your full name'} 
+                  readOnly
                 />
               </div>
             </div>

@@ -11,6 +11,7 @@ import { Footer } from './components/Footer';
 import { MasterProfile } from './components/MasterProfile';
 import { SearchResults } from './components/SearchResults';
 import { MasterDashboard } from './components/MasterDashboard';
+import { EmailConfirmation } from './components/EmailConfirmation';
 import { mockMasters, Master } from './data/mockData';
 
 const AppContent: React.FC = () => {
@@ -19,6 +20,8 @@ const AppContent: React.FC = () => {
   const [pendingUserType, setPendingUserType] = useState<'client' | 'master' | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'register'>('register');
+  const [showEmailConfirmation, setShowEmailConfirmation] = useState(false);
+  const [registrationEmail, setRegistrationEmail] = useState('');
   const [recentlyViewed, setRecentlyViewed] = useState<Master[]>([]);
   const [selectedMaster, setSelectedMaster] = useState<Master | null>(null);
   const [showSearchResults, setShowSearchResults] = useState(false);
@@ -70,8 +73,23 @@ const AppContent: React.FC = () => {
 
   // Handle successful authentication
   const handleAuthSuccess = (userType: 'client' | 'master') => {
+    // Don't close modal immediately, let the AuthModal handle the flow
+    // setShowAuthModal(false);
+    // setPendingUserType(null);
+  };
+
+  // Handle registration success (email confirmation needed)
+  const handleRegistrationSuccess = (email: string) => {
+    setRegistrationEmail(email);
     setShowAuthModal(false);
-    setPendingUserType(null);
+    setShowEmailConfirmation(true);
+  };
+
+  // Handle email confirmation completion
+  const handleEmailConfirmed = () => {
+    setShowEmailConfirmation(false);
+    setAuthMode('login');
+    setShowAuthModal(true);
   };
 
   const handleClosePopup = () => {
@@ -219,6 +237,14 @@ const AppContent: React.FC = () => {
         initialMode={authMode}
         userType={pendingUserType || 'client'}
         onAuthSuccess={handleAuthSuccess}
+        onRegistrationSuccess={handleRegistrationSuccess}
+      />
+      
+      <EmailConfirmation
+        isOpen={showEmailConfirmation}
+        onClose={() => setShowEmailConfirmation(false)}
+        onLoginRequired={handleEmailConfirmed}
+        email={registrationEmail}
       />
       
       <Header />
