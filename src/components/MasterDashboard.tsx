@@ -13,6 +13,8 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
   const [editingField, setEditingField] = useState<string | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
   const [copiedCoupon, setCopiedCoupon] = useState<string | null>(null);
+  const [isProfileSaved, setIsProfileSaved] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   
   // Calendar state
   const [currentDate, setCurrentDate] = useState(new Date());
