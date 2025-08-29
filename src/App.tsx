@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { LanguageProvider } from './hooks/useLanguage';
+import { AuthProvider } from './hooks/useAuth';
 import { Header } from './components/Header';
 import { WelcomePopup } from './components/WelcomePopup';
 import { MainSearchSection } from './components/MainSearchSection';
@@ -215,7 +216,9 @@ const AppContent: React.FC = () => {
 function App() {
   return (
     <LanguageProvider>
-      <AppContent />
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
     </LanguageProvider>
   );
 }
