@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowLeft, User, Star, MapPin, Phone, Mail, Camera, Plus, Edit, Settings, BarChart3, Calendar, Clock, Euro, Award, Users, Play, Globe, Save, X, Upload, Copy, Check } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import { saveMasterProfile, type MasterProfile } from '../lib/masterProfileApi';
 
 interface MasterDashboardProps {
   onBack: () => void;
