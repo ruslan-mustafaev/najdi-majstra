@@ -134,7 +134,110 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
     setTimeout(() => setCopiedCoupon(null), 2000);
   };
 
-handleSave
+  const handleSave = async () => {
+    setIsSaving(true);
+    
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      setEditingField(null);
+      setHasChanges(false);
+      setIsProfileSaved(true);
+      
+      // Call the parent callback to update the profile in the main app
+      if (onProfileUpdate) {
+        onProfileUpdate({
+          ...profileData,
+          workingHours: profileData.workingHours
+        });
+      }
+      
+      console.log('Profile saved:', profileData);
+      console.log('Weekly schedule:', profileData.workingHours);
+      
+    } catch (error) {
+      console.error('Error saving profile:', error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleFieldChange = (field: string, value: any) => {
+    setProfileData(prev => ({ ...prev, [field]: value }));
+    setHasChanges(true);
+  };
+
+  const handleNestedFieldChange = (parentField: string, childField: string, value: any) => {
+    setProfileData(prev => ({
+      ...prev,
+      [parentField]: {
+        ...prev[parentField as keyof typeof prev] as any,
+        [childField]: value
+      }
+    }));
+    setHasChanges(true);
+  };
+
+  const startEditing = (field: string) => {
+    setEditingField(field);
+  };
+
+  const cancelEditing = () => {
+    setEditingField(null);
+    setHasChanges(false);
+  };
+
+  // Calendar functions
+  const formatDateKey = (date: Date) => {
+    return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+  };
+
+  const navigateMonth = (direction: 'prev' | 'next') => {
+    setCurrentDate(prev => {
+      const newDate = new Date(prev);
+      if (direction === 'prev') {
+        newDate.setMonth(prev.getMonth() - 1);
+      } else {
+        newDate.setMonth(prev.getMonth() + 1);
+      }
+      return newDate;
+    });
+  };
+
+  const toggleDateAvailability = (date: Date) => {
+    const dateKey = formatDateKey(date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    if (date < today) return;
+    
+    setAvailability(prev => {
+      const current = prev[dateKey] || 'unavailable';
+      let newStatus: 'available' | 'unavailable' | 'booked';
+      
+      if (current === 'unavailable') {
+        newStatus = 'available';
+      } else if (current === 'available') {
+        newStatus = 'booked';
+      } else {
+        newStatus = 'unavailable';
+      }
+      
+      return {
+        ...prev,
+        [dateKey]: newStatus
+      };
+    });
+  };
+
+  const setDateStatus = (date: Date, status: 'available' | 'unavailable') => {
+    const dateKey = formatDateKey(date);
+    setAvailability(prev => ({
+      ...prev,
+      [dateKey]: status
+    }));
+  };
 
   const setTodayStatus = (status: 'available' | 'unavailable') => {
     const today = new Date();
