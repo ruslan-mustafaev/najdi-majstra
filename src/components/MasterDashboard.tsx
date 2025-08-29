@@ -5,7 +5,6 @@ import { useAuth } from '../hooks/useAuth';
 interface MasterDashboardProps {
   onBack: () => void;
   onProfileUpdate?: (profileData: any) => void;
-  onProfileUpdate?: (updatedData: any) => void;
 }
 
 export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProfileUpdate }) => {
@@ -134,16 +133,33 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
     setTimeout(() => setCopiedCoupon(null), 2000);
   };
 
-  const handleSave = () => {
-    setEditingField(null);
-    setHasChanges(false);
+  const handleSave = async () => {
+    setIsSaving(true);
     
-    // Notify parent component about profile updates
-    if (onProfileUpdate) {
-      onProfileUpdate(profileData);
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      setEditingField(null);
+      setHasChanges(false);
+      setIsProfileSaved(true);
+      
+      // Call the parent callback to update the profile in the main app
+      if (onProfileUpdate) {
+        onProfileUpdate({
+          ...profileData,
+          workingHours: weeklySchedule
+        });
+      }
+      
+      console.log('Profile saved:', profileData);
+      console.log('Weekly schedule:', weeklySchedule);
+      
+    } catch (error) {
+      console.error('Error saving profile:', error);
+    } finally {
+      setIsSaving(false);
     }
-    
-    console.log('Saving profile:', profileData);
   };
 
   const handleFieldChange = (field: string, value: any) => {
