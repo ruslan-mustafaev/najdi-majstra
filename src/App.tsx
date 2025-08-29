@@ -185,60 +185,10 @@ const AppContent: React.FC = () => {
 
   // Show master dashboard if user is authenticated and is a master
   if (user && (user.user_metadata?.user_type === 'master' || pendingUserType === 'master')) {
-    // Create a master object from user data for profile display
-    const masterFromUser: Master = {
-      id: user.id,
-      name: user.user_metadata?.full_name || `${user.user_metadata?.first_name || ''} ${user.user_metadata?.last_name || ''}`.trim() || user.email?.split('@')[0] || 'Master',
-      profession: user.user_metadata?.profession || 'Majster',
-      location: user.user_metadata?.location || 'Slovensko',
-      rating: 9.0,
-      reviewCount: 0,
-      available: true,
-      age: user.user_metadata?.age,
-      profileImage: user.user_metadata?.profile_image || 'https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=400',
-      workImages: [
-        'https://images.pexels.com/photos/162553/keys-workshop-mechanic-tools-162553.jpeg?auto=compress&cs=tinysrgb&w=400',
-        'https://images.pexels.com/photos/159358/multimeter-digital-hand-tool-159358.jpeg?auto=compress&cs=tinysrgb&w=400'
-      ],
-      description: user.user_metadata?.description || 'Profesionálny majster s bohatými skúsenosťami. Poskytujeme kvalitné služby a spoľahlivé riešenia.',
-      services: user.user_metadata?.services || ['Inštalácie', 'Opravy', 'Servis', 'Poradenstvo'],
-      experience: user.user_metadata?.experience || '5 rokov',
-      certifications: user.user_metadata?.certifications || ['Odborná spôsobilosť', 'Certifikát BOZP'],
-      expertise: user.user_metadata?.expertise || ['Moderné technológie', 'Kvalitné materiály'],
-      teamSize: user.user_metadata?.team_size || 'individual',
-      serviceTypes: user.user_metadata?.service_types || ['individuals'],
-      languages: user.user_metadata?.languages || ['Slovenčina'],
-      priceRange: user.user_metadata?.price_range || '25-45 €/hod',
-      subscriptionPlan: user.user_metadata?.subscription_plan || 'standard',
-      communicationStyle: user.user_metadata?.communication_style || 'Profesionálne a priateľsky',
-      workingHours: user.user_metadata?.working_hours || {
-        monday: '8:00 - 17:00',
-        tuesday: '8:00 - 17:00',
-        wednesday: '8:00 - 17:00',
-        thursday: '8:00 - 17:00',
-        friday: '8:00 - 17:00',
-        saturday: '9:00 - 15:00',
-        sunday: 'Zatvorené'
-      },
-      contact: {
-        phone: user.user_metadata?.phone || '+421 9xx xxx xxx',
-        email: user.email || '',
-        website: user.user_metadata?.website
-      },
-      availability: {
-        schedule: user.user_metadata?.schedule || '8:00 - 17:00',
-        workRadius: user.user_metadata?.work_radius || user.user_metadata?.location || 'Slovensko'
-      }
-    };
-
     return (
       <div className="min-h-screen bg-gray-50">
         <Header />
-        <MasterProfile 
-          master={masterFromUser} 
-          onBack={() => setPendingUserType(null)}
-          isOwnProfile={true}
-        />
+        <MasterDashboard onBack={() => setPendingUserType(null)} />
         <Footer />
       </div>
     );
