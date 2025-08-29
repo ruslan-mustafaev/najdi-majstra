@@ -4,6 +4,7 @@ import { useAuth } from '../hooks/useAuth';
 
 interface MasterDashboardProps {
   onBack: () => void;
+  onProfileUpdate?: (profileData: any) => void;
   onProfileUpdate?: (updatedData: any) => void;
 }
 

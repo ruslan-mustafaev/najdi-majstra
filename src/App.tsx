@@ -79,6 +79,41 @@ const AppContent: React.FC = () => {
     // setPendingUserType(null);
   };
 
+  // Handle profile update from dashboard
+  const handleProfileUpdate = (profileData: any) => {
+    if (user) {
+      const fullProfile = createMasterProfileFromUser({
+        ...user,
+        user_metadata: {
+          ...user.user_metadata,
+          ...profileData,
+          profile_saved: true, // Mark profile as saved
+          full_name: profileData.name,
+          profession: profileData.profession,
+          phone: profileData.contact?.phone,
+          location: profileData.location,
+          description: profileData.description,
+          experience: profileData.experience,
+          hourly_rate: profileData.hourlyRate,
+          team_size: profileData.teamSize,
+          service_types: profileData.serviceTypes,
+          website: profileData.contact?.website,
+          social_media: profileData.contact?.socialMedia,
+          work_radius: profileData.workRadius,
+          services: profileData.services,
+          expertise: profileData.expertise,
+          languages: profileData.languages,
+          certifications: profileData.certifications,
+          availability: profileData.availability,
+          working_hours: profileData.workingHours
+        }
+      });
+      setMasterProfileData(fullProfile);
+      
+      // Force re-render by updating a state that affects the masters list
+      setRecentlyViewed(prev => [...prev]); // Trigger re-render
+    }
+  };
   // Handle registration success (email confirmation needed)
   const handleRegistrationSuccess = (email: string) => {
     setRegistrationEmail(email);
@@ -191,6 +226,11 @@ const AppContent: React.FC = () => {
     }
   }, [user]);
 
+  // Check if master profile should be visible (only if saved)
+  const isMasterProfileVisible = (profile: Master | null) => {
+    if (!profile || !user) return false;
+    return user.user_metadata?.profile_saved === true;
+  };
   const filterMasters = (masters: Master[], filters: typeof searchFilters) => {
     return masters.filter(master => {
       // Filter by city
@@ -247,11 +287,11 @@ const AppContent: React.FC = () => {
   const topRatedMasters = [...mockMasters].sort((a, b) => b.rating - a.rating);
 
   // Add master's own profile to the list if they are a master
-  const allMasters = masterProfileData 
+  const allMasters = (masterProfileData && isMasterProfileVisible(masterProfileData))
     ? [masterProfileData, ...mockMasters]
     : mockMasters;
 
-  const allTopRatedMasters = masterProfileData 
+  const allTopRatedMasters = (masterProfileData && isMasterProfileVisible(masterProfileData))
     ? [masterProfileData, ...topRatedMasters]
     : topRatedMasters;
 
@@ -264,30 +304,7 @@ const AppContent: React.FC = () => {
           onBack={() => {
             setPendingUserType(null);
           }}
-          onProfileUpdate={(profileData) => {
-            // Create full master profile from dashboard data
-            if (user) {
-              const fullProfile = createMasterProfileFromUser({
-                ...user,
-                user_metadata: {
-                  ...user.user_metadata,
-                  ...profileData,
-                  full_name: profileData.name,
-                  profession: profileData.profession,
-                  phone: profileData.contact?.phone,
-                  location: profileData.location,
-                  description: profileData.description,
-                  experience: profileData.experience,
-                  hourly_rate: profileData.hourlyRate,
-                  team_size: profileData.teamSize,
-                  service_types: profileData.serviceTypes,
-                  website: profileData.contact?.website,
-                  social_media: profileData.contact?.socialMedia
-                }
-              });
-              setMasterProfileData(fullProfile);
-            }
-          }}
+          onProfileUpdate={handleProfileUpdate}
         />
         <Footer />
       </div>
