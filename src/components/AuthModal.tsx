@@ -7,12 +7,16 @@ interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   initialMode?: 'login' | 'register';
+  userType?: 'client' | 'master';
+  onAuthSuccess?: (userType: 'client' | 'master') => void;
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({ 
   isOpen, 
   onClose, 
-  initialMode = 'login' 
+  initialMode = 'login',
+  userType,
+  onAuthSuccess
 }) => {
   const { signIn, signUp } = useAuth();
   const { language } = useLanguage();
@@ -29,9 +33,33 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     fullName: '',
     phone: '',
     location: '',
-    userType: 'client' as 'client' | 'master'
+    userType: userType || 'client' as 'client' | 'master'
   });
 
+  // Update userType when prop changes
+  useEffect(() => {
+    if (userType) {
+      setFormData(prev => ({ ...prev, userType }));
+    }
+  }, [userType]);
+
+  // Reset form when modal opens/closes
+  useEffect(() => {
+    if (isOpen) {
+      setMode(initialMode);
+      setError(null);
+      setSuccess(null);
+      setFormData({
+        email: '',
+        password: '',
+        confirmPassword: '',
+        fullName: '',
+        phone: '',
+        location: '',
+        userType: userType || 'client'
+      });
+    }
+  }, [isOpen, initialMode, userType]);
   if (!isOpen) return null;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -80,7 +108,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           setError(language === 'sk' ? 'Nesprávny email alebo heslo' : 'Invalid email or password');
         } else {
           setSuccess(language === 'sk' ? 'Úspešne prihlásený!' : 'Successfully logged in!');
-          setTimeout(() => onClose(), 1500);
+          setTimeout(() => {
+            onClose();
+            if (onAuthSuccess) {
+              onAuthSuccess(formData.userType);
+            }
+          }, 1500);
         }
       } else {
         const userData = {
@@ -100,8 +133,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         } else {
           setSuccess(language === 'sk' ? 'Registrácia úspešná! Skontrolujte email pre potvrdenie.' : 'Registration successful! Check your email for confirmation.');
           setTimeout(() => {
-            setMode('login');
-            setSuccess(null);
+            onClose();
+            if (onAuthSuccess) {
+              onAuthSuccess(formData.userType);
+            }
           }, 3000);
         }
       }
@@ -172,6 +207,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 name="userType"
                 value={formData.userType}
                 onChange={handleInputChange}
+                disabled={!!userType} // Disable if userType is provided from props
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#4169e1] focus:border-transparent outline-none"
               >
                 <option value="client">
@@ -181,6 +217,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   {language === 'sk' ? 'Majster (ponúkam služby)' : 'Master (offering services)'}
                 </option>
               </select>
+              {userType && (
+                <p className="text-sm text-gray-500 mt-1">
+                  {language === 'sk' ? 'Typ účtu bol automaticky nastavený na základe vášho výberu' : 'Account type was automatically set based on your selection'}
+                </p>
+              )}
             </div>
           )}
 

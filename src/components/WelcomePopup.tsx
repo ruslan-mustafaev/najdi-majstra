@@ -7,9 +7,10 @@ interface WelcomePopupProps {
   isOpen: boolean;
   onClose: () => void;
   onUserTypeSelect: (type: 'client' | 'master') => void;
+  onAuthRequired: (type: 'client' | 'master') => void;
 }
 
-export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onUserTypeSelect }) => {
+export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onUserTypeSelect, onAuthRequired }) => {
   const { language } = useLanguage();
   const t = translations[language];
   const [cookiesAccepted, setCookiesAccepted] = useState(false);
@@ -18,7 +19,8 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
 
   const handleOptionSelect = (option: 'master' | 'client') => {
     if (cookiesAccepted) {
-      onUserTypeSelect(option);
+      // Trigger authentication flow instead of direct selection
+      onAuthRequired(option);
     }
   };
 

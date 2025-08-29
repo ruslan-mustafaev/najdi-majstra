@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { LanguageProvider } from './hooks/useLanguage';
-import { AuthProvider } from './hooks/useAuth';
+import { AuthProvider, useAuth } from './hooks/useAuth';
 import { Header } from './components/Header';
 import { WelcomePopup } from './components/WelcomePopup';
+import { AuthModal } from './components/AuthModal';
 import { MainSearchSection } from './components/MainSearchSection';
 import { MastersCarousel } from './components/MastersCarousel';
 import { NoResults } from './components/NoResults';
@@ -13,8 +14,11 @@ import { MasterDashboard } from './components/MasterDashboard';
 import { mockMasters, Master } from './data/mockData';
 
 const AppContent: React.FC = () => {
+  const { user, loading } = useAuth();
   const [showWelcomePopup, setShowWelcomePopup] = useState(false);
-  const [userType, setUserType] = useState<'client' | 'master' | null>(null);
+  const [pendingUserType, setPendingUserType] = useState<'client' | 'master' | null>(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authMode, setAuthMode] = useState<'login' | 'register'>('register');
   const [recentlyViewed, setRecentlyViewed] = useState<Master[]>([]);
   const [selectedMaster, setSelectedMaster] = useState<Master | null>(null);
   const [showSearchResults, setShowSearchResults] = useState(false);
@@ -26,8 +30,12 @@ const AppContent: React.FC = () => {
   });
 
   useEffect(() => {
-    // Show popup on every page reload (temporarily)
-    setShowWelcomePopup(true);
+    // Show welcome popup only if user is not authenticated and not loading
+    if (!loading) {
+      if (!user) {
+        setShowWelcomePopup(true);
+      }
+    }
 
     // Load recently viewed from localStorage
     const savedRecentlyViewed = localStorage.getItem('recently-viewed');
@@ -39,11 +47,31 @@ const AppContent: React.FC = () => {
         console.error('Error parsing recently viewed:', error);
       }
     }
-  }, []);
+  }, [user, loading]);
 
+  // Handle user type selection from welcome popup
   const handleUserTypeSelect = (type: 'client' | 'master') => {
-    setUserType(type);
+    // This is called when user is already authenticated
+    // Direct them to appropriate dashboard
+    if (type === 'master') {
+      // User is authenticated and wants master dashboard
+      // This will be handled by the render logic below
+    }
     setShowWelcomePopup(false);
+  };
+
+  // Handle authentication requirement from welcome popup
+  const handleAuthRequired = (type: 'client' | 'master') => {
+    setPendingUserType(type);
+    setAuthMode('register'); // Default to register for new users
+    setShowWelcomePopup(false);
+    setShowAuthModal(true);
+  };
+
+  // Handle successful authentication
+  const handleAuthSuccess = (userType: 'client' | 'master') => {
+    setShowAuthModal(false);
+    setPendingUserType(null);
   };
 
   const handleClosePopup = () => {
@@ -137,9 +165,15 @@ const AppContent: React.FC = () => {
   // Sort masters by rating for featured carousel
   const topRatedMasters = [...mockMasters].sort((a, b) => b.rating - a.rating);
 
-  // Show master dashboard if user selected master
-  if (userType === 'master') {
+  // Show master dashboard if user is authenticated and is a master
+  if (user && (user.user_metadata?.user_type === 'master' || pendingUserType === 'master')) {
     return (
+      <div className="min-h-screen bg-gray-50">
+        <MasterDashboard onBack={() => setPendingUserType(null)} />
+      </div>
+    );
+  }
+
       <div className="min-h-screen bg-gray-50">
         <MasterDashboard onBack={() => setUserType(null)} />
       </div>
@@ -179,6 +213,18 @@ const AppContent: React.FC = () => {
         isOpen={showWelcomePopup} 
         onClose={handleClosePopup}
         onUserTypeSelect={handleUserTypeSelect}
+        onAuthRequired={handleAuthRequired}
+      />
+      
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => {
+          setShowAuthModal(false);
+          setPendingUserType(null);
+        }}
+        initialMode={authMode}
+        userType={pendingUserType || 'client'}
+        onAuthSuccess={handleAuthSuccess}
       />
       
       <Header />

@@ -15,6 +15,7 @@ export const Header: React.FC = () => {
   const [lastScrollY, setLastScrollY] = useState(0);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
+  const [authUserType, setAuthUserType] = useState<'client' | 'master'>('client');
 
   useEffect(() => {
     const controlHeader = () => {
@@ -37,9 +38,14 @@ export const Header: React.FC = () => {
 
   const handleLoginClick = () => {
     setAuthMode('login');
+    setAuthUserType('client');
     setAuthModalOpen(true);
   };
 
+  const handleAuthSuccess = (userType: 'client' | 'master') => {
+    // This will be handled by the main App component through user state changes
+    // No additional action needed here
+  };
   return (
     <>
       <header className={`fixed top-0 left-0 right-0 z-40 bg-gradient-to-r from-[#4169e1]/90 to-[#5a7bff]/90 backdrop-blur-md shadow-lg transition-transform duration-300 ${
@@ -95,6 +101,8 @@ export const Header: React.FC = () => {
         isOpen={authModalOpen}
         onClose={() => setAuthModalOpen(false)}
         initialMode={authMode}
+        userType={authUserType}
+        onAuthSuccess={handleAuthSuccess}
       />
     </>
   );
