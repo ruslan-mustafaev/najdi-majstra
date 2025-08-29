@@ -16,6 +16,7 @@ interface Review {
 interface MasterProfileProps {
   master: Master;
   onBack: () => void;
+  isOwnProfile?: boolean;
 }
 
 const mockReviews: Review[] = [
@@ -82,7 +83,7 @@ const getSocialIcon = (platform: string) => {
   }
 };
 
-export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack }) => {
+export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, isOwnProfile = false }) => {
   // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -163,7 +164,7 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack }) 
             className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
           >
             <ArrowLeft size={20} />
-            <span>Späť na zoznam</span>
+            <span>{isOwnProfile ? 'Späť na hlavnú stránku' : 'Späť na zoznam'}</span>
           </button>
         </div>
       </div>
@@ -341,11 +342,11 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack }) 
               <div className="mt-6 space-y-3">
                 <button className="w-full bg-green-500 text-white py-3 rounded-lg font-medium hover:bg-green-600 transition-colors flex items-center justify-center space-x-2">
                   <Phone size={20} />
-                  <span>Zavolať</span>
+                  <span>{isOwnProfile ? 'Upraviť kontakt' : 'Zavolať'}</span>
                 </button>
                 <button className="w-full bg-blue-500 text-white py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors flex items-center justify-center space-x-2">
                   <Mail size={20} />
-                  <span>Napísať email</span>
+                  <span>{isOwnProfile ? 'Upraviť profil' : 'Napísať email'}</span>
                 </button>
               </div>
             </div>
