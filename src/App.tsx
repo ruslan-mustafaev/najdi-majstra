@@ -188,7 +188,10 @@ const AppContent: React.FC = () => {
     return (
       <div className="min-h-screen bg-gray-50">
         <Header />
-        <MasterDashboard onBack={() => setPendingUserType(null)} />
+        <MasterDashboard onBack={() => {
+          setPendingUserType(null);
+          // Optionally redirect to home or handle differently
+        }} />
         <Footer />
       </div>
     );
