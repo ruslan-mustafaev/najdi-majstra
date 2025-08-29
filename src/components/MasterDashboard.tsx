@@ -148,12 +148,12 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
       if (onProfileUpdate) {
         onProfileUpdate({
           ...profileData,
-          workingHours: weeklySchedule
+          workingHours: profileData.workingHours
         });
       }
       
       console.log('Profile saved:', profileData);
-      console.log('Weekly schedule:', weeklySchedule);
+      console.log('Weekly schedule:', profileData.workingHours);
       
     } catch (error) {
       console.error('Error saving profile:', error);
