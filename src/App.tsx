@@ -337,52 +337,6 @@ const AppContent: React.FC = () => {
           setShowAuthModal(false);
           setPendingUserType(null);
           // Optionally redirect to home or handle differently
-        }} />
-        <Footer />
-      </div>
-    );
-  }
-
-  // Show search results page
-  if (showSearchResults) {
-    const filteredMasters = filterMasters(mockMasters, searchFilters);
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <Header />
-        <SearchResults
-          masters={filteredMasters}
-          filters={searchFilters}
-          onBack={handleBackToHome}
-          onMasterClick={handleMasterClick}
-        />
-        <Footer />
-      </div>
-    );
-  }
-
-  if (selectedMaster) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <Header />
-        <MasterProfile master={selectedMaster} onBack={handleBackToList} />
-        <Footer />
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <WelcomePopup 
-        isOpen={showWelcomePopup} 
-        onClose={handleClosePopup}
-        onUserTypeSelect={handleUserTypeSelect}
-        onAuthRequired={handleAuthRequired}
-      />
-      
-      <AuthModal
-        isOpen={showAuthModal}
-        onClose={() => {
-          setShowAuthModal(false);
         }}
         initialMode={authMode}
         userType={pendingUserType || 'client'}
@@ -407,60 +361,7 @@ const AppContent: React.FC = () => {
           masters={allTopRatedMasters} 
           title="Najlepšie hodnotení majstri" 
           onMasterClick={handleMasterClick}
-        initialMode={authMode}
-        userType={pendingUserType || 'client'}
-        onAuthSuccess={handleAuthSuccess}
-        onRegistrationSuccess={handleRegistrationSuccess}
-      />
-      
-      <EmailConfirmation
-        isOpen={showEmailConfirmation}
-        onClose={() => setShowEmailConfirmation(false)}
-        onLoginRequired={handleEmailConfirmed}
-        email={registrationEmail}
-      />
-      
-      <Header />
-      
-      <main>
-        <MainSearchSection onSearch={handleSearch} onMasterClick={handleMasterClickFromSearch} />
-        
-        {/* Top Masters Carousel */}
-        <MastersCarousel 
-          masters={topRatedMasters} 
-          title="Najlepšie hodnotení majstri" 
-          onMasterClick={handleMasterClick}
         />
-        
-        {/* Recently Viewed Section */}
-        {recentlyViewed.length > 0 && (
-          <MastersCarousel 
-            masters={recentlyViewed} 
-            title="Naposledy zobrazené"
-            onMasterClick={handleMasterClick}
-          />
-        )}
-        
-        {/* No Results Example */}
-        <div className="container mx-auto px-4">
-          <NoResults />
-        </div>
-      </main>
-      
-      <Footer />
-    </div>
-  );
-};
-
-function App() {
-  return (
-    <LanguageProvider>
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
-    </LanguageProvider>
-  );
-}
         
         {/* Recently Viewed Section */}
         {recentlyViewed.length > 0 && (
