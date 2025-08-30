@@ -1730,4 +1730,4 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
       )}
     </div>
   );
-}; {
+};
