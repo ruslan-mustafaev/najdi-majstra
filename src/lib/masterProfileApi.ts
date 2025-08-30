@@ -3,34 +3,12 @@ import { supabase } from './supabase';
 export interface MasterProfile {
   name: string;
   profession: string;
-  age?: number;
+  email: string;
+  phone: string;
   location: string;
-  work_radius: string;
   description: string;
-  experience: string;
-  services: string;
-  expertise: string;
-  team_size: 'individual' | 'small-team';
-  service_types: string[];
-  languages: string;
-  hourly_rate: string;
-  availability: {
-    schedule: string;
-    available: boolean;
-  };
-  contact: {
-    phone: string;
-    email: string;
-    website: string;
-    social_media?: {
-      facebook?: string;
-      instagram?: string;
-      youtube?: string;
-      tiktok?: string;
-    };
-  };
-  certifications: string[];
-  profile_completed: boolean;
+  is_active?: boolean;
+  profile_completed?: boolean;
 }
 
 export const saveMasterProfile = async (profileData: MasterProfile): Promise<MasterProfile> => {
@@ -44,16 +22,25 @@ export const saveMasterProfile = async (profileData: MasterProfile): Promise<Mas
 
     // Подготавливаем данные для Supabase (добавляем user_id)
     const dataForSupabase = {
-      ...profileData,
       user_id: user.id,
+      name: profileData.name,
+      profession: profileData.profession,
+      email: profileData.email,
+      phone: profileData.phone,
+      location: profileData.location,
+      description: profileData.description,
+      is_active: profileData.is_active ?? true,
+      profile_completed: profileData.profile_completed ?? true,
       updated_at: new Date().toISOString()
     };
 
-    // Сохраняем в таблицу master_profiles (замените название таблицы на ваше)
+    console.log('Sending to Supabase:', dataForSupabase);
+
+    // Сохраняем в таблицу masters (ИСПРАВЛЕНО НАЗВАНИЕ ТАБЛИЦЫ)
     const { data, error } = await supabase
-      .from('master_profiles') // название вашей таблицы
+      .from('masters') // БЫЛО 'master_profiles' - ТЕПЕРЬ 'masters'
       .upsert(dataForSupabase, { 
-        onConflict: 'user_id' // обновляем если профиль уже существует
+        onConflict: 'user_id'
       })
       .select()
       .single();
