@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowLeft, User, Star, MapPin, Phone, Mail, Camera, Plus, Edit, Settings, BarChart3, Calendar, Clock, Euro, Award, Users, Play, Globe, Save, X, Upload, Copy, Check } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import { saveMasterProfile, type MasterProfile } from '../lib/masterProfileApi';
 
 interface MasterDashboardProps {
   onBack: () => void;
@@ -137,8 +138,37 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
     setIsSaving(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Подготавливаем данные для сохранения в базу данных
+      const profileForDB: MasterProfile = {
+        name: profileData.name,
+        profession: profileData.profession,
+        age: profileData.age,
+        location: profileData.location,
+        work_radius: profileData.workRadius,
+        description: profileData.description,
+        experience: profileData.experience,
+        services: profileData.services,
+        expertise: profileData.expertise,
+        team_size: profileData.teamSize,
+        service_types: profileData.serviceTypes,
+        languages: profileData.languages,
+        hourly_rate: profileData.hourlyRate,
+        availability: {
+          schedule: profileData.availability.schedule,
+          available: profileData.availability.available
+        },
+        contact: {
+          phone: profileData.contact.phone,
+          email: profileData.contact.email,
+          website: profileData.contact.website,
+          social_media: profileData.contact.socialMedia
+        },
+        certifications: profileData.certifications,
+        profile_completed: true
+      };
+
+      // Сохраняем в базу данных
+      const savedProfile = await saveMasterProfile(profileForDB);
       
       setEditingField(null);
       setHasChanges(false);
@@ -146,17 +176,14 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
       
       // Call the parent callback to update the profile in the main app
       if (onProfileUpdate) {
-        onProfileUpdate({
-          ...profileData,
-          workingHours: profileData.workingHours
-        });
+        onProfileUpdate(savedProfile);
       }
       
-      console.log('Profile saved:', profileData);
-      console.log('Weekly schedule:', profileData.workingHours);
+      console.log('Profile saved to database:', savedProfile);
       
     } catch (error) {
       console.error('Error saving profile:', error);
+      alert('Ошибка при сохранении профиля. Попробуйте снова.');
     } finally {
       setIsSaving(false);
     }
@@ -682,16 +709,6 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                             type="text"
                             placeholder="Facebook používateľ"
                             value={profileData.contact.socialMedia?.facebook || ''}
-                            onChange={(e) => handleNestedFieldChange('contact', 'socialMedia', {
-                              ...profileData.contact.socialMedia,
-                              facebook: e.target.value
-                            })}
-                            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent text-sm"
-                          />
-                          <input
-                            type="text"
-                            placeholder="Instagram používateľ"
-                            value={profileData.contact.socialMedia?.instagram || ''}
                             onChange={(e) => handleNestedFieldChange('contact', 'socialMedia', {
                               ...profileData.contact.socialMedia,
                               instagram: e.target.value
@@ -1238,13 +1255,6 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                   <div className="text-lg mb-1">✅</div>
                   Označiť ako dostupný dnes
                 </button>
-                <button 
-                  onClick={() => setTodayStatus('unavailable')}
-                  className="bg-red-500 text-white py-4 px-6 rounded-xl font-semibold hover:bg-red-600 transition-all duration-200 hover:scale-105 hover:shadow-lg border-2 border-red-600"
-                >
-                  <div className="text-lg mb-1">❌</div>
-                  Označiť ako nedostupný dnes
-                </button>
                 <button className="bg-blue-500 text-white py-4 px-6 rounded-xl font-semibold hover:bg-blue-600 transition-all duration-200 hover:scale-105 hover:shadow-lg border-2 border-blue-600">
                   <div className="text-lg mb-1">⚙️</div>
                   Nastaviť pravidelný rozvrh
@@ -1720,4 +1730,4 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
       )}
     </div>
   );
-};
+}; {
