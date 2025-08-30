@@ -1,4 +1,4 @@
-import { supabase } from './supabase'; // путь к вашему supabase клиенту
+import { supabase } from './supabase';
 
 export interface MasterProfile {
   name: string;
