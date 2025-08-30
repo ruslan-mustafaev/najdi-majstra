@@ -133,62 +133,44 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
     setCopiedCoupon(code);
     setTimeout(() => setCopiedCoupon(null), 2000);
   };
-
+  
   const handleSave = async () => {
-    setIsSaving(true);
+  setIsSaving(true);
+  
+  try {
+    // Подготавливаем данные только с полями из таблицы masters
+    const profileForDB: MasterProfile = {
+      name: profileData.name,
+      profession: profileData.profession,
+      email: profileData.contact.email,
+      phone: profileData.contact.phone,
+      location: profileData.location,
+      description: profileData.description,
+      is_active: profileData.availability.available,
+      profile_completed: true
+    };
+
+    // Сохраняем в Supabase
+    const savedProfile = await saveMasterProfile(profileForDB);
     
-    try {
-      // Подготавливаем данные для сохранения в базу данных
-      const profileForDB: MasterProfile = {
-        name: profileData.name,
-        profession: profileData.profession,
-        age: profileData.age,
-        location: profileData.location,
-        work_radius: profileData.workRadius,
-        description: profileData.description,
-        experience: profileData.experience,
-        services: profileData.services,
-        expertise: profileData.expertise,
-        team_size: profileData.teamSize,
-        service_types: profileData.serviceTypes,
-        languages: profileData.languages,
-        hourly_rate: profileData.hourlyRate,
-        availability: {
-          schedule: profileData.availability.schedule,
-          available: profileData.availability.available
-        },
-        contact: {
-          phone: profileData.contact.phone,
-          email: profileData.contact.email,
-          website: profileData.contact.website,
-          social_media: profileData.contact.socialMedia
-        },
-        certifications: profileData.certifications,
-        profile_completed: true
-      };
-
-      // Сохраняем в базу данных
-      const savedProfile = await saveMasterProfile(profileForDB);
-      
-      setEditingField(null);
-      setHasChanges(false);
-      setIsProfileSaved(true);
-      
-      // Call the parent callback to update the profile in the main app
-      if (onProfileUpdate) {
-        onProfileUpdate(savedProfile);
-      }
-      
-      console.log('Profile saved to database:', savedProfile);
-      
-    } catch (error) {
-      console.error('Error saving profile:', error);
-      alert('Ошибка при сохранении профиля. Попробуйте снова.');
-    } finally {
-      setIsSaving(false);
+    setEditingField(null);
+    setHasChanges(false);
+    setIsProfileSaved(true);
+    
+    // Call the parent callback to update the profile in the main app
+    if (onProfileUpdate) {
+      onProfileUpdate(savedProfile);
     }
-  };
-
+    
+    console.log('Profile saved to Supabase:', savedProfile);
+    
+  } catch (error) {
+    console.error('Error saving profile:', error);
+    alert('Ошибка при сохранении профиля. Попробуйте снова.');
+  } finally {
+    setIsSaving(false);
+  }
+};
   const handleFieldChange = (field: string, value: any) => {
     setProfileData(prev => ({ ...prev, [field]: value }));
     setHasChanges(true);
