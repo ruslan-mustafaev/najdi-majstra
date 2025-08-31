@@ -13,6 +13,7 @@ import { SearchResults } from './components/SearchResults';
 import { MasterDashboard } from './components/MasterDashboard';
 import { EmailConfirmation } from './components/EmailConfirmation';
 import { mockMasters, Master } from './data/mockData';
+import { getTopRatedMasters } from './lib/mastersApi';
 
 const AppContent: React.FC = () => {
   const { user, loading } = useAuth();
@@ -32,6 +33,7 @@ const AppContent: React.FC = () => {
     experience: ''
   });
   const [masterProfileData, setMasterProfileData] = useState<Master | null>(null);
+  const [realMasters, setRealMasters] = useState<Master[]>([]);
 
   useEffect(() => {
     // Show welcome popup only if user is not authenticated and not loading
@@ -52,6 +54,21 @@ const AppContent: React.FC = () => {
       }
     }
   }, [user, loading]);
+
+  // Load masters from Supabase
+  useEffect(() => {
+    const loadMasters = async () => {
+      try {
+        const masters = await getTopRatedMasters();
+        setRealMasters(masters);
+        console.log('Loaded masters from Supabase:', masters);
+      } catch (error) {
+        console.error('Error loading real masters:', error);
+      }
+    };
+    
+    loadMasters();
+  }, []);
 
   // Handle user type selection from welcome popup
   const handleUserTypeSelect = (type: 'client' | 'master') => {
@@ -110,10 +127,22 @@ const AppContent: React.FC = () => {
       });
       setMasterProfileData(fullProfile);
       
+      // Reload masters from Supabase after profile update
+      const loadMasters = async () => {
+        try {
+          const masters = await getTopRatedMasters();
+          setRealMasters(masters);
+        } catch (error) {
+          console.error('Error reloading masters:', error);
+        }
+      };
+      loadMasters();
+      
       // Force re-render by updating a state that affects the masters list
       setRecentlyViewed(prev => [...prev]); // Trigger re-render
     }
   };
+  
   // Handle registration success (email confirmation needed)
   const handleRegistrationSuccess = (email: string) => {
     setRegistrationEmail(email);
@@ -155,11 +184,13 @@ const AppContent: React.FC = () => {
   };
 
   const handleMasterClickFromSearch = (masterId: string) => {
-    const master = mockMasters.find(m => m.id === masterId);
+    const allMastersForSearch = realMasters.length > 0 ? [...realMasters, ...mockMasters] : mockMasters;
+    const master = allMastersForSearch.find(m => m.id === masterId);
     if (master) {
       handleMasterClick(master);
     }
   };
+  
   const handleBackToHome = () => {
     setShowSearchResults(false);
   };
@@ -231,6 +262,7 @@ const AppContent: React.FC = () => {
     if (!profile || !user) return false;
     return user.user_metadata?.profile_saved === true;
   };
+  
   const filterMasters = (masters: Master[], filters: typeof searchFilters) => {
     return masters.filter(master => {
       // Filter by city
@@ -283,13 +315,13 @@ const AppContent: React.FC = () => {
     });
   };
 
-  // Sort masters by rating for featured carousel
-  const topRatedMasters = [...mockMasters].sort((a, b) => b.rating - a.rating);
+  // Use real masters if available, otherwise fallback to mock data
+  const topRatedMasters = realMasters.length > 0 ? realMasters : [...mockMasters].sort((a, b) => b.rating - a.rating);
 
   // Add master's own profile to the list if they are a master
   const allMasters = (masterProfileData && isMasterProfileVisible(masterProfileData))
-    ? [masterProfileData, ...mockMasters]
-    : mockMasters;
+    ? [masterProfileData, ...(realMasters.length > 0 ? realMasters : mockMasters)]
+    : (realMasters.length > 0 ? realMasters : mockMasters);
 
   const allTopRatedMasters = (masterProfileData && isMasterProfileVisible(masterProfileData))
     ? [masterProfileData, ...topRatedMasters]
@@ -388,7 +420,7 @@ const AppContent: React.FC = () => {
       <main>
         <MainSearchSection onSearch={handleSearch} onMasterClick={handleMasterClickFromSearch} />
         
-        {/* Top Masters Carousel - includes master's own profile if they are a master */}
+        {/* Top Masters Carousel - includes real masters from Supabase and master's own profile */}
         <MastersCarousel 
           masters={allTopRatedMasters} 
           title="Najlepšie hodnotení majstri" 
