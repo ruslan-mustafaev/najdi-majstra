@@ -205,6 +205,7 @@ const HomePage: React.FC = () => {
 const ProfilePage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [master, setMaster] = useState<Master | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -212,6 +213,12 @@ const ProfilePage: React.FC = () => {
     const loadMaster = async () => {
       setLoading(true);
       try {
+        // Если это профиль текущего пользователя-мастера, перенаправляем на dashboard
+        if (user && user.user_metadata?.user_type === 'master' && user.id === id) {
+          navigate('/dashboard');
+          return;
+        }
+        
         // Load all masters and find the needed one
         const masters = await getTopRatedMasters();
         const foundMaster = masters.find(m => m.id === id);
@@ -233,7 +240,7 @@ const ProfilePage: React.FC = () => {
     };
     
     loadMaster();
-  }, [id]);
+  }, [id, user, navigate]);
 
   if (loading) {
     return (

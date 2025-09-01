@@ -280,7 +280,7 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                 </button>
                 <button className="w-full bg-blue-500 text-white py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors flex items-center justify-center space-x-2">
                   <Mail size={20} />
-                  <span>{isOwnProfile ? 'Zobraziť ako Dashboard' : 'Napísať email'}</span>
+                  <span>Napísať email</span>
                 </button>
               </div>
             </div>
