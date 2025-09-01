@@ -29,7 +29,9 @@ const HomePage: React.FC = () => {
   const [recentlyViewed, setRecentlyViewed] = useState<Master[]>([]);
 
   useEffect(() => {
-    if (!loading && !user) {
+    // Show welcome popup only for completely new users (not logged in and no localStorage data)
+    // Show welcome popup only for completely new users (not logged in and no localStorage data)
+    if (!loading && !user && !localStorage.getItem('user-visited')) {
       setShowWelcomePopup(true);
     }
 
@@ -39,10 +41,13 @@ const HomePage: React.FC = () => {
       if (saved) {
         try {
           const savedIds = JSON.parse(saved);
-          // Only load if we have valid master IDs from database
+          // Load masters by IDs from database
           if (Array.isArray(savedIds) && savedIds.length > 0) {
-            // For now, keep empty until we implement proper master loading by IDs
-            setRecentlyViewed([]);
+            const allMasters = await getTopRatedMasters();
+            const recentMasters = savedIds
+              .map(id => allMasters.find(master => master.id === id))
+              .filter(Boolean) as Master[];
+            setRecentlyViewed(recentMasters);
           }
         } catch (error) {
           console.error('Error parsing recently viewed:', error);
@@ -72,6 +77,9 @@ const HomePage: React.FC = () => {
   }, []);
 
   const handleUserTypeSelect = (type: 'client' | 'master') => {
+    // Mark that user has visited the site
+    localStorage.setItem('user-visited', 'true');
+    
     if (type === 'master' && user) {
       navigate('/dashboard');
     }
@@ -79,6 +87,9 @@ const HomePage: React.FC = () => {
   };
 
   const handleAuthRequired = (type: 'client' | 'master') => {
+    // Mark that user has visited the site
+    localStorage.setItem('user-visited', 'true');
+    
     setPendingUserType(type);
     setAuthMode('register');
     setShowWelcomePopup(false);
@@ -86,26 +97,34 @@ const HomePage: React.FC = () => {
   };
 
   const handleAuthSuccess = (userType: 'client' | 'master') => {
+    // Mark that user has visited the site
+    localStorage.setItem('user-visited', 'true');
+    
     if (userType === 'master') {
       navigate('/dashboard');
     }
   };
 
   const handleMasterClick = (master: Master) => {
-    // Add to recently viewed - store only master IDs
+    // Add to recently viewed when clicking on master
+    addToRecentlyViewed(master);
+    
+    // Navigate to profile
+    navigate(`/profile/${master.id}`);
+  };
+
+  const addToRecentlyViewed = (master: Master) => {
+    // Store master ID in localStorage
     const savedIds = JSON.parse(localStorage.getItem('recently-viewed') || '[]');
     const filteredIds = savedIds.filter((id: string) => id !== master.id);
     const updatedIds = [master.id, ...filteredIds].slice(0, 10);
     localStorage.setItem('recently-viewed', JSON.stringify(updatedIds));
     
-    // Update recently viewed state with actual master object
+    // Update state with actual master object
     setRecentlyViewed(prev => {
       const filtered = prev.filter(m => m.id !== master.id);
       return [master, ...filtered].slice(0, 10);
     });
-    
-    // Navigate to profile
-    navigate(`/profile/${master.id}`);
   };
 
   const handleSearch = (filters: any) => {
@@ -193,12 +212,18 @@ const ProfilePage: React.FC = () => {
     const loadMaster = async () => {
       setLoading(true);
       try {
-        // Загружаем всех мастеров и находим нужного
+        // Load all masters and find the needed one
         const masters = await getTopRatedMasters();
         const foundMaster = masters.find(m => m.id === id);
         
         if (foundMaster) {
           setMaster(foundMaster);
+          
+          // Add to recently viewed when profile is loaded
+          const savedIds = JSON.parse(localStorage.getItem('recently-viewed') || '[]');
+          const filteredIds = savedIds.filter((masterId: string) => masterId !== id);
+          const updatedIds = [id, ...filteredIds].slice(0, 10);
+          localStorage.setItem('recently-viewed', JSON.stringify(updatedIds));
         }
       } catch (error) {
         console.error('Error loading master:', error);
@@ -250,7 +275,7 @@ const ProfilePage: React.FC = () => {
       <Header />
       <MasterProfile 
         master={master} 
-        onBack={() => navigate('/')}
+        onBack={() => navigate(-1)} // Go back to previous page instead of home
         isOwnProfile={false}
       />
       <Footer />
@@ -359,7 +384,7 @@ const SearchPage: React.FC = () => {
       <SearchResults
         masters={masters}
         filters={filters}
-        onBack={() => navigate('/')}
+        onBack={() => navigate(-1)} // Go back to previous page
         onMasterClick={(master) => navigate(`/profile/${master.id}`)}
       />
       <Footer />
