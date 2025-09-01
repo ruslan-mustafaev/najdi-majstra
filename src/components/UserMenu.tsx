@@ -102,10 +102,7 @@ export const UserMenu: React.FC = () => {
                 <span>{language === 'sk' ? 'Odhlásiť sa' : 'Sign Out'}</span>
               </button>
             </div>
-              <button 
-                onClick={handleDashboardClick}
-                className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 text-gray-700 transition-colors"
-              >
+          </div>
         </>
       )}
     </div>
