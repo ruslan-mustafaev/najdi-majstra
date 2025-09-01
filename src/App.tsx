@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { LanguageProvider } from './hooks/useLanguage';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import { Header } from './components/Header';
@@ -12,43 +13,31 @@ import { MasterProfile } from './components/MasterProfile';
 import { SearchResults } from './components/SearchResults';
 import { MasterDashboard } from './components/MasterDashboard';
 import { EmailConfirmation } from './components/EmailConfirmation';
-import { mockMasters, Master } from './data/mockData';
+import { Master } from './data/mockData';
 import { getTopRatedMasters } from './lib/mastersApi';
 
-const AppContent: React.FC = () => {
+// Главная страница
+const HomePage: React.FC = () => {
+  const navigate = useNavigate();
   const { user, loading } = useAuth();
   const [showWelcomePopup, setShowWelcomePopup] = useState(false);
-  const [pendingUserType, setPendingUserType] = useState<'client' | 'master' | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'register'>('register');
-  const [showEmailConfirmation, setShowEmailConfirmation] = useState(false);
-  const [registrationEmail, setRegistrationEmail] = useState('');
-  const [recentlyViewed, setRecentlyViewed] = useState<Master[]>([]);
-  const [selectedMaster, setSelectedMaster] = useState<Master | null>(null);
-  const [showSearchResults, setShowSearchResults] = useState(false);
-  const [searchFilters, setSearchFilters] = useState({
-    city: '',
-    profession: '',
-    availability: '',
-    experience: ''
-  });
-  const [masterProfileData, setMasterProfileData] = useState<Master | null>(null);
+  const [pendingUserType, setPendingUserType] = useState<'client' | 'master' | null>(null);
   const [realMasters, setRealMasters] = useState<Master[]>([]);
+  const [isLoadingMasters, setIsLoadingMasters] = useState(true);
+  const [recentlyViewed, setRecentlyViewed] = useState<Master[]>([]);
 
   useEffect(() => {
-    // Show welcome popup only if user is not authenticated and not loading
-    if (!loading) {
-      if (!user) {
-        setShowWelcomePopup(true);
-      }
+    if (!loading && !user) {
+      setShowWelcomePopup(true);
     }
 
-    // Load recently viewed from localStorage
-    const savedRecentlyViewed = localStorage.getItem('recently-viewed');
-    if (savedRecentlyViewed) {
+    // Load recently viewed
+    const saved = localStorage.getItem('recently-viewed');
+    if (saved) {
       try {
-        const parsed = JSON.parse(savedRecentlyViewed);
-        setRecentlyViewed(parsed);
+        setRecentlyViewed(JSON.parse(saved));
       } catch (error) {
         console.error('Error parsing recently viewed:', error);
       }
@@ -58,111 +47,41 @@ const AppContent: React.FC = () => {
   // Load masters from Supabase
   useEffect(() => {
     const loadMasters = async () => {
+      setIsLoadingMasters(true);
       try {
         const masters = await getTopRatedMasters();
         setRealMasters(masters);
-        console.log('Loaded masters from Supabase:', masters);
       } catch (error) {
-        console.error('Error loading real masters:', error);
+        console.error('Error loading masters:', error);
+      } finally {
+        setIsLoadingMasters(false);
       }
     };
-    
     loadMasters();
   }, []);
 
-  // Handle user type selection from welcome popup
   const handleUserTypeSelect = (type: 'client' | 'master') => {
-    // This is called when user is already authenticated
-    // Direct them to appropriate dashboard
-    if (type === 'master') {
-      // User is authenticated and wants master dashboard
-      // This will be handled by the render logic below
+    if (type === 'master' && user) {
+      navigate('/dashboard');
     }
     setShowWelcomePopup(false);
   };
 
-  // Handle authentication requirement from welcome popup
   const handleAuthRequired = (type: 'client' | 'master') => {
     setPendingUserType(type);
-    setAuthMode('register'); // Default to register for new users
+    setAuthMode('register');
     setShowWelcomePopup(false);
     setShowAuthModal(true);
   };
 
-  // Handle successful authentication
   const handleAuthSuccess = (userType: 'client' | 'master') => {
-    // Don't close modal immediately, let the AuthModal handle the flow
-    // setShowAuthModal(false);
-    // setPendingUserType(null);
-  };
-
-  // Handle profile update from dashboard
-  const handleProfileUpdate = (profileData: any) => {
-    if (user) {
-      const fullProfile = createMasterProfileFromUser({
-        ...user,
-        user_metadata: {
-          ...user.user_metadata,
-          ...profileData,
-          profile_saved: true, // Mark profile as saved
-          full_name: profileData.name,
-          profession: profileData.profession,
-          phone: profileData.contact?.phone,
-          location: profileData.location,
-          description: profileData.description,
-          experience: profileData.experience,
-          hourly_rate: profileData.hourlyRate,
-          team_size: profileData.teamSize,
-          service_types: profileData.serviceTypes,
-          website: profileData.contact?.website,
-          social_media: profileData.contact?.socialMedia,
-          work_radius: profileData.workRadius,
-          services: profileData.services,
-          expertise: profileData.expertise,
-          languages: profileData.languages,
-          certifications: profileData.certifications,
-          availability: profileData.availability,
-          working_hours: profileData.workingHours
-        }
-      });
-      setMasterProfileData(fullProfile);
-      
-      // Reload masters from Supabase after profile update
-      const loadMasters = async () => {
-        try {
-          const masters = await getTopRatedMasters();
-          setRealMasters(masters);
-        } catch (error) {
-          console.error('Error reloading masters:', error);
-        }
-      };
-      loadMasters();
-      
-      // Force re-render by updating a state that affects the masters list
-      setRecentlyViewed(prev => [...prev]); // Trigger re-render
+    if (userType === 'master') {
+      navigate('/dashboard');
     }
-  };
-  
-  // Handle registration success (email confirmation needed)
-  const handleRegistrationSuccess = (email: string) => {
-    setRegistrationEmail(email);
-    setShowAuthModal(false);
-    setShowEmailConfirmation(true);
-  };
-
-  // Handle email confirmation completion
-  const handleEmailConfirmed = () => {
-    setShowEmailConfirmation(false);
-    setAuthMode('login');
-    setShowAuthModal(true);
-  };
-
-  const handleClosePopup = () => {
-    setShowWelcomePopup(false);
   };
 
   const handleMasterClick = (master: Master) => {
-    // Add to recently viewed (avoid duplicates and limit to 10 items)
+    // Add to recently viewed
     setRecentlyViewed(prev => {
       const filtered = prev.filter(m => m.id !== master.id);
       const updated = [master, ...filtered].slice(0, 10);
@@ -170,227 +89,21 @@ const AppContent: React.FC = () => {
       return updated;
     });
     
-    // Show master profile
-    setSelectedMaster(master);
+    // Navigate to profile
+    navigate(`/profile/${master.id}`);
   };
 
-  const handleBackToList = () => {
-    setSelectedMaster(null);
+  const handleSearch = (filters: any) => {
+    // Navigate to search with query params
+    const params = new URLSearchParams(filters);
+    navigate(`/search?${params.toString()}`);
   };
-
-  const handleSearch = (filters: typeof searchFilters) => {
-    setSearchFilters(filters);
-    setShowSearchResults(true);
-  };
-
-  const handleMasterClickFromSearch = (masterId: string) => {
-    const allMastersForSearch = realMasters.length > 0 ? [...realMasters, ...mockMasters] : mockMasters;
-    const master = allMastersForSearch.find(m => m.id === masterId);
-    if (master) {
-      handleMasterClick(master);
-    }
-  };
-  
-  const handleBackToHome = () => {
-    setShowSearchResults(false);
-  };
-
-  // Create master profile from user data
-  const createMasterProfileFromUser = (user: any): Master => {
-    const userData = user.user_metadata || {};
-    
-    return {
-      id: user.id,
-      name: userData.full_name || userData.first_name + ' ' + userData.last_name || 'Nový majster',
-      profession: userData.profession || 'Majster',
-      location: userData.location || 'Slovensko',
-      rating: 0.0,
-      reviewCount: 0,
-      available: true,
-      profileImage: userData.profile_image || 'https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=400',
-      workImages: userData.work_images || [
-        'https://images.pexels.com/photos/162553/keys-workshop-mechanic-tools-162553.jpeg?auto=compress&cs=tinysrgb&w=400',
-        'https://images.pexels.com/photos/159358/multimeter-digital-hand-tool-159358.jpeg?auto=compress&cs=tinysrgb&w=400'
-      ],
-      workVideo: userData.work_video,
-      description: userData.description || 'Profesionálny majster s dlhoročnými skúsenosťami.',
-      services: userData.services ? userData.services.split(',') : ['Opravy', 'Inštalácie', 'Servis'],
-      experience: userData.experience || '5 rokov',
-      certifications: userData.certifications || ['Odborná spôsobilosť'],
-      expertise: userData.expertise ? userData.expertise.split(',') : ['Všeobecné práce'],
-      teamSize: userData.team_size || 'individual',
-      serviceTypes: userData.service_types || ['individuals'],
-      languages: userData.languages ? userData.languages.split(',') : ['Slovenčina'],
-      priceRange: userData.hourly_rate ? `${userData.hourly_rate} €/hod` : '25-45 €/hod',
-      age: userData.age,
-      subscriptionPlan: userData.subscription_plan || 'standard',
-      communicationStyle: userData.communication_style || 'Profesionálne a vecne',
-      workingHours: userData.working_hours || {
-        monday: '8:00 - 18:00',
-        tuesday: '8:00 - 18:00',
-        wednesday: '8:00 - 18:00',
-        thursday: '8:00 - 18:00',
-        friday: '8:00 - 18:00',
-        saturday: '9:00 - 16:00',
-        sunday: 'Zatvorené'
-      },
-      contact: {
-        phone: userData.phone || user.phone || '+421 9xx xxx xxx',
-        email: user.email,
-        website: userData.website,
-        socialMedia: userData.social_media || {}
-      },
-      availability: {
-        schedule: userData.schedule || '8:00 - 18:00',
-        workRadius: userData.work_radius || 'Lokálne + 50km'
-      }
-    };
-  };
-
-  // Update master profile data when user changes
-  useEffect(() => {
-    if (user && user.user_metadata?.user_type === 'master') {
-      const masterProfile = createMasterProfileFromUser(user);
-      setMasterProfileData(masterProfile);
-    } else {
-      setMasterProfileData(null);
-    }
-  }, [user]);
-
-  // Check if master profile should be visible (only if saved)
-  const isMasterProfileVisible = (profile: Master | null) => {
-    if (!profile || !user) return false;
-    return user.user_metadata?.profile_saved === true;
-  };
-  
-  const filterMasters = (masters: Master[], filters: typeof searchFilters) => {
-    return masters.filter(master => {
-      // Filter by city
-      if (filters.city && !filters.city.startsWith('- ')) {
-        if (!master.location.toLowerCase().includes(filters.city.toLowerCase())) {
-          return false;
-        }
-      }
-
-      // Filter by profession
-      if (filters.profession && !filters.profession.startsWith('- ')) {
-        if (!master.profession.toLowerCase().includes(filters.profession.toLowerCase())) {
-          return false;
-        }
-      }
-
-      // Filter by availability
-      if (filters.availability && !filters.availability.startsWith('- ')) {
-        if (filters.availability === 'Dostupný teraz' || filters.availability === 'Available now') {
-          if (!master.available) return false;
-        }
-      }
-
-      // Filter by price range
-      if (filters.experience && !filters.experience.startsWith('- ')) {
-        const masterExperience = master.experience.toLowerCase();
-        
-        if (filters.experience === '1 rok a viac') {
-          if (!masterExperience.includes('rok') && !masterExperience.includes('viac')) return false;
-        }
-        
-        if (filters.experience === '3 roky a viac') {
-          if (masterExperience.includes('začiatočník') || masterExperience.includes('1 rok')) return false;
-        }
-        
-        if (filters.experience === '5 rokov a viac') {
-          if (masterExperience.includes('začiatočník') || masterExperience.includes('1 rok') || masterExperience.includes('2 rok')) return false;
-        }
-        
-        if (filters.experience === '10 rokov a viac') {
-          if (!masterExperience.includes('viac ako 10')) return false;
-        }
-        
-        if (filters.experience === '20 rokov a viac') {
-          if (!masterExperience.includes('viac ako 10')) return false; // Assuming 10+ includes 20+
-        }
-      }
-
-      return true;
-    });
-  };
-
-  // Use real masters if available, otherwise fallback to mock data
-  const topRatedMasters = realMasters.length > 0 ? realMasters : [...mockMasters].sort((a, b) => b.rating - a.rating);
-
-  // Add master's own profile to the list if they are a master
-  const allMasters = (masterProfileData && isMasterProfileVisible(masterProfileData))
-    ? [masterProfileData, ...(realMasters.length > 0 ? realMasters : mockMasters)]
-    : (realMasters.length > 0 ? realMasters : mockMasters);
-
-  const allTopRatedMasters = (masterProfileData && isMasterProfileVisible(masterProfileData))
-    ? [masterProfileData, ...topRatedMasters]
-    : topRatedMasters;
-
-  // Show master dashboard if user is authenticated and is a master
-  if (user && (user.user_metadata?.user_type === 'master' || pendingUserType === 'master')) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <Header />
-        <MasterDashboard 
-          onBack={() => {
-            setPendingUserType(null);
-          }}
-          onProfileUpdate={handleProfileUpdate}
-        />
-        <Footer />
-      </div>
-    );
-  }
-
-  // Show master's own profile if they want to see how it looks on the site
-  if (selectedMaster && masterProfileData && selectedMaster.id === masterProfileData.id) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <Header />
-        <MasterProfile 
-          master={masterProfileData} 
-          onBack={handleBackToList} 
-          isOwnProfile={true}
-        />
-        <Footer />
-      </div>
-    );
-  }
-
-  // Show regular master profile
-  if (selectedMaster) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <Header />
-        <MasterProfile master={selectedMaster} onBack={handleBackToList} />
-        <Footer />
-      </div>
-    );
-  }
-
-  // Show search results page
-  if (showSearchResults) {
-    const filteredMasters = filterMasters(allMasters, searchFilters);
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <Header />
-        <SearchResults
-          masters={filteredMasters}
-          filters={searchFilters}
-          onBack={handleBackToHome}
-          onMasterClick={handleMasterClick}
-        />
-        <Footer />
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gray-50">
       <WelcomePopup 
         isOpen={showWelcomePopup} 
-        onClose={handleClosePopup}
+        onClose={() => setShowWelcomePopup(false)}
         onUserTypeSelect={handleUserTypeSelect}
         onAuthRequired={handleAuthRequired}
       />
@@ -400,34 +113,46 @@ const AppContent: React.FC = () => {
         onClose={() => {
           setShowAuthModal(false);
           setPendingUserType(null);
-          // Optionally redirect to home or handle differently
         }}
         initialMode={authMode}
         userType={pendingUserType || 'client'}
         onAuthSuccess={handleAuthSuccess}
-        onRegistrationSuccess={handleRegistrationSuccess}
+        onRegistrationSuccess={(email) => {
+          // Handle email confirmation
+          setShowAuthModal(false);
+        }}
       />
-      
-      <EmailConfirmation
-        isOpen={showEmailConfirmation}
-        onClose={() => setShowEmailConfirmation(false)}
-        onLoginRequired={handleEmailConfirmed}
-        email={registrationEmail}
-      />
-      
+
       <Header />
       
       <main>
-        <MainSearchSection onSearch={handleSearch} onMasterClick={handleMasterClickFromSearch} />
-        
-        {/* Top Masters Carousel - includes real masters from Supabase and master's own profile */}
-        <MastersCarousel 
-          masters={allTopRatedMasters} 
-          title="Najlepšie hodnotení majstri" 
-          onMasterClick={handleMasterClick}
+        <MainSearchSection 
+          onSearch={handleSearch} 
+          onMasterClick={(masterId) => navigate(`/profile/${masterId}`)} 
         />
         
-        {/* Recently Viewed Section */}
+        {isLoadingMasters ? (
+          <div className="container mx-auto px-4 py-8">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#4169e1] mx-auto"></div>
+              <p className="text-gray-600 mt-4">Načítavam majstrov...</p>
+            </div>
+          </div>
+        ) : realMasters.length > 0 ? (
+          <MastersCarousel 
+            masters={realMasters} 
+            title="Najlepšie hodnotení majstri" 
+            onMasterClick={handleMasterClick}
+          />
+        ) : (
+          <div className="container mx-auto px-4 py-8">
+            <div className="text-center bg-white rounded-lg p-8 shadow-sm">
+              <h3 className="text-xl font-semibold text-gray-800 mb-2">Zatiaľ žiadni majstri</h3>
+              <p className="text-gray-600">Buďte prvý majster na platforme!</p>
+            </div>
+          </div>
+        )}
+        
         {recentlyViewed.length > 0 && (
           <MastersCarousel 
             masters={recentlyViewed} 
@@ -435,11 +160,6 @@ const AppContent: React.FC = () => {
             onMasterClick={handleMasterClick}
           />
         )}
-        
-        {/* No Results Example */}
-        <div className="container mx-auto px-4">
-          <NoResults />
-        </div>
       </main>
       
       <Footer />
@@ -447,13 +167,222 @@ const AppContent: React.FC = () => {
   );
 };
 
+// Страница профиля мастера
+const ProfilePage: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const [master, setMaster] = useState<Master | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadMaster = async () => {
+      setLoading(true);
+      try {
+        // Загружаем всех мастеров и находим нужного
+        const masters = await getTopRatedMasters();
+        const foundMaster = masters.find(m => m.id === id);
+        
+        if (foundMaster) {
+          setMaster(foundMaster);
+        }
+      } catch (error) {
+        console.error('Error loading master:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadMaster();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#4169e1] mx-auto"></div>
+            <p className="text-gray-600 mt-4">Načítavam profil...</p>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!master) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center bg-white rounded-lg p-8 shadow-sm">
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">Profil nenájdený</h3>
+            <button 
+              onClick={() => navigate('/')}
+              className="mt-4 bg-[#4169e1] text-white px-6 py-2 rounded-lg hover:bg-[#3558d4]"
+            >
+              Späť na hlavnú stránku
+            </button>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Header />
+      <MasterProfile 
+        master={master} 
+        onBack={() => navigate('/')}
+        isOwnProfile={false}
+      />
+      <Footer />
+    </div>
+  );
+};
+
+// Страница дашборда мастера
+const DashboardPage: React.FC = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  // Проверяем, является ли пользователь мастером
+  useEffect(() => {
+    if (!user || user.user_metadata?.user_type !== 'master') {
+      navigate('/');
+    }
+  }, [user, navigate]);
+
+  const handleProfileUpdate = async (profileData: any) => {
+    // Сохраняем профиль и перезагружаем данные
+    console.log('Profile updated:', profileData);
+    // После успешного сохранения можно перенаправить на страницу профиля
+    // navigate(`/profile/${user?.id}`);
+  };
+
+  if (!user || user.user_metadata?.user_type !== 'master') {
+    return null;
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Header />
+      <MasterDashboard 
+        onBack={() => navigate('/')}
+        onProfileUpdate={handleProfileUpdate}
+      />
+      <Footer />
+    </div>
+  );
+};
+
+// Страница результатов поиска
+const SearchPage: React.FC = () => {
+  const navigate = useNavigate();
+  const [searchParams] = useState(new URLSearchParams(window.location.search));
+  const [masters, setMasters] = useState<Master[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const filters = {
+    city: searchParams.get('city') || '',
+    profession: searchParams.get('profession') || '',
+    availability: searchParams.get('availability') || '',
+    experience: searchParams.get('experience') || ''
+  };
+
+  useEffect(() => {
+    const loadAndFilterMasters = async () => {
+      setLoading(true);
+      try {
+        const allMasters = await getTopRatedMasters();
+        
+        // Фильтруем мастеров
+        const filtered = allMasters.filter(master => {
+          if (filters.city && !master.location.toLowerCase().includes(filters.city.toLowerCase())) {
+            return false;
+          }
+          if (filters.profession && !master.profession.toLowerCase().includes(filters.profession.toLowerCase())) {
+            return false;
+          }
+          if (filters.availability === 'Dostupný teraz' && !master.available) {
+            return false;
+          }
+          return true;
+        });
+        
+        setMasters(filtered);
+      } catch (error) {
+        console.error('Error loading masters:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadAndFilterMasters();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#4169e1] mx-auto"></div>
+            <p className="text-gray-600 mt-4">Hľadám majstrov...</p>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Header />
+      <SearchResults
+        masters={masters}
+        filters={filters}
+        onBack={() => navigate('/')}
+        onMasterClick={(master) => navigate(`/profile/${master.id}`)}
+      />
+      <Footer />
+    </div>
+  );
+};
+
+// Основной компонент приложения с роутингом
+const AppContent: React.FC = () => {
+  return (
+    <Routes>
+      {/* Главная страница */}
+      <Route path="/" element={<HomePage />} />
+      
+      {/* Профиль мастера */}
+      <Route path="/profile/:id" element={<ProfilePage />} />
+      
+      {/* Дашборд мастера (только для авторизованных мастеров) */}
+      <Route path="/dashboard" element={<DashboardPage />} />
+      
+      {/* Результаты поиска */}
+      <Route path="/search" element={<SearchPage />} />
+      
+      {/* Перенаправление на главную для несуществующих путей */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
+};
+
 function App() {
   return (
-    <LanguageProvider>
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
-    </LanguageProvider>
+    <Router>
+      <LanguageProvider>
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
+      </LanguageProvider>
+    </Router>
   );
 }
 
