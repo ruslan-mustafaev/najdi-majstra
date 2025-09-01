@@ -295,15 +295,16 @@ const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  // Проверяем, является ли пользователь мастером
+  // Проверяем авторизацию
   useEffect(() => {
-    if (user && user.user_metadata?.user_type !== 'master') {
-      // If user is logged in but not a master, redirect to home
+    if (!user) {
+      console.log('No user found, redirecting to home');
       navigate('/');
-    } else if (!user) {
-      // If no user, redirect to home
-      navigate('/');
+      return;
     }
+    
+    console.log('User in dashboard:', user);
+    console.log('User type:', user.user_metadata?.user_type);
   }, [user, navigate]);
 
   const handleProfileUpdate = async (profileData: any) => {
@@ -313,7 +314,7 @@ const DashboardPage: React.FC = () => {
     // navigate(`/profile/${user?.id}`);
   };
 
-  if (!user || user.user_metadata?.user_type !== 'master') {
+  if (!user) {
     return null;
   }
 

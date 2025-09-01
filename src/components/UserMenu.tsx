@@ -63,12 +63,8 @@ export const UserMenu: React.FC = () => {
               <button 
                 onClick={() => {
                   setIsOpen(false);
-                  if (user.user_metadata?.user_type === 'master') {
-                    navigate('/dashboard');
-                  } else {
-                    // For clients - show message that settings are not available yet
-                    alert(language === 'sk' ? 'Nastavenia pre klientov budú dostupné čoskoro' : 'Client settings will be available soon');
-                  }
+                  console.log('Settings clicked, user type:', user.user_metadata?.user_type);
+                  navigate('/dashboard');
                 }}
                 className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 text-gray-700"
               >
