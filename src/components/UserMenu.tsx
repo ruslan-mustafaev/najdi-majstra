@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { User, LogOut, Settings, Heart, FileText, ChevronDown } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useLanguage } from '../hooks/useLanguage';
@@ -6,6 +7,7 @@ import { useLanguage } from '../hooks/useLanguage';
 export const UserMenu: React.FC = () => {
   const { user, signOut } = useAuth();
   const { language } = useLanguage();
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
 
   if (!user) return null;
@@ -61,9 +63,8 @@ export const UserMenu: React.FC = () => {
               <button 
                 onClick={() => {
                   setIsOpen(false);
-                  // Navigate to dashboard for masters, settings for clients
                   if (user.user_metadata?.user_type === 'master') {
-                    window.location.href = '/dashboard';
+                    navigate('/dashboard');
                   } else {
                     // For clients - could be settings page in future
                     console.log('Client settings - not implemented yet');
