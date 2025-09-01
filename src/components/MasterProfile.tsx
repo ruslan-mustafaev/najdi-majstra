@@ -1,6 +1,6 @@
 import React from 'react';
 import { useEffect } from 'react';
-import { ArrowLeft, Star, MapPin, Clock, Phone, Mail, Globe, Award, Users, Calendar, Euro, Play, Facebook, Instagram, Linkedin, Youtube, Twitter, BookText as TikTok } from 'lucide-react';
+import { ArrowLeft, Star, MapPin, Clock, Phone, Mail, Globe, Award, Users, Calendar, Euro, Play, Facebook, Instagram, Linkedin, Youtube, Twitter, BookText as TikTok, Camera } from 'lucide-react';
 import { Master } from '../types';
 import { WorkPlanningCalendar } from './WorkPlanningCalendar';
 import { DefaultAvatar } from './DefaultAvatar';
