@@ -246,14 +246,29 @@ const ProfilePage: React.FC = () => {
 // Страница дашборда мастера
 const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+
+  // Показываем загрузку пока проверяем пользователя
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#4169e1] mx-auto"></div>
+            <p className="text-gray-600 mt-4">Načítavam...</p>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   // Проверяем, является ли пользователь мастером
-  useEffect(() => {
-    if (!user || user.user_metadata?.user_type !== 'master') {
-      navigate('/');
-    }
-  }, [user, navigate]);
+  if (!user) {
+    navigate('/');
+    return null;
+  }
 
   const handleProfileUpdate = async (profileData: any) => {
     // Сохраняем профиль и перезагружаем данные
@@ -261,10 +276,6 @@ const DashboardPage: React.FC = () => {
     // После успешного сохранения можно перенаправить на страницу профиля
     // navigate(`/profile/${user?.id}`);
   };
-
-  if (!user || user.user_metadata?.user_type !== 'master') {
-    return null;
-  }
 
   return (
     <div className="min-h-screen bg-gray-50">
