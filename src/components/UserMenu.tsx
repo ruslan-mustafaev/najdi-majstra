@@ -58,7 +58,15 @@ export const UserMenu: React.FC = () => {
 
             {/* Menu Items */}
             <div className="py-2">
-              <button className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 text-gray-700">
+              <button 
+                onClick={() => {
+                  setIsOpen(false);
+                  if (user.user_metadata?.user_type === 'master') {
+                    window.location.href = '/dashboard';
+                  }
+                }}
+                className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 text-gray-700"
+              >
                 <Settings size={16} />
                 <span>{language === 'sk' ? 'Nastavenia' : 'Settings'}</span>
               </button>
