@@ -1,15 +1,8 @@
 // src/lib/supabase.ts
 import { createClient } from '@supabase/supabase-js'
 
-// Проверяем наличие environment variables
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Missing Supabase environment variables!')
-  console.log('VITE_SUPABASE_URL:', supabaseUrl ? 'Set' : 'Missing')
-  console.log('VITE_SUPABASE_ANON_KEY:', supabaseAnonKey ? 'Set' : 'Missing')
-}
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://budlyqnloyiyexsocpbb.supabase.co'
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ1ZGx5cW5sb3lpeWV4c29jcGJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5MzM0NDksImV4cCI6MjA3MTUwOTQ0OX0.5vPCIu5yvtEossIEYfMGqha5Xj1eEwEDmvU-g-rUttw'
 
 // Определяем базовый URL в зависимости от окружения
 const getBaseUrl = () => {
@@ -26,12 +19,11 @@ const getBaseUrl = () => {
   return 'http://localhost:3000'
 }
 
-export const supabase = createClient(supabaseUrl!, supabaseAnonKey!, {
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     redirectTo: getBaseUrl(),
     autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: true
+    persistSession: true
   }
 })
 

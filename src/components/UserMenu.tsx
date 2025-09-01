@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
-import { User, LogOut, Settings, Heart, FileText, ChevronDown, Wrench } from 'lucide-react';
+import { User, LogOut, Settings, Heart, FileText, ChevronDown } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useLanguage } from '../hooks/useLanguage';
-import { useNavigate } from 'react-router-dom';
 
 export const UserMenu: React.FC = () => {
   const { user, signOut } = useAuth();
   const { language } = useLanguage();
-  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
 
   if (!user) return null;
@@ -17,13 +15,7 @@ export const UserMenu: React.FC = () => {
     setIsOpen(false);
   };
 
-  const handleDashboardClick = () => {
-    navigate('/dashboard');
-    setIsOpen(false);
-  };
-
   const userDisplayName = user.user_metadata?.full_name || user.email?.split('@')[0] || 'User';
-  const isMaster = user?.user_metadata?.user_type === 'master';
 
   return (
     <div className="relative">
@@ -66,24 +58,6 @@ export const UserMenu: React.FC = () => {
 
             {/* Menu Items */}
             <div className="py-2">
-              <button 
-                onClick={() => {
-                  setIsOpen(false);
-                  if (user.user_metadata?.user_type === 'master') {
-                    window.location.href = '/dashboard';
-                  }
-                }}
-                className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 text-gray-700"
-              >
-                <button 
-                  onClick={handleDashboardClick}
-                  className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 text-gray-700"
-                >
-                  <Wrench size={16} />
-                  <span>{language === 'sk' ? 'Dashboard majstra' : 'Master Dashboard'}</span>
-                </button>
-              )}
-              
               <button className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 text-gray-700">
                 <Settings size={16} />
                 <span>{language === 'sk' ? 'Nastavenia' : 'Settings'}</span>
@@ -104,7 +78,7 @@ export const UserMenu: React.FC = () => {
             <div className="border-t border-gray-100 pt-2">
               <button 
                 onClick={handleSignOut}
-                className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 text-gray-700 transition-colors"
+                className="w-full px-4 py-2 text-left hover:bg-red-50 flex items-center space-x-3 text-red-600"
               >
                 <LogOut size={16} />
                 <span>{language === 'sk' ? 'Odhlásiť sa' : 'Sign Out'}</span>
@@ -114,7 +88,5 @@ export const UserMenu: React.FC = () => {
         </>
       )}
     </div>
-        );
-      };
-  )
-}
+  );
+};
