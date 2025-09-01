@@ -4,11 +4,9 @@ import { ArrowLeft, User, Star, MapPin, Phone, Mail, Camera, Plus, Edit, Setting
 import { useAuth } from '../hooks/useAuth';
 import { saveMasterProfile, MasterProfile } from '../lib/masterProfileApi';
 import { supabase } from '../lib/supabase';
-import { supabase } from '../lib/supabase';
 
 interface MasterDashboardProps {
   onBack: () => void;
-  onProfileUpdate?: (profileData: any) => void;
   onProfileUpdate?: (profileData: any) => void;
 }
 
@@ -135,6 +133,12 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
   });
 
   const handleCopyCoupon = (code: string) => {
+    navigator.clipboard.writeText(code);
+    setCopiedCoupon(code);
+    setTimeout(() => setCopiedCoupon(null), 2000);
+  };
+
+  useEffect(() => {
     const loadExistingProfile = async () => {
       if (!user) return;
       
@@ -152,18 +156,42 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
           setProfileData({
             name: data.name || '',
             profession: data.profession || '',
-            email: data.email || user.email || '',
-            phone: data.phone || '',
+            age: data.age,
             location: data.location || '',
+            workRadius: data.work_radius || '',
             description: data.description || '',
-            is_active: data.is_active ?? true,
-            profile_completed: data.profile_completed ?? false
+            experience: data.experience || '',
+            services: data.services || '',
+            expertise: data.expertise || '',
+            teamSize: data.team_size || 'individual',
+            serviceTypes: data.service_types || [],
+            languages: data.languages || '',
+            hourlyRate: data.hourly_rate || '',
+            availability: {
+              schedule: data.availability_schedule || '',
+              available: data.is_available ?? true
+            },
+            contact: {
+              phone: data.phone || '',
+              email: data.email || user.email || '',
+              website: data.website || '',
+              socialMedia: {
+                facebook: data.social_facebook || '',
+                instagram: data.social_instagram || '',
+                youtube: data.social_youtube || '',
+                tiktok: data.social_tiktok || ''
+              }
+            },
+            certifications: data.certifications || []
           });
         } else {
           // No profile exists, initialize with user email
           setProfileData(prev => ({
             ...prev,
-            email: user.email || ''
+            contact: {
+              ...prev.contact,
+              email: user.email || ''
+            }
           }));
         }
       } catch (error) {
@@ -171,7 +199,10 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
         // Initialize with user email on error
         setProfileData(prev => ({
           ...prev,
-          email: user.email || ''
+          contact: {
+            ...prev.contact,
+            email: user.email || ''
+          }
         }));
       } finally {
         setLoading(false);
@@ -179,7 +210,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
     };
 
     loadExistingProfile();
-  };
+  }, [user]);
 
   if (loading) {
     return (
@@ -259,11 +290,32 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
           )}
         </div>
       </div>
-    setEditingField(null);
-    setHasChanges(false);
-    console.log('Saving profile:', profileData);
-    if (onProfileUpdate) {
-      onProfileUpdate(profileData);
+    );
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    setSaveError(null);
+    setSaveSuccess(false);
+    
+    try {
+      // Save to database
+      await saveMasterProfile(profileData);
+      
+      setEditingField(null);
+      setHasChanges(false);
+      setSaveSuccess(true);
+      console.log('Saving profile:', profileData);
+      if (onProfileUpdate) {
+        onProfileUpdate(profileData);
+      }
+      
+      setTimeout(() => setSaveSuccess(false), 3000);
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      setSaveError('Chyba pri ukladaní profilu. Skúste to znovu.');
+    } finally {
+      setSaving(false);
     }
   };
 
