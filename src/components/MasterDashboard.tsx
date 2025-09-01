@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useEffect } from 'react';
 import { ArrowLeft, User, Star, MapPin, Phone, Mail, Camera, Plus, Edit, Settings, BarChart3, Calendar, Clock, Euro, Award, Users, Play, Globe, Save, X, Upload, Copy, Check } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
-import { saveMasterProfile } from '../lib/masterProfileApi';
+import { saveMasterProfile, MasterProfile } from '../lib/masterProfileApi';
+import { supabase } from '../lib/supabase';
 import { supabase } from '../lib/supabase';
 
 interface MasterDashboardProps {
@@ -19,6 +20,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [copiedCoupon, setCopiedCoupon] = useState<string | null>(null);
   
   // Calendar state
@@ -133,12 +135,130 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
   });
 
   const handleCopyCoupon = (code: string) => {
-    navigator.clipboard.writeText(code);
-    setCopiedCoupon(code);
-    setTimeout(() => setCopiedCoupon(null), 2000);
+    const loadExistingProfile = async () => {
+      if (!user) return;
+      
+      setLoading(true);
+      try {
+        // Load existing profile from database
+        const { data, error } = await supabase
+          .from('masters')
+          .select('*')
+          .eq('user_id', user.id)
+          .single();
+
+        if (data) {
+          // Profile exists, load the data
+          setProfileData({
+            name: data.name || '',
+            profession: data.profession || '',
+            email: data.email || user.email || '',
+            phone: data.phone || '',
+            location: data.location || '',
+            description: data.description || '',
+            is_active: data.is_active ?? true,
+            profile_completed: data.profile_completed ?? false
+          });
+        } else {
+          // No profile exists, initialize with user email
+          setProfileData(prev => ({
+            ...prev,
+            email: user.email || ''
+          }));
+        }
+      } catch (error) {
+        console.error('Error loading profile:', error);
+        // Initialize with user email on error
+        setProfileData(prev => ({
+          ...prev,
+          email: user.email || ''
+        }));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadExistingProfile();
   };
 
-  const handleSave = () => {
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 pt-16">
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#4169e1] mx-auto"></div>
+            <p className="text-gray-600 mt-4">Načítavam profil...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const renderField = (label: string, value: string, field: keyof MasterProfile, placeholder: string, type: 'input' | 'textarea' = 'input') => {
+    const isEditing = editingField === field;
+    const displayValue = value || placeholder;
+    const isEmpty = !value;
+
+    return (
+      <div className="border-b border-gray-100 py-4">
+        <div className="flex justify-between items-start">
+          <div className="flex-1">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {label}
+            </label>
+            {isEditing ? (
+              <div className="space-y-3">
+                {type === 'textarea' ? (
+                  <textarea
+                    value={value}
+                    onChange={(e) => setProfileData(prev => ({ ...prev, [field]: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent outline-none resize-none"
+                    rows={4}
+                    placeholder={placeholder}
+                  />
+                ) : (
+                  <input
+                    type="text"
+                    value={value}
+                    onChange={(e) => setProfileData(prev => ({ ...prev, [field]: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent outline-none"
+                    placeholder={placeholder}
+                  />
+                )}
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => setEditingField(null)}
+                    className="px-4 py-2 bg-[#4169e1] text-white rounded-lg hover:bg-[#3558d4] transition-colors text-sm"
+                  >
+                    Uložiť
+                  </button>
+                  <button
+                    onClick={() => setEditingField(null)}
+                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors text-sm"
+                  >
+                    Zrušiť
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div 
+                className={`cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-colors ${isEmpty ? 'text-blue-600' : 'text-gray-900'}`}
+                onClick={() => setEditingField(field)}
+              >
+                {isEmpty ? placeholder : displayValue}
+              </div>
+            )}
+          </div>
+          {!isEditing && (
+            <button
+              onClick={() => setEditingField(field)}
+              className="ml-4 p-2 text-gray-400 hover:text-[#4169e1] transition-colors"
+            >
+              <Edit size={16} />
+            </button>
+          )}
+        </div>
+      </div>
     setEditingField(null);
     setHasChanges(false);
     console.log('Saving profile:', profileData);
