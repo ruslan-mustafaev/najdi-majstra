@@ -24,22 +24,19 @@ export const getTopRatedMasters = async () => {
       rating: master.rating || 4.5,
       reviewCount: master.reviews_count || 0,
       available: master.is_active,
-      profileImage: 'https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=400',
-      workImages: [
-        'https://images.pexels.com/photos/162553/keys-workshop-mechanic-tools-162553.jpeg?auto=compress&cs=tinysrgb&w=400',
-        'https://images.pexels.com/photos/159358/multimeter-digital-hand-tool-159358.jpeg?auto=compress&cs=tinysrgb&w=400'
-      ],
+      profileImage: '/api/placeholder/400/400', // Placeholder until real avatar is uploaded
+      workImages: [], // Will be loaded from database when implemented
       description: master.description || 'Профессиональный мастер с опытом работы',
-      services: ['Opravy', 'Inštalácie', 'Servis'],
-      experience: '5+ rokov',
-      certifications: ['Odborná spôsobilosť'],
-      expertise: ['Všeobecné práce'],
+      services: [], // Will be loaded from database
+      experience: 'Informácie z profilu',
+      certifications: [], // Will be loaded from database
+      expertise: [], // Will be loaded from database
       teamSize: 'individual' as const,
-      serviceTypes: ['individuals'],
-      languages: ['Slovenčina'],
-      priceRange: '25-45 €/hod',
-      subscriptionPlan: 'standard',
-      communicationStyle: 'Profesionálne a vecne',
+      serviceTypes: ['individuals'], // Will be loaded from database
+      languages: ['Slovenčina'], // Will be loaded from database
+      priceRange: 'Informácie z profilu',
+      subscriptionPlan: 'standard' as const,
+      communicationStyle: 'Informácie z profilu',
       workingHours: {
         monday: '8:00 - 18:00',
         tuesday: '8:00 - 18:00',
@@ -52,12 +49,12 @@ export const getTopRatedMasters = async () => {
       contact: {
         phone: master.phone || '+421 9xx xxx xxx',
         email: master.email || '',
-        website: '',
+        website: '', // Will be loaded from database
         socialMedia: {}
       },
       availability: {
         schedule: '8:00 - 18:00',
-        workRadius: 'Lokálne + 50km'
+        workRadius: master.location + ' + okolie'
       }
     }));
   } catch (error) {

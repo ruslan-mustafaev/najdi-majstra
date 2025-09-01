@@ -1,5 +1,5 @@
 import { ChatMessage, AIResponse } from '../types';
-import { mockMasters } from '../../../data/mockData';
+import { getTopRatedMasters } from '../../../lib/mastersApi';
 
 export class RegularService {
   private systemPrompt = `
@@ -262,45 +262,10 @@ Na základe vašich odpovedí vyberiem spoľahlivých majstrov pre stálu spolup
 
   private findServiceMasters(userMessage: string): string[] {
     const lowerMessage = userMessage.toLowerCase();
-    const serviceMasters: string[] = [];
-
-    mockMasters.forEach(master => {
-      // Проверяем наличие сервисных услуг
-      const hasServiceExperience = master.services.some(service => 
-        service.toLowerCase().includes('сервис') || 
-        service.toLowerCase().includes('обслуживание') ||
-        service.toLowerCase().includes('профилактика') ||
-        service.toLowerCase().includes('техобслуживание') ||
-        service.toLowerCase().includes('регулярн')
-      );
-
-      // Проверяем опыт работы (предпочтение опытным мастерам)
-      const hasGoodExperience = master.experience.includes('вiac ako') || 
-                               master.experience.includes('5') ||
-                               master.experience.includes('10');
-
-      // Проверяем соответствие профессии
-      let isProfessionMatch = false;
-      
-      if (lowerMessage.includes('котел') || lowerMessage.includes('отопление') || lowerMessage.includes('газ')) {
-        isProfessionMatch = master.profession.toLowerCase().includes('газ') || 
-                           master.profession.toLowerCase().includes('плын');
-      } else if (lowerMessage.includes('электр')) {
-        isProfessionMatch = master.profession.toLowerCase().includes('электр');
-      } else if (lowerMessage.includes('сантехник') || lowerMessage.includes('вода')) {
-        isProfessionMatch = master.profession.toLowerCase().includes('водо');
-      } else if (lowerMessage.includes('кондиционер') || lowerMessage.includes('климат')) {
-        isProfessionMatch = master.profession.toLowerCase().includes('климат') ||
-                           master.services.some(s => s.toLowerCase().includes('кондиционер'));
-      }
-
-      // Добавляем мастера если есть опыт сервиса и соответствие профессии
-      if ((hasServiceExperience || hasGoodExperience) && (isProfessionMatch || hasServiceExperience)) {
-        serviceMasters.push(master.id);
-      }
-    });
-
-    return serviceMasters.slice(0, 5);
+    
+    // Return empty array for now - will be implemented with real database
+    // TODO: Implement real master search based on database
+    return [];
   }
 
   updateSystemPrompt(newPrompt: string): void {
