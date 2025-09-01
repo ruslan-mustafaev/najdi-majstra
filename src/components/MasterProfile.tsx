@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { ArrowLeft, Star, MapPin, Clock, Phone, Mail, Globe, Award, Users, Calendar, Euro, Play, Facebook, Instagram, Linkedin, Youtube, Twitter, BookText as TikTok } from 'lucide-react';
 import { Master } from '../types';
 import { WorkPlanningCalendar } from './WorkPlanningCalendar';
+import { DefaultAvatar } from './DefaultAvatar';
 
 interface MasterProfileProps {
   master: Master;
@@ -123,11 +124,17 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
           <div className="lg:col-span-1">
             {/* Main Profile Image */}
             <div className="relative mb-6">
-              <img
-                src={master.profileImage}
-                alt={master.name}
-                className="w-full aspect-square object-cover rounded-xl shadow-lg"
-              />
+              {master.profileImage && master.profileImage !== '/api/placeholder/400/400' ? (
+                <img
+                  src={master.profileImage}
+                  alt={master.name}
+                  className="w-full aspect-square object-cover rounded-xl shadow-lg"
+                />
+              ) : (
+                <div className="w-full aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl shadow-lg flex items-center justify-center">
+                  <DefaultAvatar size="xl" showCamera={true} className="w-24 h-24" />
+                </div>
+              )}
               <div className="absolute top-4 right-4">
                 <div className={`w-4 h-4 rounded-full border-2 border-white ${
                   master.available ? 'bg-green-500' : 'bg-red-500'
@@ -138,10 +145,18 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
             {/* Work Images and Video Grid */}
             <div className="space-y-4">
               <h4 className="font-semibold text-gray-900">Ukážky práce</h4>
-              <div className="text-center py-8 bg-gray-50 rounded-lg">
-                <p className="text-gray-500">
-                  Ukážky práce budú zobrazené po nahratí do profilu
-                </p>
+              <div className="text-center py-12 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg border-2 border-dashed border-gray-300">
+                <div className="flex flex-col items-center space-y-3">
+                  <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
+                    <Camera size={24} className="text-gray-400" />
+                  </div>
+                  <p className="text-gray-500 font-medium">
+                    Žiadne ukážky práce
+                  </p>
+                  <p className="text-gray-400 text-sm">
+                    Fotografie budú zobrazené po nahratí
+                  </p>
+                </div>
               </div>
             </div>
 

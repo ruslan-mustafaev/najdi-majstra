@@ -1,6 +1,7 @@
 import React from 'react';
 import { Star, MapPin } from 'lucide-react';
 import { Master } from '../types';
+import { DefaultAvatar } from './DefaultAvatar';
 
 interface MasterCardProps {
   master: Master;
@@ -19,11 +20,17 @@ export const MasterCard: React.FC<MasterCardProps> = ({ master, featured = false
     >
       {/* Photo with availability indicator and rating */}
       <div className="relative" style={{ height: '180px' }}>
-        <img
-          src={master.profileImage}
-          alt={master.name}
-          className="w-full h-full object-cover"
-        />
+        {master.profileImage && master.profileImage !== '/api/placeholder/400/400' ? (
+          <img
+            src={master.profileImage}
+            alt={master.name}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+            <DefaultAvatar size="xl" showCamera={true} />
+          </div>
+        )}
         
         {/* Availability indicator */}
         <div className="absolute top-3 right-3">
