@@ -297,7 +297,11 @@ const DashboardPage: React.FC = () => {
 
   // Проверяем, является ли пользователь мастером
   useEffect(() => {
-    if (!user || user.user_metadata?.user_type !== 'master') {
+    if (user && user.user_metadata?.user_type !== 'master') {
+      // If user is logged in but not a master, redirect to home
+      navigate('/');
+    } else if (!user) {
+      // If no user, redirect to home
       navigate('/');
     }
   }, [user, navigate]);
