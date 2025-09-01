@@ -144,6 +144,11 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
     const [isEditing, setIsEditing] = useState(false);
     const [tempValue, setTempValue] = useState(value);
 
+    // Update tempValue when value changes (important for loading data)
+    useEffect(() => {
+      setTempValue(value);
+    }, [value]);
+
     const handleSaveField = () => {
       handleInputChange(field, tempValue);
       setIsEditing(false);
@@ -165,6 +170,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent outline-none"
               rows={4}
               placeholder={placeholder}
+              autoFocus
             />
           ) : (
             <input
@@ -173,6 +179,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
               onChange={(e) => setTempValue(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent outline-none"
               placeholder={placeholder}
+              autoFocus
             />
           )}
           <div className="flex space-x-2">
