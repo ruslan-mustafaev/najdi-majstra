@@ -608,31 +608,6 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                     )}
                   </div>
 
-                  {/* Age */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Vek (voliteľné)
-                    </label>
-                    {editingField === 'age' ? (
-                      <input
-                        type="number"
-                        placeholder="Váš vek"
-                        min="18"
-                        max="80"
-                        value={profileData.age || ''}
-                        onChange={(e) => handleFieldChange('age', e.target.value ? parseInt(e.target.value) : undefined)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
-                      />
-                    ) : (
-                      <p 
-                        className="text-gray-900 cursor-pointer hover:bg-gray-50 p-2 rounded border-2 border-transparent hover:border-gray-200 transition-colors"
-                        onClick={() => startEditing('age')}
-                      >
-                        {profileData.age ? `${profileData.age} rokov` : 'Nevyplnené - kliknite pre úpravu'}
-                      </p>
-                    )}
-                  </div>
-
                   {/* Location & Availability */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -744,8 +719,13 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                   {/* Description */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Čo robím (max 1000 znakov)
+                      Čo robíte a ponúkate (max 1000 znakov)
                     </label>
+                    <p className="text-sm text-gray-600 mb-2">
+                      1. Opíš konkrétne čo s čím viete pomôcť vašemu zákazníkovy.<br/>
+                      2. Vypíšte všetko čo robíte, všetky slová podľa ktorých<br/>
+                      by vás vedel váš zákazník vyhľadať
+                    </p>
                     {editingField === 'description' ? (
                       <textarea
                         placeholder="Opíšte svoju prácu a služby..."
@@ -761,6 +741,31 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                         onClick={() => startEditing('description')}
                       >
                         {profileData.description || 'Nevyplnené - kliknite pre úpravu'}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Age */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Vek (voliteľné)
+                    </label>
+                    {editingField === 'age' ? (
+                      <input
+                        type="number"
+                        placeholder="Váš vek"
+                        min="18"
+                        max="80"
+                        value={profileData.age || ''}
+                        onChange={(e) => handleFieldChange('age', e.target.value ? parseInt(e.target.value) : undefined)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
+                      />
+                    ) : (
+                      <p 
+                        className="text-gray-900 cursor-pointer hover:bg-gray-50 p-2 rounded border-2 border-transparent hover:border-gray-200 transition-colors"
+                        onClick={() => startEditing('age')}
+                      >
+                        {profileData.age ? `${profileData.age} rokov` : 'Nevyplnené - kliknite pre úpravu'}
                       </p>
                     )}
                   </div>
