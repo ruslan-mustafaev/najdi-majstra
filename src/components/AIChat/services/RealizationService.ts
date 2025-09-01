@@ -1,5 +1,5 @@
 import { ChatMessage, AIResponse } from '../types';
-import { getTopRatedMasters } from '../../../lib/mastersApi';
+import { mockMasters } from '../../../data/mockData';
 
 export class RealizationService {
   private systemPrompt = `
@@ -326,10 +326,52 @@ Na základe týchto informácií vyberiem tím profesionálov a zostavím plán 
 
   private findProjectMasters(userMessage: string): string[] {
     const lowerMessage = userMessage.toLowerCase();
-    
-    // Return empty array for now - will be implemented with real database
-    // TODO: Implement real master search based on database
-    return [];
+    const projectMasters: string[] = [];
+
+    mockMasters.forEach(master => {
+      // Проверяем опыт проектной работы
+      const hasProjectExperience = master.services.some(service => 
+        service.toLowerCase().includes('проект') || 
+        service.toLowerCase().includes('строительство') ||
+        service.toLowerCase().includes('реконструкция') ||
+        service.toLowerCase().includes('ремонт') ||
+        service.toLowerCase().includes('отделка')
+      );
+
+      // Предпочтение командам и опытным мастерам
+      const isTeamOrExperienced = master.teamSize === 'small-team' || 
+                                 master.experience.includes('viac ako') ||
+                                 master.experience.includes('10');
+
+      // Проверяем рейтинг (для проектов важно качество)
+      const hasGoodRating = master.rating >= 8.5;
+
+      // Проверяем соответствие типу проекта
+      let isProjectMatch = false;
+      
+      if (lowerMessage.includes('строительство') || lowerMessage.includes('дом')) {
+        isProjectMatch = master.profession.toLowerCase().includes('строител') ||
+                        master.profession.toLowerCase().includes('мурар') ||
+                        hasProjectExperience;
+      } else if (lowerMessage.includes('ремонт') || lowerMessage.includes('отделка')) {
+        isProjectMatch = master.profession.toLowerCase().includes('малиар') ||
+                        master.profession.toLowerCase().includes('отделочн') ||
+                        hasProjectExperience;
+      } else if (lowerMessage.includes('электр')) {
+        isProjectMatch = master.profession.toLowerCase().includes('электр');
+      } else if (lowerMessage.includes('сантехник')) {
+        isProjectMatch = master.profession.toLowerCase().includes('водо');
+      }
+
+      // Добавляем мастера если подходит для проектной работы
+      if ((hasProjectExperience || isTeamOrExperienced) && 
+          (isProjectMatch || hasProjectExperience) && 
+          hasGoodRating) {
+        projectMasters.push(master.id);
+      }
+    });
+
+    return projectMasters.slice(0, 6); // Больше мастеров для проектов
   }
 
   updateSystemPrompt(newPrompt: string): void {

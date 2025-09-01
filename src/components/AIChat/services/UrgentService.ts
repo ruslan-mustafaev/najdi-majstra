@@ -1,5 +1,5 @@
 import { ChatMessage, AIResponse } from '../types';
-import { getTopRatedMasters } from '../../../lib/mastersApi';
+import { mockMasters } from '../../../data/mockData';
 
 export class UrgentService {
   private systemPrompt = `
@@ -211,10 +211,38 @@ Upresnite prosím:
 
   private findUrgentMasters(userMessage: string): string[] {
     const lowerMessage = userMessage.toLowerCase();
-    
-    // Return empty array for now - will be implemented with real database
-    // TODO: Implement real master search based on database
-    return [];
+    const urgentMasters: string[] = [];
+
+    mockMasters.forEach(master => {
+      // Проверяем доступность для экстренных вызовов
+      const hasEmergencyService = master.services.some(service => 
+        service.toLowerCase().includes('поhotovos') || 
+        service.toLowerCase().includes('24/7') ||
+        service.toLowerCase().includes('экстренн') ||
+        service.toLowerCase().includes('срочн')
+      );
+
+      // Проверяем доступность мастера
+      const isAvailable = master.available;
+
+      // Проверяем соответствие профессии
+      let isProfessionMatch = false;
+      
+      if (lowerMessage.includes('электр') || lowerMessage.includes('свет')) {
+        isProfessionMatch = master.profession.toLowerCase().includes('электр');
+      } else if (lowerMessage.includes('вода') || lowerMessage.includes('труб')) {
+        isProfessionMatch = master.profession.toLowerCase().includes('водо');
+      } else if (lowerMessage.includes('газ') || lowerMessage.includes('котел')) {
+        isProfessionMatch = master.profession.toLowerCase().includes('газ') || 
+                           master.profession.toLowerCase().includes('плын');
+      }
+
+      if ((hasEmergencyService || isAvailable) && (isProfessionMatch || hasEmergencyService)) {
+        urgentMasters.push(master.id);
+      }
+    });
+
+    return urgentMasters.slice(0, 5); // Максимум 5 рекомендаций
   }
 
   // Метод для настройки промпта (можно изменять для разных сценариев)

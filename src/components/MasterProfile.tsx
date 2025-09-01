@@ -4,11 +4,63 @@ import { ArrowLeft, Star, MapPin, Clock, Phone, Mail, Globe, Award, Users, Calen
 import { Master } from '../types';
 import { WorkPlanningCalendar } from './WorkPlanningCalendar';
 
+interface Review {
+  id: string;
+  clientName: string;
+  rating: number;
+  comment: string;
+  date: string;
+  service: string;
+}
+
 interface MasterProfileProps {
   master: Master;
   onBack: () => void;
   isOwnProfile?: boolean;
 }
+
+const mockReviews: Review[] = [
+  {
+    id: '1',
+    clientName: 'Mária Novotná',
+    rating: 5,
+    comment: 'Výborná práca, veľmi profesionálny prístup. Všetko bolo dokončené včas a kvalitne. Určite odporúčam!',
+    date: '15.12.2024',
+    service: 'Inštalácia kotla'
+  },
+  {
+    id: '2',
+    clientName: 'Peter Kováč',
+    rating: 5,
+    comment: 'Rýchla reakcia na pohotovostnú výzvu. Problém vyriešil do hodiny. Ceny primerané, komunikácia na vysokej úrovni.',
+    date: '08.12.2024',
+    service: 'Pohotovostný servis'
+  },
+  {
+    id: '3',
+    clientName: 'Jana Svobodová',
+    rating: 4,
+    comment: 'Solídna práca, len trochu dlhšie trvalo ako sme sa dohodli. Inak spokojnosť, kvalita v poriadku.',
+    date: '02.12.2024',
+    service: 'Revízia plynu'
+  },
+  {
+    id: '4',
+    clientName: 'Tomáš Horváth',
+    rating: 5,
+    comment: 'Už druhýkrát využívam služby tohto majstra. Vždy spoľahlivý, presný a ceny férové. Môžem len odporučiť.',
+    date: '28.11.2024',
+    service: 'Servis kotla'
+  },
+  {
+    id: '5',
+    clientName: 'Eva Kratochvílová',
+    rating: 5,
+    comment: 'Perfektná komunikácia už od prvého kontaktu. Práca vykonaná na jednotku, všetko vysvetlil a poradil.',
+    date: '20.11.2024',
+    service: 'Inštalácia plynového rozvodu'
+  }
+];
 
 const getSocialIcon = (platform: string) => {
   switch (platform) {
@@ -138,10 +190,25 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
             {/* Work Images and Video Grid */}
             <div className="space-y-4">
               <h4 className="font-semibold text-gray-900">Ukážky práce</h4>
-              <div className="text-center py-8 bg-gray-50 rounded-lg">
-                <p className="text-gray-500">
-                  Ukážky práce budú zobrazené po nahratí do profilu
-                </p>
+              <div className="grid grid-cols-2 gap-3">
+                {master.workImages.map((image, index) => (
+                  <div key={index} className="relative">
+                    <img
+                      src={image}
+                      alt={`Práca ${index + 1}`}
+                      className="w-full aspect-square object-cover rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                    />
+                  </div>
+                ))}
+                {master.workVideo && (
+                  <div className="relative">
+                    <div className="w-full aspect-square bg-gray-900 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer flex items-center justify-center">
+                      <div className="absolute inset-0 bg-black/20 rounded-lg flex items-center justify-center">
+                        <Play className="text-white" size={32} />
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -217,10 +284,24 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
             {/* Reviews */}
             <div className="bg-white rounded-xl shadow-lg p-6">
               <h2 className="text-2xl font-bold mb-6">Hodnotenia klientov</h2>
-              <div className="text-center py-8">
-                <p className="text-gray-500">
-                  Hodnotenia budú zobrazené po pripojení systému recenzií
-                </p>
+              <div className="space-y-6">
+                {mockReviews.map((review) => (
+                  <div key={review.id} className="border-b border-gray-200 pb-6 last:border-b-0">
+                    <div className="flex justify-between items-start mb-3">
+                      <div>
+                        <h4 className="font-semibold text-gray-900">{review.clientName}</h4>
+                        <p className="text-sm text-gray-600">{review.service}</p>
+                      </div>
+                      <div className="text-right">
+                        <div className="flex items-center space-x-1 mb-1">
+                          {renderStars(review.rating)}
+                        </div>
+                        <p className="text-sm text-gray-500">{review.date}</p>
+                      </div>
+                    </div>
+                    <p className="text-gray-700">{review.comment}</p>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -278,7 +359,7 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                   <Award className="text-[#4169e1] mt-1" size={20} />
                   <div>
                     <p className="font-medium">Skúsenosti</p>
-                    <p className="text-gray-600 text-sm">Informácie z profilu</p>
+                    <p className="text-gray-600 text-sm">{master.experience}</p>
                   </div>
                 </div>
                 
@@ -287,7 +368,7 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                   <div>
                     <p className="font-medium">Tím</p>
                     <p className="text-gray-600 text-sm">
-                      Informácie z profilu
+                      {master.teamSize === 'individual' ? 'Individuálne' : 'Malý tím'}
                     </p>
                   </div>
                 </div>
@@ -296,7 +377,7 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                   <MapPin className="text-[#4169e1] mt-1" size={20} />
                   <div>
                     <p className="font-medium">Oblasť pôsobenia</p>
-                    <p className="text-gray-600 text-sm">{master.location}</p>
+                    <p className="text-gray-600 text-sm">{master.availability?.workRadius || master.location}</p>
                   </div>
                 </div>
 
@@ -304,7 +385,7 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                   <Euro className="text-[#4169e1] mt-1" size={20} />
                   <div>
                     <p className="font-medium">Cenové rozpätie</p>
-                    <p className="text-gray-600 text-sm">Informácie z profilu</p>
+                    <p className="text-gray-600 text-sm">{master.priceRange}</p>
                   </div>
                 </div>
               </div>
@@ -316,10 +397,13 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
             {/* Certifications */}
             <div className="bg-white rounded-xl shadow-lg p-6">
               <h3 className="text-lg font-semibold mb-4">Certifikáty</h3>
-              <div className="text-center py-4">
-                <p className="text-gray-500 text-sm">
-                  Certifikáty budú zobrazené po pridaní do profilu
-                </p>
+              <div className="space-y-2">
+                {master.certifications.map((cert, index) => (
+                  <div key={index} className="flex items-center space-x-2">
+                    <Award className="text-green-600" size={16} />
+                    <span className="text-sm">{cert}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

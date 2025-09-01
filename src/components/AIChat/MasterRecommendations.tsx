@@ -1,6 +1,6 @@
 import React from 'react';
 import { X, Star, MapPin, Phone } from 'lucide-react';
-import { getTopRatedMasters } from '../../lib/mastersApi';
+import { mockMasters } from '../../data/mockData';
 import { useLanguage } from '../../hooks/useLanguage';
 import { translations } from '../../data/translations';
 
@@ -22,8 +22,9 @@ export const MasterRecommendations: React.FC<MasterRecommendationsProps> = ({
   
   if (!isOpen) return null;
 
-  // For now, show empty state - will be implemented with real database
-  const recommendedMasters: any[] = [];
+  const recommendedMasters = mockMasters.filter(master => 
+    masterIds.includes(master.id)
+  );
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -46,13 +47,70 @@ export const MasterRecommendations: React.FC<MasterRecommendationsProps> = ({
 
         {/* Masters List */}
         <div className="p-6">
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">
-              {language === 'sk' 
-                ? 'Odporúčania majstrov budú dostupné po implementácii vyhľadávania v databáze'
-                : 'Master recommendations will be available after implementing database search'
-              }
-            </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {recommendedMasters.map((master) => (
+              <div
+                key={master.id}
+                className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow cursor-pointer"
+                onClick={() => onMasterClick(master.id)}
+              >
+                <div className="flex items-start space-x-4">
+                  <img
+                    src={master.profileImage}
+                    alt={master.name}
+                    className="w-16 h-16 rounded-full object-cover"
+                  />
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                      {master.name}
+                    </h3>
+                    <p className="text-[#4169e1] font-medium mb-2">
+                      {master.profession}
+                    </p>
+                    <div className="flex items-center text-gray-600 text-sm mb-2">
+                      <MapPin size={14} className="mr-1" />
+                      <span>{master.location}</span>
+                    </div>
+                    <div className="flex items-center space-x-4 mb-3">
+                      <div className="flex items-center space-x-1">
+                        <Star className="text-yellow-400 fill-current" size={16} />
+                        <span className="font-medium">{master.rating}</span>
+                        <span className="text-gray-500 text-sm">({master.reviewCount})</span>
+                      </div>
+                      <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                        master.available 
+                          ? 'bg-green-100 text-green-800' 
+                          : 'bg-red-100 text-red-800'
+                      }`}>
+                        <div className={`w-2 h-2 rounded-full mr-1 ${
+                          master.available ? 'bg-green-500' : 'bg-red-500'
+                        }`} />
+                        {master.available ? t.available : t.busy}
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap gap-1 mb-3">
+                      {master.services.slice(0, 3).map((service, index) => (
+                        <span
+                          key={index}
+                          className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs"
+                        >
+                          {service}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">
+                        {master.experience}
+                      </span>
+                      <button className="bg-[#4169e1] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#3558d4] transition-colors flex items-center space-x-1">
+                        <Phone size={14} />
+                        <span>{t.contactButton}</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
