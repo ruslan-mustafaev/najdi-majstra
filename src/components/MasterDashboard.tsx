@@ -1,15 +1,24 @@
 import React, { useState } from 'react';
+import { useEffect } from 'react';
 import { ArrowLeft, User, Star, MapPin, Phone, Mail, Camera, Plus, Edit, Settings, BarChart3, Calendar, Clock, Euro, Award, Users, Play, Globe, Save, X, Upload, Copy, Check } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
+import { saveMasterProfile } from '../lib/masterProfileApi';
+import { supabase } from '../lib/supabase';
 
 interface MasterDashboardProps {
   onBack: () => void;
   onProfileUpdate?: (profileData: any) => void;
+  onProfileUpdate?: (profileData: any) => void;
 }
 
 export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProfileUpdate }) => {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<'profile' | 'calendar' | 'projects' | 'payments'>('profile');
   const [editingField, setEditingField] = useState<string | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [saveSuccess, setSaveSuccess] = useState(false);
   const [copiedCoupon, setCopiedCoupon] = useState<string | null>(null);
   
   // Calendar state
