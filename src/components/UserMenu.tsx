@@ -61,8 +61,12 @@ export const UserMenu: React.FC = () => {
               <button 
                 onClick={() => {
                   setIsOpen(false);
+                  // Navigate to dashboard for masters, settings for clients
                   if (user.user_metadata?.user_type === 'master') {
                     window.location.href = '/dashboard';
+                  } else {
+                    // For clients - could be settings page in future
+                    console.log('Client settings - not implemented yet');
                   }
                 }}
                 className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 text-gray-700"
