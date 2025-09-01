@@ -264,17 +264,14 @@ const DashboardPage: React.FC = () => {
     );
   }
 
-  // Проверяем, является ли пользователь мастером
+  // Проверяем авторизацию
   if (!user) {
     navigate('/');
     return null;
   }
 
   const handleProfileUpdate = async (profileData: any) => {
-    // Сохраняем профиль и перезагружаем данные
     console.log('Profile updated:', profileData);
-    // После успешного сохранения можно перенаправить на страницу профиля
-    // navigate(`/profile/${user?.id}`);
   };
 
   return (

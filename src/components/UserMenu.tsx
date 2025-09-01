@@ -96,13 +96,16 @@ export const UserMenu: React.FC = () => {
             <div className="border-t border-gray-100 pt-2">
               <button 
                 onClick={handleSignOut}
-                className="w-full px-4 py-2 text-left hover:bg-red-50 flex items-center space-x-3 text-red-600"
+                className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 text-gray-700 transition-colors"
               >
                 <LogOut size={16} />
                 <span>{language === 'sk' ? 'Odhlásiť sa' : 'Sign Out'}</span>
               </button>
             </div>
-          </div>
+              <button 
+                onClick={handleDashboardClick}
+                className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 text-gray-700 transition-colors"
+              >
         </>
       )}
     </div>
