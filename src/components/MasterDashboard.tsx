@@ -548,13 +548,24 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                     <div className="flex space-x-2">
                       <button
                         onClick={handleSave}
-                        className="bg-green-500 text-white px-4 py-2 rounded-lg flex items-center space-x-1"
+                        disabled={saving}
+                        className="bg-green-500 text-white px-4 py-2 rounded-lg flex items-center space-x-1 disabled:bg-gray-400 disabled:cursor-not-allowed"
                       >
-                        <Save size={16} />
-                        <span>Uložiť</span>
+                        {saving ? (
+                          <>
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                            <span>Ukladám...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Save size={16} />
+                            <span>Uložiť</span>
+                          </>
+                        )}
                       </button>
                       <button
                         onClick={cancelEditing}
+                        disabled={saving}
                         className="bg-gray-500 text-white px-4 py-2 rounded-lg flex items-center space-x-1"
                       >
                         <X size={16} />
