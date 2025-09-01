@@ -103,6 +103,9 @@ export const UserMenu: React.FC = () => {
               </button>
             </div>
           </div>
+              </button>
+            </div>
+          </div>
         </>
       )}
     </div>
