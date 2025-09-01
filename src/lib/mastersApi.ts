@@ -24,7 +24,7 @@ export const getTopRatedMasters = async () => {
       rating: master.rating || 4.5,
       reviewCount: master.reviews_count || 0,
       available: master.is_active,
-      profileImage: '/api/placeholder/400/400', // Placeholder until real avatar is uploaded
+      profileImage: master.profile_photo || '', // Real photo from database or empty for default avatar
       workImages: [], // Will be loaded from database when implemented
       description: master.description || 'Профессиональный мастер с опытом работы',
       services: [], // Will be loaded from database

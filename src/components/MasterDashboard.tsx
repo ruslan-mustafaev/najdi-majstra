@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { ArrowLeft, User, Star, MapPin, Phone, Mail, Camera, Plus, Edit, Settings, BarChart3, Calendar, Clock, Euro, Award, Users, Play, Globe, Save, X, Upload, Copy, Check } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { saveMasterProfile, type MasterProfile } from '../lib/masterProfileApi';
+import { PhotoUpload } from './PhotoUpload';
+import { DefaultAvatar } from './DefaultAvatar';
 
 interface MasterDashboardProps {
   onBack: () => void;
@@ -97,6 +99,8 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
       };
     };
     certifications: string[];
+    profilePhoto: string;
+    workPhotos: string[];
   }>({
     name: user?.user_metadata?.full_name || user?.user_metadata?.first_name + ' ' + user?.user_metadata?.last_name || '',
     profession: user?.user_metadata?.profession || '',
@@ -125,7 +129,9 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
         tiktok: ''
       }
     },
-    certifications: []
+    certifications: [],
+    profilePhoto: '',
+    workPhotos: []
   });
 
   const handleCopyCoupon = (code: string) => {
@@ -468,9 +474,15 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
 
                 {/* Profile Photo */}
                 <div className="text-center mb-6">
-                  <div className="w-32 h-32 mx-auto bg-gray-200 rounded-full flex items-center justify-center mb-4">
-                    <Camera size={32} className="text-gray-400" />
-                  </div>
+                  <PhotoUpload
+                    type="profile"
+                    currentPhotos={profileData.profilePhoto ? [profileData.profilePhoto] : []}
+                    onPhotosChange={(photos) => setProfileData(prev => ({ 
+                      ...prev, 
+                      profilePhoto: photos[0] || '' 
+                    }))}
+                    maxPhotos={1}
+                  />
                   <p className="text-sm text-gray-600 mb-2">Profilová fotka</p>
                   <div className="flex items-center justify-center space-x-1 mb-2">
                     {[1,2,3,4,5].map((star) => (
@@ -478,14 +490,6 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                     ))}
                     <span className="text-sm text-gray-500 ml-2">0.0 (0 hodnotení)</span>
                   </div>
-                  <button 
-                    onClick={() => {
-                      setHasChanges(true);
-                    }}
-                    className="bg-[#4169e1] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#3558d4] transition-colors"
-                  >
-                    Nahrať fotku
-                  </button>
                   <div className="mt-4 p-3 bg-blue-50 rounded-lg">
                     <p className="text-xs text-blue-800">
                       💡 <strong>Tip:</strong> Majstri s profilovou fotkou majú o 70% vyššiu šancu získať zákazku! 
@@ -497,22 +501,15 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                 {/* Work Photos */}
                 <div>
                   <h4 className="font-medium mb-3">Fotky práce (max 20MB)</h4>
-                  <div className="grid grid-cols-2 gap-3 mb-4">
-                    {[1,2,3,4].map((i) => (
-                      <div key={i} className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center">
-                        <Camera size={24} className="text-gray-400" />
-                      </div>
-                    ))}
-                  </div>
-                  <button 
-                    onClick={() => {
-                      setHasChanges(true);
-                    }}
-                    className="w-full border-2 border-dashed border-gray-300 rounded-lg py-4 text-gray-500 hover:border-[#4169e1] hover:text-[#4169e1] transition-colors"
-                  >
-                    <Plus size={20} className="mx-auto mb-2" />
-                    Pridať fotky práce
-                  </button>
+                  <PhotoUpload
+                    type="work"
+                    currentPhotos={profileData.workPhotos}
+                    onPhotosChange={(photos) => setProfileData(prev => ({ 
+                      ...prev, 
+                      workPhotos: photos 
+                    }))}
+                    maxPhotos={10}
+                  />
                   
                   {/* Work Video */}
                   <div className="mt-4">
@@ -1030,6 +1027,62 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                       <span>Uložiť rozvrh</span>
                     )}
                   </button>
+                </div>
+              </div>
+
+              {/* Profile Preview */}
+              <div className="bg-white rounded-xl shadow-lg p-6">
+                <h3 className="text-lg font-semibold mb-4 flex items-center space-x-2">
+                  <span>Náhľad profilu</span>
+                </h3>
+                
+                <div className="border rounded-lg p-4 bg-gray-50">
+                  {/* Profile Image Preview */}
+                  <div className="flex items-center space-x-4 mb-4">
+                    {profileData.profilePhoto ? (
+                      <img
+                        src={profileData.profilePhoto}
+                        alt="Profile preview"
+                        className="w-16 h-16 object-cover rounded-full border-2 border-gray-300"
+                      />
+                    ) : (
+                      <DefaultAvatar size="md" showCamera={true} />
+                    )}
+                    <div>
+                      <h4 className="font-bold text-lg">
+                        {profileData.name || 'Vaše meno'}
+                      </h4>
+                      <p className="text-gray-600">
+                        {profileData.profession || 'Vaša profesia'}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <p className="text-gray-600 mb-4">
+                    {profileData.description || 'Popis vašich služieb...'}
+                  </p>
+                  
+                  {/* Work Photos Preview */}
+                  {profileData.workPhotos.length > 0 && (
+                    <div>
+                      <h5 className="font-medium text-gray-900 mb-2">Ukážky práce:</h5>
+                      <div className="grid grid-cols-3 gap-2">
+                        {profileData.workPhotos.slice(0, 6).map((photo, index) => (
+                          <img
+                            key={index}
+                            src={photo}
+                            alt={`Ukážka ${index + 1}`}
+                            className="w-full h-16 object-cover rounded border"
+                          />
+                        ))}
+                        {profileData.workPhotos.length > 6 && (
+                          <div className="w-full h-16 bg-gray-200 rounded border flex items-center justify-center">
+                            <span className="text-xs text-gray-600">+{profileData.workPhotos.length - 6}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
