@@ -722,7 +722,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                       Čo robíte a ponúkate (max 1000 znakov)
                     </label>
                     <p className="text-sm text-gray-600 mb-2">
-                      1. Opíš konkrétne to s čím viete pomôcť vašemu zákazníkovy.<br/>
+                      1. Opíšte konkrétne to s čím viete pomôcť vašemu zákazníkovy.<br/>
                       2. Vypíšte všetko čo robíte, všetky slová podľa ktorých<br/>
                       by vás vedel váš zákazník vyhľadať
                     </p>
