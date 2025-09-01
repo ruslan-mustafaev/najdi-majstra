@@ -33,15 +33,26 @@ const HomePage: React.FC = () => {
       setShowWelcomePopup(true);
     }
 
-    // Load recently viewed
-    const saved = localStorage.getItem('recently-viewed');
-    if (saved) {
-      try {
-        setRecentlyViewed(JSON.parse(saved));
-      } catch (error) {
-        console.error('Error parsing recently viewed:', error);
+    // Load recently viewed - only real profiles from database
+    const loadRecentlyViewed = async () => {
+      const saved = localStorage.getItem('recently-viewed');
+      if (saved) {
+        try {
+          const savedIds = JSON.parse(saved);
+          // Only load if we have valid master IDs from database
+          if (Array.isArray(savedIds) && savedIds.length > 0) {
+            // For now, keep empty until we implement proper master loading by IDs
+            setRecentlyViewed([]);
+          }
+        } catch (error) {
+          console.error('Error parsing recently viewed:', error);
+          // Clear invalid data
+          localStorage.removeItem('recently-viewed');
+        }
       }
-    }
+    };
+    
+    loadRecentlyViewed();
   }, [user, loading]);
 
   // Load masters from Supabase
@@ -81,12 +92,16 @@ const HomePage: React.FC = () => {
   };
 
   const handleMasterClick = (master: Master) => {
-    // Add to recently viewed
+    // Add to recently viewed - store only master IDs
+    const savedIds = JSON.parse(localStorage.getItem('recently-viewed') || '[]');
+    const filteredIds = savedIds.filter((id: string) => id !== master.id);
+    const updatedIds = [master.id, ...filteredIds].slice(0, 10);
+    localStorage.setItem('recently-viewed', JSON.stringify(updatedIds));
+    
+    // Update recently viewed state with actual master object
     setRecentlyViewed(prev => {
       const filtered = prev.filter(m => m.id !== master.id);
-      const updated = [master, ...filtered].slice(0, 10);
-      localStorage.setItem('recently-viewed', JSON.stringify(updated));
-      return updated;
+      return [master, ...filtered].slice(0, 10);
     });
     
     // Navigate to profile
