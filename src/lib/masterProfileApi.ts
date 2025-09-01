@@ -9,8 +9,6 @@ export interface MasterProfile {
   description: string;
   is_active?: boolean;
   profile_completed?: boolean;
-  profilePhoto?: string;
-  workPhotos?: string[];
 }
 
 export const saveMasterProfile = async (profileData: MasterProfile): Promise<MasterProfile> => {

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { User, LogOut, Settings, Heart, FileText, ChevronDown } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useLanguage } from '../hooks/useLanguage';
@@ -7,7 +6,6 @@ import { useLanguage } from '../hooks/useLanguage';
 export const UserMenu: React.FC = () => {
   const { user, signOut } = useAuth();
   const { language } = useLanguage();
-  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
 
   if (!user) return null;
@@ -60,14 +58,7 @@ export const UserMenu: React.FC = () => {
 
             {/* Menu Items */}
             <div className="py-2">
-              <button 
-                onClick={() => {
-                  setIsOpen(false);
-                  console.log('Settings clicked, user type:', user.user_metadata?.user_type);
-                  navigate('/dashboard');
-                }}
-                className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 text-gray-700"
-              >
+              <button className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 text-gray-700">
                 <Settings size={16} />
                 <span>{language === 'sk' ? 'Nastavenia' : 'Settings'}</span>
               </button>

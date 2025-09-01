@@ -21,25 +21,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     // Get initial session
     const getInitialSession = async () => {
-      try {
-        const { user, error } = await auth.getCurrentUser();
-        
-        // Check for invalid session error
-        if (error && error.message && error.message.includes('Session from session_id claim in JWT does not exist')) {
-          console.log('Invalid session detected, clearing auth state');
-          await auth.signOut();
-          setUser(null);
-          setSession(null);
-        } else if (user) {
-          setUser(user);
-        }
-      } catch (error) {
-        console.error('Error getting initial session:', error);
-        // Clear invalid session on any auth error
-        await auth.signOut();
-        setUser(null);
-        setSession(null);
-      }
+      const { user } = await auth.getCurrentUser();
+      setUser(user);
       setLoading(false);
     };
 
