@@ -35,7 +35,6 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
               {t.popup.title}
             </h2>
             <p className="text-gray-600 text-xs sm:text-base leading-relaxed">
-              Potrebuje rýchlo alebo plánovanie pomôcť alebo najsť odborníka a aj pre tých ktorí chcú zvýšiť svoj príjem a mať viac zákazníkov a viac zákaziek počas celého roka. Registrujte sa zadarmo.
             </p>
           </div>
 
