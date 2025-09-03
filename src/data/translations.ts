@@ -10,19 +10,15 @@ export const translations = {
     
     popup: {
       title: 'Pre koho je táto stránka určená?',
-      clearSpace: 'Vymazať',
-      clearSpaceMessage: 'Tento priestor prosím vymaž.',
       clientOption: {
         title: 'Hľadám majstra',
         description: 'Potrebujem nájsť kvalifikovaného experta',
-        button: 'Áno, chcem pokračovať na web',
-        redButton: 'vymazať'
+        button: 'Áno, chcem pokračovať na web'
       },
       masterOption: {
         title: 'Som majster/expert',
         description: 'Chcem viac istoty a objednávok počas roka',
-        button: 'Áno, chcem sa registrovať',
-        redButton: 'vymazať'
+        button: 'Áno, chcem sa registrovať'
       },
       registrationPromo: 'Ak hľadáte odborníka tak lepšieho majstra nenájdete, registrácia zdarma pre majstrov.',
       cookies: 'Súhlasím povoliť cookies',
