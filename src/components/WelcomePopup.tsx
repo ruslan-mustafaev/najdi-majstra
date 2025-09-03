@@ -38,7 +38,7 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
           {/* Mobile Layout */}
           <div className="sm:hidden space-y-2 mb-4">
             {/* Client Option - Mobile */}
-            <div className="border-2 border-gray-200 rounded-l-lg rounded-r-2xl sm:rounded-lg p-3 hover:border-[#4169e1] transition-all duration-200 cursor-pointer group bg-gradient-to-br from-white to-gray-50">
+            <div className="border-2 border-gray-200 rounded-l-lg rounded-r-2xl p-3 hover:border-[#4169e1] transition-all duration-200 cursor-pointer group bg-gradient-to-br from-white to-gray-50">
               <div className="flex items-center space-x-2">
                 <div className="w-10 h-10 bg-[#4169e1] rounded-full flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                   <Search className="text-white" size={16} />
@@ -47,9 +47,6 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
                   <h3 className="text-sm font-semibold mb-0.5 text-gray-900">
                     {t.popup.clientOption.title}
                   </h3>
-                  <p className="text-gray-600 text-xs leading-tight">
-                    {t.popup.clientOption.description}
-                  </p>
                 </div>
               </div>
               <button
@@ -62,7 +59,7 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
             </div>
 
             {/* Master Option - Mobile */}
-            <div className="border-2 border-[#4169e1] rounded-l-lg rounded-r-2xl sm:rounded-lg p-3 hover:border-[#4169e1] transition-all duration-200 cursor-pointer group bg-gradient-to-br from-white to-gray-50">
+            <div className="border-2 border-gray-200 rounded-l-lg rounded-r-2xl p-3 hover:border-[#4169e1] transition-all duration-200 cursor-pointer group bg-gradient-to-br from-white to-gray-50">
               <div className="flex items-center space-x-2">
                 <div className="w-10 h-10 bg-[#4169e1] rounded-full flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                   <Users className="text-white" size={16} />
@@ -71,9 +68,6 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
                   <h3 className="text-sm font-semibold mb-0.5 text-gray-900">
                     {t.popup.masterOption.title}
                   </h3>
-                  <p className="text-gray-600 text-xs leading-tight">
-                    {t.popup.masterOption.description}
-                  </p>
                 </div>
               </div>
               <button
@@ -97,9 +91,6 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
                 <h3 className="text-xl font-semibold mb-2 text-gray-900">
                   {t.popup.clientOption.title}
                 </h3>
-                <p className="text-gray-600 mb-4 text-base">
-                  {t.popup.clientOption.description}
-                </p>
                 <button
                   onClick={() => handleOptionSelect('client')}
                   disabled={!cookiesAccepted}
@@ -111,7 +102,7 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
             </div>
 
             {/* Master Option - Desktop */}
-            <div className="border-2 border-[#4169e1] rounded-xl p-6 hover:border-[#4169e1] transition-all duration-200 cursor-pointer group bg-gradient-to-br from-white to-gray-50">
+            <div className="border-2 border-gray-200 rounded-xl p-6 hover:border-[#4169e1] transition-all duration-200 cursor-pointer group bg-gradient-to-br from-white to-gray-50">
               <div className="text-center">
                 <div className="w-16 h-16 bg-[#4169e1] rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                   <Users className="text-white" size={24} />
