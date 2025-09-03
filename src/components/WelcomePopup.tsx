@@ -133,8 +133,8 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
             </div>
           </div>
 
-          {/* Registration promo */}
-          <div className="bg-red-500 text-white text-center py-3 rounded mb-4 text-sm">
+          {/* Registration promo text without red background */}
+          <div className="text-center mb-4 text-sm text-gray-700">
             {t.popup.registrationPromo}
           </div>
 
