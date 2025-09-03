@@ -119,9 +119,6 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
                 <h3 className="text-xl font-semibold mb-2 text-gray-900">
                   {t.popup.masterOption.title}
                 </h3>
-                <p className="text-gray-600 mb-4 text-base">
-                  {t.popup.masterOption.description}
-                </p>
                 <button
                   onClick={() => handleOptionSelect('master')}
                   disabled={!cookiesAccepted}
