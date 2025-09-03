@@ -66,7 +66,7 @@ export const Footer: React.FC = () => {
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
           <p>
-            &copy; 2024 {t.brand}. {language === 'sk' ? 'Všetky práva vyhradené.' : 'All rights reserved.'}
+            &copy; 2025 {t.brand}. {language === 'sk' ? 'Všetky práva vyhradené.' : 'All rights reserved.'}
           </p>
         </div>
       </div>
