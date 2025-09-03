@@ -20,7 +20,7 @@ export const translations = {
       },
       clientOption: {
         title: 'Hľadám majstra',
-        description: 'Potrebujem nájsť kvalifikovaného experta',
+        description: 
         button: 'Áno, chcem pokračovať na web'
       },
       cookies: 'Súhlasím povoliť cookies',
@@ -84,7 +84,7 @@ export const translations = {
       },
       clientOption: {
         title: 'I am looking for a master',
-        description: 'I need to find a qualified expert',
+        description:
         button: 'Yes, I want to continue to the website'
       },
       cookies: 'I agree to allow cookies',
