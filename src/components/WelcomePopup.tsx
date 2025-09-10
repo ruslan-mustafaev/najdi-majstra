@@ -24,7 +24,7 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center sm:items-center justify-center z-50 p-3 sm:p-4 overflow-y-auto">
-      <style jsx>{`
+      <style>{`
         .custom-scrollbar::-webkit-scrollbar {
           width: 12px;
         }
@@ -93,7 +93,36 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
               <button
                 onClick={() => handleOptionSelect('client')}
                 disabled={!cookiesAccepted}
-                className="w-full mt-4 bg-green-500 text-white py-3.5 px-4 rounded-l-lg rounded-r-2xl font-semibold hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed text-sm shadow-lg hover:shadow-xl min-h-[56px] flex items-center justify-center"
+                style={{
+                  width: '100%',
+                  marginTop: '16px',
+                  backgroundColor: cookiesAccepted ? '#10b981' : '#d1d5db',
+                  color: 'white',
+                  padding: '14px 16px',
+                  borderRadius: '8px 8px 32px 8px',
+                  fontWeight: '600',
+                  fontSize: '14px',
+                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                  border: 'none',
+                  cursor: cookiesAccepted ? 'pointer' : 'not-allowed',
+                  minHeight: '56px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'all 0.2s'
+                }}
+                onMouseEnter={(e) => {
+                  if (cookiesAccepted) {
+                    e.currentTarget.style.backgroundColor = '#059669';
+                    e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (cookiesAccepted) {
+                    e.currentTarget.style.backgroundColor = '#10b981';
+                    e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)';
+                  }
+                }}
               >
                 {t.popup.clientOption.button}
               </button>
@@ -117,7 +146,36 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
               <button
                 onClick={() => handleOptionSelect('master')}
                 disabled={!cookiesAccepted}
-                className="w-full mt-4 bg-green-500 text-white py-3.5 px-4 rounded-l-lg rounded-r-2xl font-semibold hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed text-sm shadow-lg hover:shadow-xl min-h-[56px] flex items-center justify-center"
+                style={{
+                  width: '100%',
+                  marginTop: '16px',
+                  backgroundColor: cookiesAccepted ? '#10b981' : '#d1d5db',
+                  color: 'white',
+                  padding: '14px 16px',
+                  borderRadius: '8px 8px 32px 8px',
+                  fontWeight: '600',
+                  fontSize: '14px',
+                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                  border: 'none',
+                  cursor: cookiesAccepted ? 'pointer' : 'not-allowed',
+                  minHeight: '56px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'all 0.2s'
+                }}
+                onMouseEnter={(e) => {
+                  if (cookiesAccepted) {
+                    e.currentTarget.style.backgroundColor = '#059669';
+                    e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (cookiesAccepted) {
+                    e.currentTarget.style.backgroundColor = '#10b981';
+                    e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)';
+                  }
+                }}
               >
                 {t.popup.masterOption.button}
               </button>
@@ -141,7 +199,35 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
                 <button
                   onClick={() => handleOptionSelect('client')}
                   disabled={!cookiesAccepted}
-                  className="w-full bg-green-500 text-white py-3 rounded-lg font-medium hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed text-base shadow-md hover:shadow-lg min-h-[56px] flex items-center justify-center"
+                  style={{
+                    width: '100%',
+                    backgroundColor: cookiesAccepted ? '#10b981' : '#d1d5db',
+                    color: 'white',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    fontWeight: '500',
+                    fontSize: '16px',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                    border: 'none',
+                    cursor: cookiesAccepted ? 'pointer' : 'not-allowed',
+                    minHeight: '56px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (cookiesAccepted) {
+                      e.currentTarget.style.backgroundColor = '#059669';
+                      e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (cookiesAccepted) {
+                      e.currentTarget.style.backgroundColor = '#10b981';
+                      e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)';
+                    }
+                  }}
                 >
                   {t.popup.clientOption.button}
                 </button>
