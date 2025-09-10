@@ -178,6 +178,20 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
             </div>
           </div>
 
+          {/* Promotional Banner */}
+          <div className="text-center mb-4 sm:mb-6 py-3 px-4 bg-gradient-to-r from-blue-50 to-green-50 rounded-lg border border-blue-200">
+            <p className="text-sm sm:text-base font-semibold text-gray-800">
+              <strong className="text-blue-600">Nikde</strong> lepšieho majstra nenájdete, registrácia zdarma pre majstrov.
+            </p>
+          </div>
+
+          {/* Promotional Banner */}
+          <div className="text-center mb-4 sm:mb-6 py-3 px-4 bg-gradient-to-r from-blue-50 to-green-50 rounded-lg border border-blue-200">
+            <p className="text-sm sm:text-base font-semibold text-gray-800">
+              <strong className="text-blue-600">Nikde</strong> lepšieho majstra nenájdete, registrácia zdarma pre majstrov.
+            </p>
+          </div>
+
           {/* Cookies Consent */}
           <div className="border-t pt-3 sm:pt-6 bg-white">
             <div className="flex items-start space-x-2 sm:space-x-3">
