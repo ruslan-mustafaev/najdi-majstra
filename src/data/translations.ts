@@ -5,7 +5,7 @@ export const translations = {
       blog: 'Blog',
       favorites: 'Obľúbené inzeráty',
       login: 'Prihlásiť sa',
-      addAd: 'Pridať inzerát'
+      register: 'Registrovať sa'
     },
     
     popup: {
@@ -22,7 +22,6 @@ export const translations = {
       cookies: 'Súhlasím povoliť cookies',
       privacy: 'Obchodné podmienky a pravidlá'
     },
-
     hero: {
       title: 'Najväčší slovenský predajca majstrov a expertov v stavebníctve',
       subtitle: 'Rýchlo, lacno a jednoducho nájdite kvalifikovaného odborníka zo svojej lokality',
@@ -30,7 +29,6 @@ export const translations = {
       regularService: 'PRAVIDELNÝ SERVIS',
       realization: 'REALIZÁCIA'
     },
-
     search: {
       city: 'Mesto',
       profession: 'Profesia',
@@ -39,12 +37,10 @@ export const translations = {
       searchButton: 'Nájdi Majstra',
       noResults: 'Žiaden inzerát nevyhovuje zvoleným požiadavkám'
     },
-
     masters: {
       title: 'Naposledy zobrazené',
       topRated: 'Najlepšie hodnotení majstri'
     },
-
     footer: {
       terms: 'Obchodné podmienky',
       ethics: 'Etický kódex a pravidlá',
@@ -53,7 +49,6 @@ export const translations = {
       contact: 'Kontakt'
     }
   },
-
   aiChat: {
     sk: {
       title: 'AI Asistent',
