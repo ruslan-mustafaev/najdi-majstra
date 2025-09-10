@@ -5,6 +5,7 @@ import { translations } from '../data/translations';
 import { ChatWindow } from './AIChat/ChatWindow';
 import { MasterRecommendations } from './AIChat/MasterRecommendations';
 import { ServiceType } from './AIChat/types';
+import Lanyard from './Lanyard/Lanyard';
 
 interface MainSearchSectionProps {
   onSearch: (filters: {
@@ -267,6 +268,11 @@ export const MainSearchSection: React.FC<MainSearchSectionProps> = ({ onSearch, 
     <>
       <section className="relative text-white py-16 pt-32 overflow-hidden">
         <div className="absolute inset-0 animate-smooth-gradient"></div>
+        
+        {/* 3D Lanyard Background */}
+        <div className="absolute inset-0 opacity-20 pointer-events-none">
+          <Lanyard position={[0, 0, 20]} gravity={[0, -40, 0]} />
+        </div>
         
         <div className="container mx-auto px-4">
           <style jsx>{`
