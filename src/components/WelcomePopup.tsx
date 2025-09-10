@@ -7,10 +7,9 @@ interface WelcomePopupProps {
   isOpen: boolean;
   onClose: () => void;
   onUserTypeSelect: (type: 'client' | 'master') => void;
-  onAuthRequired: (type: 'client' | 'master') => void;
 }
 
-export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onUserTypeSelect, onAuthRequired }) => {
+export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onUserTypeSelect }) => {
   const { language } = useLanguage();
   const t = translations[language];
   const [cookiesAccepted, setCookiesAccepted] = useState(false);
@@ -19,13 +18,48 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
 
   const handleOptionSelect = (option: 'master' | 'client') => {
     if (cookiesAccepted) {
-      onAuthRequired(option);
+      onUserTypeSelect(option);
     }
   };
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center sm:items-center justify-center z-50 p-3 sm:p-4 overflow-y-auto">
-      <div className="bg-white rounded-l-xl rounded-r-3xl sm:rounded-2xl w-full max-w-sm sm:max-w-2xl mx-auto relative animate-in zoom-in-95 duration-300 shadow-2xl my-12 sm:my-8 max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
+      <style jsx>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 12px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: linear-gradient(45deg, #e3f2fd, #ffffff, #bbdefb);
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: linear-gradient(135deg, #4169e1, #6495ed, #87ceeb, #4169e1);
+          background-size: 400% 400%;
+          border-radius: 10px;
+          border: 2px solid #ffffff;
+          animation: gradient-shift 3s ease infinite;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: linear-gradient(135deg, #3357d4, #5a7fe8, #76c7e9, #3357d4);
+          background-size: 400% 400%;
+          animation: gradient-shift 1.5s ease infinite;
+        }
+        .custom-scrollbar::-webkit-scrollbar-corner {
+          background: linear-gradient(45deg, #e3f2fd, #ffffff);
+        }
+        @keyframes gradient-shift {
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
+          }
+        }
+      `}</style>
+      <div className="bg-white rounded-l-xl rounded-r-3xl sm:rounded-2xl w-full max-w-sm sm:max-w-2xl mx-auto relative animate-in zoom-in-95 duration-300 shadow-2xl my-12 sm:my-8 max-h-[95vh] sm:max-h-[90vh] overflow-y-auto custom-scrollbar">
         
         <div className="p-4 sm:p-8">
           {/* Header */}
@@ -33,47 +67,56 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
             <h2 className="text-lg sm:text-3xl font-bold text-gray-900 mb-2 sm:mb-4">
               {t.popup.title}
             </h2>
+            <p className="text-gray-600 text-xs sm:text-base leading-relaxed">
+              Potrebuje rýchlo alebo plánovanie pomôcť alebo najsť odborníka a aj pre tých ktorí chcú zvýšiť svoj príjem a mať viac zákazníkov a viac zákaziek počas celého roka. Registrujte sa zadarmo.
+            </p>
           </div>
 
           {/* Mobile Layout */}
-          <div className="sm:hidden space-y-2 mb-4">
+          <div className="sm:hidden space-y-3 mb-4">
             {/* Client Option - Mobile */}
-            <div className="border-2 border-gray-200 rounded-l-lg rounded-r-2xl p-3 hover:border-[#4169e1] transition-all duration-200 cursor-pointer group bg-gradient-to-br from-white to-gray-50">
-              <div className="flex items-center space-x-2">
-                <div className="w-10 h-10 bg-[#4169e1] rounded-full flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                  <Search className="text-white" size={16} />
+            <div className="border-2 border-gray-200 rounded-l-lg rounded-r-2xl sm:rounded-lg p-4 hover:border-[#4169e1] transition-all duration-200 cursor-pointer group bg-gradient-to-br from-white to-gray-50">
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-[#4169e1] rounded-full flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                  <Search className="text-white" size={18} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-semibold mb-0.5 text-gray-900">
+                  <h3 className="text-base font-semibold mb-1 text-gray-900">
                     {t.popup.clientOption.title}
                   </h3>
+                  <p className="text-gray-600 text-sm leading-snug">
+                    {t.popup.clientOption.description}
+                  </p>
                 </div>
               </div>
               <button
                 onClick={() => handleOptionSelect('client')}
                 disabled={!cookiesAccepted}
-                className="w-full mt-2 bg-green-500 text-white py-2 rounded-l-lg rounded-r-2xl font-medium hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed text-xs shadow-md hover:shadow-lg"
+                className="w-full mt-4 bg-green-500 text-white py-3.5 px-4 rounded-l-lg rounded-r-2xl font-semibold hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed text-sm shadow-lg hover:shadow-xl"
               >
                 {t.popup.clientOption.button}
               </button>
             </div>
 
             {/* Master Option - Mobile */}
-            <div className="border-2 border-gray-200 rounded-l-lg rounded-r-2xl p-3 hover:border-[#4169e1] transition-all duration-200 cursor-pointer group bg-gradient-to-br from-white to-gray-50">
-              <div className="flex items-center space-x-2">
-                <div className="w-10 h-10 bg-[#4169e1] rounded-full flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                  <Users className="text-white" size={16} />
+            <div className="border-2 border-gray-200 rounded-l-lg rounded-r-2xl sm:rounded-lg p-4 hover:border-[#4169e1] transition-all duration-200 cursor-pointer group bg-gradient-to-br from-white to-gray-50">
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-[#4169e1] rounded-full flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                  <Users className="text-white" size={18} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-semibold mb-0.5 text-gray-900">
+                  <h3 className="text-base font-semibold mb-1 text-gray-900">
                     {t.popup.masterOption.title}
                   </h3>
+                  <p className="text-gray-600 text-sm leading-snug">
+                    {t.popup.masterOption.description}
+                  </p>
                 </div>
               </div>
               <button
                 onClick={() => handleOptionSelect('master')}
                 disabled={!cookiesAccepted}
-                className="w-full mt-2 bg-green-500 text-white py-2 rounded-l-lg rounded-r-2xl font-medium hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed text-xs shadow-md hover:shadow-lg"
+                className="w-full mt-4 bg-green-500 text-white py-3.5 px-4 rounded-l-lg rounded-r-2xl font-semibold hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed text-sm shadow-lg hover:shadow-xl"
               >
                 {t.popup.masterOption.button}
               </button>
@@ -91,6 +134,9 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
                 <h3 className="text-xl font-semibold mb-2 text-gray-900">
                   {t.popup.clientOption.title}
                 </h3>
+                <p className="text-gray-600 mb-4 text-base">
+                  {t.popup.clientOption.description}
+                </p>
                 <button
                   onClick={() => handleOptionSelect('client')}
                   disabled={!cookiesAccepted}
@@ -110,6 +156,9 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
                 <h3 className="text-xl font-semibold mb-2 text-gray-900">
                   {t.popup.masterOption.title}
                 </h3>
+                <p className="text-gray-600 mb-4 text-base">
+                  {t.popup.masterOption.description}
+                </p>
                 <button
                   onClick={() => handleOptionSelect('master')}
                   disabled={!cookiesAccepted}
@@ -119,11 +168,6 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
                 </button>
               </div>
             </div>
-          </div>
-
-          {/* Registration promo text without red background */}
-          <div className="text-center mb-4 text-sm text-gray-700">
-            {t.popup.registrationPromo}
           </div>
 
           {/* Cookies Consent */}
