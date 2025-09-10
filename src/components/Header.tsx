@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Heart, Plus, Menu, UserPlus } from 'lucide-react';
+import { Plus, Menu, UserPlus } from 'lucide-react';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { AuthModal } from './AuthModal';
 import { UserMenu } from './UserMenu';
