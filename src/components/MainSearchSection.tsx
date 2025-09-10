@@ -295,10 +295,9 @@ export const MainSearchSection: React.FC<MainSearchSectionProps> = ({ onSearch, 
   return (
     <>
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-[#4169e1] via-[#5a7bff] to-[#6c8cff] text-white py-16 pt-32 overflow-hidden">
-        {/* Animated Background Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-purple-500/30 to-cyan-400/20 animate-gradient-x"></div>
-        <div className="absolute inset-0 bg-gradient-to-l from-indigo-500/10 via-blue-400/20 to-white/10 animate-gradient-y"></div>
+      <section className="relative text-white py-16 pt-32 overflow-hidden">
+        {/* Анимированный градиентный фон */}
+        <div className="absolute inset-0 animate-gradient-flow" />
         
         {/* Interactive Floating Elements */}
         <div className="absolute top-10 left-10 w-32 h-32 bg-white/5 rounded-full blur-xl animate-float"></div>
@@ -311,25 +310,29 @@ export const MainSearchSection: React.FC<MainSearchSectionProps> = ({ onSearch, 
         
         <div className="container mx-auto px-4">
           <style jsx>{`
-            @keyframes gradient-x {
-              0%, 100% {
-                transform: translateX(-100%);
-                opacity: 0.3;
+            @keyframes gradient-flow {
+              0% {
+                background: linear-gradient(135deg, #4169e1, #5a7bff, #6c8cff, #7a9dff);
+              }
+              25% {
+                background: linear-gradient(135deg, #5a7bff, #6c8cff, #7a9dff, #87ceeb);
               }
               50% {
-                transform: translateX(100%);
-                opacity: 0.8;
+                background: linear-gradient(135deg, #6c8cff, #7a9dff, #87ceeb, #4169e1);
+              }
+              75% {
+                background: linear-gradient(135deg, #7a9dff, #87ceeb, #4169e1, #5a7bff);
+              }
+              100% {
+                background: linear-gradient(135deg, #4169e1, #5a7bff, #6c8cff, #7a9dff);
               }
             }
-            @keyframes gradient-y {
-              0%, 100% {
-                transform: translateY(-100%);
-                opacity: 0.2;
-              }
-              50% {
-                transform: translateY(100%);
-                opacity: 0.6;
-              }
+            .animate-gradient-flow {
+              animation: gradient-flow 12s ease-in-out infinite;
+              background-size: 400% 400%;
+              position: absolute;
+              inset: 0;
+              z-index: 0;
             }
             @keyframes float {
               0%, 100% {
@@ -376,12 +379,6 @@ export const MainSearchSection: React.FC<MainSearchSectionProps> = ({ onSearch, 
                 transform: translateX(200%) skewX(-12deg);
               }
             }
-            .animate-gradient-x {
-              animation: gradient-x 8s ease-in-out infinite;
-            }
-            .animate-gradient-y {
-              animation: gradient-y 12s ease-in-out infinite reverse;
-            }
             .animate-float {
               animation: float 6s ease-in-out infinite;
             }
@@ -399,7 +396,7 @@ export const MainSearchSection: React.FC<MainSearchSectionProps> = ({ onSearch, 
               animation: shimmer 3s ease-in-out infinite;
             }
           `}</style>
-          <div className="text-center max-w-4xl mx-auto mb-12">
+          <div className="text-center max-w-4xl mx-auto mb-12 relative z-10">
             <h2 className="relative z-10 text-4xl md:text-5xl font-bold mb-6 leading-tight drop-shadow-lg">
               {t.hero.title}
             </h2>
