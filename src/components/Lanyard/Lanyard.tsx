@@ -15,6 +15,11 @@ import {
 import { MeshLineGeometry, MeshLineMaterial } from 'meshline';
 import * as THREE from 'three';
 
+// Make THREE globally available for meshline
+if (typeof window !== 'undefined') {
+  (window as any).THREE = THREE;
+}
+
 // replace with your own imports, see the usage snippet for details
 import cardGLB from './card.glb';
 import lanyard from './lanyard.png';
