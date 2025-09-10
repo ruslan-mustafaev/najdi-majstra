@@ -296,114 +296,37 @@ export const MainSearchSection: React.FC<MainSearchSectionProps> = ({ onSearch, 
     <>
       {/* Hero Section */}
       <section className="relative text-white py-16 pt-32 overflow-hidden">
-        {/* Мягкий анимированный градиентный фон */}
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 animate-gentle-flow" />
-          <div className="absolute inset-0 animate-soft-pulse opacity-60" />
-        </div>
-        
-        {/* Мягкие плавающие элементы */}
-        <div className="absolute top-10 left-10 w-32 h-32 bg-white/3 rounded-full blur-xl animate-gentle-float"></div>
-        <div className="absolute top-32 right-20 w-24 h-24 bg-cyan-300/5 rounded-full blur-lg animate-gentle-float-delayed"></div>
-        <div className="absolute bottom-20 left-1/4 w-40 h-40 bg-purple-400/3 rounded-full blur-2xl animate-gentle-float-slow"></div>
-        
-        {/* Мягкий блеск */}
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/2 to-transparent -skew-x-12 animate-gentle-shimmer"></div>
+        {/* Плавно движущийся градиент */}
+        <div className="absolute inset-0 animate-smooth-gradient"></div>
         
         <div className="container mx-auto px-4">
           <style jsx>{`
-            @keyframes gentle-flow {
+            @keyframes smooth-gradient {
               0% {
-                background: linear-gradient(135deg, #4169e1, #5a7bff, #6c8cff, #7a9dff);
+                background: linear-gradient(-45deg, #4169e1, #5a7bff, #6c8cff, #7a9dff, #4169e1);
+                background-position: 0% 50%;
               }
               25% {
-                background: linear-gradient(180deg, #5a7bff, #6c8cff, #7a9dff, #87ceeb);
+                background: linear-gradient(-45deg, #4169e1, #5a7bff, #6c8cff, #7a9dff, #4169e1);
+                background-position: 100% 50%;
               }
               50% {
-                background: linear-gradient(225deg, #6c8cff, #7a9dff, #87ceeb, #4169e1);
+                background: linear-gradient(-45deg, #4169e1, #5a7bff, #6c8cff, #7a9dff, #4169e1);
+                background-position: 100% 100%;
               }
               75% {
-                background: linear-gradient(270deg, #7a9dff, #87ceeb, #4169e1, #5a7bff);
+                background: linear-gradient(-45deg, #4169e1, #5a7bff, #6c8cff, #7a9dff, #4169e1);
+                background-position: 0% 100%;
               }
               100% {
-                background: linear-gradient(135deg, #4169e1, #5a7bff, #6c8cff, #7a9dff);
+                background: linear-gradient(-45deg, #4169e1, #5a7bff, #6c8cff, #7a9dff, #4169e1);
+                background-position: 0% 50%;
               }
             }
             
-            @keyframes soft-pulse {
-              0%, 100% {
-                background: radial-gradient(circle at 30% 70%, rgba(65,105,225,0.3) 0%, transparent 60%);
-              }
-              50% {
-                background: radial-gradient(circle at 70% 30%, rgba(90,123,255,0.3) 0%, transparent 60%);
-              }
-            }
-            
-            .animate-gentle-flow {
-              animation: gentle-flow 20s ease-in-out infinite;
-            }
-            
-            .animate-soft-pulse {
-              animation: soft-pulse 15s ease-in-out infinite;
-            }
-            
-            @keyframes gentle-float {
-              0%, 100% {
-                transform: translateY(0px);
-              }
-              50% {
-                transform: translateY(-10px);
-              }
-            }
-            
-            @keyframes gentle-float-delayed {
-              0%, 100% {
-                transform: translateY(0px) translateX(0px);
-              }
-              50% {
-                transform: translateY(-8px) translateX(5px);
-              }
-            }
-            
-            @keyframes gentle-float-slow {
-              0%, 100% {
-                transform: translateY(0px);
-              }
-              50% {
-                transform: translateY(-15px);
-              }
-            }
-            
-            @keyframes gentle-shimmer {
-              0%, 100% {
-                transform: translateX(-100%) skewX(-12deg);
-                opacity: 0;
-              }
-              10%, 90% {
-                opacity: 1;
-              }
-              50% {
-                transform: translateX(0%) skewX(-12deg);
-                opacity: 1;
-              }
-            }
-            
-            .animate-gentle-float {
-              animation: gentle-float 12s ease-in-out infinite;
-            }
-            
-            .animate-gentle-float-delayed {
-              animation: gentle-float-delayed 16s ease-in-out infinite;
-              animation-delay: 4s;
-            }
-            
-            .animate-gentle-float-slow {
-              animation: gentle-float-slow 20s ease-in-out infinite;
-              animation-delay: 8s;
-            }
-            
-            .animate-gentle-shimmer {
-              animation: gentle-shimmer 25s ease-in-out infinite;
+            .animate-smooth-gradient {
+              animation: smooth-gradient 15s ease-in-out infinite;
+              background-size: 400% 400%;
             }
           `}</style>
           <div className="text-center max-w-4xl mx-auto mb-12 relative z-10">
