@@ -218,6 +218,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 disabled={!!userType} // Disable if userType is provided from props
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#4169e1] focus:border-transparent outline-none"
               >
+                <option value="">
+                  {language === 'sk' ? '- Vyberte typ účtu -' : '- Select account type -'}
+                </option>
                 <option value="client">
                   {language === 'sk' ? 'Klient (hľadám majstra)' : 'Client (looking for master)'}
                 </option>
