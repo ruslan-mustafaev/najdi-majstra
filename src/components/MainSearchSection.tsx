@@ -296,8 +296,12 @@ export const MainSearchSection: React.FC<MainSearchSectionProps> = ({ onSearch, 
     <>
       {/* Hero Section */}
       <section className="relative text-white py-16 pt-32 overflow-hidden">
-        {/* Анимированный градиентный фон */}
-        <div className="absolute inset-0 animate-gradient-flow" />
+        {/* Многослойный анимированный градиентный фон */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 animate-gradient-wave opacity-90" />
+          <div className="absolute inset-0 animate-gradient-pulse opacity-70" />
+          <div className="absolute inset-0 animate-gradient-flow opacity-80" />
+        </div>
         
         {/* Interactive Floating Elements */}
         <div className="absolute top-10 left-10 w-32 h-32 bg-white/5 rounded-full blur-xl animate-float"></div>
@@ -310,29 +314,72 @@ export const MainSearchSection: React.FC<MainSearchSectionProps> = ({ onSearch, 
         
         <div className="container mx-auto px-4">
           <style jsx>{`
-            @keyframes gradient-flow {
+            @keyframes gradient-wave {
               0% {
-                background: linear-gradient(135deg, #4169e1, #5a7bff, #6c8cff, #7a9dff);
+                background: linear-gradient(45deg, #4169e1 0%, #5a7bff 25%, #6c8cff 50%, #7a9dff 75%, #87ceeb 100%);
+                background-position: 0% 50%;
               }
               25% {
-                background: linear-gradient(135deg, #5a7bff, #6c8cff, #7a9dff, #87ceeb);
+                background: linear-gradient(90deg, #5a7bff 0%, #6c8cff 25%, #7a9dff 50%, #87ceeb 75%, #4169e1 100%);
+                background-position: 25% 75%;
               }
               50% {
-                background: linear-gradient(135deg, #6c8cff, #7a9dff, #87ceeb, #4169e1);
+                background: linear-gradient(135deg, #6c8cff 0%, #7a9dff 25%, #87ceeb 50%, #4169e1 75%, #5a7bff 100%);
+                background-position: 50% 100%;
               }
               75% {
-                background: linear-gradient(135deg, #7a9dff, #87ceeb, #4169e1, #5a7bff);
+                background: linear-gradient(180deg, #7a9dff 0%, #87ceeb 25%, #4169e1 50%, #5a7bff 75%, #6c8cff 100%);
+                background-position: 75% 25%;
               }
               100% {
-                background: linear-gradient(135deg, #4169e1, #5a7bff, #6c8cff, #7a9dff);
+                background: linear-gradient(225deg, #87ceeb 0%, #4169e1 25%, #5a7bff 50%, #6c8cff 75%, #7a9dff 100%);
+                background-position: 100% 50%;
               }
             }
-            .animate-gradient-flow {
-              animation: gradient-flow 12s ease-in-out infinite;
+            
+            @keyframes gradient-pulse {
+              0%, 100% {
+                background: radial-gradient(circle at 20% 80%, #4169e1 0%, transparent 50%),
+                           radial-gradient(circle at 80% 20%, #5a7bff 0%, transparent 50%);
+              }
+              33% {
+                background: radial-gradient(circle at 40% 40%, #6c8cff 0%, transparent 50%),
+                           radial-gradient(circle at 60% 60%, #7a9dff 0%, transparent 50%);
+              }
+              66% {
+                background: radial-gradient(circle at 70% 30%, #87ceeb 0%, transparent 50%),
+                           radial-gradient(circle at 30% 70%, #4169e1 0%, transparent 50%);
+              }
+            }
+            
+            @keyframes gradient-flow {
+              0% {
+                background: linear-gradient(270deg, #4169e1, #5a7bff, #6c8cff, #7a9dff, #87ceeb);
+                background-position: 0% 50%;
+              }
+              50% {
+                background: linear-gradient(270deg, #4169e1, #5a7bff, #6c8cff, #7a9dff, #87ceeb);
+                background-position: 100% 50%;
+              }
+              100% {
+                background: linear-gradient(270deg, #4169e1, #5a7bff, #6c8cff, #7a9dff, #87ceeb);
+                background-position: 0% 50%;
+              }
+            }
+            
+            .animate-gradient-wave {
+              animation: gradient-wave 8s ease-in-out infinite;
               background-size: 400% 400%;
-              position: absolute;
-              inset: 0;
-              z-index: 0;
+            }
+            
+            .animate-gradient-pulse {
+              animation: gradient-pulse 6s ease-in-out infinite;
+              background-size: 300% 300%;
+            }
+            
+            .animate-gradient-flow {
+              animation: gradient-flow 10s linear infinite;
+              background-size: 200% 200%;
             }
             @keyframes float {
               0%, 100% {
