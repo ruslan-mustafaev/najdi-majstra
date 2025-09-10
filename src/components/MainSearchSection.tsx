@@ -295,35 +295,137 @@ export const MainSearchSection: React.FC<MainSearchSectionProps> = ({ onSearch, 
   return (
     <>
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-[#4169e1] via-[#5a7bff] to-[#6c8cff] text-white py-16 pt-32">
+      <section className="relative bg-gradient-to-br from-[#4169e1] via-[#5a7bff] to-[#6c8cff] text-white py-16 pt-32 overflow-hidden">
+        {/* Animated Background Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-purple-500/30 to-cyan-400/20 animate-gradient-x"></div>
+        <div className="absolute inset-0 bg-gradient-to-l from-indigo-500/10 via-blue-400/20 to-white/10 animate-gradient-y"></div>
+        
+        {/* Interactive Floating Elements */}
+        <div className="absolute top-10 left-10 w-32 h-32 bg-white/5 rounded-full blur-xl animate-float"></div>
+        <div className="absolute top-32 right-20 w-24 h-24 bg-cyan-300/10 rounded-full blur-lg animate-float-delayed"></div>
+        <div className="absolute bottom-20 left-1/4 w-40 h-40 bg-purple-400/5 rounded-full blur-2xl animate-float-slow"></div>
+        <div className="absolute bottom-32 right-1/3 w-28 h-28 bg-white/8 rounded-full blur-xl animate-pulse-slow"></div>
+        
+        {/* Shimmer Effect */}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-x-12 animate-shimmer"></div>
+        
         <div className="container mx-auto px-4">
+          <style jsx>{`
+            @keyframes gradient-x {
+              0%, 100% {
+                transform: translateX(-100%);
+                opacity: 0.3;
+              }
+              50% {
+                transform: translateX(100%);
+                opacity: 0.8;
+              }
+            }
+            @keyframes gradient-y {
+              0%, 100% {
+                transform: translateY(-100%);
+                opacity: 0.2;
+              }
+              50% {
+                transform: translateY(100%);
+                opacity: 0.6;
+              }
+            }
+            @keyframes float {
+              0%, 100% {
+                transform: translateY(0px) scale(1);
+              }
+              50% {
+                transform: translateY(-20px) scale(1.1);
+              }
+            }
+            @keyframes float-delayed {
+              0%, 100% {
+                transform: translateY(0px) translateX(0px) scale(1);
+              }
+              33% {
+                transform: translateY(-15px) translateX(10px) scale(1.05);
+              }
+              66% {
+                transform: translateY(-5px) translateX(-10px) scale(0.95);
+              }
+            }
+            @keyframes float-slow {
+              0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+              }
+              50% {
+                transform: translateY(-30px) rotate(180deg);
+              }
+            }
+            @keyframes pulse-slow {
+              0%, 100% {
+                opacity: 0.3;
+                transform: scale(1);
+              }
+              50% {
+                opacity: 0.8;
+                transform: scale(1.2);
+              }
+            }
+            @keyframes shimmer {
+              0% {
+                transform: translateX(-100%) skewX(-12deg);
+              }
+              100% {
+                transform: translateX(200%) skewX(-12deg);
+              }
+            }
+            .animate-gradient-x {
+              animation: gradient-x 8s ease-in-out infinite;
+            }
+            .animate-gradient-y {
+              animation: gradient-y 12s ease-in-out infinite reverse;
+            }
+            .animate-float {
+              animation: float 6s ease-in-out infinite;
+            }
+            .animate-float-delayed {
+              animation: float-delayed 8s ease-in-out infinite;
+              animation-delay: 2s;
+            }
+            .animate-float-slow {
+              animation: float-slow 15s linear infinite;
+            }
+            .animate-pulse-slow {
+              animation: pulse-slow 4s ease-in-out infinite;
+            }
+            .animate-shimmer {
+              animation: shimmer 3s ease-in-out infinite;
+            }
+          `}</style>
           <div className="text-center max-w-4xl mx-auto mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+            <h2 className="relative z-10 text-4xl md:text-5xl font-bold mb-6 leading-tight drop-shadow-lg">
               {t.hero.title}
             </h2>
-            <p className="text-xl md:text-2xl text-white/90 mb-8">
+            <p className="relative z-10 text-xl md:text-2xl text-white/90 mb-8 drop-shadow-md">
               {t.hero.subtitle}
             </p>
 
             {/* Service Type Buttons */}
-            <div className="flex flex-wrap justify-center gap-4 mb-12">
+            <div className="relative z-10 flex flex-wrap justify-center gap-4 mb-12">
               <button 
                 onClick={() => handleServiceButtonClick('urgent')}
-                className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl"
+                className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 flex items-center space-x-2 shadow-lg hover:shadow-xl hover:scale-105 hover:-translate-y-1 backdrop-blur-sm border border-white/10"
               >
                 <Zap size={20} />
                 <span>{t.hero.urgentRepair}</span>
               </button>
               <button 
                 onClick={() => handleServiceButtonClick('regular')}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl"
+                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 flex items-center space-x-2 shadow-lg hover:shadow-xl hover:scale-105 hover:-translate-y-1 backdrop-blur-sm border border-white/10"
               >
                 <Settings size={20} />
                 <span>{t.hero.regularService}</span>
               </button>
               <button 
                 onClick={() => handleServiceButtonClick('realization')}
-                className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl"
+                className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 flex items-center space-x-2 shadow-lg hover:shadow-xl hover:scale-105 hover:-translate-y-1 backdrop-blur-sm border border-white/10"
               >
                 <Wrench size={20} />
                 <span>{t.hero.realization}</span>
