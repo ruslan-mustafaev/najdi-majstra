@@ -163,7 +163,35 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
                 <button
                   onClick={() => handleOptionSelect('master')}
                   disabled={!cookiesAccepted}
-                  className="w-full bg-green-500 text-white py-3 rounded-lg font-medium hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed text-base shadow-md hover:shadow-lg min-h-[56px] flex items-center justify-center"
+                  style={{
+                    width: '100%',
+                    backgroundColor: cookiesAccepted ? '#10b981' : '#d1d5db',
+                    color: 'white',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    fontWeight: '500',
+                    fontSize: '16px',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                    border: 'none',
+                    cursor: cookiesAccepted ? 'pointer' : 'not-allowed',
+                    minHeight: '56px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (cookiesAccepted) {
+                      e.currentTarget.style.backgroundColor = '#059669';
+                      e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (cookiesAccepted) {
+                      e.currentTarget.style.backgroundColor = '#10b981';
+                      e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)';
+                    }
+                  }}
                 >
                   {t.popup.masterOption.button}
                 </button>
