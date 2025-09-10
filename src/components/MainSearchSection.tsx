@@ -128,6 +128,7 @@ export const MainSearchSection: React.FC<MainSearchSectionProps> = ({ onSearch, 
 
   const cityOptions = [
     { value: '', label: `- ${t.search.city} -`, isRegion: false },
+    { value: 'Celé Slovensko', label: 'Celé Slovensko', isRegion: false },
     { value: 'Banskobystrický kraj', label: 'Banskobystrický kraj', isRegion: false },
     { value: 'Bratislavský kraj', label: 'Bratislavský kraj', isRegion: false },
     { value: 'Košický kraj', label: 'Košický kraj', isRegion: false },
