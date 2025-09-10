@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Heart, Plus, Menu } from 'lucide-react';
+import { Heart, Plus, Menu, UserPlus } from 'lucide-react';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { AuthModal } from './AuthModal';
 import { UserMenu } from './UserMenu';
@@ -42,10 +42,17 @@ export const Header: React.FC = () => {
     setAuthModalOpen(true);
   };
 
+  const handleRegisterClick = () => {
+    setAuthMode('register');
+    setAuthUserType('client'); // Default to client, user can change it
+    setAuthModalOpen(true);
+  };
+
   const handleAuthSuccess = (userType: 'client' | 'master') => {
     // This will be handled by the main App component through user state changes
     // No additional action needed here
   };
+
   return (
     <>
       <header className={`fixed top-0 left-0 right-0 z-40 bg-gradient-to-r from-[#4169e1]/90 to-[#5a7bff]/90 backdrop-blur-md shadow-lg transition-transform duration-300 ${
@@ -61,7 +68,6 @@ export const Header: React.FC = () => {
             </div>
 
             {/* Navigation */}
-
             {/* Right Section */}
             <div className="flex items-center space-x-4">
               <LanguageSwitcher />
@@ -75,18 +81,23 @@ export const Header: React.FC = () => {
               {user ? (
                 <UserMenu />
               ) : (
-                <button 
-                  onClick={handleLoginClick}
-                  className="flex items-center space-x-2 text-white/90 hover:text-white transition-colors"
-                >
-                  <span className="hidden sm:inline">{t.navigation.login}</span>
-                </button>
+                <>
+                  <button 
+                    onClick={handleLoginClick}
+                    className="flex items-center space-x-2 text-white/90 hover:text-white transition-colors"
+                  >
+                    <span className="hidden sm:inline">{t.navigation.login}</span>
+                  </button>
+                  
+                  <button 
+                    onClick={handleRegisterClick}
+                    className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2"
+                  >
+                    <UserPlus size={20} />
+                    <span className="hidden sm:inline">{t.navigation.register}</span>
+                  </button>
+                </>
               )}
-
-              <button className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2">
-                <Plus size={20} />
-                <span className="hidden sm:inline">{t.navigation.addAd}</span>
-              </button>
 
               <button className="md:hidden text-white">
                 <Menu size={24} />
