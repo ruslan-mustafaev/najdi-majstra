@@ -101,7 +101,7 @@ export const MainSearchSection: React.FC<MainSearchSectionProps> = ({ onSearch, 
       }
     };
     document.addEventListener('click', handleClickOutside);
-    return () => document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
   const handleSearch = () => {
@@ -271,29 +271,24 @@ export const MainSearchSection: React.FC<MainSearchSectionProps> = ({ onSearch, 
           <style jsx>{`
             @keyframes smooth-gradient {
               0% {
-                background: linear-gradient(0deg, #4169e1, #5a7bff, #6c8cff, #7a9dff, #4169e1);
-                background-size: 400% 400%;
-              }
-              25% {
-                background: linear-gradient(90deg, #4169e1, #5a7bff, #6c8cff, #7a9dff, #4169e1);
-                background-size: 400% 400%;
+                background: linear-gradient(45deg, #4169e1, #5a7bff, #6c8cff, #7a9dff, #4169e1);
+                background-size: 600% 600%;
+                background-position: 0% 0%;
               }
               50% {
-                background: linear-gradient(180deg, #4169e1, #5a7bff, #6c8cff, #7a9dff, #4169e1);
-                background-size: 400% 400%;
-              }
-              75% {
-                background: linear-gradient(270deg, #4169e1, #5a7bff, #6c8cff, #7a9dff, #4169e1);
-                background-size: 400% 400%;
+                background: linear-gradient(45deg, #4169e1, #5a7bff, #6c8cff, #7a9dff, #4169e1);
+                background-size: 600% 600%;
+                background-position: 100% 100%;
               }
               100% {
-                background: linear-gradient(360deg, #4169e1, #5a7bff, #6c8cff, #7a9dff, #4169e1);
-                background-size: 400% 400%;
+                background: linear-gradient(45deg, #4169e1, #5a7bff, #6c8cff, #7a9dff, #4169e1);
+                background-size: 600% 600%;
+                background-position: 0% 0%;
               }
             }
 
             .animate-smooth-gradient {
-              animation: smooth-gradient 20s ease infinite;
+              animation: smooth-gradient 30s ease infinite;
             }
           `}</style>
           <div className="text-center max-w-4xl mx-auto mb-12 relative z-10">
