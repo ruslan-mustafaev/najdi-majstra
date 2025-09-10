@@ -142,7 +142,7 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
                 <button
                   onClick={() => handleOptionSelect('client')}
                   disabled={!cookiesAccepted}
-                  className="w-full bg-green-500 text-white py-3 rounded-lg font-medium hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed text-base shadow-md hover:shadow-lg min-h-[56px] flex items-center justify-center"
+                  className="w-full bg-green-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed text-base shadow-md hover:shadow-lg flex items-center justify-center"
                 >
                   {t.popup.clientOption.button}
                 </button>
@@ -164,7 +164,7 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
                 <button
                   onClick={() => handleOptionSelect('master')}
                   disabled={!cookiesAccepted}
-                  className="w-full bg-green-500 text-white py-3 rounded-lg font-medium hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed text-base shadow-md hover:shadow-lg min-h-[56px] flex items-center justify-center"
+                  className="w-full bg-green-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed text-base shadow-md hover:shadow-lg flex items-center justify-center"
                 >
                   {t.popup.masterOption.button}
                 </button>
