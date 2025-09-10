@@ -18,8 +18,13 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
 
   const handleOptionSelect = (option: 'master' | 'client') => {
     if (cookiesAccepted) {
-      onUserTypeSelect(option);
-      onClose(); // Закрываем popup после выбора
+      if (option === 'master') {
+        // Для мастеров открываем регистрацию
+        onUserTypeSelect(option);
+      } else {
+        // Для клиентов просто закрываем popup без регистрации
+        onClose();
+      }
     }
   };
 
