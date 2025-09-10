@@ -67,15 +67,9 @@ export const Header: React.FC = () => {
               </h1>
             </div>
 
-            {/* Navigation */}
             {/* Right Section */}
             <div className="flex items-center space-x-4">
               <LanguageSwitcher />
-              
-              <button className="flex items-center space-x-2 text-white/90 hover:text-white transition-colors">
-                <Heart size={20} />
-                <span className="hidden sm:inline">{t.navigation.favorites}</span>
-              </button>
 
               {/* Auth Section */}
               {user ? (
