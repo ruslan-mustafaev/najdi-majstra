@@ -220,10 +220,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 name="userType"
                 value={formData.userType}
                 onChange={handleInputChange}
-                disabled={!!userType} // Disable if userType is provided from props
-                className={`w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-[#4169e1] focus:border-transparent outline-none ${
-                  !formData.userType && !userType ? 'border-red-300 bg-red-50' : 'border-gray-300'
-                }`}
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#4169e1] focus:border-transparent outline-none"
                 required
               >
                 <option value="client">
@@ -233,16 +230,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   {language === 'sk' ? 'Majster (ponúkam služby)' : 'Master (offering services)'}
                 </option>
               </select>
-              {userType && (
-                <p className="text-sm text-blue-600 mt-1">
-                  {language === 'sk' ? 'Typ účtu bol automaticky nastavený na základe vášho výberu' : 'Account type was automatically set based on your selection'}
-                </p>
-              )}
-              {!userType && (
-                <p className="text-xs text-gray-500 mt-1">
-                  {language === 'sk' ? 'Vyberte, či hľadáte služby alebo ich ponúkate' : 'Choose whether you are looking for services or offering them'}
-                </p>
-              )}
+              <p className="text-xs text-gray-500 mt-1">
+                {language === 'sk' ? 'Vyberte, či hľadáte služby alebo ich ponúkate' : 'Choose whether you are looking for services or offering them'}
+              </p>
             </div>
           )}
 
