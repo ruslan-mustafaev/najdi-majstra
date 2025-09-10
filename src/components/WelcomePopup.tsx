@@ -172,8 +172,8 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
           </div>
 
           {/* Promotional Banner */}
-          <div className="text-center mb-4 sm:mb-6 py-3 px-4 bg-gradient-to-r from-blue-50 to-green-50 rounded-lg border border-blue-200">
-            <p className="text-sm sm:text-base font-semibold text-gray-800">
+          <div className="text-center mb-4 sm:mb-6">
+            <p className="text-gray-600 text-xs sm:text-base leading-relaxed">
               <strong className="text-blue-600">Nikde</strong> lepšieho majstra nenájdete, registrácia zdarma pre majstrov.
             </p>
           </div>
