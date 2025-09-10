@@ -230,6 +230,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   {language === 'sk' ? 'Majster (ponúkam služby)' : 'Master (offering services)'}
                 </option>
               </select>
+              {userType && (
+                <p className="text-sm text-blue-600 mt-1">
+                  {language === 'sk' 
+                    ? `Automaticky nastavené na "${userType === 'client' ? 'Klient' : 'Majster'}" podľa vášho výberu. Môžete zmeniť vyššie.`
+                    : `Automatically set to "${userType === 'client' ? 'Client' : 'Master'}" based on your choice. You can change above.`
+                  }
+                </p>
+              )}
               <p className="text-xs text-gray-500 mt-1">
                 {language === 'sk' ? 'Vyberte, či hľadáte služby alebo ich ponúkate' : 'Choose whether you are looking for services or offering them'}
               </p>
