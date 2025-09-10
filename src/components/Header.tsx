@@ -73,13 +73,7 @@ export const Header: React.FC = () => {
 
               {/* Auth Section */}
               {user ? (
-                <>
-                  <UserMenu />
-                  <button className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2">
-                    <Plus size={20} />
-                    <span className="hidden sm:inline">Pridať inzerát</span>
-                  </button>
-                </>
+                <UserMenu />
               ) : (
                 <>
                   <button 
