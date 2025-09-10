@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Users, Search, Cookie, Handshake } from 'lucide-react';
+import { X, Users, Search, Cookie } from 'lucide-react';
 import { useLanguage } from '../hooks/useLanguage';
 import { translations } from '../data/translations';
 
@@ -67,9 +67,8 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
             <h2 className="text-lg sm:text-3xl font-bold text-gray-900 mb-2 sm:mb-4">
               {t.popup.title}
             </h2>
-            <p className="text-gray-600 text-xs sm:text-base leading-relaxed flex items-center justify-center gap-2">
-              Pre tých ktorý sa chcú dohodnúť
-              <Handshake className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
+            <p className="text-gray-600 text-xs sm:text-base leading-relaxed">
+              Potrebuje rýchlo alebo plánovanie pomôcť alebo najsť odborníka a aj pre tých ktorí chcú zvýšiť svoj príjem a mať viac zákazníkov a viac zákaziek počas celého roka. Registrujte sa zadarmo.
             </p>
           </div>
 
@@ -86,43 +85,14 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
                     {t.popup.clientOption.title}
                   </h3>
                   <p className="text-gray-600 text-sm leading-snug">
-                    {t.popup.clientOption.description || 'Hľadáte odborníka pre vašu prácu'}
+                    {t.popup.clientOption.description}
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => handleOptionSelect('client')}
                 disabled={!cookiesAccepted}
-                style={{
-                  width: '100%',
-                  marginTop: '16px',
-                  backgroundColor: cookiesAccepted ? '#10b981' : '#d1d5db',
-                  color: 'white',
-                  padding: '14px 16px',
-                  borderRadius: '8px 8px 32px 8px',
-                  fontWeight: '600',
-                  fontSize: '14px',
-                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-                  border: 'none',
-                  cursor: cookiesAccepted ? 'pointer' : 'not-allowed',
-                  minHeight: '56px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  transition: 'all 0.2s'
-                }}
-                onMouseEnter={(e) => {
-                  if (cookiesAccepted) {
-                    e.currentTarget.style.backgroundColor = '#059669';
-                    e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (cookiesAccepted) {
-                    e.currentTarget.style.backgroundColor = '#10b981';
-                    e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)';
-                  }
-                }}
+                className="w-full mt-4 bg-green-500 text-white py-3.5 px-4 rounded-l-lg rounded-r-2xl font-semibold hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed text-sm shadow-lg hover:shadow-xl min-h-[56px] flex items-center justify-center"
               >
                 {t.popup.clientOption.button}
               </button>
@@ -139,43 +109,14 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
                     {t.popup.masterOption.title}
                   </h3>
                   <p className="text-gray-600 text-sm leading-snug">
-                    {t.popup.masterOption.description || 'Ponúkate svoje služby klientom'}
+                    {t.popup.masterOption.description}
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => handleOptionSelect('master')}
                 disabled={!cookiesAccepted}
-                style={{
-                  width: '100%',
-                  marginTop: '16px',
-                  backgroundColor: cookiesAccepted ? '#10b981' : '#d1d5db',
-                  color: 'white',
-                  padding: '14px 16px',
-                  borderRadius: '8px 8px 32px 8px',
-                  fontWeight: '600',
-                  fontSize: '14px',
-                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-                  border: 'none',
-                  cursor: cookiesAccepted ? 'pointer' : 'not-allowed',
-                  minHeight: '56px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  transition: 'all 0.2s'
-                }}
-                onMouseEnter={(e) => {
-                  if (cookiesAccepted) {
-                    e.currentTarget.style.backgroundColor = '#059669';
-                    e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (cookiesAccepted) {
-                    e.currentTarget.style.backgroundColor = '#10b981';
-                    e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)';
-                  }
-                }}
+                className="w-full mt-4 bg-green-500 text-white py-3.5 px-4 rounded-l-lg rounded-r-2xl font-semibold hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed text-sm shadow-lg hover:shadow-xl min-h-[56px] flex items-center justify-center"
               >
                 {t.popup.masterOption.button}
               </button>
@@ -194,40 +135,12 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
                   {t.popup.clientOption.title}
                 </h3>
                 <p className="text-gray-600 mb-4 text-base">
-                  {t.popup.clientOption.description || 'Hľadáte odborníka pre vašu prácu'}
+                  {t.popup.clientOption.description}
                 </p>
                 <button
                   onClick={() => handleOptionSelect('client')}
                   disabled={!cookiesAccepted}
-                  style={{
-                    width: '100%',
-                    backgroundColor: cookiesAccepted ? '#10b981' : '#d1d5db',
-                    color: 'white',
-                    padding: '12px',
-                    borderRadius: '8px',
-                    fontWeight: '500',
-                    fontSize: '16px',
-                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-                    border: 'none',
-                    cursor: cookiesAccepted ? 'pointer' : 'not-allowed',
-                    minHeight: '56px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    transition: 'all 0.2s'
-                  }}
-                  onMouseEnter={(e) => {
-                    if (cookiesAccepted) {
-                      e.currentTarget.style.backgroundColor = '#059669';
-                      e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (cookiesAccepted) {
-                      e.currentTarget.style.backgroundColor = '#10b981';
-                      e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)';
-                    }
-                  }}
+                  className="w-full bg-green-500 text-white py-3 rounded-lg font-medium hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed text-base shadow-md hover:shadow-lg min-h-[56px] flex items-center justify-center"
                 >
                   {t.popup.clientOption.button}
                 </button>
@@ -244,52 +157,17 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
                   {t.popup.masterOption.title}
                 </h3>
                 <p className="text-gray-600 mb-4 text-base">
-                  {t.popup.masterOption.description || 'Ponúkате svoje služby klientom'}
+                  {t.popup.masterOption.description}
                 </p>
                 <button
                   onClick={() => handleOptionSelect('master')}
                   disabled={!cookiesAccepted}
-                  style={{
-                    width: '100%',
-                    backgroundColor: cookiesAccepted ? '#10b981' : '#d1d5db',
-                    color: 'white',
-                    padding: '12px',
-                    borderRadius: '8px',
-                    fontWeight: '500',
-                    fontSize: '16px',
-                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-                    border: 'none',
-                    cursor: cookiesAccepted ? 'pointer' : 'not-allowed',
-                    minHeight: '56px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    transition: 'all 0.2s'
-                  }}
-                  onMouseEnter={(e) => {
-                    if (cookiesAccepted) {
-                      e.currentTarget.style.backgroundColor = '#059669';
-                      e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (cookiesAccepted) {
-                      e.currentTarget.style.backgroundColor = '#10b981';
-                      e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)';
-                    }
-                  }}
+                  className="w-full bg-green-500 text-white py-3 rounded-lg font-medium hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed text-base shadow-md hover:shadow-lg min-h-[56px] flex items-center justify-center"
                 >
                   {t.popup.masterOption.button}
                 </button>
               </div>
             </div>
-          </div>
-
-          {/* Promotional Banner */}
-          <div className="text-center mb-4 sm:mb-6">
-            <p className="text-gray-600 text-xs sm:text-base leading-relaxed">
-              <strong className="text-blue-600">Nikde</strong> lepšieho majstra nenájdete, registrácia zdarma pre majstrov.
-            </p>
           </div>
 
           {/* Cookies Consent */}
