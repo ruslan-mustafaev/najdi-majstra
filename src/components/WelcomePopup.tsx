@@ -164,7 +164,23 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
                 <button
                   onClick={() => handleOptionSelect('master')}
                   disabled={!cookiesAccepted}
-                  className="w-full bg-green-500 text-white py-3 rounded-lg font-medium hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed text-base shadow-md hover:shadow-lg min-h-[56px] flex items-center justify-center mt-4"
+                  className="w-full bg-green-500 text-white py-3 rounded-lg font-medium hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed text-base shadow-md hover:shadow-lg min-h-[56px] flex items-center justify-center"
+                >
+                  {t.popup.masterOption.button}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Add spacing for master button */}
+          <div className="hidden sm:block">
+            <div className="grid grid-cols-2 gap-6">
+              <div></div>
+              <div className="mt-4">
+                <button
+                  onClick={() => handleOptionSelect('master')}
+                  disabled={!cookiesAccepted}
+                  className="w-full bg-green-500 text-white py-3 rounded-lg font-medium hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed text-base shadow-md hover:shadow-lg min-h-[56px] flex items-center justify-center"
                 >
                   {t.popup.masterOption.button}
                 </button>
