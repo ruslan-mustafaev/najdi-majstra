@@ -68,8 +68,8 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
               {t.popup.title}
             </h2>
             <p className="text-gray-600 text-xs sm:text-base leading-relaxed flex items-center justify-center gap-2">
-              <Handshake className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
               Pre tých ktorý sa chcú dohodnúť
+              <Handshake className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
             </p>
           </div>
 
