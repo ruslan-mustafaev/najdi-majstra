@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Users, Search, Cookie } from 'lucide-react';
+import { X, Users, Search, Cookie, Handshake } from 'lucide-react';
 import { useLanguage } from '../hooks/useLanguage';
 import { translations } from '../data/translations';
 
@@ -19,6 +19,7 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
   const handleOptionSelect = (option: 'master' | 'client') => {
     if (cookiesAccepted) {
       onUserTypeSelect(option);
+      onClose(); // Закрываем popup после выбора
     }
   };
 
@@ -67,8 +68,9 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
             <h2 className="text-lg sm:text-3xl font-bold text-gray-900 mb-2 sm:mb-4">
               {t.popup.title}
             </h2>
-            <p className="text-gray-600 text-xs sm:text-base leading-relaxed">
-              Potrebuje rýchlo alebo plánovanie pomôcť alebo najsť odborníka a aj pre tých ktorí chcú zvýšiť svoj príjem a mať viac zákazníkov a viac zákaziek počas celého roka. Registrujte sa zadarmo.
+            <p className="text-gray-600 text-xs sm:text-base leading-relaxed flex items-center justify-center gap-2">
+              Pre tých ktorý sa chcú dohodnúť
+              <Handshake className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
             </p>
           </div>
 
@@ -85,7 +87,7 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
                     {t.popup.clientOption.title}
                   </h3>
                   <p className="text-gray-600 text-sm leading-snug">
-                    {t.popup.clientOption.description}
+                    {t.popup.clientOption.description || 'Hľadáte odborníka pre vašu prácu'}
                   </p>
                 </div>
               </div>
@@ -109,7 +111,7 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
                     {t.popup.masterOption.title}
                   </h3>
                   <p className="text-gray-600 text-sm leading-snug">
-                    {t.popup.masterOption.description}
+                    {t.popup.masterOption.description || 'Ponúkate svoje služby klientom'}
                   </p>
                 </div>
               </div>
@@ -135,7 +137,7 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
                   {t.popup.clientOption.title}
                 </h3>
                 <p className="text-gray-600 mb-4 text-base">
-                  {t.popup.clientOption.description}
+                  {t.popup.clientOption.description || 'Hľadáte odborníka pre vašu prácu'}
                 </p>
                 <button
                   onClick={() => handleOptionSelect('client')}
@@ -157,7 +159,7 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
                   {t.popup.masterOption.title}
                 </h3>
                 <p className="text-gray-600 mb-4 text-base">
-                  {t.popup.masterOption.description}
+                  {t.popup.masterOption.description || 'Ponúkate svoje služby klientom'}
                 </p>
                 <button
                   onClick={() => handleOptionSelect('master')}
@@ -168,6 +170,13 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
                 </button>
               </div>
             </div>
+          </div>
+
+          {/* Promotional Banner */}
+          <div className="text-center mb-4 sm:mb-6">
+            <p className="text-gray-600 text-xs sm:text-base leading-relaxed">
+              <strong className="text-blue-600">Nikde</strong> lepšieho majstra nenájdete, registrácia zdarma pre majstrov.
+            </p>
           </div>
 
           {/* Cookies Consent */}
