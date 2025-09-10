@@ -27,7 +27,7 @@ export const translations = {
       subtitle: 'Rýchlo, lacno a jednoducho nájdite kvalifikovaného odborníka zo svojej lokality',
       urgentRepair: 'AKÚTNA PORUCHA',
       regularService: 'PRAVIDELNÝ SERVIS',
-      realization: 'REALIZÁCIA'
+      realization: 'PLÁNOVANÁ REALIZÁCIA'
     },
     search: {
       city: 'Mesto',
