@@ -19,6 +19,7 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
   const handleOptionSelect = (option: 'master' | 'client') => {
     if (cookiesAccepted) {
       onUserTypeSelect(option);
+      onClose(); // Закрываем popup после выбора
     }
   };
 
@@ -86,7 +87,7 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
                     {t.popup.clientOption.title}
                   </h3>
                   <p className="text-gray-600 text-sm leading-snug">
-                    {t.popup.clientOption.description}
+                    {t.popup.clientOption.description || 'Hľadáte odborníka pre vašu prácu'}
                   </p>
                 </div>
               </div>
@@ -110,7 +111,7 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
                     {t.popup.masterOption.title}
                   </h3>
                   <p className="text-gray-600 text-sm leading-snug">
-                    {t.popup.masterOption.description}
+                    {t.popup.masterOption.description || 'Ponúkate svoje služby klientom'}
                   </p>
                 </div>
               </div>
@@ -136,7 +137,7 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
                   {t.popup.clientOption.title}
                 </h3>
                 <p className="text-gray-600 mb-4 text-base">
-                  {t.popup.clientOption.description}
+                  {t.popup.clientOption.description || 'Hľadáte odborníka pre vašu prácu'}
                 </p>
                 <button
                   onClick={() => handleOptionSelect('client')}
@@ -158,7 +159,7 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
                   {t.popup.masterOption.title}
                 </h3>
                 <p className="text-gray-600 mb-4 text-base">
-                  {t.popup.masterOption.description}
+                  {t.popup.masterOption.description || 'Ponúkate svoje služby klientom'}
                 </p>
                 <button
                   onClick={() => handleOptionSelect('master')}
