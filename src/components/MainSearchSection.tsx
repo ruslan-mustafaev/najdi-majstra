@@ -296,151 +296,114 @@ export const MainSearchSection: React.FC<MainSearchSectionProps> = ({ onSearch, 
     <>
       {/* Hero Section */}
       <section className="relative text-white py-16 pt-32 overflow-hidden">
-        {/* Многослойный анимированный градиентный фон */}
+        {/* Мягкий анимированный градиентный фон */}
         <div className="absolute inset-0">
-          <div className="absolute inset-0 animate-gradient-wave opacity-90" />
-          <div className="absolute inset-0 animate-gradient-pulse opacity-70" />
-          <div className="absolute inset-0 animate-gradient-flow opacity-80" />
+          <div className="absolute inset-0 animate-gentle-flow" />
+          <div className="absolute inset-0 animate-soft-pulse opacity-60" />
         </div>
         
-        {/* Interactive Floating Elements */}
-        <div className="absolute top-10 left-10 w-32 h-32 bg-white/5 rounded-full blur-xl animate-float"></div>
-        <div className="absolute top-32 right-20 w-24 h-24 bg-cyan-300/10 rounded-full blur-lg animate-float-delayed"></div>
-        <div className="absolute bottom-20 left-1/4 w-40 h-40 bg-purple-400/5 rounded-full blur-2xl animate-float-slow"></div>
-        <div className="absolute bottom-32 right-1/3 w-28 h-28 bg-white/8 rounded-full blur-xl animate-pulse-slow"></div>
+        {/* Мягкие плавающие элементы */}
+        <div className="absolute top-10 left-10 w-32 h-32 bg-white/3 rounded-full blur-xl animate-gentle-float"></div>
+        <div className="absolute top-32 right-20 w-24 h-24 bg-cyan-300/5 rounded-full blur-lg animate-gentle-float-delayed"></div>
+        <div className="absolute bottom-20 left-1/4 w-40 h-40 bg-purple-400/3 rounded-full blur-2xl animate-gentle-float-slow"></div>
         
-        {/* Shimmer Effect */}
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-x-12 animate-shimmer"></div>
+        {/* Мягкий блеск */}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/2 to-transparent -skew-x-12 animate-gentle-shimmer"></div>
         
         <div className="container mx-auto px-4">
           <style jsx>{`
-            @keyframes gradient-wave {
+            @keyframes gentle-flow {
               0% {
-                background: linear-gradient(45deg, #4169e1 0%, #5a7bff 25%, #6c8cff 50%, #7a9dff 75%, #87ceeb 100%);
-                background-position: 0% 50%;
+                background: linear-gradient(135deg, #4169e1, #5a7bff, #6c8cff, #7a9dff);
               }
               25% {
-                background: linear-gradient(90deg, #5a7bff 0%, #6c8cff 25%, #7a9dff 50%, #87ceeb 75%, #4169e1 100%);
-                background-position: 25% 75%;
+                background: linear-gradient(180deg, #5a7bff, #6c8cff, #7a9dff, #87ceeb);
               }
               50% {
-                background: linear-gradient(135deg, #6c8cff 0%, #7a9dff 25%, #87ceeb 50%, #4169e1 75%, #5a7bff 100%);
-                background-position: 50% 100%;
+                background: linear-gradient(225deg, #6c8cff, #7a9dff, #87ceeb, #4169e1);
               }
               75% {
-                background: linear-gradient(180deg, #7a9dff 0%, #87ceeb 25%, #4169e1 50%, #5a7bff 75%, #6c8cff 100%);
-                background-position: 75% 25%;
+                background: linear-gradient(270deg, #7a9dff, #87ceeb, #4169e1, #5a7bff);
               }
               100% {
-                background: linear-gradient(225deg, #87ceeb 0%, #4169e1 25%, #5a7bff 50%, #6c8cff 75%, #7a9dff 100%);
-                background-position: 100% 50%;
+                background: linear-gradient(135deg, #4169e1, #5a7bff, #6c8cff, #7a9dff);
               }
             }
             
-            @keyframes gradient-pulse {
+            @keyframes soft-pulse {
               0%, 100% {
-                background: radial-gradient(circle at 20% 80%, #4169e1 0%, transparent 50%),
-                           radial-gradient(circle at 80% 20%, #5a7bff 0%, transparent 50%);
-              }
-              33% {
-                background: radial-gradient(circle at 40% 40%, #6c8cff 0%, transparent 50%),
-                           radial-gradient(circle at 60% 60%, #7a9dff 0%, transparent 50%);
-              }
-              66% {
-                background: radial-gradient(circle at 70% 30%, #87ceeb 0%, transparent 50%),
-                           radial-gradient(circle at 30% 70%, #4169e1 0%, transparent 50%);
-              }
-            }
-            
-            @keyframes gradient-flow {
-              0% {
-                background: linear-gradient(270deg, #4169e1, #5a7bff, #6c8cff, #7a9dff, #87ceeb);
-                background-position: 0% 50%;
+                background: radial-gradient(circle at 30% 70%, rgba(65,105,225,0.3) 0%, transparent 60%);
               }
               50% {
-                background: linear-gradient(270deg, #4169e1, #5a7bff, #6c8cff, #7a9dff, #87ceeb);
-                background-position: 100% 50%;
-              }
-              100% {
-                background: linear-gradient(270deg, #4169e1, #5a7bff, #6c8cff, #7a9dff, #87ceeb);
-                background-position: 0% 50%;
+                background: radial-gradient(circle at 70% 30%, rgba(90,123,255,0.3) 0%, transparent 60%);
               }
             }
             
-            .animate-gradient-wave {
-              animation: gradient-wave 8s ease-in-out infinite;
-              background-size: 400% 400%;
+            .animate-gentle-flow {
+              animation: gentle-flow 20s ease-in-out infinite;
             }
             
-            .animate-gradient-pulse {
-              animation: gradient-pulse 6s ease-in-out infinite;
-              background-size: 300% 300%;
+            .animate-soft-pulse {
+              animation: soft-pulse 15s ease-in-out infinite;
             }
             
-            .animate-gradient-flow {
-              animation: gradient-flow 10s linear infinite;
-              background-size: 200% 200%;
-            }
-            @keyframes float {
+            @keyframes gentle-float {
               0%, 100% {
-                transform: translateY(0px) scale(1);
+                transform: translateY(0px);
               }
               50% {
-                transform: translateY(-20px) scale(1.1);
+                transform: translateY(-10px);
               }
             }
-            @keyframes float-delayed {
+            
+            @keyframes gentle-float-delayed {
               0%, 100% {
-                transform: translateY(0px) translateX(0px) scale(1);
-              }
-              33% {
-                transform: translateY(-15px) translateX(10px) scale(1.05);
-              }
-              66% {
-                transform: translateY(-5px) translateX(-10px) scale(0.95);
-              }
-            }
-            @keyframes float-slow {
-              0%, 100% {
-                transform: translateY(0px) rotate(0deg);
+                transform: translateY(0px) translateX(0px);
               }
               50% {
-                transform: translateY(-30px) rotate(180deg);
+                transform: translateY(-8px) translateX(5px);
               }
             }
-            @keyframes pulse-slow {
+            
+            @keyframes gentle-float-slow {
               0%, 100% {
-                opacity: 0.3;
-                transform: scale(1);
+                transform: translateY(0px);
               }
               50% {
-                opacity: 0.8;
-                transform: scale(1.2);
+                transform: translateY(-15px);
               }
             }
-            @keyframes shimmer {
-              0% {
+            
+            @keyframes gentle-shimmer {
+              0%, 100% {
                 transform: translateX(-100%) skewX(-12deg);
+                opacity: 0;
               }
-              100% {
-                transform: translateX(200%) skewX(-12deg);
+              10%, 90% {
+                opacity: 1;
+              }
+              50% {
+                transform: translateX(0%) skewX(-12deg);
+                opacity: 1;
               }
             }
-            .animate-float {
-              animation: float 6s ease-in-out infinite;
+            
+            .animate-gentle-float {
+              animation: gentle-float 12s ease-in-out infinite;
             }
-            .animate-float-delayed {
-              animation: float-delayed 8s ease-in-out infinite;
-              animation-delay: 2s;
+            
+            .animate-gentle-float-delayed {
+              animation: gentle-float-delayed 16s ease-in-out infinite;
+              animation-delay: 4s;
             }
-            .animate-float-slow {
-              animation: float-slow 15s linear infinite;
+            
+            .animate-gentle-float-slow {
+              animation: gentle-float-slow 20s ease-in-out infinite;
+              animation-delay: 8s;
             }
-            .animate-pulse-slow {
-              animation: pulse-slow 4s ease-in-out infinite;
-            }
-            .animate-shimmer {
-              animation: shimmer 3s ease-in-out infinite;
+            
+            .animate-gentle-shimmer {
+              animation: gentle-shimmer 25s ease-in-out infinite;
             }
           `}</style>
           <div className="text-center max-w-4xl mx-auto mb-12 relative z-10">
