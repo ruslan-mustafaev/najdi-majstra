@@ -64,6 +64,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       });
     }
   }, [isOpen, initialMode, userType]);
+  
   if (!isOpen) return null;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -83,6 +84,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     if (mode === 'register') {
       if (!formData.firstName || !formData.lastName) {
         setError(language === 'sk' ? 'Meno a priezvisko sú povinné' : 'First name and last name are required');
+        return false;
+      }
+      if (!formData.userType || (formData.userType !== 'client' && formData.userType !== 'master')) {
+        setError(language === 'sk' ? 'Vyberte typ účtu' : 'Please select account type');
         return false;
       }
       if (formData.password !== formData.confirmPassword) {
@@ -166,7 +171,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       lastName: '',
       phone: '',
       location: '',
-      userType: 'client'
+      userType: userType || 'client'
     });
   };
 
@@ -209,18 +214,18 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           {mode === 'register' && (
             <div>
               <label className="block text-gray-700 text-sm font-medium mb-2">
-                {language === 'sk' ? 'Typ účtu' : 'Account Type'}
+                {language === 'sk' ? 'Typ účtu *' : 'Account Type *'}
               </label>
               <select
                 name="userType"
                 value={formData.userType}
                 onChange={handleInputChange}
                 disabled={!!userType} // Disable if userType is provided from props
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#4169e1] focus:border-transparent outline-none"
+                className={`w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-[#4169e1] focus:border-transparent outline-none ${
+                  !formData.userType && !userType ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                }`}
+                required
               >
-                <option value="">
-                  {language === 'sk' ? '- Vyberte typ účtu -' : '- Select account type -'}
-                </option>
                 <option value="client">
                   {language === 'sk' ? 'Klient (hľadám majstra)' : 'Client (looking for master)'}
                 </option>
@@ -229,8 +234,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 </option>
               </select>
               {userType && (
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-blue-600 mt-1">
                   {language === 'sk' ? 'Typ účtu bol automaticky nastavený na základe vášho výberu' : 'Account type was automatically set based on your selection'}
+                </p>
+              )}
+              {!userType && (
+                <p className="text-xs text-gray-500 mt-1">
+                  {language === 'sk' ? 'Vyberte, či hľadáte služby alebo ich ponúkate' : 'Choose whether you are looking for services or offering them'}
                 </p>
               )}
             </div>
@@ -241,7 +251,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-gray-700 text-sm font-medium mb-2">
-                  {language === 'sk' ? 'Meno' : 'First Name'}
+                  {language === 'sk' ? 'Meno *' : 'First Name *'}
                 </label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
@@ -259,7 +269,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               
               <div>
                 <label className="block text-gray-700 text-sm font-medium mb-2">
-                  {language === 'sk' ? 'Priezvisko' : 'Last Name'}
+                  {language === 'sk' ? 'Priezvisko *' : 'Last Name *'}
                 </label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
@@ -277,31 +287,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             </div>
           )}
 
-          {/* Full Name Display (Register only) - Hidden field for backward compatibility */}
-          {mode === 'register' && (
-            <div className="hidden">
-              <label className="block text-gray-700 text-sm font-medium mb-2">
-                {language === 'sk' ? 'Celé meno' : 'Full Name'} 
-              </label>
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                <input
-                  type="text"
-                  name="fullName" 
-                  value={`${formData.firstName} ${formData.lastName}`}
-                  onChange={handleInputChange}
-                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#4169e1] focus:border-transparent outline-none"
-                  placeholder={language === 'sk' ? 'Vaše meno a priezvisko' : 'Your full name'} 
-                  readOnly
-                />
-              </div>
-            </div>
-          )}
-
           {/* Email */}
           <div>
             <label className="block text-gray-700 text-sm font-medium mb-2">
-              Email
+              Email *
             </label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
@@ -320,7 +309,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           {/* Password */}
           <div>
             <label className="block text-gray-700 text-sm font-medium mb-2">
-              {language === 'sk' ? 'Heslo' : 'Password'}
+              {language === 'sk' ? 'Heslo *' : 'Password *'}
             </label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
@@ -341,13 +330,18 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
+            {mode === 'register' && (
+              <p className="text-xs text-gray-500 mt-1">
+                {language === 'sk' ? 'Minimálne 6 znakov' : 'Minimum 6 characters'}
+              </p>
+            )}
           </div>
 
           {/* Confirm Password (Register only) */}
           {mode === 'register' && (
             <div>
               <label className="block text-gray-700 text-sm font-medium mb-2">
-                {language === 'sk' ? 'Potvrdiť heslo' : 'Confirm Password'}
+                {language === 'sk' ? 'Potvrdiť heslo *' : 'Confirm Password *'}
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
@@ -368,7 +362,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           {mode === 'register' && (
             <div>
               <label className="block text-gray-700 text-sm font-medium mb-2">
-                {language === 'sk' ? 'Telefón (voliteľné)' : 'Phone (optional)'}
+                {language === 'sk' ? 'Telefón' : 'Phone'}
               </label>
               <div className="relative">
                 <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
@@ -388,7 +382,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           {mode === 'register' && (
             <div>
               <label className="block text-gray-700 text-sm font-medium mb-2">
-                {language === 'sk' ? 'Mesto (voliteľné)' : 'City (optional)'}
+                {language === 'sk' ? 'Mesto' : 'City'}
               </label>
               <div className="relative">
                 <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
