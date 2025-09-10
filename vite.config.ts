@@ -6,6 +6,6 @@ export default defineConfig({
   plugins: [react()],
   assetsInclude: ['**/*.glb'],
   optimizeDeps: {
-    exclude: ['lucide-react'],
+    exclude: ['lucide-react', 'three'],
   },
 });
