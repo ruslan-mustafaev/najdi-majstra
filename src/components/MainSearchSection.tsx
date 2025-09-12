@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Search, Zap, Settings, Wrench, ChevronDown } from 'lucide-react';
 
-// Компонент интерактивного градиента
-const InteractiveGradient = () => {
+// Компонент дышащего градиента
+const BreathingGradient = () => {
   const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
   const containerRef = useRef(null);
 
@@ -22,29 +22,179 @@ const InteractiveGradient = () => {
   return (
     <div 
       ref={containerRef}
-      className="absolute inset-0 overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-102"
+      className="absolute inset-0 overflow-hidden"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      style={{
-        background: `radial-gradient(circle at ${mousePosition.x}% ${mousePosition.y}%, 
-          #4169e1 0%, 
-          #5a7bff 25%, 
-          #6c8cff 50%, 
-          #7a9dff 75%, 
-          #4169e1 100%)`
-      }}
     >
-      {/* Дополнительный слой для глубины */}
-      <div 
-        className="absolute inset-0 opacity-60 transition-all duration-500"
-        style={{
-          background: `radial-gradient(ellipse 80% 60% at ${mousePosition.x}% ${mousePosition.y}%, 
-            rgba(255, 255, 255, 0.1) 0%, 
-            rgba(147, 51, 234, 0.3) 30%, 
-            rgba(59, 130, 246, 0.2) 70%, 
-            transparent 100%)`
-        }}
-      />
+      <style>
+        {`
+          .breathing-bg {
+            animation: containerPulse 4s ease-in-out infinite;
+          }
+
+          .gradient-overlay {
+            animation: breathingGlow 3s ease-in-out infinite;
+          }
+
+          .wave-layer-1 {
+            animation: waveMotion1 5s ease-in-out infinite;
+          }
+
+          .wave-layer-2 {
+            animation: waveMotion2 4s ease-in-out infinite reverse;
+          }
+
+          .wave-layer-3 {
+            animation: waveMotion3 6s ease-in-out infinite;
+          }
+
+          .inner-glow {
+            animation: innerGlow 3.5s ease-in-out infinite;
+          }
+
+          @keyframes containerPulse {
+            0%, 100% { 
+              transform: scale(1);
+              box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+            }
+            50% { 
+              transform: scale(1.02);
+              box-shadow: 0 0 50px rgba(147, 51, 234, 0.5);
+            }
+          }
+
+          @keyframes breathingGlow {
+            0%, 100% {
+              opacity: 0.8;
+              transform: scale(1) rotate(0deg);
+            }
+            50% {
+              opacity: 1;
+              transform: scale(1.05) rotate(2deg);
+            }
+          }
+
+          @keyframes waveMotion1 {
+            0%, 100% {
+              transform: translateX(-10%) translateY(-5%) rotate(0deg) scale(1);
+              opacity: 0.6;
+            }
+            33% {
+              transform: translateX(5%) translateY(-10%) rotate(3deg) scale(1.1);
+              opacity: 0.8;
+            }
+            66% {
+              transform: translateX(-5%) translateY(5%) rotate(-2deg) scale(0.95);
+              opacity: 0.7;
+            }
+          }
+
+          @keyframes waveMotion2 {
+            0%, 100% {
+              transform: translateX(5%) translateY(10%) rotate(0deg) scale(1);
+              opacity: 0.5;
+            }
+            50% {
+              transform: translateX(-10%) translateY(-5%) rotate(-4deg) scale(1.15);
+              opacity: 0.7;
+            }
+          }
+
+          @keyframes waveMotion3 {
+            0%, 100% {
+              transform: translateX(0%) translateY(-8%) rotate(0deg) scale(1);
+              opacity: 0.4;
+            }
+            25% {
+              transform: translateX(8%) translateY(3%) rotate(2deg) scale(1.05);
+              opacity: 0.6;
+            }
+            75% {
+              transform: translateX(-3%) translateY(8%) rotate(-3deg) scale(0.9);
+              opacity: 0.5;
+            }
+          }
+
+          @keyframes innerGlow {
+            0%, 100% {
+              transform: scale(1);
+              opacity: 0.6;
+            }
+            50% {
+              transform: scale(1.2);
+              opacity: 0.9;
+            }
+          }
+        `}
+      </style>
+      
+      <div className="absolute inset-0 breathing-bg">
+        {/* Базовый градиент */}
+        <div 
+          className="absolute inset-0 gradient-overlay transition-all duration-300 ease-out"
+          style={{
+            background: `radial-gradient(ellipse 120% 80% at ${mousePosition.x}% ${mousePosition.y}%, rgba(59, 130, 246, 0.8) 0%, rgba(147, 51, 234, 0.6) 30%, rgba(236, 72, 153, 0.4) 60%, rgba(59, 130, 246, 0.2) 100%)`,
+            filter: 'blur(1px)'
+          }}
+        />
+        
+        {/* Волновые слои */}
+        <div 
+          className="absolute inset-0 wave-layer-1"
+          style={{
+            width: '120%',
+            height: '120%',
+            background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(147, 51, 234, 0.2) 50%, rgba(236, 72, 153, 0.1) 100%)',
+            borderRadius: '50%',
+            filter: 'blur(2px)',
+            transformOrigin: 'center',
+            transform: `translate(${(mousePosition.x - 50) * 0.05}px, ${(mousePosition.y - 50) * 0.05}px)`
+          }}
+        />
+        
+        <div 
+          className="absolute wave-layer-2"
+          style={{
+            top: '10%',
+            left: '10%',
+            width: '100%',
+            height: '100%',
+            background: 'radial-gradient(circle at 30% 70%, rgba(147, 51, 234, 0.4) 0%, rgba(59, 130, 246, 0.2) 40%, transparent 80%)',
+            borderRadius: '40%',
+            filter: 'blur(3px)',
+            transform: `translate(${(mousePosition.x - 50) * 0.03}px, ${(mousePosition.y - 50) * 0.03}px)`
+          }}
+        />
+        
+        <div 
+          className="absolute wave-layer-3"
+          style={{
+            top: '-10%',
+            left: '-10%',
+            width: '120%',
+            height: '120%',
+            background: 'linear-gradient(45deg, rgba(236, 72, 153, 0.2) 0%, rgba(59, 130, 246, 0.3) 50%, rgba(147, 51, 234, 0.1) 100%)',
+            borderRadius: '60%',
+            filter: 'blur(4px)',
+            transform: `translate(${(mousePosition.x - 50) * 0.02}px, ${(mousePosition.y - 50) * 0.02}px)`
+          }}
+        />
+        
+        {/* Внутреннее свечение */}
+        <div 
+          className="absolute inner-glow transition-all duration-300"
+          style={{
+            top: '15%',
+            left: '15%',
+            width: '70%',
+            height: '70%',
+            background: 'radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(147, 51, 234, 0.3) 30%, rgba(59, 130, 246, 0.2) 70%, transparent 100%)',
+            borderRadius: '50%',
+            filter: 'blur(1px)',
+            transform: `translate(${(mousePosition.x - 50) * 0.1}px, ${(mousePosition.y - 50) * 0.1}px) scale(${1 + (Math.max(0.3, 1 - Math.sqrt(Math.pow(mousePosition.x - 50, 2) + Math.pow(mousePosition.y - 50, 2)) / 100)) * 0.3})`
+          }}
+        />
+      </div>
     </div>
   );
 };
@@ -174,7 +324,7 @@ export const MainSearchSection = ({ onSearch, onMasterClick }) => {
   return (
     <>
       <section className="relative text-white py-16 pt-32 overflow-hidden">
-        {/* Интерактивный дышащий градиент как фон */}
+        {/* Дышащий градиент как фон */}
         <BreathingGradient />
         
         <div className="container mx-auto px-4 relative z-10">
