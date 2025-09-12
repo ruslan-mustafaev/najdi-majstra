@@ -174,8 +174,8 @@ export const MainSearchSection = ({ onSearch, onMasterClick }) => {
   return (
     <>
       <section className="relative text-white py-16 pt-32 overflow-hidden">
-        {/* Интерактивный градиент как фон */}
-        <InteractiveGradient />
+        {/* Интерактивный дышащий градиент как фон */}
+        <BreathingGradient />
         
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center max-w-4xl mx-auto mb-12">
