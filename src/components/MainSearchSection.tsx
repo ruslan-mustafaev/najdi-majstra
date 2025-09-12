@@ -1,20 +1,154 @@
 import React from 'react';
 import { Search, Zap, Settings, Wrench, ChevronDown } from 'lucide-react';
-import { useLanguage } from '../hooks/useLanguage';
-import { translations } from '../data/translations';
-import { ChatWindow } from './AIChat/ChatWindow';
-import { MasterRecommendations } from './AIChat/MasterRecommendations';
-import { ServiceType } from './AIChat/types';
 
-interface MainSearchSectionProps {
-  onSearch: (filters: {
-    city: string;
-    profession: string;
-    availability: string;
-    priceRange: string;
-  }) => void;
-  onMasterClick?: (masterId: string) => void;
-}
+// Компонент дышащего градиента
+const BreathingGradient = () => {
+  const [mousePosition, setMousePosition] = React.useState({ x: 50, y: 50 });
+  const containerRef = React.useRef(null);
+
+  const handleMouseMove = (e) => {
+    if (containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      setMousePosition({ x, y });
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setMousePosition({ x: 50, y: 50 });
+  };
+
+  return (
+    <div 
+      ref={containerRef}
+      className="absolute inset-0 overflow-hidden"
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+    >
+      {/* Базовый градиент */}
+      <div 
+        className="absolute inset-0 opacity-80 transition-all duration-300 ease-out"
+        style={{
+          background: `radial-gradient(ellipse 120% 80% at ${mousePosition.x}% ${mousePosition.y}%, rgba(65, 105, 225, 0.9) 0%, rgba(90, 123, 255, 0.7) 30%, rgba(108, 140, 255, 0.5) 60%, rgba(122, 157, 255, 0.3) 100%)`,
+          filter: 'blur(1px)',
+          animation: 'breathingGlow 3s ease-in-out infinite'
+        }}
+      />
+      
+      {/* Волновые слои */}
+      <div 
+        className="absolute inset-0 opacity-60"
+        style={{
+          background: 'linear-gradient(135deg, rgba(65, 105, 225, 0.3) 0%, rgba(90, 123, 255, 0.2) 50%, rgba(108, 140, 255, 0.1) 100%)',
+          animation: 'waveMotion1 5s ease-in-out infinite',
+          borderRadius: '50%',
+          filter: 'blur(2px)',
+          transform: `translate(${(mousePosition.x - 50) * 0.05}px, ${(mousePosition.y - 50) * 0.05}px)`
+        }}
+      />
+      
+      <div 
+        className="absolute top-[10%] left-[10%] w-full h-full opacity-50"
+        style={{
+          background: 'radial-gradient(circle at 30% 70%, rgba(90, 123, 255, 0.4) 0%, rgba(65, 105, 225, 0.2) 40%, transparent 80%)',
+          animation: 'waveMotion2 4s ease-in-out infinite reverse',
+          borderRadius: '40%',
+          filter: 'blur(3px)',
+          transform: `translate(${(mousePosition.x - 50) * 0.03}px, ${(mousePosition.y - 50) * 0.03}px)`
+        }}
+      />
+      
+      <div 
+        className="absolute -top-[10%] -left-[10%] w-[120%] h-[120%] opacity-40"
+        style={{
+          background: 'linear-gradient(45deg, rgba(108, 140, 255, 0.2) 0%, rgba(65, 105, 225, 0.3) 50%, rgba(90, 123, 255, 0.1) 100%)',
+          animation: 'waveMotion3 6s ease-in-out infinite',
+          borderRadius: '60%',
+          filter: 'blur(4px)',
+          transform: `translate(${(mousePosition.x - 50) * 0.02}px, ${(mousePosition.y - 50) * 0.02}px)`
+        }}
+      />
+      
+      {/* Внутреннее свечение */}
+      <div 
+        className="absolute top-[15%] left-[15%] w-[70%] h-[70%] opacity-60 transition-all duration-300"
+        style={{
+          background: 'radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(90, 123, 255, 0.3) 30%, rgba(65, 105, 225, 0.2) 70%, transparent 100%)',
+          borderRadius: '50%',
+          animation: 'innerGlow 3.5s ease-in-out infinite',
+          filter: 'blur(1px)',
+          transform: `translate(${(mousePosition.x - 50) * 0.1}px, ${(mousePosition.y - 50) * 0.1}px) scale(${1 + (Math.max(0.3, 1 - Math.sqrt(Math.pow(mousePosition.x - 50, 2) + Math.pow(mousePosition.y - 50, 2)) / 100)) * 0.3})`
+        }}
+      />
+      
+      <style jsx>{`
+        @keyframes breathingGlow {
+          0%, 100% {
+            opacity: 0.8;
+            transform: scale(1) rotate(0deg);
+          }
+          50% {
+            opacity: 1;
+            transform: scale(1.05) rotate(2deg);
+          }
+        }
+
+        @keyframes waveMotion1 {
+          0%, 100% {
+            transform: translateX(-10%) translateY(-5%) rotate(0deg) scale(1);
+            opacity: 0.6;
+          }
+          33% {
+            transform: translateX(5%) translateY(-10%) rotate(3deg) scale(1.1);
+            opacity: 0.8;
+          }
+          66% {
+            transform: translateX(-5%) translateY(5%) rotate(-2deg) scale(0.95);
+            opacity: 0.7;
+          }
+        }
+
+        @keyframes waveMotion2 {
+          0%, 100% {
+            transform: translateX(5%) translateY(10%) rotate(0deg) scale(1);
+            opacity: 0.5;
+          }
+          50% {
+            transform: translateX(-10%) translateY(-5%) rotate(-4deg) scale(1.15);
+            opacity: 0.7;
+          }
+        }
+
+        @keyframes waveMotion3 {
+          0%, 100% {
+            transform: translateX(0%) translateY(-8%) rotate(0deg) scale(1);
+            opacity: 0.4;
+          }
+          25% {
+            transform: translateX(8%) translateY(3%) rotate(2deg) scale(1.05);
+            opacity: 0.6;
+          }
+          75% {
+            transform: translateX(-3%) translateY(8%) rotate(-3deg) scale(0.9);
+            opacity: 0.5;
+          }
+        }
+
+        @keyframes innerGlow {
+          0%, 100% {
+            transform: scale(1);
+            opacity: 0.6;
+          }
+          50% {
+            transform: scale(1.2);
+            opacity: 0.9;
+          }
+        }
+      `}</style>
+    </div>
+  );
+};
 
 const CustomSelect = ({ label, value, onChange, options, placeholder, isOpen, onToggle }) => {
   const handleSelect = (optionValue) => {
@@ -69,10 +203,7 @@ const CustomSelect = ({ label, value, onChange, options, placeholder, isOpen, on
   );
 };
 
-export const MainSearchSection: React.FC<MainSearchSectionProps> = ({ onSearch, onMasterClick }) => {
-  const { language } = useLanguage();
-  const t = translations[language];
-  
+export const MainSearchSection = ({ onSearch, onMasterClick }) => {
   const [filters, setFilters] = React.useState({
     city: '',
     profession: '',
@@ -82,9 +213,9 @@ export const MainSearchSection: React.FC<MainSearchSectionProps> = ({ onSearch, 
 
   const [openSelect, setOpenSelect] = React.useState(null);
   const [chatOpen, setChatOpen] = React.useState(false);
-  const [currentServiceType, setCurrentServiceType] = React.useState<ServiceType>('urgent');
+  const [currentServiceType, setCurrentServiceType] = React.useState('urgent');
   const [recommendationsOpen, setRecommendationsOpen] = React.useState(false);
-  const [recommendedMasterIds, setRecommendedMasterIds] = React.useState<string[]>([]);
+  const [recommendedMasterIds, setRecommendedMasterIds] = React.useState([]);
 
   const handleSelectToggle = (selectName, isOpen) => {
     if (isOpen) {
@@ -108,147 +239,28 @@ export const MainSearchSection: React.FC<MainSearchSectionProps> = ({ onSearch, 
     onSearch(filters);
   };
 
-  const handleServiceButtonClick = (serviceType: ServiceType) => {
+  const handleServiceButtonClick = (serviceType) => {
     setCurrentServiceType(serviceType);
     setChatOpen(true);
   };
 
-  const handleMasterRecommendation = (masterIds: string[]) => {
-    setRecommendedMasterIds(masterIds);
-    setRecommendationsOpen(true);
-  };
-
-  const handleRecommendedMasterClick = (masterId: string) => {
-    setRecommendationsOpen(false);
-    setChatOpen(false);
-    if (onMasterClick) {
-      onMasterClick(masterId);
-    }
-  };
-
+  // Упрощенные опции для примера
   const cityOptions = [
-    { value: '', label: `- ${t.search.city} -`, isRegion: false },
-    { value: 'Celé Slovensko', label: 'Celé Slovensko', isRegion: false },
-    { value: 'Banskobystrický kraj', label: 'Banskobystrický kraj', isRegion: false },
-    { value: 'Bratislavský kraj', label: 'Bratislavský kraj', isRegion: false },
-    { value: 'Košický kraj', label: 'Košický kraj', isRegion: false },
-    { value: 'Nitriansky kraj', label: 'Nitriansky kraj', isRegion: false },
-    { value: 'Prešovský kraj', label: 'Prešovský kraj', isRegion: false },
-    { value: 'Trenčiansky kraj', label: 'Trenčiansky kraj', isRegion: false },
-    { value: 'Trnavský kraj', label: 'Trnavský kraj', isRegion: false },
-    { value: 'Žilinský kraj', label: 'Žilinský kraj', isRegion: false },
-    { value: 'region-bb', label: 'Banskobystrický kraj - mestá', isRegion: true },
-    { value: 'Banská Bystrica', label: 'Banská Bystrica', isRegion: false },
-    { value: 'Fiľakovo', label: 'Fiľakovo', isRegion: false },
-    { value: 'Lučenec', label: 'Lučenec', isRegion: false },
-    { value: 'Rimavská Sobota', label: 'Rimavská Sobota', isRegion: false },
-    { value: 'Zvolen', label: 'Zvolen', isRegion: false },
-    { value: 'region-ba', label: 'Bratislavský kraj - mestá', isRegion: true },
+    { value: '', label: '- Vyberte mesto -', isRegion: false },
     { value: 'Bratislava', label: 'Bratislava', isRegion: false },
-    { value: 'Bratislava - Devín', label: 'Bratislava - Devín', isRegion: false },
-    { value: 'Bratislava - Devínska Nová Ves', label: 'Bratislava - Devínska Nová Ves', isRegion: false },
-    { value: 'Malacky', label: 'Malacky', isRegion: false },
-    { value: 'Pezinok', label: 'Pezinok', isRegion: false },
-    { value: 'Senec', label: 'Senec', isRegion: false },
-    { value: 'region-ke', label: 'Košický kraj - mestá', isRegion: true },
     { value: 'Košice', label: 'Košice', isRegion: false },
-    { value: 'Michalovce', label: 'Michalovce', isRegion: false },
-    { value: 'Rožňava', label: 'Rožňava', isRegion: false },
-    { value: 'Spišská Nová Ves', label: 'Spišská Nová Ves', isRegion: false },
-    { value: 'Trebišov', label: 'Trebišov', isRegion: false },
-    { value: 'region-nr', label: 'Nitriansky kraj - mestá', isRegion: true },
-    { value: 'Nitra', label: 'Nitra', isRegion: false },
-    { value: 'Komárno', label: 'Komárno', isRegion: false },
-    { value: 'Levice', label: 'Levice', isRegion: false },
-    { value: 'Nové Zámky', label: 'Nové Zámky', isRegion: false },
-    { value: 'Topoľčany', label: 'Topoľčany', isRegion: false },
-    { value: 'region-po', label: 'Prešovský kraj - mestá', isRegion: true },
     { value: 'Prešov', label: 'Prešov', isRegion: false },
-    { value: 'Bardejov', label: 'Bardejov', isRegion: false },
-    { value: 'Humenné', label: 'Humenné', isRegion: false },
-    { value: 'Poprad', label: 'Poprad', isRegion: false },
-    { value: 'Stará Ľubovňa', label: 'Stará Ľubovňa', isRegion: false },
-    { value: 'Svidník', label: 'Svidník', isRegion: false },
-    { value: 'region-tn', label: 'Trenčiansky kraj - mestá', isRegion: true },
-    { value: 'Trenčín', label: 'Trenčín', isRegion: false },
-    { value: 'Bánovce nad Bebravou', label: 'Bánovce nad Bebravou', isRegion: false },
-    { value: 'Myjava', label: 'Myjava', isRegion: false },
-    { value: 'Partizánske', label: 'Partizánske', isRegion: false },
-    { value: 'Považská Bystrica', label: 'Považská Bystrica', isRegion: false },
-    { value: 'Prievidza', label: 'Prievidza', isRegion: false },
-    { value: 'region-tt', label: 'Trnavský kraj - mestá', isRegion: true },
-    { value: 'Trnava', label: 'Trnava', isRegion: false },
-    { value: 'Dunajská Streda', label: 'Dunajská Streda', isRegion: false },
-    { value: 'Galanta', label: 'Galanta', isRegion: false },
-    { value: 'Hlohovec', label: 'Hlohovec', isRegion: false },
-    { value: 'Piešťany', label: 'Piešťany', isRegion: false },
-    { value: 'Senica', label: 'Senica', isRegion: false },
-    { value: 'region-za', label: 'Žilinský kraj - mestá', isRegion: true },
-    { value: 'Žilina', label: 'Žilina', isRegion: false },
-    { value: 'Bytča', label: 'Bytča', isRegion: false },
-    { value: 'Čadca', label: 'Čadca', isRegion: false },
-    { value: 'Dolný Kubín', label: 'Dolný Kubín', isRegion: false },
-    { value: 'Liptovský Mikuláš', label: 'Liptovský Mikuláš', isRegion: false },
-    { value: 'Martin', label: 'Martin', isRegion: false },
-    { value: 'Námestovo', label: 'Námestovo', isRegion: false },
-    { value: 'Ružomberok', label: 'Ružomberok', isRegion: false },
-    { value: 'Turčianske Teplice', label: 'Turčianske Teplice', isRegion: false }
   ];
 
   const professionOptions = [
-    { value: '', label: `- ${t.search.profession} -` },
-    { value: 'region-projektove', label: '1. Projektové profesie', isRegion: true },
-    { value: 'Architekt', label: 'Architekt', isRegion: false },
-    { value: 'Stavebný inžinier', label: 'Stavebný inžinier', isRegion: false },
-    { value: 'Statik', label: 'Statik', isRegion: false },
-    { value: 'Projektant TZB', label: 'Projektant TZB', isRegion: false },
-    { value: 'Projektant dopravných stavieb / Inžinier pre vonkajšie plochy', label: 'Projektant dopravných stavieb / Inžinier pre vonkajšie plochy', isRegion: false },
-    { value: 'Špecialista OZE', label: 'Špecialista OZE', isRegion: false },
-    { value: 'Geodet', label: 'Geodet', isRegion: false },
-    { value: 'Rozpočtár', label: 'Rozpočtár', isRegion: false },
-    { value: 'Interiérový dizajnér', label: 'Interiérový dizajnér', isRegion: false },
-    { value: 'Technik pre inžinierske siete', label: 'Technik pre inžinierske siete', isRegion: false },
-    { value: 'Projektant vonkajších rozvodov', label: 'Projektant vonkajších rozvodov', isRegion: false },
-    { value: 'region-dozorne', label: '2. Dozorné a manažérske profesie', isRegion: true },
-    { value: 'Stavebník / Investor', label: 'Stavebník / Investor', isRegion: false },
-    { value: 'Projektový manažér', label: 'Projektový manažér', isRegion: false },
-    { value: 'Stavbyvedúci', label: 'Stavbyvedúci', isRegion: false },
-    { value: 'Stavebný dozor', label: 'Stavebný dozor', isRegion: false },
-    { value: 'Koordinátor BOZP', label: 'Koordinátor BOZP', isRegion: false },
-    { value: 'Právnik pre stavebné právo', label: 'Právnik pre stavebné právo', isRegion: false },
-    { value: 'region-interier', label: '3. Profesie pre interiér', isRegion: true },
-    { value: 'Inštalatér', label: 'Inštalatér', isRegion: false },
+    { value: '', label: '- Vyberte profesiu -' },
     { value: 'Elektrikár', label: 'Elektrikár', isRegion: false },
-    { value: 'Sadrokartonista', label: 'Sadrokartonista', isRegion: false },
-    { value: 'Omietkar', label: 'Omietkar', isRegion: false },
-    { value: 'Maliar / Natierač', label: 'Maliar / Natierač', isRegion: false },
-    { value: 'Obkladač', label: 'Obkladač', isRegion: false },
-    { value: 'Podlahár', label: 'Podlahár', isRegion: false },
-    { value: 'Stolár / Interiérový montážnik', label: 'Stolár / Interiérový montážnik', isRegion: false },
-    { value: 'Štukatér', label: 'Štukatér', isRegion: false },
-    { value: 'Kameník', label: 'Kameník', isRegion: false },
-    { value: 'region-exterier', label: '4. Profesie pre exteriér', isRegion: true },
-    { value: 'Bagrista / Zemné práce', label: 'Bagrista / Zemné práce', isRegion: false },
+    { value: 'Inštalatér', label: 'Inštalatér', isRegion: false },
     { value: 'Murár', label: 'Murár', isRegion: false },
-    { value: 'Tesár', label: 'Tesár', isRegion: false },
-    { value: 'Elektrikár (exteriér)', label: 'Elektrikár', isRegion: false },
-    { value: 'Betonár', label: 'Betonár', isRegion: false },
-    { value: 'Klampiar / Pokrývač', label: 'Klampiar / Pokrývač', isRegion: false },
-    { value: 'Fasádnik / Izolatér', label: 'Fasádnik / Izolatér', isRegion: false },
-    { value: 'Okenár / Dvereár', label: 'Okenár / Dvereár', isRegion: false },
-    { value: 'Stavebný zámočník', label: 'Stavebný zámočník', isRegion: false },
-    { value: 'Dláždič / Cestár', label: 'Dláždič / Cestár', isRegion: false },
-    { value: 'Terénny úpravca / Záhradník', label: 'Terénny úpravca / Záhradník', isRegion: false },
-    { value: 'region-specializacie', label: '5. Profesie a špecializácie', isRegion: true },
-    { value: 'Technik pre inteligentné domácnosti', label: 'Technik pre inteligentné domácnosti', isRegion: false },
-    { value: 'Špecialista na obnoviteľné zdroje energie', label: 'Špecialista na obnoviteľné zdroje energie', isRegion: false },
-    { value: 'Akustický inžinier', label: 'Akustický inžinier', isRegion: false },
-    { value: 'Revízny technik', label: 'Revízny technik', isRegion: false },
-    { value: 'Fotovoltik / Montážnik', label: 'Fotovoltik / Montážnik', isRegion: false }
   ];
 
   const availabilityOptions = [
-    { value: '', label: `- ${t.search.availability} -` },
+    { value: '', label: '- Dostupnosť -' },
     { value: 'Dostupný teraz', label: 'Dostupný teraz' },
     { value: 'Tento týždeň', label: 'Tento týždeň' },
     { value: 'Tento mesiac', label: 'Tento mesiac' }
@@ -259,68 +271,44 @@ export const MainSearchSection: React.FC<MainSearchSectionProps> = ({ onSearch, 
     { value: '1 rok a viac', label: '1 rok a viac' },
     { value: '3 roky a viac', label: '3 roky a viac' },
     { value: '5 rokov a viac', label: '5 rokov a viac' },
-    { value: '10 rokov a viac', label: '10 rokov a viac' },
-    { value: '20 rokov a viac', label: '20 rokov a viac' }
   ];
 
   return (
     <>
       <section className="relative text-white py-16 pt-32 overflow-hidden">
-        <div className="absolute inset-0 animate-smooth-gradient"></div>
+        {/* Dышащий градиент как фон */}
+        <BreathingGradient />
         
-        <div className="container mx-auto px-4">
-          <style jsx>{`
-            @keyframes smooth-gradient {
-              0% {
-                background: linear-gradient(45deg, #4169e1, #5a7bff, #6c8cff, #7a9dff, #4169e1);
-                background-size: 600% 600%;
-                background-position: 0% 0%;
-              }
-              50% {
-                background: linear-gradient(45deg, #4169e1, #5a7bff, #6c8cff, #7a9dff, #4169e1);
-                background-size: 600% 600%;
-                background-position: 100% 100%;
-              }
-              100% {
-                background: linear-gradient(45deg, #4169e1, #5a7bff, #6c8cff, #7a9dff, #4169e1);
-                background-size: 600% 600%;
-                background-position: 0% 0%;
-              }
-            }
-
-            .animate-smooth-gradient {
-              animation: smooth-gradient 30s ease infinite;
-            }
-          `}</style>
-          <div className="text-center max-w-4xl mx-auto mb-12 relative z-10">
-            <h2 className="relative z-10 text-4xl md:text-5xl font-bold mb-6 leading-tight drop-shadow-lg">
-              {t.hero.title}
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="text-center max-w-4xl mx-auto mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight drop-shadow-lg">
+              Nájdite kvalitných remeselníkov
             </h2>
-            <p className="relative z-10 text-xl md:text-2xl text-white/90 mb-8 drop-shadow-md">
-              {t.hero.subtitle}
+            <p className="text-xl md:text-2xl text-white/90 mb-8 drop-shadow-md">
+              Rýchlo, spoľahlivo, overené
             </p>
 
-            <div className="relative z-10 flex flex-wrap justify-center gap-4 mb-12">
+            <div className="flex flex-wrap justify-center gap-4 mb-12">
               <button 
                 onClick={() => handleServiceButtonClick('urgent')}
                 className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 flex items-center space-x-2 shadow-lg hover:shadow-xl hover:scale-105 hover:-translate-y-1 backdrop-blur-sm border border-white/10"
               >
                 <Zap size={20} />
-                <span>{t.hero.urgentRepair}</span>
+                <span>Urgentná oprava</span>
               </button>
               <button 
                 onClick={() => handleServiceButtonClick('regular')}
                 className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 flex items-center space-x-2 shadow-lg hover:shadow-xl hover:scale-105 hover:-translate-y-1 backdrop-blur-sm border border-white/10"
               >
                 <Settings size={20} />
-                <span>{t.hero.regularService}</span>
+                <span>Pravidelná služba</span>
               </button>
               <button 
                 onClick={() => handleServiceButtonClick('realization')}
                 className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 flex items-center space-x-2 shadow-lg hover:shadow-xl hover:scale-105 hover:-translate-y-1 backdrop-blur-sm border border-white/10"
               >
                 <Wrench size={20} />
-                <span>{t.hero.realization}</span>
+                <span>Realizácia</span>
               </button>
             </div>
           </div>
@@ -338,31 +326,31 @@ export const MainSearchSection: React.FC<MainSearchSectionProps> = ({ onSearch, 
             <div className="relative z-10">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                 <CustomSelect
-                  label={t.search.city}
+                  label="Mesto"
                   value={filters.city}
                   onChange={(value) => setFilters(prev => ({ ...prev, city: value }))}
                   options={cityOptions}
-                  placeholder={`- ${t.search.city} -`}
+                  placeholder="- Vyberte mesto -"
                   isOpen={openSelect === 'city'}
                   onToggle={(isOpen) => handleSelectToggle('city', isOpen)}
                 />
                 
                 <CustomSelect
-                  label={t.search.profession}
+                  label="Profesia"
                   value={filters.profession}
                   onChange={(value) => setFilters(prev => ({ ...prev, profession: value }))}
                   options={professionOptions}
-                  placeholder={`- ${t.search.profession} -`}
+                  placeholder="- Vyberte profesiu -"
                   isOpen={openSelect === 'profession'}
                   onToggle={(isOpen) => handleSelectToggle('profession', isOpen)}
                 />
                 
                 <CustomSelect
-                  label={t.search.availability}
+                  label="Dostupnosť"
                   value={filters.availability}
                   onChange={(value) => setFilters(prev => ({ ...prev, availability: value }))}
                   options={availabilityOptions}
-                  placeholder={`- ${t.search.availability} -`}
+                  placeholder="- Dostupnosť -"
                   isOpen={openSelect === 'availability'}
                   onToggle={(isOpen) => handleSelectToggle('availability', isOpen)}
                 />
@@ -383,27 +371,13 @@ export const MainSearchSection: React.FC<MainSearchSectionProps> = ({ onSearch, 
                   className="bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-lg font-medium transition-colors flex items-center space-x-2 mx-auto"
                 >
                   <Search size={20} />
-                  <span>{t.search.searchButton}</span>
+                  <span>Hľadať</span>
                 </button>
               </div>
             </div>
           </div>
         </div>
       </section>
-
-      <ChatWindow
-        isOpen={chatOpen}
-        onClose={() => setChatOpen(false)}
-        serviceType={currentServiceType}
-        onMasterRecommendation={handleMasterRecommendation}
-      />
-
-      <MasterRecommendations
-        isOpen={recommendationsOpen}
-        onClose={() => setRecommendationsOpen(false)}
-        masterIds={recommendedMasterIds}
-        onMasterClick={handleRecommendedMasterClick}
-      />
     </>
   );
 };
