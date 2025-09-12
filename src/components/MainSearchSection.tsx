@@ -148,7 +148,7 @@ const BreathingGradient = () => {
             borderRadius: '50%',
             filter: 'blur(2px)',
             transformOrigin: 'center',
-            transform: `translate(${(mousePosition.x - 50) * 0.05}px, ${(mousePosition.y - 50) * 0.05}px)`
+            transform: `translate(${(mousePosition.x - 50) * 0.05}px, ${(mousePosition.y - 50) * 0.05}px) scale(${1 + Math.abs(mousePosition.x - 50) * 0.002})`
           }}
         />
         
@@ -159,10 +159,10 @@ const BreathingGradient = () => {
             left: '10%',
             width: '100%',
             height: '100%',
-            background: 'radial-gradient(circle at 30% 70%, rgba(147, 51, 234, 0.4) 0%, rgba(59, 130, 246, 0.2) 40%, transparent 80%)',
+            background: `radial-gradient(ellipse ${100 + Math.abs(mousePosition.x - 50)}% ${100 + Math.abs(mousePosition.y - 50)}% at ${mousePosition.x}% ${mousePosition.y}%, rgba(147, 51, 234, 0.4) 0%, rgba(59, 130, 246, 0.2) 40%, transparent 80%)`,
             borderRadius: '40%',
             filter: 'blur(3px)',
-            transform: `translate(${(mousePosition.x - 50) * 0.03}px, ${(mousePosition.y - 50) * 0.03}px)`
+            transform: `translate(${(mousePosition.x - 50) * 0.03}px, ${(mousePosition.y - 50) * 0.03}px) rotate(${(mousePosition.x - 50) * 0.1}deg) scale(${1 + Math.abs(mousePosition.y - 50) * 0.003})`
           }}
         />
         
@@ -173,10 +173,10 @@ const BreathingGradient = () => {
             left: '-10%',
             width: '120%',
             height: '120%',
-            background: 'linear-gradient(45deg, rgba(236, 72, 153, 0.2) 0%, rgba(59, 130, 246, 0.3) 50%, rgba(147, 51, 234, 0.1) 100%)',
+            background: `linear-gradient(${45 + (mousePosition.x - 50) * 0.5}deg, rgba(236, 72, 153, ${0.2 + Math.abs(mousePosition.x - 50) * 0.002}) 0%, rgba(59, 130, 246, ${0.3 + Math.abs(mousePosition.y - 50) * 0.002}) 50%, rgba(147, 51, 234, 0.1) 100%)`,
             borderRadius: '60%',
             filter: 'blur(4px)',
-            transform: `translate(${(mousePosition.x - 50) * 0.02}px, ${(mousePosition.y - 50) * 0.02}px)`
+            transform: `translate(${(mousePosition.x - 50) * 0.02}px, ${(mousePosition.y - 50) * 0.02}px) rotate(${(mousePosition.y - 50) * 0.1}deg) scale(${1 + (Math.abs(mousePosition.x - 50) + Math.abs(mousePosition.y - 50)) * 0.001})`
           }}
         />
         
@@ -188,10 +188,10 @@ const BreathingGradient = () => {
             left: '15%',
             width: '70%',
             height: '70%',
-            background: 'radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(147, 51, 234, 0.3) 30%, rgba(59, 130, 246, 0.2) 70%, transparent 100%)',
+            background: `radial-gradient(ellipse ${100 + Math.abs(mousePosition.x - 50) * 0.8}% ${100 + Math.abs(mousePosition.y - 50) * 0.8}% at ${mousePosition.x}% ${mousePosition.y}%, rgba(255, 255, 255, ${0.1 + Math.abs(mousePosition.x - 50) * 0.003}) 0%, rgba(147, 51, 234, ${0.3 + Math.abs(mousePosition.y - 50) * 0.002}) 30%, rgba(59, 130, 246, 0.2) 70%, transparent 100%)`,
             borderRadius: '50%',
             filter: 'blur(1px)',
-            transform: `translate(${(mousePosition.x - 50) * 0.1}px, ${(mousePosition.y - 50) * 0.1}px) scale(${1 + (Math.max(0.3, 1 - Math.sqrt(Math.pow(mousePosition.x - 50, 2) + Math.pow(mousePosition.y - 50, 2)) / 100)) * 0.3})`
+            transform: `translate(${(mousePosition.x - 50) * 0.1}px, ${(mousePosition.y - 50) * 0.1}px) scale(${1 + (Math.max(0.3, 1 - Math.sqrt(Math.pow(mousePosition.x - 50, 2) + Math.pow(mousePosition.y - 50, 2)) / 100)) * 0.3}) rotate(${(mousePosition.x - 50) * 0.2}deg)`
           }}
         />
       </div>
