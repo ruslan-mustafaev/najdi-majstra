@@ -72,7 +72,6 @@ export const UserMenu: React.FC = () => {
                   className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 text-gray-700"
                 >
                   <Wrench size={16} />
-                  <span>{language === 'sk' ? 'Moja prezentácia' : 'Master Dashboard'}</span>
                   <span>{language === 'sk' ? 'Moj Profil' : 'Master Dashboard'}</span>
                 </button>
               )}
