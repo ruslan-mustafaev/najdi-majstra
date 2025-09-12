@@ -73,6 +73,7 @@ export const UserMenu: React.FC = () => {
                 >
                   <Wrench size={16} />
                   <span>{language === 'sk' ? 'Moja prezentácia' : 'Master Dashboard'}</span>
+                  <span>{language === 'sk' ? 'Moj Profil' : 'Master Dashboard'}</span>
                 </button>
               )}
               
