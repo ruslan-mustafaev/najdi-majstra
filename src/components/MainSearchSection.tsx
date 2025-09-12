@@ -20,12 +20,7 @@ const BreathingGradient = () => {
   };
 
   return (
-    <div 
-      ref={containerRef}
-      className="absolute inset-0 overflow-hidden"
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-    >
+    <div className="absolute inset-0 overflow-hidden">
       <style>
         {`
           .breathing-bg {
@@ -128,73 +123,83 @@ const BreathingGradient = () => {
         `}
       </style>
       
-      <div className="absolute inset-0 breathing-bg">
-        {/* Базовый градиент */}
-        <div 
-          className="absolute inset-0 gradient-overlay transition-all duration-300 ease-out"
-          style={{
-            background: `radial-gradient(ellipse 120% 80% at ${mousePosition.x}% ${mousePosition.y}%, rgba(59, 130, 246, 0.8) 0%, rgba(147, 51, 234, 0.6) 30%, rgba(236, 72, 153, 0.4) 60%, rgba(59, 130, 246, 0.2) 100%)`,
-            filter: 'blur(1px)'
-          }}
-        />
-        
-        {/* Волновые слои */}
-        <div 
-          className="absolute inset-0 wave-layer-1"
-          style={{
-            width: '120%',
-            height: '120%',
-            background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(147, 51, 234, 0.2) 50%, rgba(236, 72, 153, 0.1) 100%)',
-            borderRadius: '50%',
-            filter: 'blur(2px)',
-            transformOrigin: 'center',
-            transform: `translate(${(mousePosition.x - 50) * 0.05}px, ${(mousePosition.y - 50) * 0.05}px)`
-          }}
-        />
-        
-        <div 
-          className="absolute wave-layer-2"
-          style={{
-            top: '10%',
-            left: '10%',
-            width: '100%',
-            height: '100%',
-            background: 'radial-gradient(circle at 30% 70%, rgba(147, 51, 234, 0.4) 0%, rgba(59, 130, 246, 0.2) 40%, transparent 80%)',
-            borderRadius: '40%',
-            filter: 'blur(3px)',
-            transform: `translate(${(mousePosition.x - 50) * 0.03}px, ${(mousePosition.y - 50) * 0.03}px)`
-          }}
-        />
-        
-        <div 
-          className="absolute wave-layer-3"
-          style={{
-            top: '-10%',
-            left: '-10%',
-            width: '120%',
-            height: '120%',
-            background: 'linear-gradient(45deg, rgba(236, 72, 153, 0.2) 0%, rgba(59, 130, 246, 0.3) 50%, rgba(147, 51, 234, 0.1) 100%)',
-            borderRadius: '60%',
-            filter: 'blur(4px)',
-            transform: `translate(${(mousePosition.x - 50) * 0.02}px, ${(mousePosition.y - 50) * 0.02}px)`
-          }}
-        />
-        
-        {/* Внутреннее свечение */}
-        <div 
-          className="absolute inner-glow transition-all duration-300"
-          style={{
-            top: '15%',
-            left: '15%',
-            width: '70%',
-            height: '70%',
-            background: 'radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(147, 51, 234, 0.3) 30%, rgba(59, 130, 246, 0.2) 70%, transparent 100%)',
-            borderRadius: '50%',
-            filter: 'blur(1px)',
-            transform: `translate(${(mousePosition.x - 50) * 0.1}px, ${(mousePosition.y - 50) * 0.1}px) scale(${1 + (Math.max(0.3, 1 - Math.sqrt(Math.pow(mousePosition.x - 50, 2) + Math.pow(mousePosition.y - 50, 2)) / 100)) * 0.3})`
-          }}
-        />
-      </div>
+      {(() => {
+        // Вычисляем значения для анимации здесь
+        const distanceFromCenter = Math.sqrt(Math.pow(mousePosition.x - 50, 2) + Math.pow(mousePosition.y - 50, 2));
+        const offsetX = (mousePosition.x - 50) / 50;
+        const offsetY = (mousePosition.y - 50) / 50;
+        const intensity = Math.min(distanceFromCenter / 50, 1);
+
+        return (
+          <div className="absolute inset-0 breathing-bg">
+            {/* Базовый градиент */}
+            <div 
+              className="absolute inset-0 gradient-overlay transition-all duration-300 ease-out"
+              style={{
+                background: `radial-gradient(ellipse 120% 80% at ${mousePosition.x}% ${mousePosition.y}%, rgba(59, 130, 246, 0.8) 0%, rgba(147, 51, 234, 0.6) 30%, rgba(236, 72, 153, 0.4) 60%, rgba(59, 130, 246, 0.2) 100%)`,
+                filter: 'blur(1px)'
+              }}
+            />
+            
+            {/* Волновые слои */}
+            <div 
+              className="absolute inset-0 wave-layer-1"
+              style={{
+                width: '120%',
+                height: '120%',
+                background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(147, 51, 234, 0.2) 50%, rgba(236, 72, 153, 0.1) 100%)',
+                borderRadius: '50%',
+                filter: 'blur(2px)',
+                transformOrigin: 'center',
+                transform: `translate(${offsetX * 20}px, ${offsetY * 20}px) scale(${1 + intensity * 0.1}) rotate(${offsetX * 5}deg)`
+              }}
+            />
+            
+            <div 
+              className="absolute wave-layer-2"
+              style={{
+                top: '10%',
+                left: '10%',
+                width: '100%',
+                height: '100%',
+                background: `radial-gradient(ellipse ${100 + intensity * 20}% ${100 + intensity * 15}% at ${mousePosition.x}% ${mousePosition.y}%, rgba(147, 51, 234, ${0.4 + intensity * 0.1}) 0%, rgba(59, 130, 246, 0.2) 40%, transparent 80%)`,
+                borderRadius: '40%',
+                filter: 'blur(3px)',
+                transform: `translate(${offsetX * 15}px, ${offsetY * 15}px) rotate(${offsetY * 8}deg) scale(${1 + intensity * 0.15})`
+              }}
+            />
+            
+            <div 
+              className="absolute wave-layer-3"
+              style={{
+                top: '-10%',
+                left: '-10%',
+                width: '120%',
+                height: '120%',
+                background: `linear-gradient(${45 + offsetX * 30}deg, rgba(236, 72, 153, ${0.2 + intensity * 0.1}) 0%, rgba(59, 130, 246, ${0.3 + intensity * 0.1}) 50%, rgba(147, 51, 234, 0.1) 100%)`,
+                borderRadius: '60%',
+                filter: 'blur(4px)',
+                transform: `translate(${offsetX * 10}px, ${offsetY * 10}px) rotate(${offsetY * -6}deg) scale(${1 + intensity * 0.08})`
+              }}
+            />
+            
+            {/* Внутреннее свечение */}
+            <div 
+              className="absolute inner-glow transition-all duration-300"
+              style={{
+                top: '15%',
+                left: '15%',
+                width: '70%',
+                height: '70%',
+                background: `radial-gradient(ellipse ${100 + intensity * 40}% ${100 + intensity * 30}% at ${mousePosition.x}% ${mousePosition.y}%, rgba(255, 255, 255, ${0.1 + intensity * 0.15}) 0%, rgba(147, 51, 234, ${0.3 + intensity * 0.2}) 30%, rgba(59, 130, 246, 0.2) 70%, transparent 100%)`,
+                borderRadius: '50%',
+                filter: 'blur(1px)',
+                transform: `translate(${offsetX * 30}px, ${offsetY * 30}px) scale(${1 + intensity * 0.4}) rotate(${offsetX * 10}deg)`
+              }}
+            />
+          </div>
+        );
+      })()}
     </div>
   );
 };
