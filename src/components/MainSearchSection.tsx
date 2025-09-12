@@ -39,9 +39,10 @@ const InteractiveGradient = () => {
         className="absolute inset-0 opacity-60 transition-all duration-500"
         style={{
           background: `radial-gradient(ellipse 80% 60% at ${mousePosition.x}% ${mousePosition.y}%, 
-            rgba(255, 255, 255, 0.2) 0%, 
-            rgba(65, 105, 225, 0.3) 30%, 
-            transparent 70%)`
+            rgba(255, 255, 255, 0.1) 0%, 
+            rgba(147, 51, 234, 0.3) 30%, 
+            rgba(59, 130, 246, 0.2) 70%, 
+            transparent 100%)`
         }}
       />
     </div>
