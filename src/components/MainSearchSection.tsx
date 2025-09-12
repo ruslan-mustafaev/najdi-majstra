@@ -253,6 +253,9 @@ const CustomSelect = ({ label, value, onChange, options, placeholder, isOpen, on
 };
 
 export const MainSearchSection = ({ onSearch, onMasterClick }) => {
+  const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
+  const sectionRef = useRef(null);
+  
   const [filters, setFilters] = useState({
     city: '',
     profession: '',
@@ -265,6 +268,19 @@ export const MainSearchSection = ({ onSearch, onMasterClick }) => {
   const [currentServiceType, setCurrentServiceType] = useState('urgent');
   const [recommendationsOpen, setRecommendationsOpen] = useState(false);
   const [recommendedMasterIds, setRecommendedMasterIds] = useState([]);
+
+  const handleMouseMove = (e) => {
+    if (sectionRef.current) {
+      const rect = sectionRef.current.getBoundingClientRect();
+      const x = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
+      const y = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
+      setMousePosition({ x, y });
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setMousePosition({ x: 50, y: 50 });
+  };
 
   const handleSelectToggle = (selectName, isOpen) => {
     if (isOpen) {
