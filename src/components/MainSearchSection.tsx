@@ -323,9 +323,14 @@ export const MainSearchSection = ({ onSearch, onMasterClick }) => {
 
   return (
     <>
-      <section className="relative text-white py-16 pt-32 overflow-hidden">
+      <section 
+        ref={sectionRef}
+        className="relative text-white py-16 pt-32 overflow-hidden"
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+      >
         {/* Дышащий градиент как фон */}
-        <BreathingGradient />
+        <BreathingGradient onMouseMove={mousePosition} />
         
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center max-w-4xl mx-auto mb-12">
