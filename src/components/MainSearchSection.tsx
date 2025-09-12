@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Search, Zap, Settings, Wrench, ChevronDown } from 'lucide-react';
 
-// Компонент дышащего градиента
-const BreathingGradient = () => {
-  const [mousePosition, setMousePosition] = React.useState({ x: 50, y: 50 });
-  const containerRef = React.useRef(null);
+// Компонент интерактивного градиента
+const InteractiveGradient = () => {
+  const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
+  const containerRef = useRef(null);
 
   const handleMouseMove = (e) => {
     if (containerRef.current) {
@@ -22,130 +22,28 @@ const BreathingGradient = () => {
   return (
     <div 
       ref={containerRef}
-      className="absolute inset-0 overflow-hidden"
+      className="absolute inset-0 overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-102"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      style={{
+        background: `radial-gradient(circle at ${mousePosition.x}% ${mousePosition.y}%, 
+          #4169e1 0%, 
+          #5a7bff 25%, 
+          #6c8cff 50%, 
+          #7a9dff 75%, 
+          #4169e1 100%)`
+      }}
     >
-      {/* Базовый градиент */}
+      {/* Дополнительный слой для глубины */}
       <div 
-        className="absolute inset-0 opacity-80 transition-all duration-300 ease-out"
+        className="absolute inset-0 opacity-60 transition-all duration-500"
         style={{
-          background: `radial-gradient(ellipse 120% 80% at ${mousePosition.x}% ${mousePosition.y}%, rgba(65, 105, 225, 0.9) 0%, rgba(90, 123, 255, 0.7) 30%, rgba(108, 140, 255, 0.5) 60%, rgba(122, 157, 255, 0.3) 100%)`,
-          filter: 'blur(1px)',
-          animation: 'breathingGlow 3s ease-in-out infinite'
+          background: `radial-gradient(ellipse 80% 60% at ${mousePosition.x}% ${mousePosition.y}%, 
+            rgba(255, 255, 255, 0.2) 0%, 
+            rgba(65, 105, 225, 0.3) 30%, 
+            transparent 70%)`
         }}
       />
-      
-      {/* Волновые слои */}
-      <div 
-        className="absolute inset-0 opacity-60"
-        style={{
-          background: 'linear-gradient(135deg, rgba(65, 105, 225, 0.3) 0%, rgba(90, 123, 255, 0.2) 50%, rgba(108, 140, 255, 0.1) 100%)',
-          animation: 'waveMotion1 5s ease-in-out infinite',
-          borderRadius: '50%',
-          filter: 'blur(2px)',
-          transform: `translate(${(mousePosition.x - 50) * 0.05}px, ${(mousePosition.y - 50) * 0.05}px)`
-        }}
-      />
-      
-      <div 
-        className="absolute top-[10%] left-[10%] w-full h-full opacity-50"
-        style={{
-          background: 'radial-gradient(circle at 30% 70%, rgba(90, 123, 255, 0.4) 0%, rgba(65, 105, 225, 0.2) 40%, transparent 80%)',
-          animation: 'waveMotion2 4s ease-in-out infinite reverse',
-          borderRadius: '40%',
-          filter: 'blur(3px)',
-          transform: `translate(${(mousePosition.x - 50) * 0.03}px, ${(mousePosition.y - 50) * 0.03}px)`
-        }}
-      />
-      
-      <div 
-        className="absolute -top-[10%] -left-[10%] w-[120%] h-[120%] opacity-40"
-        style={{
-          background: 'linear-gradient(45deg, rgba(108, 140, 255, 0.2) 0%, rgba(65, 105, 225, 0.3) 50%, rgba(90, 123, 255, 0.1) 100%)',
-          animation: 'waveMotion3 6s ease-in-out infinite',
-          borderRadius: '60%',
-          filter: 'blur(4px)',
-          transform: `translate(${(mousePosition.x - 50) * 0.02}px, ${(mousePosition.y - 50) * 0.02}px)`
-        }}
-      />
-      
-      {/* Внутреннее свечение */}
-      <div 
-        className="absolute top-[15%] left-[15%] w-[70%] h-[70%] opacity-60 transition-all duration-300"
-        style={{
-          background: 'radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(90, 123, 255, 0.3) 30%, rgba(65, 105, 225, 0.2) 70%, transparent 100%)',
-          borderRadius: '50%',
-          animation: 'innerGlow 3.5s ease-in-out infinite',
-          filter: 'blur(1px)',
-          transform: `translate(${(mousePosition.x - 50) * 0.1}px, ${(mousePosition.y - 50) * 0.1}px) scale(${1 + (Math.max(0.3, 1 - Math.sqrt(Math.pow(mousePosition.x - 50, 2) + Math.pow(mousePosition.y - 50, 2)) / 100)) * 0.3})`
-        }}
-      />
-      
-      <style jsx>{`
-        @keyframes breathingGlow {
-          0%, 100% {
-            opacity: 0.8;
-            transform: scale(1) rotate(0deg);
-          }
-          50% {
-            opacity: 1;
-            transform: scale(1.05) rotate(2deg);
-          }
-        }
-
-        @keyframes waveMotion1 {
-          0%, 100% {
-            transform: translateX(-10%) translateY(-5%) rotate(0deg) scale(1);
-            opacity: 0.6;
-          }
-          33% {
-            transform: translateX(5%) translateY(-10%) rotate(3deg) scale(1.1);
-            opacity: 0.8;
-          }
-          66% {
-            transform: translateX(-5%) translateY(5%) rotate(-2deg) scale(0.95);
-            opacity: 0.7;
-          }
-        }
-
-        @keyframes waveMotion2 {
-          0%, 100% {
-            transform: translateX(5%) translateY(10%) rotate(0deg) scale(1);
-            opacity: 0.5;
-          }
-          50% {
-            transform: translateX(-10%) translateY(-5%) rotate(-4deg) scale(1.15);
-            opacity: 0.7;
-          }
-        }
-
-        @keyframes waveMotion3 {
-          0%, 100% {
-            transform: translateX(0%) translateY(-8%) rotate(0deg) scale(1);
-            opacity: 0.4;
-          }
-          25% {
-            transform: translateX(8%) translateY(3%) rotate(2deg) scale(1.05);
-            opacity: 0.6;
-          }
-          75% {
-            transform: translateX(-3%) translateY(8%) rotate(-3deg) scale(0.9);
-            opacity: 0.5;
-          }
-        }
-
-        @keyframes innerGlow {
-          0%, 100% {
-            transform: scale(1);
-            opacity: 0.6;
-          }
-          50% {
-            transform: scale(1.2);
-            opacity: 0.9;
-          }
-        }
-      `}</style>
     </div>
   );
 };
@@ -204,18 +102,18 @@ const CustomSelect = ({ label, value, onChange, options, placeholder, isOpen, on
 };
 
 export const MainSearchSection = ({ onSearch, onMasterClick }) => {
-  const [filters, setFilters] = React.useState({
+  const [filters, setFilters] = useState({
     city: '',
     profession: '',
     availability: '',
     experience: ''
   });
 
-  const [openSelect, setOpenSelect] = React.useState(null);
-  const [chatOpen, setChatOpen] = React.useState(false);
-  const [currentServiceType, setCurrentServiceType] = React.useState('urgent');
-  const [recommendationsOpen, setRecommendationsOpen] = React.useState(false);
-  const [recommendedMasterIds, setRecommendedMasterIds] = React.useState([]);
+  const [openSelect, setOpenSelect] = useState(null);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [currentServiceType, setCurrentServiceType] = useState('urgent');
+  const [recommendationsOpen, setRecommendationsOpen] = useState(false);
+  const [recommendedMasterIds, setRecommendedMasterIds] = useState([]);
 
   const handleSelectToggle = (selectName, isOpen) => {
     if (isOpen) {
@@ -225,7 +123,7 @@ export const MainSearchSection = ({ onSearch, onMasterClick }) => {
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handleClickOutside = (event) => {
       if (!event.target.closest('.relative')) {
         setOpenSelect(null);
@@ -244,7 +142,6 @@ export const MainSearchSection = ({ onSearch, onMasterClick }) => {
     setChatOpen(true);
   };
 
-  // Упрощенные опции для примера
   const cityOptions = [
     { value: '', label: '- Vyberte mesto -', isRegion: false },
     { value: 'Bratislava', label: 'Bratislava', isRegion: false },
@@ -276,8 +173,8 @@ export const MainSearchSection = ({ onSearch, onMasterClick }) => {
   return (
     <>
       <section className="relative text-white py-16 pt-32 overflow-hidden">
-        {/* Dышащий градиент как фон */}
-        <BreathingGradient />
+        {/* Интерактивный градиент как фон */}
+        <InteractiveGradient />
         
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center max-w-4xl mx-auto mb-12">
