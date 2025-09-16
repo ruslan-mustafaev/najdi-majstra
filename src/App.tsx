@@ -12,7 +12,6 @@ import { Footer } from './components/Footer';
 import { MasterProfile } from './components/MasterProfile';
 import { SearchResults } from './components/SearchResults';
 import { MasterDashboard } from './components/MasterDashboard';
-import { EmailConfirmation } from './components/EmailConfirmation';
 import { Master } from './data/mockData';
 import { getTopRatedMasters } from './lib/mastersApi';
 
@@ -27,6 +26,8 @@ const HomePage: React.FC = () => {
   const [realMasters, setRealMasters] = useState<Master[]>([]);
   const [isLoadingMasters, setIsLoadingMasters] = useState(true);
   const [recentlyViewed, setRecentlyViewed] = useState<Master[]>([]);
+  const [filteredMasters, setFilteredMasters] = useState<Master[]>([]);
+  const [hasActiveFilters, setHasActiveFilters] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -95,9 +96,28 @@ const HomePage: React.FC = () => {
   };
 
   const handleSearch = (filters: any) => {
-    // Navigate to search with query params
-    const params = new URLSearchParams(filters);
-    navigate(`/search?${params.toString()}`);
+    // Check if any filters are active
+    const hasFilters = filters.city || filters.profession || filters.availability || filters.priceRange;
+    setHasActiveFilters(hasFilters);
+    
+    if (hasFilters) {
+      // Filter masters based on criteria
+      const filtered = realMasters.filter(master => {
+        if (filters.city && filters.city !== 'Celé Slovensko' && !master.location.toLowerCase().includes(filters.city.toLowerCase())) {
+          return false;
+        }
+        if (filters.profession && !master.profession.toLowerCase().includes(filters.profession.toLowerCase())) {
+          return false;
+        }
+        if (filters.availability === 'Dostupný teraz' && !master.available) {
+          return false;
+        }
+        return true;
+      });
+      setFilteredMasters(filtered);
+    } else {
+      setFilteredMasters([]);
+    }
   };
 
   return (
@@ -128,7 +148,23 @@ const HomePage: React.FC = () => {
           onMasterClick={(masterId) => navigate(`/profile/${masterId}`)} 
         />
         
-        {isLoadingMasters ? (
+        {hasActiveFilters ? (
+          // Show filtered results
+          filteredMasters.length > 0 ? (
+            <MastersCarousel 
+              masters={filteredMasters} 
+              title={`Výsledky vyhľadávania (${filteredMasters.length})`}
+              onMasterClick={handleMasterClick}
+            />
+          ) : (
+            <div className="container mx-auto px-4 py-8">
+              <div className="text-center bg-white rounded-lg p-8 shadow-sm">
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">Žiadni majstri nenájdení</h3>
+                <p className="text-gray-600">Skúste zmeniť kritériá vyhľadávania</p>
+              </div>
+            </div>
+          )
+        ) : isLoadingMasters ? (
           <div className="container mx-auto px-4 py-8">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#4169e1] mx-auto"></div>
