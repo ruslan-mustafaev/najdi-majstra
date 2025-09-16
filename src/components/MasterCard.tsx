@@ -9,6 +9,14 @@ interface MasterCardProps {
 }
 
 export const MasterCard: React.FC<MasterCardProps> = ({ master, featured = false, onClick }) => {
+  const handleButtonClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onClick) {
+      onClick();
+    }
+  };
+
   return (
     <div 
       className={`bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer ${
@@ -64,10 +72,7 @@ export const MasterCard: React.FC<MasterCardProps> = ({ master, featured = false
         <div style={{ height: '36px' }}>
           <button 
             className="w-full bg-[#4169e1] text-white py-2 rounded-lg font-medium hover:bg-[#3558d4] transition-colors text-sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              onClick?.();
-            }}
+            onClick={handleButtonClick}
           >
             Zobraziť profil
           </button>
