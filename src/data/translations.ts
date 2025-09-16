@@ -46,17 +46,18 @@ export const translations = {
       ethics: 'Etický kódex a pravidlá',
       recommendations: 'Odporúčania',
       legal: 'Právna doložka',
-      contact: 'Kontakt'
-    }
-  },
-  aiChat: {
-    sk: {
+      contact: 'Kontakt',
+      contracts: 'Zmluvy',
+      courses: 'Kurzy'
+    },
+    aiChat: {
       title: 'AI Asistent',
       subtitle: 'Pomôžem vám nájsť správneho majstra',
       typing: 'AI píše...',
       sendButton: 'Odoslať',
       placeholder: 'Opíšte váš problém alebo požiadavku...',
       recommendationsTitle: 'Odporúčaní majstri',
+      recommendationsSubtitle: 'Našli sme {count} vhodných majstrov pre vašu požiadavku',
       contactButton: 'Kontakt',
       available: 'Dostupný',
       busy: 'Obsadený',
@@ -64,6 +65,75 @@ export const translations = {
         urgent: 'Akútna porucha',
         regular: 'Pravidelný servis', 
         realization: 'Realizácia'
+      }
+    }
+  },
+  en: {
+    brand: 'findMaster.sk',
+    navigation: {
+      blog: 'Blog',
+      favorites: 'Favorite Ads',
+      login: 'Sign In',
+      register: 'Register'
+    },
+    
+    popup: {
+      title: 'Who is this site for?',
+      clientOption: {
+        title: 'Looking for a master',
+        button: 'Yes, I want to continue to the website'
+      },
+      masterOption: {
+        title: 'I am a master/expert',
+        button: 'Yes, I want to register'
+      },
+      registrationPromo: 'If you are looking for a professional, you will not find a better master, free registration for masters.',
+      cookies: 'I agree to allow cookies',
+      privacy: 'Terms and conditions and rules'
+    },
+    hero: {
+      title: 'The largest Slovak seller of masters and experts in construction',
+      subtitle: 'Quickly, cheaply and easily find a qualified professional from your locality',
+      urgentRepair: 'URGENT REPAIR',
+      regularService: 'REGULAR SERVICE',
+      realization: 'PLANNED REALIZATION'
+    },
+    search: {
+      city: 'City',
+      profession: 'Profession',
+      availability: 'Availability',
+      priceRange: 'Price Range',
+      searchButton: 'Find Master',
+      noResults: 'No ads match the selected requirements'
+    },
+    masters: {
+      title: 'Recently Viewed',
+      topRated: 'Top Rated Masters'
+    },
+    footer: {
+      terms: 'Terms and Conditions',
+      ethics: 'Code of Ethics and Rules',
+      recommendations: 'Recommendations',
+      legal: 'Legal Notice',
+      contact: 'Contact',
+      contracts: 'Contracts',
+      courses: 'Courses'
+    },
+    aiChat: {
+      title: 'AI Assistant',
+      subtitle: 'I will help you find the right master',
+      typing: 'AI is typing...',
+      sendButton: 'Send',
+      placeholder: 'Describe your problem or request...',
+      recommendationsTitle: 'Recommended Masters',
+      recommendationsSubtitle: 'We found {count} suitable masters for your request',
+      contactButton: 'Contact',
+      available: 'Available',
+      busy: 'Busy',
+      serviceTypes: {
+        urgent: 'Urgent Repair',
+        regular: 'Regular Service', 
+        realization: 'Realization'
       }
     }
   }

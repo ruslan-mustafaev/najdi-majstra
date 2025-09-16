@@ -18,7 +18,7 @@ export const MasterRecommendations: React.FC<MasterRecommendationsProps> = ({
   onMasterClick
 }) => {
   const { language } = useLanguage();
-  const t = translations.aiChat[language];
+  const t = translations[language].aiChat;
   
   if (!isOpen) return null;
 
