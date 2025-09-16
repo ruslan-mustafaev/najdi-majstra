@@ -12,6 +12,9 @@ export const getCityOptions = (language: 'sk' | 'en'): FilterOption[] => {
   return [
     { value: '', label: `- ${t.search.city} -`, isRegion: false },
     
+    // Celé Slovensko option
+    { value: 'Celé Slovensko', label: language === 'sk' ? 'Celé Slovensko' : 'All Slovakia', isRegion: false },
+    
     // Kraje (Regions)
     { value: 'Banskobystrický kraj', label: 'Banskobystrický kraj', isRegion: false },
     { value: 'Bratislavský kraj', label: 'Bratislavský kraj', isRegion: false },
