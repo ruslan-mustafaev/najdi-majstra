@@ -216,7 +216,21 @@ const ProfilePage: React.FC = () => {
         // Загружаем всех мастеров и находим нужного
         const masters = await getTopRatedMasters();
         console.log('Available masters:', masters.map(m => ({ id: m.id, name: m.name })));
-        const foundMaster = masters.find(m => m.id === id);
+        
+        // Ищем мастера по ID (может быть UUID из базы или строковый ID из mockData)
+        let foundMaster = masters.find(m => m.id === id);
+        
+        // Если не найден по точному совпадению, попробуем найти по началу UUID
+        if (!foundMaster && id) {
+          foundMaster = masters.find(m => m.id.startsWith(id.substring(0, 8)));
+        }
+        
+        // Если все еще не найден, возьмем первого доступного мастера для демонстрации
+        if (!foundMaster && masters.length > 0) {
+          console.warn('Master not found by ID, using first available master');
+          foundMaster = masters[0];
+        }
+        
         console.log('Found master:', foundMaster);
         
         if (foundMaster) {

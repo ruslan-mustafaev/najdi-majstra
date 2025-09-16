@@ -12,7 +12,7 @@ export const MasterCard: React.FC<MasterCardProps> = ({ master, featured = false
   const handleButtonClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('Button clicked for master:', master.id, master.name);
+    console.log('Button clicked for master:', { id: master.id, name: master.name, fullMaster: master });
     if (onClick) {
       onClick();
     }
