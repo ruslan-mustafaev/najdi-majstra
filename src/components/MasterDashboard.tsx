@@ -523,27 +523,25 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                         workImagePaths: [...(prev.workImagePaths || []), path]
                       }));
                       setHasChanges(true);
+                  <ImageUpload
+                    currentImageUrl={formData.profileImage}
+                    onImageUploaded={(url, path) => {
+                      setFormData(prev => ({ 
+                        ...prev, 
+                        profileImage: url,
+                        profileImagePath: path 
+                      }));
                     }}
-                    onImageRemoved={(path) => {
-                      const pathIndex = profileData.workImagePaths?.indexOf(path) || -1;
-                      if (pathIndex !== -1) {
-                        setProfileData(prev => ({
-                          ...prev,
-                          workImages: prev.workImages.filter((_, i) => i !== pathIndex),
-                          workImagePaths: prev.workImagePaths?.filter((_, i) => i !== pathIndex) || []
-                        }));
-                        setHasChanges(true);
-                      }
+                    onImageRemoved={() => {
+                      setFormData(prev => ({ 
+                        ...prev, 
+                        profileImage: '',
+                        profileImagePath: '' 
+                      }));
                     }}
-                    folder="work-images"
-                    multiple={true}
-                    maxImages={6}
+                    folder="profiles"
+                    className="max-w-xs mx-auto"
                   />
-                  
-                  {/* Work Video */}
-                  <div className="mt-4">
-                    <h4 className="font-medium mb-3">Video práce (max 1, 50MB)</h4>
-                    <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center mb-3">
                       <div className="text-center">
                         <Play size={32} className="text-gray-400 mx-auto mb-2" />
                         <p className="text-sm text-gray-500">Žiadne video</p>
