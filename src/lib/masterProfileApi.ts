@@ -7,9 +7,6 @@ export interface MasterProfile {
   phone: string;
   location: string;
   description: string;
-  profile_image_url?: string;
-  work_images_urls?: string[];
-  work_video_url?: string;
   is_active?: boolean;
   profile_completed?: boolean;
 }
@@ -32,9 +29,6 @@ export const saveMasterProfile = async (profileData: MasterProfile): Promise<Mas
       phone: profileData.phone,
       location: profileData.location,
       description: profileData.description,
-      profile_image_url: profileData.profile_image_url,
-      work_images_urls: profileData.work_images_urls || [],
-      work_video_url: profileData.work_video_url,
       is_active: profileData.is_active ?? true,
       profile_completed: profileData.profile_completed ?? true,
       updated_at: new Date().toISOString()

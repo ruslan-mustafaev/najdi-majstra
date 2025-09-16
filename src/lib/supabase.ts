@@ -3,7 +3,6 @@ import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://budlyqnloyiyexsocpbb.supabase.co'
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ1ZGx5cW5sb3lpeWV4c29jcGJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5MzM0NDksImV4cCI6MjA3MTUwOTQ0OX0.5vPCIu5yvtEossIEYfMGqha5Xj1eEwEDmvU-g-rUttw'
-const supabaseServiceKey = import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY
 
 // Определяем базовый URL в зависимости от окружения
 const getBaseUrl = () => {
@@ -27,16 +26,6 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     persistSession: true
   }
 })
-
-// Административный клиент для операций с Storage (обходит RLS)
-export const supabaseAdmin = supabaseServiceKey 
-  ? createClient(supabaseUrl, supabaseServiceKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false
-      }
-    })
-  : null
 
 // Helper функции для аутентификации
 export const signUp = async (email: string, password: string, userData?: any) => {
@@ -120,4 +109,3 @@ export const auth = {
     return supabase.auth.onAuthStateChange(callback)
   }
 }
-// Основной клиент для обычных операций
