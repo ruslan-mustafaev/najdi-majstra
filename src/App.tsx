@@ -92,7 +92,7 @@ const HomePage: React.FC = () => {
     });
     
     // Navigate to profile
-    navigate(`/profile/${master.id}`);
+    navigate(`/profile/${master.id}`, { replace: true });
   };
 
   const handleSearch = (filters: any) => {
@@ -212,12 +212,17 @@ const ProfilePage: React.FC = () => {
     const loadMaster = async () => {
       setLoading(true);
       try {
+        console.log('Loading master with ID:', id);
         // Загружаем всех мастеров и находим нужного
         const masters = await getTopRatedMasters();
+        console.log('Available masters:', masters.map(m => ({ id: m.id, name: m.name })));
         const foundMaster = masters.find(m => m.id === id);
+        console.log('Found master:', foundMaster);
         
         if (foundMaster) {
           setMaster(foundMaster);
+        } else {
+          console.error('Master not found with ID:', id);
         }
       } catch (error) {
         console.error('Error loading master:', error);

@@ -17,7 +17,7 @@ export const getTopRatedMasters = async () => {
 
     // Преобразуем данные из базы в формат Master
     return (data || []).map(master => ({
-      id: master.id,
+      id: master.id.toString(), // Убеждаемся что ID это строка
       name: master.name || 'Без имени',
       profession: master.profession || 'Majster',
       location: master.location || 'Не указано',
