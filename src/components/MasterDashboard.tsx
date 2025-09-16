@@ -542,10 +542,12 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                     folder="profiles"
                     className="max-w-xs mx-auto"
                   />
+                  <>
                       <div className="text-center">
                         <Play size={32} className="text-gray-400 mx-auto mb-2" />
                         <p className="text-sm text-gray-500">Žiadne video</p>
                       </div>
+                  </>
                     </div>
                     <button 
                       onClick={() => {
