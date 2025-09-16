@@ -18,12 +18,23 @@ export const MasterCard: React.FC<MasterCardProps> = ({ master, featured = false
     }
   };
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Проверяем, что клик не был по кнопке
+    const target = e.target as HTMLElement;
+    if (target.tagName === 'BUTTON' || target.closest('button')) {
+      return; // Не обрабатываем клик по карточке, если кликнули по кнопке
+    }
+    
+    if (onClick) {
+      onClick();
+    }
+  };
   return (
     <div 
       className={`bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer ${
         featured ? 'ring-2 ring-[#4169e1] ring-opacity-20' : ''
       }`}
-      onClick={onClick}
+      onClick={handleCardClick}
       style={{ height: '320px', width: '100%' }} // Принудительно задаем размеры
     >
       {/* Photo with availability indicator and rating */}
@@ -72,8 +83,9 @@ export const MasterCard: React.FC<MasterCardProps> = ({ master, featured = false
         {/* Button - fixed height */}
         <div style={{ height: '36px' }}>
           <button 
-            className="w-full bg-[#4169e1] text-white py-2 rounded-lg font-medium hover:bg-[#3558d4] transition-colors text-sm"
+            className="w-full bg-[#4169e1] text-white py-2 rounded-lg font-medium hover:bg-[#3558d4] transition-colors text-sm cursor-pointer"
             onClick={handleButtonClick}
+            type="button"
           >
             Zobraziť profil
           </button>
