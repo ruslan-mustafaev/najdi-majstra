@@ -24,11 +24,14 @@ export const getTopRatedMasters = async () => {
       rating: master.rating || 4.5,
       reviewCount: master.reviews_count || 0,
       available: master.is_active,
-      profileImage: 'https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=400',
-      workImages: [
-        'https://images.pexels.com/photos/162553/keys-workshop-mechanic-tools-162553.jpeg?auto=compress&cs=tinysrgb&w=400',
-        'https://images.pexels.com/photos/159358/multimeter-digital-hand-tool-159358.jpeg?auto=compress&cs=tinysrgb&w=400'
-      ],
+      profileImage: master.profile_image_url || 'https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=400',
+      workImages: master.work_images_urls && master.work_images_urls.length > 0 
+        ? master.work_images_urls 
+        : [
+            'https://images.pexels.com/photos/162553/keys-workshop-mechanic-tools-162553.jpeg?auto=compress&cs=tinysrgb&w=400',
+            'https://images.pexels.com/photos/159358/multimeter-digital-hand-tool-159358.jpeg?auto=compress&cs=tinysrgb&w=400'
+          ],
+      workVideo: master.work_video_url,
       description: master.description || 'Профессиональный мастер с опытом работы',
       services: ['Opravy', 'Inštalácie', 'Servis'],
       experience: '5+ rokov',
