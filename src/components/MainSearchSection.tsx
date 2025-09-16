@@ -54,6 +54,19 @@ export const MainSearchSection: React.FC<MainSearchSectionProps> = ({ onSearch, 
     }
   };
 
+  // Автоматический поиск при изменении фильтров
+  React.useEffect(() => {
+    // Выполняем поиск только если есть хотя бы один заполненный фильтр
+    if (filters.city || filters.profession || filters.availability || filters.experience) {
+      onSearch({
+        city: filters.city,
+        profession: filters.profession,
+        availability: filters.availability,
+        priceRange: filters.experience
+      });
+    }
+  }, [filters.city, filters.profession, filters.availability, filters.experience, onSearch]);
+
   // Закрытие выпадающих списков при клике вне их
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -65,15 +78,6 @@ export const MainSearchSection: React.FC<MainSearchSectionProps> = ({ onSearch, 
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
-
-  const handleSearch = () => {
-    onSearch({
-      city: filters.city,
-      profession: filters.profession,
-      availability: filters.availability,
-      priceRange: filters.experience // Using experience as priceRange for now
-    });
-  };
 
   const handleServiceButtonClick = (serviceType: ServiceType) => {
     setCurrentServiceType(serviceType);
@@ -187,15 +191,6 @@ export const MainSearchSection: React.FC<MainSearchSectionProps> = ({ onSearch, 
                   isOpen={openSelect === 'experience'}
                   onToggle={(isOpen) => handleSelectToggle('experience', isOpen)}
                 />
-              </div>
-              <div className="text-center">
-                <button 
-                  onClick={handleSearch}
-                  className="bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-lg font-medium transition-colors flex items-center space-x-2 mx-auto"
-                >
-                  <Search size={20} />
-                  <span>{t.search.searchButton}</span>
-                </button>
               </div>
             </div>
           </div>
