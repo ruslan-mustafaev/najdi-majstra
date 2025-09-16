@@ -11,7 +11,7 @@ import { NoResults } from './components/NoResults';
 import { Footer } from './components/Footer';
 import { MasterProfile } from './components/MasterProfile';
 import { SearchResults } from './components/SearchResults';
-import { MasterDashboard } from './components/masterdashboard/MasterDashboard';
+import { MasterDashboard } from './components/masterdashboard';
 import { EmailConfirmation } from './components/EmailConfirmation';
 import { Master } from './data/mockData';
 import { getTopRatedMasters } from './lib/mastersApi';
