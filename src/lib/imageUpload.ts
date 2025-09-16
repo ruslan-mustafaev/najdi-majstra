@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { supabase, supabaseAdmin } from './supabase';
 
 export interface ImageUploadResult {
   url: string;
@@ -15,6 +15,9 @@ export const uploadImage = async (
   userId: string
 ): Promise<ImageUploadResult> => {
   try {
+    // Используем admin клиент для загрузки файлов (обходит RLS)
+    const client = supabaseAdmin || supabase;
+    
     // Проверяем тип файла
     if (!file.type.startsWith('image/')) {
       throw new Error('Файл должен быть изображением');
@@ -30,7 +33,7 @@ export const uploadImage = async (
     const fileName = `${userId}/${folder}/${Date.now()}.${fileExt}`;
 
     // Загружаем файл
-    const { data, error } = await supabase.storage
+    const { data, error } = await client.storage
       .from('profile-images')
       .upload(fileName, file, {
         cacheControl: '3600',
@@ -42,7 +45,7 @@ export const uploadImage = async (
     }
 
     // Получаем публичный URL
-    const { data: { publicUrl } } = supabase.storage
+    const { data: { publicUrl } } = client.storage
       .from('profile-images')
       .getPublicUrl(fileName);
 
@@ -65,7 +68,10 @@ export const uploadImage = async (
  */
 export const deleteImage = async (path: string): Promise<boolean> => {
   try {
-    const { error } = await supabase.storage
+    // Используем admin клиент для удаления файлов
+    const client = supabaseAdmin || supabase;
+    
+    const { error } = await client.storage
       .from('profile-images')
       .remove([path]);
 
