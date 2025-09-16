@@ -56,15 +56,13 @@ export const MainSearchSection: React.FC<MainSearchSectionProps> = ({ onSearch, 
 
   // Автоматический поиск при изменении фильтров
   React.useEffect(() => {
-    // Выполняем поиск только если есть хотя бы один заполненный фильтр
-    if (filters.city || filters.profession || filters.availability || filters.experience) {
-      onSearch({
-        city: filters.city,
-        profession: filters.profession,
-        availability: filters.availability,
-        priceRange: filters.experience
-      });
-    }
+    // Всегда вызываем поиск, даже если все фильтры пустые (для сброса)
+    onSearch({
+      city: filters.city,
+      profession: filters.profession,
+      availability: filters.availability,
+      priceRange: filters.experience
+    });
   }, [filters.city, filters.profession, filters.availability, filters.experience, onSearch]);
 
   // Закрытие выпадающих списков при клике вне их

@@ -116,6 +116,7 @@ const HomePage: React.FC = () => {
       });
       setFilteredMasters(filtered);
     } else {
+      // Если все фильтры пустые - очищаем результаты фильтрации
       setFilteredMasters([]);
     }
   };
