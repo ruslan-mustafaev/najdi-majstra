@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Search, Zap, Settings, Wrench, ChevronDown } from 'lucide-react';
+import { ChatWindow } from './AIChat/ChatWindow';
+import { MasterRecommendations } from './AIChat/MasterRecommendations';
 
 // Компонент дышащего градиента
 const BreathingGradient = () => {
@@ -348,7 +350,7 @@ export const MainSearchSection = ({ onSearch, onMasterClick }) => {
         {/* Дышащий градиент как фон */}
         <BreathingGradient onMouseMove={mousePosition} />
         
-        <div className="container mx-auto px-4 relative z-10" style={{ pointerEvents: 'none' }}>
+        <div className="container mx-auto px-4 relative z-10">
           <div className="text-center max-w-4xl mx-auto mb-12">
             <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight drop-shadow-lg">
               Nájdite kvalitných remeselníkov
@@ -360,24 +362,21 @@ export const MainSearchSection = ({ onSearch, onMasterClick }) => {
             <div className="flex flex-wrap justify-center gap-4 mb-12">
               <button 
                 onClick={() => handleServiceButtonClick('urgent')}
-                className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 flex items-center space-x-2 shadow-lg hover:shadow-xl hover:scale-105 hover:-translate-y-1 backdrop-blur-sm border border-white/10"
-                style={{ pointerEvents: 'auto' }}
+                className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 flex items-center space-x-2 shadow-lg hover:shadow-xl hover:scale-105 hover:-translate-y-1 backdrop-blur-sm border border-white/10 cursor-pointer"
               >
                 <Zap size={20} />
                 <span>Urgentná oprava</span>
               </button>
               <button 
                 onClick={() => handleServiceButtonClick('regular')}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 flex items-center space-x-2 shadow-lg hover:shadow-xl hover:scale-105 hover:-translate-y-1 backdrop-blur-sm border border-white/10"
-                style={{ pointerEvents: 'auto' }}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 flex items-center space-x-2 shadow-lg hover:shadow-xl hover:scale-105 hover:-translate-y-1 backdrop-blur-sm border border-white/10 cursor-pointer"
               >
                 <Settings size={20} />
                 <span>Pravidelná služba</span>
               </button>
               <button 
                 onClick={() => handleServiceButtonClick('realization')}
-                className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 flex items-center space-x-2 shadow-lg hover:shadow-xl hover:scale-105 hover:-translate-y-1 backdrop-blur-sm border border-white/10"
-                style={{ pointerEvents: 'auto' }}
+                className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 flex items-center space-x-2 shadow-lg hover:shadow-xl hover:scale-105 hover:-translate-y-1 backdrop-blur-sm border border-white/10 cursor-pointer"
               >
                 <Wrench size={20} />
                 <span>Realizácia</span>
@@ -386,6 +385,28 @@ export const MainSearchSection = ({ onSearch, onMasterClick }) => {
           </div>
         </div>
       </section>
+
+      {/* AI Chat Window */}
+      <ChatWindow
+        isOpen={chatOpen}
+        onClose={() => setChatOpen(false)}
+        serviceType={currentServiceType}
+        onMasterRecommendation={(masterIds) => {
+          setRecommendedMasterIds(masterIds);
+          setRecommendationsOpen(true);
+        }}
+      />
+
+      {/* Master Recommendations */}
+      <MasterRecommendations
+        isOpen={recommendationsOpen}
+        onClose={() => setRecommendationsOpen(false)}
+        masterIds={recommendedMasterIds}
+        onMasterClick={(masterId) => {
+          setRecommendationsOpen(false);
+          onMasterClick(masterId);
+        }}
+      />
 
       <section className="bg-white py-8 shadow-md">
         <div className="container mx-auto px-4">
