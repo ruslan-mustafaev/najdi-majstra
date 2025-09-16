@@ -64,7 +64,10 @@ export const MasterCard: React.FC<MasterCardProps> = ({ master, featured = false
         <div style={{ height: '36px' }}>
           <button 
             className="w-full bg-[#4169e1] text-white py-2 rounded-lg font-medium hover:bg-[#3558d4] transition-colors text-sm"
-            onClick={onClick}
+            onClick={(e) => {
+              e.stopPropagation();
+              onClick?.();
+            }}
           >
             Zobraziť profil
           </button>

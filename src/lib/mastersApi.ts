@@ -19,7 +19,7 @@ export const getTopRatedMasters = async () => {
     return (data || []).map(master => ({
       id: master.id,
       name: master.name || 'Без имени',
-      profession: master.profession || 'Мастер',
+      profession: master.profession || 'Majster',
       location: master.location || 'Не указано',
       rating: master.rating || 4.5,
       reviewCount: master.reviews_count || 0,
@@ -29,7 +29,7 @@ export const getTopRatedMasters = async () => {
         'https://images.pexels.com/photos/162553/keys-workshop-mechanic-tools-162553.jpeg?auto=compress&cs=tinysrgb&w=400',
         'https://images.pexels.com/photos/159358/multimeter-digital-hand-tool-159358.jpeg?auto=compress&cs=tinysrgb&w=400'
       ],
-      description: master.description || 'Профессиональный мастер с опытом работы',
+      description: master.description || 'Profesionálny majster s pracovnými skúsenosťami',
       services: ['Opravy', 'Inštalácie', 'Servis'],
       experience: '5+ rokov',
       certifications: ['Odborná spôsobilosť'],
