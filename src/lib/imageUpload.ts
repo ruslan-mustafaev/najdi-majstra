@@ -15,8 +15,8 @@ export const uploadImage = async (
   userId: string
 ): Promise<ImageUploadResult> => {
   try {
-    // Используем admin клиент для загрузки файлов (обходит RLS)
-    const client = supabaseAdmin || supabase;
+    // Используем обычный клиент - политики уже настроены в UI
+    const client = supabase;
     
     // Проверяем тип файла
     if (!file.type.startsWith('image/')) {
@@ -41,6 +41,7 @@ export const uploadImage = async (
       });
 
     if (error) {
+      console.error('Supabase upload error:', error);
       throw error;
     }
 
@@ -68,14 +69,15 @@ export const uploadImage = async (
  */
 export const deleteImage = async (path: string): Promise<boolean> => {
   try {
-    // Используем admin клиент для удаления файлов
-    const client = supabaseAdmin || supabase;
+    // Используем обычный клиент
+    const client = supabase;
     
     const { error } = await client.storage
       .from('profile-images')
       .remove([path]);
 
     if (error) {
+      console.error('Supabase delete error:', error);
       throw error;
     }
 
