@@ -9,33 +9,21 @@ interface MasterCardProps {
 }
 
 export const MasterCard: React.FC<MasterCardProps> = ({ master, featured = false, onClick }) => {
-  const handleButtonClick = (e: React.MouseEvent) => {
+  const handleProfileClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('Button clicked for master:', { id: master.id, name: master.name, fullMaster: master });
+    console.log('Profile button clicked for master:', master.name, master.id);
     if (onClick) {
       onClick();
     }
   };
 
-  const handleCardClick = (e: React.MouseEvent) => {
-    // Проверяем, что клик не был по кнопке
-    const target = e.target as HTMLElement;
-    if (target.tagName === 'BUTTON' || target.closest('button')) {
-      return; // Не обрабатываем клик по карточке, если кликнули по кнопке
-    }
-    
-    if (onClick) {
-      onClick();
-    }
-  };
   return (
     <div 
-      className={`bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer ${
+      className={`bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden ${
         featured ? 'ring-2 ring-[#4169e1] ring-opacity-20' : ''
       }`}
-      onClick={handleCardClick}
-      style={{ height: '320px', width: '100%' }} // Принудительно задаем размеры
+      style={{ height: '320px', width: '100%' }}
     >
       {/* Photo with availability indicator and rating */}
       <div className="relative" style={{ height: '180px' }}>
@@ -83,8 +71,8 @@ export const MasterCard: React.FC<MasterCardProps> = ({ master, featured = false
         {/* Button - fixed height */}
         <div style={{ height: '36px' }}>
           <button 
-            className="w-full bg-[#4169e1] text-white py-2 rounded-lg font-medium hover:bg-[#3558d4] transition-colors text-sm cursor-pointer"
-            onClick={handleButtonClick}
+            className="w-full bg-[#4169e1] text-white py-2 rounded-lg font-medium hover:bg-[#3558d4] transition-colors text-sm"
+            onClick={handleProfileClick}
             type="button"
           >
             Zobraziť profil

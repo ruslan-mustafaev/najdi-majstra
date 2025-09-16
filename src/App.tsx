@@ -83,7 +83,7 @@ const HomePage: React.FC = () => {
   };
 
   const handleMasterClick = (master: Master) => {
-    console.log('Navigating to master profile:', master.id, master.name);
+    console.log('handleMasterClick called:', master.id, master.name);
     
     // Add to recently viewed
     setRecentlyViewed(prev => {
@@ -94,6 +94,7 @@ const HomePage: React.FC = () => {
     });
     
     // Navigate to profile
+    console.log('Navigating to:', `/profile/${master.id}`);
     navigate(`/profile/${master.id}`);
   };
 

@@ -96,7 +96,10 @@ export const MastersCarousel: React.FC<MastersCarouselProps> = ({ masters, title
               key={master.id}
               master={master} 
               featured={master.rating > 9}
-              onClick={() => onMasterClick?.(master)}
+              onClick={() => {
+                console.log('MasterCard onClick called for:', master.name, master.id);
+                onMasterClick?.(master);
+              }}
             />
           ))}
         </div>
