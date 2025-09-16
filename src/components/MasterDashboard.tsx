@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowLeft, User, Star, MapPin, Phone, Mail, Camera, Plus, Edit, Settings, BarChart3, Calendar, Clock, Euro, Award, Users, Play, Globe, Save, X, Upload, Copy, Check } from 'lucide-react';
+import { ImageUpload } from './ImageUpload';
 import { useAuth } from '../hooks/useAuth';
 import { saveMasterProfile, type MasterProfile } from '../lib/masterProfileApi';
 
@@ -97,6 +98,10 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
       };
     };
     certifications: string[];
+    profileImage: string;
+    profileImagePath: string;
+    workImages: string[];
+    workImagePaths: string[];
   }>({
     name: user?.user_metadata?.full_name || user?.user_metadata?.first_name + ' ' + user?.user_metadata?.last_name || '',
     profession: user?.user_metadata?.profession || '',
@@ -125,7 +130,11 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
         tiktok: ''
       }
     },
-    certifications: []
+    certifications: [],
+    profileImage: '',
+    profileImagePath: '',
+    workImages: [],
+    workImagePaths: []
   });
 
   const handleCopyCoupon = (code: string) => {
@@ -478,14 +487,19 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                     ))}
                     <span className="text-sm text-gray-500 ml-2">0.0 (0 hodnotení)</span>
                   </div>
-                  <button 
-                    onClick={() => {
+                  <ImageUpload
+                    currentImageUrl={profileData.profileImage}
+                    onImageUploaded={(url, path) => {
+                      setProfileData(prev => ({ ...prev, profileImage: url, profileImagePath: path }));
                       setHasChanges(true);
                     }}
-                    className="bg-[#4169e1] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#3558d4] transition-colors"
-                  >
-                    Nahrať fotku
-                  </button>
+                    onImageRemoved={(path) => {
+                      setProfileData(prev => ({ ...prev, profileImage: '', profileImagePath: '' }));
+                      setHasChanges(true);
+                    }}
+                    folder="profiles"
+                    multiple={false}
+                  />
                   <div className="mt-4 p-3 bg-blue-50 rounded-lg">
                     <p className="text-xs text-blue-800">
                       💡 <strong>Tip:</strong> Majstri s profilovou fotkou majú o 70% vyššiu šancu získať zákazku! 
@@ -497,22 +511,34 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                 {/* Work Photos */}
                 <div>
                   <h4 className="font-medium mb-3">Fotky práce (max 20MB)</h4>
-                  <div className="grid grid-cols-2 gap-3 mb-4">
-                    {[1,2,3,4].map((i) => (
-                      <div key={i} className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center">
-                        <Camera size={24} className="text-gray-400" />
-                      </div>
-                    ))}
-                  </div>
-                  <button 
-                    onClick={() => {
+                  <ImageUpload
+                    currentImages={profileData.workImages.map((url, index) => ({ 
+                      url, 
+                      path: profileData.workImagePaths?.[index] || '' 
+                    }))}
+                    onImageUploaded={(url, path) => {
+                      setProfileData(prev => ({
+                        ...prev,
+                        workImages: [...prev.workImages, url],
+                        workImagePaths: [...(prev.workImagePaths || []), path]
+                      }));
                       setHasChanges(true);
                     }}
-                    className="w-full border-2 border-dashed border-gray-300 rounded-lg py-4 text-gray-500 hover:border-[#4169e1] hover:text-[#4169e1] transition-colors"
-                  >
-                    <Plus size={20} className="mx-auto mb-2" />
-                    Pridať fotky práce
-                  </button>
+                    onImageRemoved={(path) => {
+                      const pathIndex = profileData.workImagePaths?.indexOf(path) || -1;
+                      if (pathIndex !== -1) {
+                        setProfileData(prev => ({
+                          ...prev,
+                          workImages: prev.workImages.filter((_, i) => i !== pathIndex),
+                          workImagePaths: prev.workImagePaths?.filter((_, i) => i !== pathIndex) || []
+                        }));
+                        setHasChanges(true);
+                      }
+                    }}
+                    folder="work-images"
+                    multiple={true}
+                    maxImages={6}
+                  />
                   
                   {/* Work Video */}
                   <div className="mt-4">
