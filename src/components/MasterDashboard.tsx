@@ -312,10 +312,10 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                       />
                     </div>
                   ) : (
-                      <div className="text-center">
-                        <Play size={32} className="text-gray-400 mx-auto mb-2" />
-                        <p className="text-sm text-gray-500">Žiadne video</p>
-                      </div>
+                    <div className="text-center">
+                      <Play size={32} className="text-gray-400 mx-auto mb-2" />
+                      <p className="text-sm text-gray-500">Žiadne video</p>
+                    </div>
                   )}
                 </div>
               </div>
