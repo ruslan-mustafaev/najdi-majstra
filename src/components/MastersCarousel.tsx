@@ -14,7 +14,6 @@ interface MastersCarouselProps {
 export const MastersCarousel: React.FC<MastersCarouselProps> = ({ masters, title, onMasterClick }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const { language } = useLanguage();
-  const t = translations[language];
 
   const itemsPerPage = 25; // 5x5 grid
   const totalPages = Math.ceil(masters.length / itemsPerPage);
@@ -44,6 +43,7 @@ export const MastersCarousel: React.FC<MastersCarouselProps> = ({ masters, title
       prevPage();
     }
   };
+  
   // Auto-rotate pages
   useEffect(() => {
     if (totalPages <= 1) return;
@@ -54,6 +54,11 @@ export const MastersCarousel: React.FC<MastersCarouselProps> = ({ masters, title
 
     return () => clearInterval(interval);
   }, [totalPages]);
+
+  // Reset to first page when masters change
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [masters]);
 
   return (
     <section className="py-12 bg-gray-50">
@@ -97,7 +102,7 @@ export const MastersCarousel: React.FC<MastersCarouselProps> = ({ masters, title
               master={master} 
               featured={master.rating > 9}
               onClick={() => {
-                console.log('MasterCard onClick called for:', master.name, master.id);
+                console.log('MasterCard onClick triggered for:', master.id); // Debug log
                 onMasterClick?.(master);
               }}
             />
