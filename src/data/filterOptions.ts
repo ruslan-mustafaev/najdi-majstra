@@ -1,4 +1,4 @@
-import { translations } from './translations';
+import { useLanguage } from '../hooks/useLanguage';
 
 export interface FilterOption {
   value: string;
@@ -6,183 +6,301 @@ export interface FilterOption {
   isRegion?: boolean;
 }
 
-export const getCityOptions = (language: 'sk' | 'en'): FilterOption[] => {
-  const t = translations[language];
-  
-  return [
-    { value: '', label: `- ${t.search.city} -`, isRegion: false },
+// Города Словакии по регионам
+export const getCityOptions = (language: 'sk' | 'en' = 'sk'): FilterOption[] => {
+  const emptyOption = {
+    value: '',
+    label: language === 'sk' ? '- Mesto -' : '- City -'
+  };
+
+  const allSlovakiaOption = {
+    value: 'Celé Slovensko',
+    label: language === 'sk' ? 'Celé Slovensko' : 'All Slovakia'
+  };
+
+  const cities = [
+    emptyOption,
+    allSlovakiaOption,
     
-    // Celé Slovensko option
-    { value: 'Celé Slovensko', label: language === 'sk' ? 'Celé Slovensko' : 'All Slovakia', isRegion: false },
+    // Bratislavský kraj
+    { value: '', label: language === 'sk' ? 'BRATISLAVSKÝ KRAJ' : 'BRATISLAVA REGION', isRegion: true },
+    { value: 'Bratislava', label: 'Bratislava' },
+    { value: 'Malacky', label: 'Malacky' },
+    { value: 'Pezinok', label: 'Pezinok' },
+    { value: 'Senec', label: 'Senec' },
+    { value: 'Stupava', label: 'Stupava' },
+    { value: 'Svätý Jur', label: 'Svätý Jur' },
     
-    // Kraje (Regions)
-    { value: 'Banskobystrický kraj', label: 'Banskobystrický kraj', isRegion: false },
-    { value: 'Bratislavský kraj', label: 'Bratislavský kraj', isRegion: false },
-    { value: 'Košický kraj', label: 'Košický kraj', isRegion: false },
-    { value: 'Nitriansky kraj', label: 'Nitriansky kraj', isRegion: false },
-    { value: 'Prešovský kraj', label: 'Prešovský kraj', isRegion: false },
-    { value: 'Trenčiansky kraj', label: 'Trenčiansky kraj', isRegion: false },
-    { value: 'Trnavský kraj', label: 'Trnavský kraj', isRegion: false },
-    { value: 'Žilinský kraj', label: 'Žilinský kraj', isRegion: false },
+    // Trnavský kraj
+    { value: '', label: language === 'sk' ? 'TRNAVSKÝ KRAJ' : 'TRNAVA REGION', isRegion: true },
+    { value: 'Trnava', label: 'Trnava' },
+    { value: 'Dunajská Streda', label: 'Dunajská Streda' },
+    { value: 'Galanta', label: 'Galanta' },
+    { value: 'Hlohovec', label: 'Hlohovec' },
+    { value: 'Piešťany', label: 'Piešťany' },
+    { value: 'Senica', label: 'Senica' },
+    { value: 'Skalica', label: 'Skalica' },
     
-    // Banskobystrický kraj - cities
-    { value: 'region-bb', label: 'Banskobystrický kraj - mestá', isRegion: true },
-    { value: 'Banská Bystrica', label: 'Banská Bystrica', isRegion: false },
-    { value: 'Fiľakovo', label: 'Fiľakovo', isRegion: false },
-    { value: 'Lučenec', label: 'Lučenec', isRegion: false },
-    { value: 'Rimavská Sobota', label: 'Rimavská Sobota', isRegion: false },
-    { value: 'Zvolen', label: 'Zvolen', isRegion: false },
+    // Trenčiansky kraj
+    { value: '', label: language === 'sk' ? 'TRENČIANSKY KRAJ' : 'TRENČÍN REGION', isRegion: true },
+    { value: 'Trenčín', label: 'Trenčín' },
+    { value: 'Bánovce nad Bebravou', label: 'Bánovce nad Bebravou' },
+    { value: 'Ilava', label: 'Ilava' },
+    { value: 'Myjava', label: 'Myjava' },
+    { value: 'Nové Mesto nad Váhom', label: 'Nové Mesto nad Váhom' },
+    { value: 'Partizánske', label: 'Partizánske' },
+    { value: 'Považská Bystrica', label: 'Považská Bystrica' },
+    { value: 'Prievidza', label: 'Prievidza' },
+    { value: 'Púchov', label: 'Púchov' },
     
-    // Bratislavský kraj - cities
-    { value: 'region-ba', label: 'Bratislavský kraj - mestá', isRegion: true },
-    { value: 'Bratislava', label: 'Bratislava', isRegion: false },
-    { value: 'Bratislava - Devín', label: 'Bratislava - Devín', isRegion: false },
-    { value: 'Bratislava - Devínska Nová Ves', label: 'Bratislava - Devínska Nová Ves', isRegion: false },
-    { value: 'Malacky', label: 'Malacky', isRegion: false },
-    { value: 'Pezinok', label: 'Pezinok', isRegion: false },
-    { value: 'Senec', label: 'Senec', isRegion: false },
+    // Nitriansky kraj
+    { value: '', label: language === 'sk' ? 'NITRIANSKY KRAJ' : 'NITRA REGION', isRegion: true },
+    { value: 'Nitra', label: 'Nitra' },
+    { value: 'Komárno', label: 'Komárno' },
+    { value: 'Levice', label: 'Levice' },
+    { value: 'Nové Zámky', label: 'Nové Zámky' },
+    { value: 'Šaľa', label: 'Šaľa' },
+    { value: 'Topoľčany', label: 'Topoľčany' },
+    { value: 'Zlaté Moravce', label: 'Zlaté Moravce' },
     
-    // Košický kraj - cities
-    { value: 'region-ke', label: 'Košický kraj - mestá', isRegion: true },
-    { value: 'Košice', label: 'Košice', isRegion: false },
-    { value: 'Michalovce', label: 'Michalovce', isRegion: false },
-    { value: 'Rožňava', label: 'Rožňava', isRegion: false },
-    { value: 'Spišská Nová Ves', label: 'Spišská Nová Ves', isRegion: false },
-    { value: 'Trebišov', label: 'Trebišov', isRegion: false },
+    // Žilinský kraj
+    { value: '', label: language === 'sk' ? 'ŽILINSKÝ KRAJ' : 'ŽILINA REGION', isRegion: true },
+    { value: 'Žilina', label: 'Žilina' },
+    { value: 'Bytča', label: 'Bytča' },
+    { value: 'Čadca', label: 'Čadca' },
+    { value: 'Dolný Kubín', label: 'Dolný Kubín' },
+    { value: 'Kysucké Nové Mesto', label: 'Kysucké Nové Mesto' },
+    { value: 'Liptovský Mikuláš', label: 'Liptovský Mikuláš' },
+    { value: 'Martin', label: 'Martin' },
+    { value: 'Námestovo', label: 'Námestovo' },
+    { value: 'Ružomberok', label: 'Ružomberok' },
+    { value: 'Turčianske Teplice', label: 'Turčianske Teplice' },
+    { value: 'Tvrdošín', label: 'Tvrdošín' },
     
-    // Nitriansky kraj - cities
-    { value: 'region-nr', label: 'Nitriansky kraj - mestá', isRegion: true },
-    { value: 'Nitra', label: 'Nitra', isRegion: false },
-    { value: 'Komárno', label: 'Komárno', isRegion: false },
-    { value: 'Levice', label: 'Levice', isRegion: false },
-    { value: 'Nové Zámky', label: 'Nové Zámky', isRegion: false },
-    { value: 'Topoľčany', label: 'Topoľčany', isRegion: false },
+    // Banskobystrický kraj
+    { value: '', label: language === 'sk' ? 'BANSKOBYSTRICKÝ KRAJ' : 'BANSKÁ BYSTRICA REGION', isRegion: true },
+    { value: 'Banská Bystrica', label: 'Banská Bystrica' },
+    { value: 'Banská Štiavnica', label: 'Banská Štiavnica' },
+    { value: 'Brezno', label: 'Brezno' },
+    { value: 'Detva', label: 'Detva' },
+    { value: 'Krupina', label: 'Krupina' },
+    { value: 'Lučenec', label: 'Lučenec' },
+    { value: 'Poltár', label: 'Poltár' },
+    { value: 'Revúca', label: 'Revúca' },
+    { value: 'Rimavská Sobota', label: 'Rimavská Sobota' },
+    { value: 'Veľký Krtíš', label: 'Veľký Krtíš' },
+    { value: 'Zvolen', label: 'Zvolen' },
+    { value: 'Žarnovica', label: 'Žarnovica' },
+    { value: 'Žiar nad Hronom', label: 'Žiar nad Hronom' },
     
-    // Prešovský kraj - cities
-    { value: 'region-po', label: 'Prešovský kraj - mestá', isRegion: true },
-    { value: 'Prešov', label: 'Prešov', isRegion: false },
-    { value: 'Bardejov', label: 'Bardejov', isRegion: false },
-    { value: 'Humenné', label: 'Humenné', isRegion: false },
-    { value: 'Poprad', label: 'Poprad', isRegion: false },
-    { value: 'Stará Ľubovňa', label: 'Stará Ľubovňa', isRegion: false },
-    { value: 'Svidník', label: 'Svidník', isRegion: false },
+    // Prešovský kraj
+    { value: '', label: language === 'sk' ? 'PREŠOVSKÝ KRAJ' : 'PREŠOV REGION', isRegion: true },
+    { value: 'Prešov', label: 'Prešov' },
+    { value: 'Bardejov', label: 'Bardejov' },
+    { value: 'Humenné', label: 'Humenné' },
+    { value: 'Kežmarok', label: 'Kežmarok' },
+    { value: 'Levoča', label: 'Levoča' },
+    { value: 'Medzilaborce', label: 'Medzilaborce' },
+    { value: 'Poprad', label: 'Poprad' },
+    { value: 'Sabinov', label: 'Sabinov' },
+    { value: 'Snina', label: 'Snina' },
+    { value: 'Stará Ľubovňa', label: 'Stará Ľubovňa' },
+    { value: 'Stropkov', label: 'Stropkov' },
+    { value: 'Svidník', label: 'Svidník' },
+    { value: 'Vranov nad Topľou', label: 'Vranov nad Topľou' },
     
-    // Trenčiansky kraj - cities
-    { value: 'region-tn', label: 'Trenčiansky kraj - mestá', isRegion: true },
-    { value: 'Trenčín', label: 'Trenčín', isRegion: false },
-    { value: 'Bánovce nad Bebravou', label: 'Bánovce nad Bebravou', isRegion: false },
-    { value: 'Myjava', label: 'Myjava', isRegion: false },
-    { value: 'Partizánske', label: 'Partizánske', isRegion: false },
-    { value: 'Považská Bystrica', label: 'Považská Bystrica', isRegion: false },
-    { value: 'Prievidza', label: 'Prievidza', isRegion: false },
-    
-    // Trnavský kraj - cities
-    { value: 'region-tt', label: 'Trnavský kraj - mestá', isRegion: true },
-    { value: 'Trnava', label: 'Trnava', isRegion: false },
-    { value: 'Dunajská Streda', label: 'Dunajská Streda', isRegion: false },
-    { value: 'Galanta', label: 'Galanta', isRegion: false },
-    { value: 'Hlohovec', label: 'Hlohovec', isRegion: false },
-    { value: 'Piešťany', label: 'Piešťany', isRegion: false },
-    { value: 'Senica', label: 'Senica', isRegion: false },
-    
-    // Žilinský kraj - cities
-    { value: 'region-za', label: 'Žilinský kraj - mestá', isRegion: true },
-    { value: 'Žilina', label: 'Žilina', isRegion: false },
-    { value: 'Bytča', label: 'Bytča', isRegion: false },
-    { value: 'Čadca', label: 'Čadca', isRegion: false },
-    { value: 'Dolný Kubín', label: 'Dolný Kubín', isRegion: false },
-    { value: 'Liptovský Mikuláš', label: 'Liptovský Mikuláš', isRegion: false },
-    { value: 'Martin', label: 'Martin', isRegion: false },
-    { value: 'Námestovo', label: 'Námestovo', isRegion: false },
-    { value: 'Ružomberok', label: 'Ružomberok', isRegion: false },
-    { value: 'Turčianske Teplice', label: 'Turčianske Teplice', isRegion: false }
+    // Košický kraj
+    { value: '', label: language === 'sk' ? 'KOŠICKÝ KRAJ' : 'KOŠICE REGION', isRegion: true },
+    { value: 'Košice', label: 'Košice' },
+    { value: 'Gelnica', label: 'Gelnica' },
+    { value: 'Michalovce', label: 'Michalovce' },
+    { value: 'Rožňava', label: 'Rožňava' },
+    { value: 'Sobrance', label: 'Sobrance' },
+    { value: 'Spišská Nová Ves', label: 'Spišská Nová Ves' },
+    { value: 'Trebišov', label: 'Trebišov' }
   ];
+
+  return cities;
 };
 
-export const getProfessionOptions = (language: 'sk' | 'en'): FilterOption[] => {
-  const t = translations[language];
-  
-  return [
-    { value: '', label: `- ${t.search.profession} -` },
+// Профессии по категориям
+export const getProfessionOptions = (language: 'sk' | 'en' = 'sk'): FilterOption[] => {
+  const emptyOption = {
+    value: '',
+    label: language === 'sk' ? '- Profesia -' : '- Profession -'
+  };
+
+  const professions = [
+    emptyOption,
     
-    // 1. Projektové profesie
-    { value: 'region-projektove', label: '1. Projektové profesie', isRegion: true },
-    { value: 'Architekt', label: 'Architekt', isRegion: false },
-    { value: 'Stavebný inžinier', label: 'Stavebný inžinier', isRegion: false },
-    { value: 'Statik', label: 'Statik', isRegion: false },
-    { value: 'Projektant TZB', label: 'Projektant TZB', isRegion: false },
-    { value: 'Projektant dopravných stavieb / Inžinier pre vonkajšie plochy', label: 'Projektant dopravných stavieb / Inžinier pre vonkajšie plochy', isRegion: false },
-    { value: 'Špecialista OZE', label: 'Špecialista OZE', isRegion: false },
-    { value: 'Geodet', label: 'Geodet', isRegion: false },
-    { value: 'Rozpočtár', label: 'Rozpočtár', isRegion: false },
-    { value: 'Interiérový dizajnér', label: 'Interiérový dizajnér', isRegion: false },
-    { value: 'Technik pre inžinierske siete', label: 'Technik pre inžinierske siete', isRegion: false },
-    { value: 'Projektant vonkajších rozvodov', label: 'Projektant vonkajších rozvodov', isRegion: false },
+    // Projektové profesie
+    { value: '', label: language === 'sk' ? 'PROJEKTOVÉ PROFESIE' : 'PROJECT PROFESSIONS', isRegion: true },
+    { value: 'Architekt', label: language === 'sk' ? 'Architekt' : 'Architect' },
+    { value: 'Interiérový dizajnér', label: language === 'sk' ? 'Interiérový dizajnér' : 'Interior Designer' },
+    { value: 'Krajinný architekt', label: language === 'sk' ? 'Krajinný architekt' : 'Landscape Architect' },
+    { value: 'Statik', label: language === 'sk' ? 'Statik' : 'Structural Engineer' },
+    { value: 'Projektant', label: language === 'sk' ? 'Projektant' : 'Project Designer' },
+    { value: 'Energetický audítor', label: language === 'sk' ? 'Energetický audítor' : 'Energy Auditor' },
+    { value: 'Geodet', label: language === 'sk' ? 'Geodet' : 'Surveyor' },
+    { value: 'Požiarny technik', label: language === 'sk' ? 'Požiarny technik' : 'Fire Safety Engineer' },
+    { value: 'BOZP koordinátor', label: language === 'sk' ? 'BOZP koordinátor' : 'Safety Coordinator' },
+    { value: 'Rozpočtár', label: language === 'sk' ? 'Rozpočtár' : 'Cost Estimator' },
+    { value: 'Technický dozor', label: language === 'sk' ? 'Technický dozor' : 'Technical Supervision' },
+    { value: 'Autorský dozor', label: language === 'sk' ? 'Autorský dozor' : 'Author Supervision' },
     
-    // 2. Dozorné a manažérske profesie
-    { value: 'region-dozorne', label: '2. Dozorné a manažérske profesie', isRegion: true },
-    { value: 'Stavebník / Investor', label: 'Stavebník / Investor', isRegion: false },
-    { value: 'Projektový manažér', label: 'Projektový manažér', isRegion: false },
-    { value: 'Stavbyvedúci', label: 'Stavbyvedúci', isRegion: false },
-    { value: 'Stavebný dozor', label: 'Stavebný dozor', isRegion: false },
-    { value: 'Koordinátor BOZP', label: 'Koordinátor BOZP', isRegion: false },
-    { value: 'Právnik pre stavebné právo', label: 'Právnik pre stavebné právo', isRegion: false },
+    // Stavebné profesie
+    { value: '', label: language === 'sk' ? 'STAVEBNÉ PROFESIE' : 'CONSTRUCTION PROFESSIONS', isRegion: true },
+    { value: 'Stavbyvedúci', label: language === 'sk' ? 'Stavbyvedúci' : 'Construction Manager' },
+    { value: 'Murár', label: language === 'sk' ? 'Murár' : 'Mason' },
+    { value: 'Betónár', label: language === 'sk' ? 'Betónár' : 'Concrete Worker' },
+    { value: 'Tesár', label: language === 'sk' ? 'Tesár' : 'Carpenter' },
+    { value: 'Pokrývač', label: language === 'sk' ? 'Pokrývač' : 'Roofer' },
+    { value: 'Izolatér', label: language === 'sk' ? 'Izolatér' : 'Insulation Specialist' },
+    { value: 'Železobetónár', label: language === 'sk' ? 'Železobetónár' : 'Reinforced Concrete Worker' },
+    { value: 'Stavebný robotník', label: language === 'sk' ? 'Stavebný robotník' : 'Construction Worker' },
+    { value: 'Demolačník', label: language === 'sk' ? 'Demolačník' : 'Demolition Specialist' },
+    { value: 'Výkopové práce', label: language === 'sk' ? 'Výkopové práce' : 'Excavation Work' },
     
-    // 3. Profesie pre interiér
-    { value: 'region-interier', label: '3. Profesie pre interiér', isRegion: true },
-    { value: 'Inštalatér', label: 'Inštalatér', isRegion: false },
-    { value: 'Elektrikár', label: 'Elektrikár', isRegion: false },
-    { value: 'Sadrokartonista', label: 'Sadrokartonista', isRegion: false },
-    { value: 'Omietkar', label: 'Omietkar', isRegion: false },
-    { value: 'Maliar / Natierač', label: 'Maliar / Natierač', isRegion: false },
-    { value: 'Obkladač', label: 'Obkladač', isRegion: false },
-    { value: 'Podlahár', label: 'Podlahár', isRegion: false },
-    { value: 'Stolár / Interiérový montážnik', label: 'Stolár / Interiérový montážnik', isRegion: false },
-    { value: 'Štukatér', label: 'Štukatér', isRegion: false },
-    { value: 'Kameník', label: 'Kameník', isRegion: false },
+    // Interiérové práce
+    { value: '', label: language === 'sk' ? 'INTERIÉROVÉ PRÁCE' : 'INTERIOR WORK', isRegion: true },
+    { value: 'Maliar', label: language === 'sk' ? 'Maliar' : 'Painter' },
+    { value: 'Podlahár', label: language === 'sk' ? 'Podlahár' : 'Flooring Specialist' },
+    { value: 'Obkladač', label: language === 'sk' ? 'Obkladač' : 'Tiler' },
+    { value: 'Sadrokartónár', label: language === 'sk' ? 'Sadrokartónár' : 'Drywall Specialist' },
+    { value: 'Tapetár', label: language === 'sk' ? 'Tapetár' : 'Wallpaper Installer' },
+    { value: 'Parkettár', label: language === 'sk' ? 'Parkettár' : 'Parquet Installer' },
+    { value: 'Kuchynský dizajnér', label: language === 'sk' ? 'Kuchynský dizajnér' : 'Kitchen Designer' },
+    { value: 'Nábytok na mieru', label: language === 'sk' ? 'Nábytok na mieru' : 'Custom Furniture' },
+    { value: 'Dekoratér', label: language === 'sk' ? 'Dekoratér' : 'Decorator' },
+    { value: 'Čalúnnik', label: language === 'sk' ? 'Čalúnnik' : 'Upholsterer' },
     
-    // 4. Profesie pre exteriér
-    { value: 'region-exterier', label: '4. Profesie pre exteriér', isRegion: true },
-    { value: 'Bagrista / Zemné práce', label: 'Bagrista / Zemné práce', isRegion: false },
-    { value: 'Murár', label: 'Murár', isRegion: false },
-    { value: 'Tesár', label: 'Tesár', isRegion: false },
-    { value: 'Elektrikár (exteriér)', label: 'Elektrikár', isRegion: false },
-    { value: 'Betonár', label: 'Betonár', isRegion: false },
-    { value: 'Klampiar / Pokrývač', label: 'Klampiar / Pokrývač', isRegion: false },
-    { value: 'Fasádnik / Izolatér', label: 'Fasádnik / Izolatér', isRegion: false },
-    { value: 'Okenár / Dvereár', label: 'Okenár / Dvereár', isRegion: false },
-    { value: 'Stavebný zámočník', label: 'Stavebný zámočník', isRegion: false },
-    { value: 'Dláždič / Cestár', label: 'Dláždič / Cestár', isRegion: false },
-    { value: 'Terénny úpravca / Záhradník', label: 'Terénny úpravca / Záhradník', isRegion: false },
+    // Technické profesie
+    { value: '', label: language === 'sk' ? 'TECHNICKÉ PROFESIE' : 'TECHNICAL PROFESSIONS', isRegion: true },
+    { value: 'Elektrikár', label: language === 'sk' ? 'Elektrikár' : 'Electrician' },
+    { value: 'Vodoinštalatér', label: language === 'sk' ? 'Vodoinštalatér' : 'Plumber' },
+    { value: 'Plynár', label: language === 'sk' ? 'Plynár' : 'Gas Technician' },
+    { value: 'Kúrenár', label: language === 'sk' ? 'Kúrenár' : 'Heating Technician' },
+    { value: 'Klimatizácie', label: language === 'sk' ? 'Klimatizácie' : 'Air Conditioning' },
+    { value: 'Solárne systémy', label: language === 'sk' ? 'Solárne systémy' : 'Solar Systems' },
+    { value: 'Tepelné čerpadlá', label: language === 'sk' ? 'Tepelné čerpadlá' : 'Heat Pumps' },
+    { value: 'Bezpečnostné systémy', label: language === 'sk' ? 'Bezpečnostné systémy' : 'Security Systems' },
+    { value: 'Smart home', label: language === 'sk' ? 'Smart home' : 'Smart Home' },
+    { value: 'Výťahy', label: language === 'sk' ? 'Výťahy' : 'Elevators' },
+    { value: 'Bazény', label: language === 'sk' ? 'Bazény' : 'Swimming Pools' },
+    { value: 'Studne', label: language === 'sk' ? 'Studne' : 'Wells' },
     
-    // 5. Profesie a špecializácie
-    { value: 'region-specializacie', label: '5. Profesie a špecializácie', isRegion: true },
-    { value: 'Technik pre inteligentné domácnosti', label: 'Technik pre inteligentné domácnosti', isRegion: false },
-    { value: 'Špecialista na obnoviteľné zdroje energie', label: 'Špecialista na obnoviteľné zdroje energie', isRegion: false },
-    { value: 'Akustický inžinier', label: 'Akustický inžinier', isRegion: false },
-    { value: 'Revízny technik', label: 'Revízny technik', isRegion: false },
-    { value: 'Fotovoltik / Montážnik', label: 'Fotovoltik / Montážnik', isRegion: false }
+    // Exteriérové práce
+    { value: '', label: language === 'sk' ? 'EXTERIÉROVÉ PRÁCE' : 'EXTERIOR WORK', isRegion: true },
+    { value: 'Fasáda', label: language === 'sk' ? 'Fasáda' : 'Facade' },
+    { value: 'Záhradník', label: language === 'sk' ? 'Záhradník' : 'Gardener' },
+    { value: 'Oplotenie', label: language === 'sk' ? 'Oplotenie' : 'Fencing' },
+    { value: 'Terasy', label: language === 'sk' ? 'Terasy' : 'Terraces' },
+    { value: 'Dlažby', label: language === 'sk' ? 'Dlažby' : 'Paving' },
+    { value: 'Strešné okná', label: language === 'sk' ? 'Strešné okná' : 'Roof Windows' },
+    { value: 'Žľaby', label: language === 'sk' ? 'Žľaby' : 'Gutters' },
+    { value: 'Komíny', label: language === 'sk' ? 'Komíny' : 'Chimneys' },
+    { value: 'Pergoly', label: language === 'sk' ? 'Pergoly' : 'Pergolas' },
+    { value: 'Zimné záhrady', label: language === 'sk' ? 'Zimné záhrady' : 'Winter Gardens' },
+    { value: 'Altánky', label: language === 'sk' ? 'Altánky' : 'Gazebos' },
+    { value: 'Osvetlenie exteriéru', label: language === 'sk' ? 'Osvetlenie exteriéru' : 'Exterior Lighting' },
+    
+    // Špecializované služby
+    { value: '', label: language === 'sk' ? 'ŠPECIALIZOVANÉ SLUŽBY' : 'SPECIALIZED SERVICES', isRegion: true },
+    { value: 'Čistenie a upratovanie', label: language === 'sk' ? 'Čistenie a upratovanie' : 'Cleaning Services' },
+    { value: 'Sťahovanie', label: language === 'sk' ? 'Sťahovanie' : 'Moving Services' },
+    { value: 'Automechanik', label: language === 'sk' ? 'Automechanik' : 'Auto Mechanic' },
+    { value: 'Kaderníčka', label: language === 'sk' ? 'Kaderníčka' : 'Hairdresser' },
+    { value: 'Masér', label: language === 'sk' ? 'Masér' : 'Massage Therapist' },
+    { value: 'Osobný tréner', label: language === 'sk' ? 'Osobný tréner' : 'Personal Trainer' },
+    { value: 'Fotografovanie', label: language === 'sk' ? 'Fotografovanie' : 'Photography' },
+    { value: 'Catering', label: language === 'sk' ? 'Catering' : 'Catering' },
+    { value: 'Hudobník', label: language === 'sk' ? 'Hudobník' : 'Musician' },
+    { value: 'Moderátor', label: language === 'sk' ? 'Moderátor' : 'Host/MC' }
   ];
+
+  return professions;
 };
 
-export const getAvailabilityOptions = (language: 'sk' | 'en'): FilterOption[] => {
-  const t = translations[language];
-  
-  return [
-    { value: '', label: `- ${t.search.availability} -` },
-    { value: 'Dostupný teraz', label: language === 'sk' ? 'Dostupný teraz' : 'Available now' },
-    { value: 'Tento týždeň', label: language === 'sk' ? 'Tento týždeň' : 'This week' },
-    { value: 'Tento mesiac', label: language === 'sk' ? 'Tento mesiac' : 'This month' }
-  ];
-};
+// Dostupnosť
+export const getAvailabilityOptions = (language: 'sk' | 'en' = 'sk'): FilterOption[] => [
+  {
+    value: '',
+    label: language === 'sk' ? '- Dostupnosť -' : '- Availability -'
+  },
+  {
+    value: 'Dostupný teraz',
+    label: language === 'sk' ? 'Dostupný teraz' : 'Available now'
+  },
+  {
+    value: 'Tento týždeň',
+    label: language === 'sk' ? 'Tento týždeň' : 'This week'
+  },
+  {
+    value: 'Tento mesiac',
+    label: language === 'sk' ? 'Tento mesiac' : 'This month'
+  },
+  {
+    value: 'Budúci mesiac',
+    label: language === 'sk' ? 'Budúci mesiac' : 'Next month'
+  },
+  {
+    value: 'Flexibilný',
+    label: language === 'sk' ? 'Flexibilný' : 'Flexible'
+  }
+];
 
-export const getExperienceOptions = (language: 'sk' | 'en'): FilterOption[] => {
-  return [
-    { value: '', label: language === 'sk' ? '- Odbornosť -' : '- Expertise -' },
-    { value: '1 rok a viac', label: language === 'sk' ? '1 rok a viac' : '1+ years' },
-    { value: '3 roky a viac', label: language === 'sk' ? '3 roky a viac' : '3+ years' },
-    { value: '5 rokov a viac', label: language === 'sk' ? '5 rokov a viac' : '5+ years' },
-    { value: '10 rokov a viac', label: language === 'sk' ? '10 rokov a viac' : '10+ years' },
-    { value: '20 rokov a viac', label: language === 'sk' ? '20 rokov a viac' : '20+ years' }
-  ];
-};
+// Skúsenosti
+export const getExperienceOptions = (language: 'sk' | 'en' = 'sk'): FilterOption[] => [
+  {
+    value: '',
+    label: language === 'sk' ? '- Skúsenosti -' : '- Experience -'
+  },
+  {
+    value: '1 rok a viac',
+    label: language === 'sk' ? '1 rok a viac' : '1+ years'
+  },
+  {
+    value: '3 roky a viac',
+    label: language === 'sk' ? '3 roky a viac' : '3+ years'
+  },
+  {
+    value: '5 rokov a viac',
+    label: language === 'sk' ? '5 rokov a viac' : '5+ years'
+  },
+  {
+    value: 'viac ako 10 rokov',
+    label: language === 'sk' ? 'Viac ako 10 rokov' : '10+ years'
+  },
+  {
+    value: 'Začiatočník',
+    label: language === 'sk' ? 'Začiatočník' : 'Beginner'
+  }
+];
+
+// Cenové rozpätie
+export const getPriceRangeOptions = (language: 'sk' | 'en' = 'sk'): FilterOption[] => [
+  {
+    value: '',
+    label: language === 'sk' ? '- Cenové rozpätie -' : '- Price Range -'
+  },
+  {
+    value: '10-20 €/hod',
+    label: '10-20 €/hod'
+  },
+  {
+    value: '20-30 €/hod',
+    label: '20-30 €/hod'
+  },
+  {
+    value: '30-50 €/hod',
+    label: '30-50 €/hod'
+  },
+  {
+    value: '50+ €/hod',
+    label: '50+ €/hod'
+  },
+  {
+    value: 'Dohodou',
+    label: language === 'sk' ? 'Dohodou' : 'By agreement'
+  }
+];
