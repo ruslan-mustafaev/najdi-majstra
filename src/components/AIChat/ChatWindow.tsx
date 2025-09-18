@@ -19,7 +19,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
   onMasterRecommendation
 }) => {
   const { language } = useLanguage();
-  const t = translations[language].aiChat;
+  const t = translations.aiChat[language];
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
