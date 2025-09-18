@@ -190,25 +190,10 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
             {/* Work Images and Video Grid */}
             <div className="space-y-4">
               <h4 className="font-semibold text-gray-900">Ukážky práce</h4>
-              <div className="grid grid-cols-2 gap-3">
-                {master.workImages.map((image, index) => (
-                  <div key={index} className="relative">
-                    <img
-                      src={image}
-                      alt={`Práca ${index + 1}`}
-                      className="w-full aspect-square object-cover rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
-                    />
-                  </div>
-                ))}
-                {master.workVideo && (
-                  <div className="relative">
-                    <div className="w-full aspect-square bg-gray-900 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer flex items-center justify-center">
-                      <div className="absolute inset-0 bg-black/20 rounded-lg flex items-center justify-center">
-                        <Play className="text-white" size={32} />
-                      </div>
-                    </div>
-                  </div>
-                )}
+              <div className="bg-gray-100 rounded-lg p-6 text-center">
+                <p className="text-gray-600 text-sm">
+                  Zatiaľ majster ešte nič nenahrál
+                </p>
               </div>
             </div>
 
