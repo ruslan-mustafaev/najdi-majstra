@@ -1,6 +1,7 @@
 import React from 'react';
 import { Star, MapPin } from 'lucide-react';
 import { Master } from '../types';
+import { ServiceIndicators, ServiceType } from './ServiceIndicators';
 
 interface MasterCardProps {
   master: Master;
@@ -9,26 +10,65 @@ interface MasterCardProps {
 }
 
 export const MasterCard: React.FC<MasterCardProps> = ({ master, featured = false, onClick }) => {
-  const handleProfileClick = (e: React.MouseEvent) => {
+  const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('Profile button clicked for master:', master.name, master.id);
     if (onClick) {
       onClick();
     }
   };
 
+  // Определяем какие индикаторы показывать
+  const getServiceIndicators = () => {
+    const services = master.emergencyServices || [];
+    const indicators = [];
+    
+    if (services.includes('urgent')) {
+      indicators.push({ color: 'bg-red-500', label: 'Akútna porucha' });
+    }
+    if (services.includes('regular')) {
+      indicators.push({ color: 'bg-blue-500', label: 'Pravidelný servis' });
+    }
+    if (services.includes('realization')) {
+      indicators.push({ color: 'bg-green-500', label: 'Plánovaná realizácia' });
+    }
+    
+    return indicators;
+  };
+
+  // Генерируем разные комбинации индикаторов для демонстрации (макет)
+  const getMockServiceTypes = (masterId: string): ServiceType[] => {
+    const combinations: ServiceType[][] = [
+      ['urgent'], // только аварийные
+      ['regular'], // только сервис
+      ['realization'], // только реализация
+      ['urgent', 'regular'], // аварийные + сервис
+      ['regular', 'realization'], // сервис + реализация
+      ['urgent', 'realization'], // аварийные + реализация
+      ['urgent', 'regular', 'realization'], // все три
+      [], // без индикаторов
+    ];
+    
+    // Используем ID мастера для получения стабильной комбинации
+    const index = parseInt(masterId) % combinations.length;
+    return combinations[index] || [];
+  };
+
+  const serviceTypes = getMockServiceTypes(master.id);
+  const serviceIndicators = getServiceIndicators();
+
   return (
     <div 
-      className={`bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden ${
+      className={`bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer ${
         featured ? 'ring-2 ring-[#4169e1] ring-opacity-20' : ''
       }`}
-      style={{ height: '320px', width: '100%' }}
+      onClick={handleClick}
+      style={{ height: '320px', width: '100%' }} // Принудительно задаем размеры
     >
       {/* Photo with availability indicator and rating */}
       <div className="relative" style={{ height: '180px' }}>
         <img
-          src={master.profileImage}
+          src={master.profileImage || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2IiByeD0iMTIiLz4KPHN2ZyB4PSI1MCIgeT0iNTAiIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgZmlsbD0ibm9uZSI+CjxyZWN0IHg9IjEwIiB5PSIyNSIgd2lkdGg9IjgwIiBoZWlnaHQ9IjU1IiByeD0iOCIgZmlsbD0iIzlDQTNBRiIvPgo8cmVjdCB4PSIyNSIgeT0iMTUiIHdpZHRoPSIyNSIgaGVpZ2h0PSIxNSIgcng9IjQiIGZpbGw9IiM5Q0EzQUYiLz4KPGNpcmNsZSBjeD0iNTAiIGN5PSI1MiIgcj0iMTUiIGZpbGw9IiM2Mzc0ODAiLz4KPGNpcmNsZSBjeD0iNzUiIGN5PSIzNSIgcj0iMyIgZmlsbD0iIzYzNzQ4MCIvPgo8L3N2Zz4KPC9zdmc+'}
           alt={master.name}
           className="w-full h-full object-cover"
         />
@@ -45,6 +85,14 @@ export const MasterCard: React.FC<MasterCardProps> = ({ master, featured = false
           <Star className="text-yellow-400 fill-current" size={14} />
           <span className="font-medium text-sm">{master.rating}</span>
           <span className="text-xs">({master.reviewCount})</span>
+        </div>
+
+        {/* Service type indicators - новый компонент */}
+        <div className="absolute bottom-3 left-3">
+          <ServiceIndicators 
+            services={serviceTypes}
+            size="medium"
+          />
         </div>
       </div>
 
@@ -72,8 +120,7 @@ export const MasterCard: React.FC<MasterCardProps> = ({ master, featured = false
         <div style={{ height: '36px' }}>
           <button 
             className="w-full bg-[#4169e1] text-white py-2 rounded-lg font-medium hover:bg-[#3558d4] transition-colors text-sm"
-            onClick={handleProfileClick}
-            type="button"
+            onClick={handleClick}
           >
             Zobraziť profil
           </button>
