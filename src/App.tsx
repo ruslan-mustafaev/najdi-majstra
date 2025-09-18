@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { LanguageProvider } from './hooks/useLanguage';
 import { AuthProvider, useAuth } from './hooks/useAuth';
@@ -12,6 +12,7 @@ import { Footer } from './components/Footer';
 import { MasterProfile } from './components/MasterProfile';
 import { SearchResults } from './components/SearchResults';
 import { MasterDashboard } from './components/MasterDashboard';
+import { EmailConfirmation } from './components/EmailConfirmation';
 import { Master } from './data/mockData';
 import { getTopRatedMasters } from './lib/mastersApi';
 
@@ -28,6 +29,75 @@ const HomePage: React.FC = () => {
   const [recentlyViewed, setRecentlyViewed] = useState<Master[]>([]);
   const [filteredMasters, setFilteredMasters] = useState<Master[]>([]);
   const [hasActiveFilters, setHasActiveFilters] = useState(false);
+
+  // ИСПРАВЛЕНО: Мемоизируем функцию фильтрации
+  const handleFiltersChange = useCallback((newFilters: any) => {
+    console.log('Filters changed:', newFilters);
+    
+    // Проверяем есть ли активные фильтры
+    const hasFilters = newFilters.city || newFilters.profession || newFilters.availability || newFilters.experience;
+    
+    if (hasFilters) {
+      // Фильтруем мастеров
+      const filtered = realMasters.filter(master => {
+        // Фильтр по городу
+        if (newFilters.city && newFilters.city !== 'Celé Slovensko' && 
+            !master.location.toLowerCase().includes(newFilters.city.toLowerCase())) {
+          return false;
+        }
+        
+        // Фильтр по профессии
+        if (newFilters.profession && 
+            !master.profession.toLowerCase().includes(newFilters.profession.toLowerCase())) {
+          return false;
+        }
+        
+        // Фильтр по доступности
+        if (newFilters.availability === 'Dostupný teraz' && !master.available) {
+          return false;
+        }
+        
+        // Фильтр по опыту
+        if (newFilters.experience) {
+          if (newFilters.experience === 'viac ako 10 rokov' && 
+              !master.experience.includes('viac ako 10')) {
+            return false;
+          }
+          if (newFilters.experience === '5 rokov a viac' && 
+              !master.experience.includes('viac ako') && 
+              !master.experience.includes('5')) {
+            return false;
+          }
+        }
+        
+        return true;
+      });
+      
+      setFilteredMasters(filtered);
+      setHasActiveFilters(true);
+    } else {
+      // Если фильтров нет - очищаем результаты
+      setFilteredMasters([]);
+      setHasActiveFilters(false);
+    }
+  }, [realMasters]); // Зависит только от realMasters
+
+  // ИСПРАВЛЕНО: Мемоизируем функцию клика по мастеру
+  const handleMasterClick = useCallback((master: Master) => {
+    console.log('Master clicked:', master.id, master.name);
+    
+    // Add to recently viewed
+    setRecentlyViewed(prev => {
+      const filtered = prev.filter(m => m.id !== master.id);
+      const updated = [master, ...filtered].slice(0, 10);
+      localStorage.setItem('recently-viewed', JSON.stringify(updated));
+      return updated;
+    });
+    
+    // Navigate to profile
+    console.log('Navigating to profile:', `/profile/${master.id}`);
+    navigate(`/profile/${master.id}`);
+  }, [navigate]);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -82,48 +152,6 @@ const HomePage: React.FC = () => {
     setShowAuthModal(false);
   };
 
-  const handleMasterClick = (master: Master) => {
-    console.log('handleMasterClick called:', master.id, master.name);
-    
-    // Add to recently viewed
-    setRecentlyViewed(prev => {
-      const filtered = prev.filter(m => m.id !== master.id);
-      const updated = [master, ...filtered].slice(0, 10);
-      localStorage.setItem('recently-viewed', JSON.stringify(updated));
-      return updated;
-    });
-    
-    // Navigate to profile
-    console.log('Navigating to:', `/profile/${master.id}`);
-    navigate(`/profile/${master.id}`);
-  };
-
-  const handleSearch = (filters: any) => {
-    // Check if any filters are active
-    const hasFilters = filters.city || filters.profession || filters.availability || filters.priceRange;
-    setHasActiveFilters(hasFilters);
-    
-    if (hasFilters) {
-      // Filter masters based on criteria
-      const filtered = realMasters.filter(master => {
-        if (filters.city && filters.city !== 'Celé Slovensko' && !master.location.toLowerCase().includes(filters.city.toLowerCase())) {
-          return false;
-        }
-        if (filters.profession && !master.profession.toLowerCase().includes(filters.profession.toLowerCase())) {
-          return false;
-        }
-        if (filters.availability === 'Dostupný teraz' && !master.available) {
-          return false;
-        }
-        return true;
-      });
-      setFilteredMasters(filtered);
-    } else {
-      // Если все фильтры пустые - очищаем результаты фильтрации
-      setFilteredMasters([]);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gray-50">
       <WelcomePopup 
@@ -148,12 +176,13 @@ const HomePage: React.FC = () => {
       
       <main>
         <MainSearchSection 
-          onSearch={handleSearch} 
-          onMasterClick={(masterId) => navigate(`/profile/${masterId}`)} 
+          onFiltersChange={handleFiltersChange} 
+          onMasterClick={(masterId: string) => navigate(`/profile/${masterId}`)} 
         />
         
+        {/* Результаты фильтрации или обычный список */}
         {hasActiveFilters ? (
-          // Show filtered results
+          // Показываем отфильтрованные результаты
           filteredMasters.length > 0 ? (
             <MastersCarousel 
               masters={filteredMasters} 
@@ -162,13 +191,18 @@ const HomePage: React.FC = () => {
             />
           ) : (
             <div className="container mx-auto px-4 py-8">
-              <div className="text-center bg-white rounded-lg p-8 shadow-sm">
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">Žiadni majstri nenájdení</h3>
-                <p className="text-gray-600">Skúste zmeniť kritériá vyhľadávania</p>
+              <div className="text-center bg-yellow-50 border border-yellow-200 rounded-xl p-8 max-w-2xl mx-auto">
+                <h3 className="text-xl font-semibold text-yellow-800 mb-2">
+                  Žiadni majstri nenájdení
+                </h3>
+                <p className="text-yellow-700">
+                  Skúste zmeniť kritériá vyhľadávania alebo vybrať širšiu oblasť.
+                </p>
               </div>
             </div>
           )
         ) : isLoadingMasters ? (
+          // Показываем загрузку
           <div className="container mx-auto px-4 py-8">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#4169e1] mx-auto"></div>
@@ -176,21 +210,25 @@ const HomePage: React.FC = () => {
             </div>
           </div>
         ) : realMasters.length > 0 ? (
+          // Показываем обычный список всех мастеров
           <MastersCarousel 
             masters={realMasters} 
             title="Najlepšie hodnotení majstri" 
             onMasterClick={handleMasterClick}
           />
         ) : (
+          // Нет мастеров вообще
           <div className="container mx-auto px-4 py-8">
             <div className="text-center bg-white rounded-lg p-8 shadow-sm">
               <h3 className="text-xl font-semibold text-gray-800 mb-2">Zatiaľ žiadni majstri</h3>
               <p className="text-gray-600">Buďte prvý majster na platforme!</p>
             </div>
           </div>
-        )}
+        )
+        }
         
-        {recentlyViewed.length > 0 && (
+        {/* Недавно просмотренные - показываем только если нет активных фильтров */}
+        {!hasActiveFilters && recentlyViewed.length > 0 && (
           <MastersCarousel 
             masters={recentlyViewed} 
             title="Naposledy zobrazené"
@@ -211,30 +249,24 @@ const ProfilePage: React.FC = () => {
   const [master, setMaster] = useState<Master | null>(null);
   const [loading, setLoading] = useState(true);
 
+  console.log('ProfilePage rendered with ID:', id); // Debug log
+
   useEffect(() => {
     const loadMaster = async () => {
+      console.log('Loading master with ID:', id); // Debug log
       setLoading(true);
       try {
-        console.log('Loading master with ID:', id);
-        // Загружаем всех мастеров и находим нужного
-        const masters = await getTopRatedMasters();
-        console.log('Available masters:', masters.map(m => ({ id: m.id, name: m.name })));
+        // Сначала ищем в mockMasters
+        const { mockMasters } = await import('./data/mockData');
+        let foundMaster = mockMasters.find(m => m.id === id);
         
-        // Ищем мастера по ID (может быть UUID из базы или строковый ID из mockData)
-        let foundMaster = masters.find(m => m.id === id);
-        
-        // Если не найден по точному совпадению, попробуем найти по началу UUID
-        if (!foundMaster && id) {
-          foundMaster = masters.find(m => m.id.startsWith(id.substring(0, 8)));
+        // Если не найден в mock, пробуем загрузить из Supabase
+        if (!foundMaster) {
+          const masters = await getTopRatedMasters();
+          foundMaster = masters.find(m => m.id === id);
         }
         
-        // Если все еще не найден, возьмем первого доступного мастера для демонстрации
-        if (!foundMaster && masters.length > 0) {
-          console.warn('Master not found by ID, using first available master');
-          foundMaster = masters[0];
-        }
-        
-        console.log('Found master:', foundMaster);
+        console.log('Found master:', foundMaster); // Debug log
         
         if (foundMaster) {
           setMaster(foundMaster);
@@ -248,7 +280,9 @@ const ProfilePage: React.FC = () => {
       }
     };
     
-    loadMaster();
+    if (id) {
+      loadMaster();
+    }
   }, [id]);
 
   if (loading) {
