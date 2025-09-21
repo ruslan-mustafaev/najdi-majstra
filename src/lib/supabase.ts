@@ -6,8 +6,8 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIU
 
 // Определяем базовый URL в зависимости от окружения
 const getBaseUrl = () => {
-  // В production (Netlify)
-  if (window.location.hostname !== 'localhost') {
+  // В production (Netlify или ваш домен)
+  if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
     return window.location.origin
   }
   
@@ -16,7 +16,7 @@ const getBaseUrl = () => {
     return import.meta.env.VITE_SITE_URL
   }
   
-  return 'http://localhost:3000'
+  return 'http://localhost:5173'
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
