@@ -110,13 +110,6 @@ export const uploadSingleFile = async (
     const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets();
     console.log('Available buckets:', buckets, bucketsError);
     
-    // Проверяем политики
-    const { data: policies, error: policiesError } = await supabase
-      .from('storage.objects')
-      .select('*')
-      .limit(1);
-    console.log('Storage access test:', policies, policiesError);
-
     // Загружаем файл
     const { data, error } = await supabase.storage
       .from('profile-images')
