@@ -224,18 +224,25 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
               </div>
               
               {/* Work Videos Section */}
-              {master.workVideo && (
+              {master.workVideos && master.workVideos.length > 0 && (
                 <div className="mt-6">
                   <h4 className="font-semibold text-gray-900 mb-3">Video ukážky práce</h4>
-                  <div className="relative">
-                    <video
-                      src={master.workVideo}
-                      controls
-                      className="w-full rounded-lg shadow-md"
-                      style={{ maxHeight: '300px' }}
-                    >
-                      Váš prehliadač nepodporuje video element.
-                    </video>
+                  <div className="grid grid-cols-1 gap-4">
+                    {master.workVideos.map((videoUrl, index) => (
+                      <div key={index} className="relative">
+                        <video
+                          src={videoUrl}
+                          controls
+                          className="w-full rounded-lg shadow-md"
+                          style={{ maxHeight: '300px' }}
+                        >
+                          Váš prehliadač nepodporuje video element.
+                        </video>
+                        <div className="absolute top-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-xs">
+                          Video {index + 1}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}

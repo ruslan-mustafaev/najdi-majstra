@@ -8,7 +8,7 @@ export interface Master {
   available: boolean;
   profileImage: string;
   workImages: string[];
-  workVideo?: string; // URL to work video (max 1)
+  workVideos?: string[]; // URLs to work videos (max 5)
   description: string;
   services: string[];
   experience: string;

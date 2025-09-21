@@ -32,7 +32,7 @@ const FILE_CONFIG = {
   'work-videos': {
     maxSize: 100 * 1024 * 1024, // 100MB
     allowedTypes: ['video/mp4', 'video/webm', 'video/ogg', 'video/avi', 'video/mov'],
-    maxFiles: 5,
+    maxFiles: 5, // Увеличиваем до 5 видео
     folder: 'work-videos'
   }
 };
@@ -426,7 +426,7 @@ const getFilesFromMaster = (master: any, fileType: FileType): string[] => {
       case 'work-images':
         return master.work_images_urls || [];
       case 'work-videos':
-        return master.work_video_url ? [master.work_video_url] : [];
+        return master.work_video_url || []; // Теперь это уже массив
       default:
         return [];
     }
@@ -442,7 +442,7 @@ export const updateMasterProfile = async (
   updates: {
     profile_image_url?: string;
     work_images_urls?: string[];
-    work_video_url?: string;
+    work_video_url?: string[]; // Изменяем на массив
   }
 ): Promise<boolean> => {
   try {

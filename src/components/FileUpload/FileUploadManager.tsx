@@ -99,7 +99,7 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
           // Обновляем профиль в базе данных
           const updateData = fileType === 'work-images' 
             ? { work_images_urls: allFiles }
-            : { work_video_url: result.urls[0] }; // Для видео берем новое
+            : { work_video_url: allFiles }; // Для видео теперь сохраняем все
 
           await updateMasterProfile(user.id, updateData);
 
@@ -146,7 +146,7 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
         ? { profile_image_url: null }
         : fileType === 'work-images'
         ? { work_images_urls: updatedFiles }
-        : { work_video_url: updatedFiles[0] || null };
+        : { work_video_url: updatedFiles }; // Сохраняем массив видео
 
       const dbSuccess = await updateMasterProfile(user.id, updateData);
 

@@ -37,7 +37,7 @@ export const getTopRatedMasters = async () => {
       available: master.is_active,
       profileImage: master.profile_image_url || '/placeholder-avatar.svg',
       workImages: master.work_images_urls || [],
-      workVideo: master.work_video_url,
+      workVideos: master.work_video_url || [], // Теперь массив видео
       description: master.description || 'Profesionálny majster s pracovnými skúsenosťami',
       services: ['Opravy', 'Inštalácie', 'Servis'],
       experience: '5+ rokov',
