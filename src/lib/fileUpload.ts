@@ -73,7 +73,7 @@ export const uploadSingleFile = async (
     console.log('=== UPLOAD DEBUG START ===');
     console.log('File:', file.name, file.size, file.type);
     console.log('FileType:', fileType);
-    console.log('UserId parameter:', userId);
+    console.log('UserId parameter received:', userId);
     
     // Валидация
     const validationError = validateFile(file, fileType);
@@ -89,41 +89,53 @@ export const uploadSingleFile = async (
       throw new Error('Пользователь не аутентифицирован');
     }
 
-    // === AUTH DEBUG ===
+    // === КРИТИЧЕСКАЯ ОТЛАДКА АУТЕНТИФИКАЦИИ ===
+    console.log('=== AUTH DEBUG ===');
     console.log('User from getUser():', user.id);
+    console.log('User email:', user.email);
     console.log('Passed userId parameter:', userId);
+    console.log('Do IDs match?', user.id === userId);
 
-    // Проверяем сессию
+    // Проверяем сессию детально
     const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    console.log('=== SESSION DEBUG ===');
     console.log('Session exists:', !!session);
-    console.log('Session user:', session?.user?.id);
+    console.log('Session user ID:', session?.user?.id);
     console.log('Access token exists:', !!session?.access_token);
+    console.log('Access token preview:', session?.access_token?.substring(0, 50) + '...');
     console.log('Session error:', sessionError);
 
-    // ВАЖНО: Используем user.id вместо userId для обеспечения соответствия RLS политике
-    const fileName = generateFileName(file, user.id, fileType);
+    // Проверяем что auth.uid() видит на сервере
+    const { data: authCheck, error: authCheckError } = await supabase.rpc('get_current_user_id');
+    console.log('=== SERVER AUTH CHECK ===');
+    console.log('Server auth.uid():', authCheck);
+    console.log('Server auth error:', authCheckError);
 
-    console.log('Generated filename with user.id:', fileName);
+    // ВСЕГДА используем user.id из аутентифицированного пользователя
+    const actualUserId = user.id;
+    const fileName = generateFileName(file, actualUserId, fileType);
+
+    console.log('=== FILE PATH DEBUG ===');
+    console.log('Generated filename:', fileName);
     console.log('First part of path:', fileName.split('/')[0]);
-    console.log('Match user.id?', user.id === fileName.split('/')[0]);
+    console.log('Actual user ID:', actualUserId);
+    console.log('Path matches user ID?', actualUserId === fileName.split('/')[0]);
 
     // Если это аватарка, сначала удаляем старую
     if (fileType === 'avatar') {
-      // await deleteOldAvatar(user.id); // Временно отключаем
+      console.log('Deleting old avatar files...');
+      // await deleteOldAvatar(actualUserId); // Временно отключаем
     }
     
-    console.log('Uploading file:', {
-      fileName,
-      actualUserId: user.id,
-      fileType,
-      bucketId: 'profile-images',
-      fileSize: file.size,
-      fileType: file.type
-    });
+    console.log('=== UPLOAD ATTEMPT ===');
+    console.log('Uploading to bucket: profile-images');
+    console.log('File path:', fileName);
+    console.log('File size:', file.size);
+    console.log('File type:', file.type);
 
-    // Проверяем существование bucket
+    // Проверяем bucket существование
     const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets();
-    console.log('Available buckets:', buckets, bucketsError);
+    console.log('Available buckets:', buckets?.map(b => b.name), bucketsError);
     
     // Загружаем файл
     const { data, error } = await supabase.storage
@@ -134,25 +146,24 @@ export const uploadSingleFile = async (
       });
 
     if (error) {
-      console.error('Supabase storage error:', {
-        message: error.message,
-        details: JSON.stringify(error, null, 2),
-        fileName,
-        actualUserId: user.id,
-        bucket: 'profile-images'
-      });
+      console.error('=== STORAGE ERROR ===');
+      console.error('Error message:', error.message);
+      console.error('Error details:', JSON.stringify(error, null, 2));
+      console.error('File path that failed:', fileName);
+      console.error('User ID used:', actualUserId);
       
       throw new Error(`Ошибка загрузки: ${error.message}`);
     }
 
-    console.log('Upload successful:', data);
+    console.log('=== UPLOAD SUCCESS ===');
+    console.log('Upload data:', data);
     
     // Получаем публичный URL
     const { data: urlData } = supabase.storage
       .from('profile-images')
       .getPublicUrl(fileName);
 
-    console.log('Public URL:', urlData.publicUrl);
+    console.log('Public URL generated:', urlData.publicUrl);
     console.log('=== UPLOAD DEBUG END ===');
 
     return { 
@@ -170,7 +181,7 @@ export const uploadSingleFile = async (
     });
     return { 
       success: false, 
-      error: 'Nastala neočakávaná chyba pri nahrávaní súboru' 
+      error: error instanceof Error ? error.message : 'Nastala neočakávaná chyba pri nahrávaní súboru'
     };
   }
 };
@@ -182,17 +193,23 @@ export const uploadMultipleFiles = async (
   userId: string
 ): Promise<MultipleUploadResult> => {
   try {
+    console.log('=== MULTIPLE UPLOAD START ===');
     const fileArray = Array.from(files);
     const config = FILE_CONFIG[fileType];
+
+    console.log('Files to upload:', fileArray.length);
 
     // Проверяем аутентификацию
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) {
+      console.log('Multiple upload auth error:', authError);
       return { 
         success: false, 
         errors: ['Пользователь не аутентифицирован'] 
       };
     }
+
+    console.log('Multiple upload user ID:', user.id);
 
     // Проверяем количество файлов
     if (fileArray.length > config.maxFiles) {
@@ -216,9 +233,12 @@ export const uploadMultipleFiles = async (
     }
 
     // Загружаем все файлы
-    const uploadPromises = fileArray.map(async (file) => {
-      // Используем user.id вместо userId
+    const uploadPromises = fileArray.map(async (file, index) => {
+      console.log(`Uploading file ${index + 1}/${fileArray.length}: ${file.name}`);
+      
+      // ВСЕГДА используем user.id
       const fileName = generateFileName(file, user.id, fileType);
+      console.log(`Generated path: ${fileName}`);
       
       const { data, error } = await supabase.storage
         .from('profile-images')
@@ -228,8 +248,11 @@ export const uploadMultipleFiles = async (
         });
 
       if (error) {
+        console.error(`Upload error for ${file.name}:`, error);
         throw new Error(`Chyba pri nahrávaní ${file.name}: ${error.message}`);
       }
+
+      console.log(`Successfully uploaded: ${fileName}`);
 
       // Получаем публичный URL
       const { data: urlData } = supabase.storage
@@ -239,7 +262,11 @@ export const uploadMultipleFiles = async (
       return urlData.publicUrl;
     });
 
+    console.log('Waiting for all uploads to complete...');
     const urls = await Promise.all(uploadPromises);
+
+    console.log('=== MULTIPLE UPLOAD SUCCESS ===');
+    console.log('Uploaded URLs:', urls);
 
     return { 
       success: true, 
@@ -247,7 +274,7 @@ export const uploadMultipleFiles = async (
     };
 
   } catch (error) {
-    console.error('Multiple upload error:', error);
+    console.error('=== MULTIPLE UPLOAD FAILED ===', error);
     return { 
       success: false, 
       errors: [error instanceof Error ? error.message : 'Nastala neočakávaná chyba'] 
@@ -258,6 +285,8 @@ export const uploadMultipleFiles = async (
 // Удаление старой аватарки
 const deleteOldAvatar = async (userId: string): Promise<void> => {
   try {
+    console.log('Deleting old avatars for user:', userId);
+    
     // Получаем список файлов пользователя
     const { data: files, error } = await supabase.storage
       .from('profile-images')
@@ -266,11 +295,19 @@ const deleteOldAvatar = async (userId: string): Promise<void> => {
         offset: 0
       });
 
-    if (error || !files || files.length === 0) {
-      return; // Нет старых файлов для удаления
+    if (error) {
+      console.error('Error listing files for deletion:', error);
+      return;
     }
 
-    // Удаляем все старые аватарки
+    if (!files || files.length === 0) {
+      console.log('No old files to delete');
+      return;
+    }
+
+    console.log('Found files to delete:', files.length);
+
+    // Удаляем все старые файлы
     const filesToDelete = files.map(file => `${userId}/${file.name}`);
     
     const { error: deleteError } = await supabase.storage
@@ -278,7 +315,9 @@ const deleteOldAvatar = async (userId: string): Promise<void> => {
       .remove(filesToDelete);
 
     if (deleteError) {
-      console.error('Error deleting old avatar:', deleteError);
+      console.error('Error deleting old files:', deleteError);
+    } else {
+      console.log('Successfully deleted old files:', filesToDelete.length);
     }
   } catch (error) {
     console.error('Error in deleteOldAvatar:', error);
@@ -288,11 +327,15 @@ const deleteOldAvatar = async (userId: string): Promise<void> => {
 // Удаление файла по URL
 export const deleteFileByUrl = async (fileUrl: string): Promise<boolean> => {
   try {
+    console.log('Deleting file by URL:', fileUrl);
+    
     // Извлекаем путь к файлу из URL
     const urlParts = fileUrl.split('/');
     const fileName = urlParts[urlParts.length - 1];
     const folderPath = urlParts.slice(-3, -1).join('/'); // Получаем путь к папке
     const fullPath = `${folderPath}/${fileName}`;
+
+    console.log('Extracted file path:', fullPath);
 
     const { error } = await supabase.storage
       .from('profile-images')
@@ -303,6 +346,7 @@ export const deleteFileByUrl = async (fileUrl: string): Promise<boolean> => {
       return false;
     }
 
+    console.log('File deleted successfully:', fullPath);
     return true;
   } catch (error) {
     console.error('Delete file error:', error);
@@ -316,6 +360,8 @@ export const getUserFiles = async (
   fileType: FileType
 ): Promise<string[]> => {
   try {
+    console.log('Getting user files:', userId, fileType);
+    
     // Сначала проверяем, существует ли профиль мастера
     const { data: master, error } = await supabase
       .from('masters')
@@ -329,9 +375,9 @@ export const getUserFiles = async (
     }
 
     if (!master) {
-      // Если профиль мастера не существует, создаем базовую запись
       console.log('No master profile found, creating basic profile for user:', userId);
       
+      // Если профиль мастера не существует, создаем базовую запись
       const { data: user } = await supabase.auth.getUser();
       if (!user.user) {
         console.error('User not authenticated');
@@ -359,7 +405,7 @@ export const getUserFiles = async (
         return [];
       }
 
-      // Используем новый профиль
+      console.log('Created new master profile');
       return getFilesFromMaster(newMaster, fileType);
     }
 
@@ -400,6 +446,8 @@ export const updateMasterProfile = async (
   }
 ): Promise<boolean> => {
   try {
+    console.log('Updating master profile:', userId, updates);
+    
     const { error } = await supabase
       .from('masters')
       .update({
@@ -413,6 +461,7 @@ export const updateMasterProfile = async (
       return false;
     }
 
+    console.log('Master profile updated successfully');
     return true;
   } catch (error) {
     console.error('Update master profile error:', error);
