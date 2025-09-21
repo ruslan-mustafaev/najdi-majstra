@@ -24,11 +24,8 @@ export const getTopRatedMasters = async () => {
       rating: master.rating || 4.5,
       reviewCount: master.reviews_count || 0,
       available: master.is_active,
-      profileImage: 'https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=400',
-      workImages: [
-        'https://images.pexels.com/photos/162553/keys-workshop-mechanic-tools-162553.jpeg?auto=compress&cs=tinysrgb&w=400',
-        'https://images.pexels.com/photos/159358/multimeter-digital-hand-tool-159358.jpeg?auto=compress&cs=tinysrgb&w=400'
-      ],
+      profileImage: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2IiByeD0iMTIiLz4KPHN2ZyB4PSI1MCIgeT0iNTAiIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgZmlsbD0ibm9uZSI+CjxyZWN0IHg9IjEwIiB5PSIyNSIgd2lkdGg9IjgwIiBoZWlnaHQ9IjU1IiByeD0iOCIgZmlsbD0iIzlDQTNBRiIvPgo8cmVjdCB4PSIyNSIgeT0iMTUiIHdpZHRoPSIyNSIgaGVpZ2h0PSIxNSIgcng9IjQiIGZpbGw9IiM5Q0EzQUYiLz4KPGNpcmNsZSBjeD0iNTAiIGN5PSI1MiIgcj0iMTUiIGZpbGw9IiM2Mzc0ODAiLz4KPGNpcmNsZSBjeD0iNzUiIGN5PSIzNSIgcj0iMyIgZmlsbD0iIzYzNzQ4MCIvPgo8L3N2Zz4KPC9zdmc+',
+      workImages: [],
       description: master.description || 'Profesionálny majster s pracovnými skúsenosťami',
       services: ['Opravy', 'Inštalácie', 'Servis'],
       experience: '5+ rokov',

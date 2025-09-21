@@ -190,10 +190,23 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
             {/* Work Images and Video Grid */}
             <div className="space-y-4">
               <h4 className="font-semibold text-gray-900">Ukážky práce</h4>
-              <div className="bg-gray-100 rounded-lg p-6 text-center">
-                <p className="text-gray-600 text-sm">
-                  Zatiaľ majster ešte nič nenahrál
-                </p>
+              <div className="grid grid-cols-2 gap-2">
+                {master.workImages && master.workImages.length > 0 ? (
+                  master.workImages.map((image, index) => (
+                    <img
+                      key={index}
+                      src={image}
+                      alt={`Práca ${index + 1}`}
+                      className="w-full aspect-square object-cover rounded-lg"
+                    />
+                  ))
+                ) : (
+                  <div className="col-span-2 bg-gray-100 rounded-lg p-6 text-center">
+                    <p className="text-gray-600 text-sm">
+                      Zatiaľ majster ešte nič nenahrál
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
 
