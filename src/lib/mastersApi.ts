@@ -35,7 +35,7 @@ export const getTopRatedMasters = async () => {
       rating: master.rating || 4.5,
       reviewCount: master.reviews_count || 0,
       available: master.is_active,
-      profileImage: master.profile_image_url || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2IiByeD0iMTIiLz4KPHN2ZyB4PSI1MCIgeT0iNTAiIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgZmlsbD0ibm9uZSI+CjxyZWN0IHg9IjEwIiB5PSIyNSIgd2lkdGg9IjgwIiBoZWlnaHQ9IjU1IiByeD0iOCIgZmlsbD0iIzlDQTNBRiIvPgo8cmVjdCB4PSIyNSIgeT0iMTUiIHdpZHRoPSIyNSIgaGVpZ2h0PSIxNSIgcng9IjQiIGZpbGw9IiM5Q0EzQUYiLz4KPGNpcmNsZSBjeD0iNTAiIGN5PSI1MiIgcj0iMTUiIGZpbGw9IiM2Mzc0ODAiLz4KPGNpcmNsZSBjeD0iNzUiIGN5PSIzNSIgcj0iMyIgZmlsbD0iIzYzNzQ4MCIvPgo8L3N2Zz4KPC9zdmc+',
+      profileImage: master.profile_image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(master.name || 'User')}&background=4169e1&color=fff&size=200&rounded=true`,
       workImages: master.work_images_urls || [],
       workVideo: master.work_video_url,
       description: master.description || 'Profesionálny majster s pracovnými skúsenosťami',

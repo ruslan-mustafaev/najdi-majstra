@@ -1,8 +1,5 @@
 import { Master } from '../types';
 
-// Аккуратная иконка камеры для профилей без фото
-const DEFAULT_AVATAR = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2IiByeD0iMTIiLz4KPHN2ZyB4PSI1MCIgeT0iNTAiIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgZmlsbD0ibm9uZSI+CjxyZWN0IHg9IjEwIiB5PSIyNSIgd2lkdGg9IjgwIiBoZWlnaHQ9IjU1IiByeD0iOCIgZmlsbD0iIzlDQTNBRiIvPgo8cmVjdCB4PSIyNSIgeT0iMTUiIHdpZHRoPSIyNSIgaGVpZ2h0PSIxNSIgcng9IjQiIGZpbGw9IiM5Q0EzQUYiLz4KPGNpcmNsZSBjeD0iNTAiIGN5PSI1MiIgcj0iMTUiIGZpbGw9IiM2Mzc0ODAiLz4KPGNpcmNsZSBjeD0iNzUiIGN5PSIzNSIgcj0iMyIgZmlsbD0iIzYzNzQ4MCIvPgo8L3N2Zz4KPC9zdmc+';
-
 // Очищенные mock данные - только структура для демонстрации
 export const mockMasters: Master[] = [
   // Оставляем только несколько примеров для демонстрации структуры

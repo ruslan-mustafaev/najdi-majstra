@@ -93,9 +93,6 @@ export const Header: React.FC = () => {
                 </>
               )}
 
-              <button className="md:hidden text-white">
-                <Menu size={24} />
-              </button>
             </div>
           </div>
         </div>
