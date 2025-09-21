@@ -186,17 +186,17 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
 
           {/* Cookies Consent */}
           <div className="border-t pt-3 sm:pt-6 bg-white">
-            <div className="flex items-start space-x-2 sm:space-x-3">
+            <div className="flex items-start space-x-3 sm:space-x-3">
               <input
                 type="checkbox"
                 id="cookies"
                 checked={cookiesAccepted}
                 onChange={(e) => setCookiesAccepted(e.target.checked)}
-                className="mt-0.5 w-3.5 h-3.5 sm:w-5 sm:h-5 text-[#4169e1] rounded focus:ring-[#4169e1] flex-shrink-0"
+                className="mt-0.5 w-5 h-5 sm:w-5 sm:h-5 text-[#4169e1] rounded focus:ring-[#4169e1] flex-shrink-0"
               />
-              <label htmlFor="cookies" className="flex-1 text-xs sm:text-sm text-gray-600 cursor-pointer">
+              <label htmlFor="cookies" className="flex-1 text-sm sm:text-sm text-gray-600 cursor-pointer">
                 <div className="flex items-center space-x-1 sm:space-x-2 mb-1 sm:mb-2">
-                  <Cookie size={10} className="sm:w-4 sm:h-4" />
+                  <Cookie size={14} className="sm:w-4 sm:h-4" />
                   <span className="font-medium">{t.popup.cookies}</span>
                 </div>
                 <a href="#" className="text-[#4169e1] hover:underline">
