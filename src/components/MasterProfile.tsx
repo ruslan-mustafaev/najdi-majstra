@@ -222,6 +222,27 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                   </div>
                 )}
               </div>
+              
+              {/* Work Videos Section */}
+              {master.workVideo && (
+                <div className="mt-6">
+                  <h4 className="font-semibold text-gray-900 mb-3">Video ukážky práce</h4>
+                  <div className="relative">
+                    <video
+                      src={master.workVideo}
+                      controls
+                      className="w-full rounded-lg shadow-md"
+                      style={{ maxHeight: '300px' }}
+                      poster={master.workImages?.[0] || master.profileImage}
+                    >
+                      Váš prehliadač nepodporuje video element.
+                    </video>
+                    <div className="absolute top-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-xs">
+                      Video ukážka
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Social Media */}
