@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ArrowLeft, User, Star, MapPin, Phone, Mail, Camera, Plus, Edit, Settings, BarChart3, Calendar, Clock, Euro, Award, Users, Play, Globe, Save, X, Upload, Copy, Check } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { saveMasterProfile, type MasterProfile } from '../lib/masterProfileApi';
+import { FileUploadManager } from './FileUpload/FileUploadManager';
 
 interface MasterDashboardProps {
   onBack: () => void;
@@ -478,14 +479,13 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                     ))}
                     <span className="text-sm text-gray-500 ml-2">0.0 (0 hodnotení)</span>
                   </div>
-                  <button 
-                    onClick={() => {
-                      setHasChanges(true);
+                  <FileUploadManager
+                    fileType="avatar"
+                    onUploadComplete={(urls) => {
+                      console.log('Avatar uploaded:', urls);
+                      // Можно добавить обновление состояния если нужно
                     }}
-                    className="bg-[#4169e1] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#3558d4] transition-colors"
-                  >
-                    Nahrať fotku
-                  </button>
+                  />
                   <div className="mt-4 p-3 bg-blue-50 rounded-lg">
                     <p className="text-xs text-blue-800">
                       💡 <strong>Tip:</strong> Majstri s profilovou fotkou majú o 70% vyššiu šancu získať zákazku! 
@@ -504,15 +504,13 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                       </div>
                     ))}
                   </div>
-                  <button 
-                    onClick={() => {
-                      setHasChanges(true);
+                  <FileUploadManager
+                    fileType="work-images"
+                    onUploadComplete={(urls) => {
+                      console.log('Work images uploaded:', urls);
+                      // Можно добавить обновление состояния если нужно
                     }}
-                    className="w-full border-2 border-dashed border-gray-300 rounded-lg py-4 text-gray-500 hover:border-[#4169e1] hover:text-[#4169e1] transition-colors"
-                  >
-                    <Plus size={20} className="mx-auto mb-2" />
-                    Pridať fotky práce
-                  </button>
+                  />
                   
                   {/* Work Video */}
                   <div className="mt-4">
@@ -523,15 +521,13 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                         <p className="text-sm text-gray-500">Žiadne video</p>
                       </div>
                     </div>
-                    <button 
-                      onClick={() => {
-                        setHasChanges(true);
+                    <FileUploadManager
+                      fileType="work-videos"
+                      onUploadComplete={(urls) => {
+                        console.log('Work videos uploaded:', urls);
+                        // Можно добавить обновление состояния если нужно
                       }}
-                      className="w-full border-2 border-dashed border-gray-300 rounded-lg py-3 text-gray-500 hover:border-[#4169e1] hover:text-[#4169e1] transition-colors"
-                    >
-                      <Plus size={16} className="inline mr-2" />
-                      Pridať video práce
-                    </button>
+                    />
                   </div>
                   
                   <div className="mt-3 p-3 bg-green-50 rounded-lg">
