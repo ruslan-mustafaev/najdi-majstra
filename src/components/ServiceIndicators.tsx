@@ -47,22 +47,22 @@ export const ServiceIndicators: React.FC<ServiceIndicatorsProps> = ({
   const getSizeClasses = () => {
     switch (size) {
       case 'small':
-        return 'w-2 h-2';
+        return 'w-4 h-1.5';
       case 'large':
-        return 'w-4 h-4';
+        return 'w-8 h-2';
       default:
-        return 'w-3 h-3';
+        return 'w-6 h-2';
     }
   };
 
   return (
-    <div className="flex space-x-1">
+    <div className="flex flex-col space-y-1">
       {services.map((service, index) => {
         const config = getServiceConfig(service);
         return (
           <div
             key={index}
-            className={`${config.color} ${getSizeClasses()} rounded-full border-2 border-white shadow-sm`}
+            className={`${config.color} ${getSizeClasses()} rounded-sm border border-white shadow-sm`}
             title={config.label}
           />
         );
