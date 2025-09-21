@@ -276,10 +276,15 @@ export const getUserFiles = async (
       .from('masters')
       .select('profile_image_url, work_images_urls, work_video_url')
       .eq('user_id', userId)
-      .single();
+      .maybeSingle();
 
-    if (error || !master) {
+    if (error) {
       console.error('Get master files error:', error);
+      return [];
+    }
+
+    // If no master profile exists, return empty arrays
+    if (!master) {
       return [];
     }
 
