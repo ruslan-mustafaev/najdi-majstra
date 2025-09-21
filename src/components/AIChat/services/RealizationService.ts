@@ -1,5 +1,5 @@
 import { ChatMessage, AIResponse } from '../types';
-import { mockMasters } from '../../../data/mockData';
+import { getTopRatedMasters } from '../../../lib/mastersApi';
 
 export class RealizationService {
   private systemPrompt = `
@@ -324,11 +324,12 @@ Na základe týchto informácií vyberiem tím profesionálov a zostavím plán 
     };
   }
 
-  private findProjectMasters(userMessage: string): string[] {
+  private async findProjectMasters(userMessage: string): Promise<string[]> {
     const lowerMessage = userMessage.toLowerCase();
     const projectMasters: string[] = [];
 
-    mockMasters.forEach(master => {
+    const masters = await getTopRatedMasters();
+    masters.forEach(master => {
       // Проверяем опыт проектной работы
       const hasProjectExperience = master.services.some(service => 
         service.toLowerCase().includes('проект') || 

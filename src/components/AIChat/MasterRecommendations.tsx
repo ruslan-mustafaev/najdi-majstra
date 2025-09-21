@@ -1,6 +1,6 @@
 import React from 'react';
 import { X, Star, MapPin, Phone } from 'lucide-react';
-import { mockMasters } from '../../data/mockData';
+import { getTopRatedMasters } from '../../lib/mastersApi';
 import { useLanguage } from '../../hooks/useLanguage';
 import { translations } from '../../data/translations';
 
@@ -19,10 +19,21 @@ export const MasterRecommendations: React.FC<MasterRecommendationsProps> = ({
 }) => {
   const { language } = useLanguage();
   const t = translations[language].aiChat;
+  const [masters, setMasters] = React.useState([]);
+
+  React.useEffect(() => {
+    const loadMasters = async () => {
+      const allMasters = await getTopRatedMasters();
+      setMasters(allMasters);
+    };
+    if (isOpen) {
+      loadMasters();
+    }
+  }, [isOpen]);
   
   if (!isOpen) return null;
 
-  const recommendedMasters = mockMasters.filter(master => 
+  const recommendedMasters = masters.filter(master => 
     masterIds.includes(master.id)
   );
 

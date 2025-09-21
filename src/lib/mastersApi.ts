@@ -35,7 +35,6 @@ export const getTopRatedMasters = async () => {
       rating: master.rating || 4.5,
       reviewCount: master.reviews_count || 0,
       available: master.is_active,
-      profileImage: master.profile_image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(master.name || 'User')}&background=4169e1&color=fff&size=200&rounded=true`,
       profileImage: master.profile_image_url || '/placeholder-avatar.svg',
       workImages: master.work_images_urls || [],
       workVideo: master.work_video_url,

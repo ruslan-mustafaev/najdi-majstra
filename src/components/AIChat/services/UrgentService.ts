@@ -1,5 +1,5 @@
 import { ChatMessage, AIResponse } from '../types';
-import { mockMasters } from '../../../data/mockData';
+import { getTopRatedMasters } from '../../../lib/mastersApi';
 
 export class UrgentService {
   private systemPrompt = `
@@ -209,11 +209,12 @@ Upresnite prosím:
     };
   }
 
-  private findUrgentMasters(userMessage: string): string[] {
+  private async findUrgentMasters(userMessage: string): Promise<string[]> {
     const lowerMessage = userMessage.toLowerCase();
     const urgentMasters: string[] = [];
 
-    mockMasters.forEach(master => {
+    const masters = await getTopRatedMasters();
+    masters.forEach(master => {
       // Проверяем доступность для экстренных вызовов
       const hasEmergencyService = master.services.some(service => 
         service.toLowerCase().includes('поhotovos') || 

@@ -1,9 +1,6 @@
 import { Master } from '../types';
 
-// Очищенные mock данные - только структура для демонстрации
-export const mockMasters: Master[] = [
-  // Оставляем только несколько примеров для демонстрации структуры
-  // В реальном приложении эти данные будут загружаться из Supabase
-];
+// Полностью убираем mock данные - используем только реальные данные из Supabase
+export const mockMasters: Master[] = [];
 
 export type { Master };

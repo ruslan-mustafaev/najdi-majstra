@@ -1,5 +1,5 @@
 import { ChatMessage, AIResponse } from '../types';
-import { mockMasters } from '../../../data/mockData';
+import { getTopRatedMasters } from '../../../lib/mastersApi';
 
 export class RegularService {
   private systemPrompt = `
@@ -260,11 +260,12 @@ Na základe vašich odpovedí vyberiem spoľahlivých majstrov pre stálu spolup
     };
   }
 
-  private findServiceMasters(userMessage: string): string[] {
+  private async findServiceMasters(userMessage: string): Promise<string[]> {
     const lowerMessage = userMessage.toLowerCase();
     const serviceMasters: string[] = [];
 
-    mockMasters.forEach(master => {
+    const masters = await getTopRatedMasters();
+    masters.forEach(master => {
       // Проверяем наличие сервисных услуг
       const hasServiceExperience = master.services.some(service => 
         service.toLowerCase().includes('сервис') || 
