@@ -73,7 +73,7 @@ export const MasterCard: React.FC<MasterCardProps> = ({ master, featured = false
           className="w-full h-full object-cover"
           onError={(e) => {
             // Fallback to default avatar if image fails to load
-            e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(master.name)}&background=4169e1&color=fff&size=200&rounded=true`;
+            e.currentTarget.src = '/placeholder-avatar.svg';
           }}
         />
         
