@@ -236,9 +236,6 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                     >
                       Váš prehliadač nepodporuje video element.
                     </video>
-                    <div className="absolute top-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-xs">
-                      Video ukážka
-                    </div>
                   </div>
                 </div>
               )}
