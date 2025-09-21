@@ -85,16 +85,34 @@ export const uploadSingleFile = async (
     const fileName = generateFileName(file, userId, fileType);
 
     // Загружаем файл
+    // Проверяем аутентификацию пользователя
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+      throw new Error('Пользователь не аутентифицирован');
+    }
+    
+    console.log('User authenticated:', user.id);
+
     const { data, error } = await supabase.storage
       .from('profile-images')
       .upload(fileName, file, {
         cacheControl: '3600',
-        upsert: false
+        upsert: true // Разрешаем перезапись файлов
       });
 
     if (error) {
-      console.error('Upload error:', error);
-      return { success: false, error: `Chyba pri nahrávaní: ${error.message}` };
+      console.error('Supabase storage error:', {
+        message: error.message,
+        details: error,
+        filePath,
+        userId: user.id
+      });
+      
+      if (error.message.includes('row-level security policy')) {
+        throw new Error('Ошибка доступа: проверьте настройки RLS политик в Supabase Storage');
+      }
+      
+      throw new Error(`Ошибка загрузки: ${error.message}`);
     }
 
     // Получаем публичный URL
@@ -108,7 +126,12 @@ export const uploadSingleFile = async (
     };
 
   } catch (error) {
-    console.error('Upload error:', error);
+    console.error('File upload failed:', {
+      error: error instanceof Error ? error.message : error,
+      file: file.name,
+      type: fileType,
+      userId: userId
+    });
     return { 
       success: false, 
       error: 'Nastala neočakávaná chyba pri nahrávaní súboru' 
