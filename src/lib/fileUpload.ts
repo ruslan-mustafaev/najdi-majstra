@@ -70,9 +70,15 @@ export const uploadSingleFile = async (
   userId: string
 ): Promise<UploadResult> => {
   try {
+    console.log('=== UPLOAD DEBUG START ===');
+    console.log('File:', file.name, file.size, file.type);
+    console.log('FileType:', fileType);
+    console.log('UserId:', userId);
+    
     // Валидация
     const validationError = validateFile(file, fileType);
     if (validationError) {
+      console.log('Validation error:', validationError);
       return { success: false, error: validationError };
     }
 
@@ -87,6 +93,7 @@ export const uploadSingleFile = async (
     // Проверяем аутентификацию пользователя
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) {
+      console.log('Auth error:', authError);
       throw new Error('Пользователь не аутентифицирован');
     }
     
@@ -94,8 +101,21 @@ export const uploadSingleFile = async (
       fileName,
       userId: user.id,
       fileType,
-      bucketId: 'profile-images'
+      bucketId: 'profile-images',
+      fileSize: file.size,
+      fileType: file.type
     });
+
+    // Проверяем существование bucket
+    const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets();
+    console.log('Available buckets:', buckets, bucketsError);
+    
+    // Проверяем политики
+    const { data: policies, error: policiesError } = await supabase
+      .from('storage.objects')
+      .select('*')
+      .limit(1);
+    console.log('Storage access test:', policies, policiesError);
 
     // Загружаем файл
     const { data, error } = await supabase.storage
@@ -108,18 +128,24 @@ export const uploadSingleFile = async (
     if (error) {
       console.error('Supabase storage error:', {
         message: error.message,
-        details: error,
+        details: JSON.stringify(error, null, 2),
         fileName,
-        userId: user.id
+        userId: user.id,
+        bucket: 'profile-images'
       });
       
       throw new Error(`Ошибка загрузки: ${error.message}`);
     }
 
+    console.log('Upload successful:', data);
+    
     // Получаем публичный URL
     const { data: urlData } = supabase.storage
       .from('profile-images')
       .getPublicUrl(fileName);
+
+    console.log('Public URL:', urlData.publicUrl);
+    console.log('=== UPLOAD DEBUG END ===');
 
     return { 
       success: true, 
@@ -127,11 +153,12 @@ export const uploadSingleFile = async (
     };
 
   } catch (error) {
-    console.error('File upload failed:', {
+    console.error('=== UPLOAD FAILED ===', {
       error: error instanceof Error ? error.message : error,
       file: file.name,
       type: fileType,
-      userId: userId
+      userId: userId,
+      stack: error instanceof Error ? error.stack : 'No stack'
     });
     return { 
       success: false, 
