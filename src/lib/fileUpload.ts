@@ -84,15 +84,20 @@ export const uploadSingleFile = async (
     // Генерируем имя файла
     const fileName = generateFileName(file, userId, fileType);
 
-    // Загружаем файл
     // Проверяем аутентификацию пользователя
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) {
       throw new Error('Пользователь не аутентифицирован');
     }
     
-    console.log('User authenticated:', user.id);
+    console.log('Uploading file:', {
+      fileName,
+      userId: user.id,
+      fileType,
+      bucketId: 'profile-images'
+    });
 
+    // Загружаем файл
     const { data, error } = await supabase.storage
       .from('profile-images')
       .upload(fileName, file, {
@@ -104,13 +109,9 @@ export const uploadSingleFile = async (
       console.error('Supabase storage error:', {
         message: error.message,
         details: error,
-        filePath,
+        fileName,
         userId: user.id
       });
-      
-      if (error.message.includes('row-level security policy')) {
-        throw new Error('Ошибка доступа: проверьте настройки RLS политик в Supabase Storage');
-      }
       
       throw new Error(`Ошибка загрузки: ${error.message}`);
     }
