@@ -233,7 +233,6 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                       controls
                       className="w-full rounded-lg shadow-md"
                       style={{ maxHeight: '300px' }}
-                      poster={master.workImages?.[0] || master.profileImage}
                     >
                       Váš prehliadač nepodporuje video element.
                     </video>
