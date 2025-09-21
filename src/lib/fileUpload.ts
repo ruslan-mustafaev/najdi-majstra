@@ -271,30 +271,29 @@ export const getUserFiles = async (
   fileType: FileType
 ): Promise<string[]> => {
   try {
-    const folder = FILE_CONFIG[fileType].folder;
-    
-    const { data: files, error } = await supabase.storage
-      .from('profile-images')
-      .list(`${folder}/${userId}`, {
-        limit: 100,
-        offset: 0
-      });
+    // Получаем данные из таблицы masters вместо storage
+    const { data: master, error } = await supabase
+      .from('masters')
+      .select('profile_image_url, work_images_urls, work_video_url')
+      .eq('user_id', userId)
+      .single();
 
-    if (error || !files) {
-      console.error('Get files error:', error);
+    if (error || !master) {
+      console.error('Get master files error:', error);
       return [];
     }
 
-    // Получаем публичные URLs для всех файлов
-    const urls = files.map(file => {
-      const { data } = supabase.storage
-        .from('profile-images')
-        .getPublicUrl(`${folder}/${userId}/${file.name}`);
-      
-      return data.publicUrl;
-    });
-
-    return urls;
+    // Возвращаем соответствующие файлы в зависимости от типа
+    switch (fileType) {
+      case 'avatar':
+        return master.profile_image_url ? [master.profile_image_url] : [];
+      case 'work-images':
+        return master.work_images_urls || [];
+      case 'work-videos':
+        return master.work_video_url ? [master.work_video_url] : [];
+      default:
+        return [];
+    }
   } catch (error) {
     console.error('Get user files error:', error);
     return [];

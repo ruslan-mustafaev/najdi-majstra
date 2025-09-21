@@ -92,20 +92,21 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
         const result = await uploadMultipleFiles(files, fileType, user.id);
 
         if (result.success && result.urls) {
-          // Объединяем с существующими файлами
-          const allFiles = [...currentFiles, ...result.urls];
+          // Объединяем с существующими файлами (убираем дубликаты)
+          const newUrls = result.urls.filter(url => !currentFiles.includes(url));
+          const allFiles = [...currentFiles, ...newUrls];
           
           // Обновляем профиль в базе данных
           const updateData = fileType === 'work-images' 
             ? { work_images_urls: allFiles }
-            : { work_video_url: allFiles[0] }; // Для видео берем первое
+            : { work_video_url: result.urls[0] }; // Для видео берем новое
 
           await updateMasterProfile(user.id, updateData);
 
           setCurrentFiles(allFiles);
           setUploadStatus({
             type: 'success',
-            message: `${result.urls.length} súborov bolo úspešne nahraných!`
+            message: `${newUrls.length} súborov bolo úspešne nahraných!`
           });
 
           if (onUploadComplete) {
@@ -133,24 +134,26 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
     if (!user?.id) return;
 
     try {
-      const success = await deleteFileByUrl(fileUrl);
+      // Сначала удаляем из storage
+      const storageSuccess = await deleteFileByUrl(fileUrl);
       
-      if (success) {
-        const updatedFiles = currentFiles.filter(url => url !== fileUrl);
-        setCurrentFiles(updatedFiles);
+      // Обновляем состояние и базу данных независимо от результата удаления из storage
+      const updatedFiles = currentFiles.filter(url => url !== fileUrl);
+      setCurrentFiles(updatedFiles);
 
-        // Обновляем профиль в базе данных
-        const updateData = fileType === 'avatar' 
-          ? { profile_image_url: null }
-          : fileType === 'work-images'
-          ? { work_images_urls: updatedFiles }
-          : { work_video_url: updatedFiles[0] || null };
+      // Обновляем профиль в базе данных
+      const updateData = fileType === 'avatar' 
+        ? { profile_image_url: null }
+        : fileType === 'work-images'
+        ? { work_images_urls: updatedFiles }
+        : { work_video_url: updatedFiles[0] || null };
 
-        await updateMasterProfile(user.id, updateData);
+      const dbSuccess = await updateMasterProfile(user.id, updateData);
 
+      if (dbSuccess) {
         setUploadStatus({
           type: 'success',
-          message: 'Súbor bol úspešne odstránený'
+          message: storageSuccess ? 'Súbor bol úspešne odstránený' : 'Súbor bol odstránený z profilu'
         });
 
         if (onUploadComplete) {
@@ -159,7 +162,7 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
       } else {
         setUploadStatus({
           type: 'error',
-          message: 'Chyba pri odstraňovaní súboru'
+          message: 'Chyba pri aktualizácii profilu'
         });
       }
     } catch (error) {
