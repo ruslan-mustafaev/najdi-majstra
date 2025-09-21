@@ -271,22 +271,63 @@ export const getUserFiles = async (
   fileType: FileType
 ): Promise<string[]> => {
   try {
-    // Получаем данные из таблицы masters вместо storage
+    // Сначала проверяем, существует ли профиль мастера
     const { data: master, error } = await supabase
       .from('masters')
       .select('profile_image_url, work_images_urls, work_video_url')
       .eq('user_id', userId)
       .maybeSingle();
 
-    if (error || !master) {
-      if (error) {
-        console.error('Get master files error:', error);
-      } else {
-        console.warn('No master profile found for user ID:', userId);
-      }
+    if (error) {
+      console.error('Database error when getting master files:', error);
       return [];
     }
 
+    if (!master) {
+      // Если профиль мастера не существует, создаем базовую запись
+      console.log('No master profile found, creating basic profile for user:', userId);
+      
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) {
+        console.error('User not authenticated');
+        return [];
+      }
+
+      const { data: newMaster, error: createError } = await supabase
+        .from('masters')
+        .insert({
+          user_id: userId,
+          name: user.user.user_metadata?.full_name || 'Nový majster',
+          profession: 'Majster',
+          email: user.user.email || '',
+          phone: user.user.user_metadata?.phone || '',
+          location: user.user.user_metadata?.location || '',
+          description: 'Profesionálny majster',
+          is_active: true,
+          profile_completed: false
+        })
+        .select('profile_image_url, work_images_urls, work_video_url')
+        .single();
+
+      if (createError) {
+        console.error('Error creating master profile:', createError);
+        return [];
+      }
+
+      // Используем новый профиль
+      return getFilesFromMaster(newMaster, fileType);
+    }
+
+    return getFilesFromMaster(master, fileType);
+  } catch (error) {
+    console.error('Unexpected error in getUserFiles:', error);
+    return [];
+  }
+};
+
+// Вспомогательная функция для извлечения файлов из объекта мастера
+const getFilesFromMaster = (master: any, fileType: FileType): string[] => {
+  try {
     // Возвращаем соответствующие файлы в зависимости от типа
     switch (fileType) {
       case 'avatar':
@@ -296,10 +337,9 @@ export const getUserFiles = async (
       case 'work-videos':
         return master.work_video_url ? [master.work_video_url] : [];
       default:
-        return [];
     }
   } catch (error) {
-    console.error('Get user files error:', error);
+    console.error('Error extracting files from master data:', error);
     return [];
   }
 };
