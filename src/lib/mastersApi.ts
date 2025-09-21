@@ -2,6 +2,17 @@ import { supabase } from './supabase';
 
 export const getTopRatedMasters = async () => {
   try {
+    // Проверяем подключение к Supabase
+    const { data: healthCheck, error: healthError } = await supabase
+      .from('masters')
+      .select('count')
+      .limit(1);
+    
+    if (healthError) {
+      console.error('Supabase connection error:', healthError);
+      return [];
+    }
+
     const { data, error } = await supabase
       .from('masters')
       .select('*')
