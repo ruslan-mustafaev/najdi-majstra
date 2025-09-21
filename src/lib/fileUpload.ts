@@ -60,7 +60,7 @@ const generateFileName = (file: File, userId: string, fileType: FileType): strin
   const extension = file.name.split('.').pop();
   
   // Путь должен начинаться с userId для соответствия RLS политике
-  return `${userId}/${fileType}/${timestamp}_${randomString}.${extension}`;
+  return `${userId}/${timestamp}_${randomString}.${extension}`;
 };
 
 // Загрузка одного файла (для аватарки)
@@ -84,7 +84,7 @@ export const uploadSingleFile = async (
 
     // Если это аватарка, сначала удаляем старую
     if (fileType === 'avatar') {
-      await deleteOldAvatar(userId);
+      // await deleteOldAvatar(userId); // Временно отключаем
     }
 
     // Генерируем имя файла
@@ -122,7 +122,7 @@ export const uploadSingleFile = async (
       .from('profile-images')
       .upload(fileName, file, {
         cacheControl: '3600',
-        upsert: true // Разрешаем перезапись файлов
+        upsert: false // Не перезаписываем, создаем новые
       });
 
     if (error) {
@@ -240,10 +240,10 @@ export const uploadMultipleFiles = async (
 // Удаление старой аватарки
 const deleteOldAvatar = async (userId: string): Promise<void> => {
   try {
-    // Получаем список файлов пользователя в папке avatars
+    // Получаем список файлов пользователя
     const { data: files, error } = await supabase.storage
       .from('profile-images')
-      .list(`avatars/${userId}`, {
+      .list(userId, {
         limit: 100,
         offset: 0
       });
@@ -253,7 +253,7 @@ const deleteOldAvatar = async (userId: string): Promise<void> => {
     }
 
     // Удаляем все старые аватарки
-    const filesToDelete = files.map(file => `avatars/${userId}/${file.name}`);
+    const filesToDelete = files.map(file => `${userId}/${file.name}`);
     
     const { error: deleteError } = await supabase.storage
       .from('profile-images')
