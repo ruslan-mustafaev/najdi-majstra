@@ -229,7 +229,7 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                   <h4 className="font-semibold text-gray-900 mb-3">Video ukážky práce</h4>
                   <div className="grid grid-cols-1 gap-4">
                     {master.workVideos.map((videoUrl, index) => (
-                      <div key={index} className="relative">
+                      <div key={index}>
                         <video
                           src={videoUrl}
                           controls
@@ -238,9 +238,6 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                         >
                           Váš prehliadač nepodporuje video element.
                         </video>
-                        <div className="absolute top-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-xs">
-                          Video {index + 1}
-                        </div>
                       </div>
                     ))}
                   </div>
