@@ -279,7 +279,11 @@ export const getUserFiles = async (
       .maybeSingle();
 
     if (error || !master) {
-      console.error('Get master files error:', error);
+      if (error) {
+        console.error('Get master files error:', error);
+      } else {
+        console.warn('No master profile found for user ID:', userId);
+      }
       return [];
     }
 
