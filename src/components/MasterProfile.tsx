@@ -193,9 +193,6 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                 src={master.profileImage}
                 alt={master.name}
                 className="w-full aspect-square object-cover rounded-xl shadow-lg"
-                onError={(e) => {
-                  e.currentTarget.src = '/placeholder-avatar.svg';
-                }}
               />
               <div className="absolute top-4 right-4">
                 <div className={`w-4 h-4 rounded-full border-2 border-white ${
