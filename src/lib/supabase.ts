@@ -62,7 +62,7 @@ export const signIn = async (email: string, password: string) => {
 
 export const signOut = async () => {
   const { error } = await supabase.auth.signOut()
-  if (error) throw error
+  // Don't throw error - signOut clears local session even if server session is invalid
 }
 
 export const getCurrentUser = async () => {
@@ -98,7 +98,8 @@ export const auth = {
       await signOut()
       return { error: null }
     } catch (error) {
-      return { error }
+      // Always return success for logout to ensure graceful client-side cleanup
+      return { error: null }
     }
   },
 
