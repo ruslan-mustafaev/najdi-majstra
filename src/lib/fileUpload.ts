@@ -58,9 +58,9 @@ const generateFileName = (file: File, userId: string, fileType: FileType): strin
   const timestamp = Date.now();
   const randomString = Math.random().toString(36).substring(2, 15);
   const extension = file.name.split('.').pop();
-  const folder = FILE_CONFIG[fileType].folder;
   
-  return `${folder}/${userId}/${timestamp}_${randomString}.${extension}`;
+  // Путь должен начинаться с userId для соответствия RLS политике
+  return `${userId}/${fileType}/${timestamp}_${randomString}.${extension}`;
 };
 
 // Загрузка одного файла (для аватарки)
