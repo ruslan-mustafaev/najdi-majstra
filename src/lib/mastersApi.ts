@@ -45,7 +45,7 @@ export const getTopRatedMasters = async () => {
         thursday: '8:00 - 18:00',
         friday: '8:00 - 18:00',
         saturday: '9:00 - 16:00',
-        sunday: 'Zatvorené'
+        sunday: '9:00 - 15:00'
       },
       contact: {
         phone: master.phone || '+421 9xx xxx xxx',

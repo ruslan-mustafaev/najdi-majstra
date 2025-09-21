@@ -103,6 +103,11 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
     let todayHours = master.workingHours?.[currentDayKey] || '8:00 - 17:00';
     let isWorkingDay = true;
     
+    // Ensure todayHours is a string
+    if (!todayHours || typeof todayHours !== 'string') {
+      todayHours = '8:00 - 17:00';
+    }
+    
     // Master-specific schedules for variety
     if (master.id === '1' && currentDayKey === 'sunday') {
       isWorkingDay = false;
@@ -118,6 +123,10 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
     const adjustedHour = (currentHour + timeVariation) % 24;
     
     // Parse working hours
+    if (!todayHours.includes(' - ')) {
+      return { available: false, reason: 'Nesprávny formát pracovného času' };
+    }
+    
     if (!isWorkingDay) {
       return { available: false, reason: 'Dnes zatvorené' };
     }
@@ -130,6 +139,11 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
     }
     
     const [startTime, endTime] = todayHours.split(' - ');
+    
+    if (!startTime || !endTime) {
+      return { available: false, reason: 'Nesprávny formát pracovného času' };
+    }
+    
     const [startHour] = startTime.split(':').map(Number);
     const [endHour] = endTime.split(':').map(Number);
     
