@@ -73,7 +73,7 @@ export const uploadSingleFile = async (
     console.log('=== UPLOAD DEBUG START ===');
     console.log('File:', file.name, file.size, file.type);
     console.log('FileType:', fileType);
-    console.log('UserId:', userId);
+    console.log('UserId parameter:', userId);
     
     // Валидация
     const validationError = validateFile(file, fileType);
@@ -82,24 +82,39 @@ export const uploadSingleFile = async (
       return { success: false, error: validationError };
     }
 
-    // Если это аватарка, сначала удаляем старую
-    if (fileType === 'avatar') {
-      // await deleteOldAvatar(userId); // Временно отключаем
-    }
-
-    // Генерируем имя файла
-    const fileName = generateFileName(file, userId, fileType);
-
     // Проверяем аутентификацию пользователя
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) {
       console.log('Auth error:', authError);
       throw new Error('Пользователь не аутентифицирован');
     }
+
+    // === AUTH DEBUG ===
+    console.log('User from getUser():', user.id);
+    console.log('Passed userId parameter:', userId);
+
+    // Проверяем сессию
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    console.log('Session exists:', !!session);
+    console.log('Session user:', session?.user?.id);
+    console.log('Access token exists:', !!session?.access_token);
+    console.log('Session error:', sessionError);
+
+    // ВАЖНО: Используем user.id вместо userId для обеспечения соответствия RLS политике
+    const fileName = generateFileName(file, user.id, fileType);
+
+    console.log('Generated filename with user.id:', fileName);
+    console.log('First part of path:', fileName.split('/')[0]);
+    console.log('Match user.id?', user.id === fileName.split('/')[0]);
+
+    // Если это аватарка, сначала удаляем старую
+    if (fileType === 'avatar') {
+      // await deleteOldAvatar(user.id); // Временно отключаем
+    }
     
     console.log('Uploading file:', {
       fileName,
-      userId: user.id,
+      actualUserId: user.id,
       fileType,
       bucketId: 'profile-images',
       fileSize: file.size,
@@ -123,7 +138,7 @@ export const uploadSingleFile = async (
         message: error.message,
         details: JSON.stringify(error, null, 2),
         fileName,
-        userId: user.id,
+        actualUserId: user.id,
         bucket: 'profile-images'
       });
       
@@ -170,6 +185,15 @@ export const uploadMultipleFiles = async (
     const fileArray = Array.from(files);
     const config = FILE_CONFIG[fileType];
 
+    // Проверяем аутентификацию
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+      return { 
+        success: false, 
+        errors: ['Пользователь не аутентифицирован'] 
+      };
+    }
+
     // Проверяем количество файлов
     if (fileArray.length > config.maxFiles) {
       return { 
@@ -193,7 +217,8 @@ export const uploadMultipleFiles = async (
 
     // Загружаем все файлы
     const uploadPromises = fileArray.map(async (file) => {
-      const fileName = generateFileName(file, userId, fileType);
+      // Используем user.id вместо userId
+      const fileName = generateFileName(file, user.id, fileType);
       
       const { data, error } = await supabase.storage
         .from('profile-images')
@@ -357,6 +382,7 @@ const getFilesFromMaster = (master: any, fileType: FileType): string[] => {
       case 'work-videos':
         return master.work_video_url ? [master.work_video_url] : [];
       default:
+        return [];
     }
   } catch (error) {
     console.error('Error extracting files from master data:', error);
