@@ -49,7 +49,6 @@ export const getTopRatedMasters = async () => {
       priceRange: '25-45 €/hod',
       subscriptionPlan: 'standard',
       communicationStyle: 'Profesionálne a vecne',
-      emergencyServices: master.emergency_services || [], // Добавляем поддержку сервисов
       workingHours: {
         monday: '8:00 - 18:00',
         tuesday: '8:00 - 18:00',
