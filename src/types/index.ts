@@ -21,6 +21,7 @@ export interface Master {
   age?: number;
   subscriptionPlan?: 'standard' | 'professional' | 'professional-expert' | 'premier';
   communicationStyle?: string;
+  emergencyServices?: ('urgent' | 'regular' | 'realization')[]; // Добавляем поддержку сервисов
   workingHours: {
     monday: string;
     tuesday: string;

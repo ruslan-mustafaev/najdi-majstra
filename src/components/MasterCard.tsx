@@ -38,6 +38,12 @@ export const MasterCard: React.FC<MasterCardProps> = ({ master, featured = false
 
   // Генерируем разные комбинации индикаторов для демонстрации (макет)
   const getMockServiceTypes = (masterId: string): ServiceType[] => {
+    // Используем реальные данные из профиля мастера, если доступны
+    if (master.emergencyServices && master.emergencyServices.length > 0) {
+      return master.emergencyServices;
+    }
+    
+    // Fallback для старых данных - генерируем на основе ID
     const combinations: ServiceType[][] = [
       ['urgent'], // только аварийные
       ['regular'], // только сервис
