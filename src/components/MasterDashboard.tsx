@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { ArrowLeft, User, Mail, Phone, MapPin, FileText, Camera, Video, Settings, Save, Eye, EyeOff, Clock, Euro, Users, Award, Globe, Facebook, Instagram, Linkedin, Youtube, Twitter, MessageCircle, CheckCircle, AlertCircle, Upload, X, Image, Play, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, User, Mail, Phone, MapPin, FileText, Camera, Video, Settings, Save, Eye, EyeOff, Clock, Euro, Users, Award, Globe, Facebook, Instagram, Linkedin, Youtube, Twitter, MessageCircle, CheckCircle, AlertCircle, Upload, X, Image, Play, AlertTriangle, Plus, Copy, Check, Calendar, Star } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { saveMasterProfile, type MasterProfile } from '../lib/masterProfileApi';
 import { FileUploadManager } from './FileUpload/FileUploadManager';
+import { supabase } from '../lib/supabase';
 
 interface MasterDashboardProps {
   onBack: () => void;
@@ -10,13 +11,16 @@ interface MasterDashboardProps {
 }
 
 export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProfileUpdate }) => {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const [activeTab, setActiveTab] = useState<'profile' | 'calendar' | 'projects' | 'payments'>('profile');
   const [editingField, setEditingField] = useState<string | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
   const [copiedCoupon, setCopiedCoupon] = useState<string | null>(null);
   const [isProfileSaved, setIsProfileSaved] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [deleteConfirmationText, setDeleteConfirmationText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
   
   // Calendar state
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -172,6 +176,44 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
     setIsSaving(false);
   }
 };
+
+  const handleDeleteProfile = async () => {
+    if (deleteConfirmationText !== 'ZMAZAŤ' || !user) return;
+    
+    setIsDeleting(true);
+    try {
+      // Delete from masters table
+      const { error: masterError } = await supabase
+        .from('masters')
+        .delete()
+        .eq('user_id', user.id);
+
+      if (masterError) {
+        console.error('Error deleting master profile:', masterError);
+        throw new Error('Chyba pri mazaní profilu majstra');
+      }
+
+      // Delete user account
+      const { error: authError } = await supabase.auth.admin.deleteUser(user.id);
+      
+      if (authError) {
+        console.error('Error deleting user account:', authError);
+        // Continue anyway as profile is deleted
+      }
+
+      // Sign out and redirect
+      await signOut();
+      alert('Profil bol úspešne zmazaný');
+      window.location.href = '/';
+      
+    } catch (error) {
+      console.error('Delete profile error:', error);
+      alert('Nastala chyba pri mazaní profilu. Skúste to znovu.');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   const handleFieldChange = (field: string, value: any) => {
     setProfileData(prev => ({ ...prev, [field]: value }));
     setHasChanges(true);
@@ -664,7 +706,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                             value={profileData.contact.socialMedia?.facebook || ''}
                             onChange={(e) => handleNestedFieldChange('contact', 'socialMedia', {
                               ...profileData.contact.socialMedia,
-                              instagram: e.target.value
+                              facebook: e.target.value
                             })}
                             className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent text-sm"
                           />
@@ -1043,6 +1085,74 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                   <li>• Rýchla odpoveď (do 1h) zvyšuje úspešnosť o 60%</li>
                   <li>• Pozitivné hodnotenia sú kľúčom k úspechu</li>
                 </ul>
+              </div>
+
+              {/* Delete Profile Section */}
+              <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-red-500">
+                <h3 className="text-xl font-bold text-red-600 mb-4 flex items-center">
+                  <AlertTriangle className="mr-2" size={24} />
+                  Nebezpečná zóna
+                </h3>
+                
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                  <h4 className="font-semibold text-red-800 mb-2">Zmazanie profilu</h4>
+                  <p className="text-red-700 text-sm mb-3">
+                    Táto akcia je <strong>nevratná</strong>. Budú zmazané:
+                  </p>
+                  <ul className="text-red-700 text-sm space-y-1 mb-4">
+                    <li>• Všetky údaje profilu</li>
+                    <li>• Nahrané fotografie a videá</li>
+                    <li>• História hodnotení</li>
+                    <li>• Váš používateľský účet</li>
+                  </ul>
+                  
+                  {!showDeleteConfirmation ? (
+                    <button
+                      onClick={() => setShowDeleteConfirmation(true)}
+                      className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors font-medium"
+                    >
+                      Zmazať profil
+                    </button>
+                  ) : (
+                    <div className="space-y-3">
+                      <p className="text-red-800 font-medium">
+                        Pre potvrdenie napíšte: <code className="bg-red-200 px-2 py-1 rounded">ZMAZAŤ</code>
+                      </p>
+                      <input
+                        type="text"
+                        value={deleteConfirmationText}
+                        onChange={(e) => setDeleteConfirmationText(e.target.value)}
+                        className="w-full px-3 py-2 border border-red-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                        placeholder="Napíšte ZMAZAŤ"
+                      />
+                      <div className="flex space-x-3">
+                        <button
+                          onClick={handleDeleteProfile}
+                          disabled={deleteConfirmationText !== 'ZMAZAŤ' || isDeleting}
+                          className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+                        >
+                          {isDeleting ? (
+                            <>
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                              Mazanie...
+                            </>
+                          ) : (
+                            'Definitívne zmazať'
+                          )}
+                        </button>
+                        <button
+                          onClick={() => {
+                            setShowDeleteConfirmation(false);
+                            setDeleteConfirmationText('');
+                          }}
+                          className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors font-medium"
+                        >
+                          Zrušiť
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -1709,74 +1819,6 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
               </div>
             </div>
           </div>
-          {/* Delete Profile Section */}
-          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-red-500">
-            <h3 className="text-xl font-bold text-red-600 mb-4 flex items-center">
-              <AlertTriangle className="mr-2" size={24} />
-              Nebezpečná zóna
-            </h3>
-            
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
-              <h4 className="font-semibold text-red-800 mb-2">Zmazanie profilu</h4>
-              <p className="text-red-700 text-sm mb-3">
-                Táto akcia je <strong>nevratná</strong>. Budú zmazané:
-              </p>
-              <ul className="text-red-700 text-sm space-y-1 mb-4">
-                <li>• Všetky údaje profilu</li>
-                <li>• Nahrané fotografie a videá</li>
-                <li>• História hodnotení</li>
-                <li>• Váš používateľský účet</li>
-              </ul>
-              
-              {!showDeleteConfirmation ? (
-                <button
-                  onClick={() => setShowDeleteConfirmation(true)}
-                  className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors font-medium"
-                >
-                  Zmazať profil
-                </button>
-              ) : (
-                <div className="space-y-3">
-                  <p className="text-red-800 font-medium">
-                    Pre potvrdenie napíšte: <code className="bg-red-200 px-2 py-1 rounded">ZMAZAŤ</code>
-                  </p>
-                  <input
-                    type="text"
-                    value={deleteConfirmationText}
-                    onChange={(e) => setDeleteConfirmationText(e.target.value)}
-                    className="w-full px-3 py-2 border border-red-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                    placeholder="Napíšte ZMAZAŤ"
-                  />
-                  <div className="flex space-x-3">
-                    <button
-                      onClick={handleDeleteProfile}
-                      disabled={deleteConfirmationText !== 'ZMAZAŤ' || isDeleting}
-                      className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
-                    >
-                      {isDeleting ? (
-                        <>
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                          Mazanie...
-                        </>
-                      ) : (
-                        'Definitívne zmazať'
-                      )}
-                    </button>
-                    <button
-                      onClick={() => {
-                        setShowDeleteConfirmation(false);
-                        setDeleteConfirmationText('');
-                      }}
-                      className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors font-medium"
-                    >
-                      Zrušiť
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
         </div>
       )}
     </div>
