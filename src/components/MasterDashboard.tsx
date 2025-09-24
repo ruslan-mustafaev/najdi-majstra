@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, User, Star, MapPin, Phone, Mail, Camera, Plus, Edit, Settings, BarChart3, Calendar, Clock, Euro, Award, Users, Play, Globe, Save, X, Upload, Copy, Check, Trash2 } from 'lucide-react';
+import { ArrowLeft, User, Mail, Phone, MapPin, FileText, Camera, Video, Settings, Save, Eye, EyeOff, Clock, Euro, Users, Award, Globe, Facebook, Instagram, Linkedin, Youtube, Twitter, MessageCircle, CheckCircle, AlertCircle, Upload, X, Image, Play, AlertTriangle } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { saveMasterProfile, type MasterProfile } from '../lib/masterProfileApi';
 import { FileUploadManager } from './FileUpload/FileUploadManager';
@@ -1709,6 +1709,74 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
               </div>
             </div>
           </div>
+          {/* Delete Profile Section */}
+          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-red-500">
+            <h3 className="text-xl font-bold text-red-600 mb-4 flex items-center">
+              <AlertTriangle className="mr-2" size={24} />
+              Nebezpečná zóna
+            </h3>
+            
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+              <h4 className="font-semibold text-red-800 mb-2">Zmazanie profilu</h4>
+              <p className="text-red-700 text-sm mb-3">
+                Táto akcia je <strong>nevratná</strong>. Budú zmazané:
+              </p>
+              <ul className="text-red-700 text-sm space-y-1 mb-4">
+                <li>• Všetky údaje profilu</li>
+                <li>• Nahrané fotografie a videá</li>
+                <li>• História hodnotení</li>
+                <li>• Váš používateľský účet</li>
+              </ul>
+              
+              {!showDeleteConfirmation ? (
+                <button
+                  onClick={() => setShowDeleteConfirmation(true)}
+                  className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors font-medium"
+                >
+                  Zmazať profil
+                </button>
+              ) : (
+                <div className="space-y-3">
+                  <p className="text-red-800 font-medium">
+                    Pre potvrdenie napíšte: <code className="bg-red-200 px-2 py-1 rounded">ZMAZAŤ</code>
+                  </p>
+                  <input
+                    type="text"
+                    value={deleteConfirmationText}
+                    onChange={(e) => setDeleteConfirmationText(e.target.value)}
+                    className="w-full px-3 py-2 border border-red-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    placeholder="Napíšte ZMAZAŤ"
+                  />
+                  <div className="flex space-x-3">
+                    <button
+                      onClick={handleDeleteProfile}
+                      disabled={deleteConfirmationText !== 'ZMAZAŤ' || isDeleting}
+                      className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+                    >
+                      {isDeleting ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                          Mazanie...
+                        </>
+                      ) : (
+                        'Definitívne zmazať'
+                      )}
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowDeleteConfirmation(false);
+                        setDeleteConfirmationText('');
+                      }}
+                      className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors font-medium"
+                    >
+                      Zrušiť
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
         </div>
       )}
     </div>
