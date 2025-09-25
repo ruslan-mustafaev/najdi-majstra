@@ -18,19 +18,64 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Функция проверки, удален ли профиль мастера
+  const checkIfProfileDeleted = async (userId: string): Promise<boolean> => {
+    try {
+      const { data: master, error } = await supabase
+        .from('masters')
+        .select('is_deleted, deleted_at')
+        .eq('user_id', userId)
+        .maybeSingle();
+      
+      if (error) {
+        console.error('Error checking master profile:', error);
+        return false;
+      }
+      
+      // Если профиль помечен как удаленный
+      if (master && (master.is_deleted === true || master.deleted_at !== null)) {
+        console.log('Profile is marked as deleted');
+        return true;
+      }
+      
+      return false;
+    } catch (error) {
+      console.error('Error in checkIfProfileDeleted:', error);
+      return false;
+    }
+  };
+
   useEffect(() => {
     // Get initial session
     const getInitialSession = async () => {
       try {
         const { data: { session }, error } = await supabase.auth.getSession();
+        
         if (error) {
           console.error('Error getting session:', error);
+          setSession(null);
+          setUser(null);
+        } else if (session?.user) {
+          // Проверяем, не удален ли профиль
+          const isDeleted = await checkIfProfileDeleted(session.user.id);
+          
+          if (isDeleted) {
+            console.log('Profile is deleted, signing out...');
+            await supabase.auth.signOut();
+            setSession(null);
+            setUser(null);
+          } else {
+            setSession(session);
+            setUser(session.user);
+          }
         } else {
-          setSession(session);
-          setUser(session?.user ?? null);
+          setSession(null);
+          setUser(null);
         }
       } catch (error) {
         console.error('Session error:', error);
+        setSession(null);
+        setUser(null);
       }
       setLoading(false);
     };
@@ -38,10 +83,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     getInitialSession();
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth state changed:', event, session?.user?.email);
-      setSession(session);
-      setUser(session?.user ?? null);
+      
+      if (session?.user) {
+        // При каждом изменении состояния проверяем, не удален ли профиль
+        const isDeleted = await checkIfProfileDeleted(session.user.id);
+        
+        if (isDeleted) {
+          console.log('Profile is deleted, preventing login...');
+          await supabase.auth.signOut();
+          setSession(null);
+          setUser(null);
+          
+          // Показываем сообщение пользователю
+          alert('Váš profil bol zmazaný. Nemôžete sa prihlásiť.');
+        } else {
+          setSession(session);
+          setUser(session.user);
+        }
+      } else {
+        setSession(null);
+        setUser(null);
+      }
+      
       setLoading(false);
     });
 
@@ -57,14 +122,41 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signIn = async (email: string, password: string) => {
     setLoading(true);
-    const result = await auth.signIn(email, password);
-    setLoading(false);
-    return result;
+    
+    try {
+      // Сначала пытаемся войти
+      const result = await auth.signIn(email, password);
+      
+      if (result.data?.user) {
+        // Проверяем, не удален ли профиль
+        const isDeleted = await checkIfProfileDeleted(result.data.user.id);
+        
+        if (isDeleted) {
+          // Если профиль удален, выходим и возвращаем ошибку
+          await supabase.auth.signOut();
+          setLoading(false);
+          return {
+            data: null,
+            error: { 
+              message: 'Váš profil bol zmazaný. Vytvorte si nový účet.' 
+            }
+          };
+        }
+      }
+      
+      setLoading(false);
+      return result;
+    } catch (error) {
+      setLoading(false);
+      return { data: null, error };
+    }
   };
 
   const signOut = async () => {
     setLoading(true);
     const result = await auth.signOut();
+    setSession(null);
+    setUser(null);
     setLoading(false);
     return result;
   };
