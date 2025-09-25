@@ -178,41 +178,70 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
 };
 
   const handleDeleteProfile = async () => {
-    if (deleteConfirmationText !== 'ZMAZAŤ' || !user) return;
-    
-    setIsDeleting(true);
+  if (deleteConfirmationText !== 'ZMAZAŤ' || !user) return;
+  
+  setIsDeleting(true);
+  try {
+    // 1. Очищаем файлы из storage
     try {
-      // Delete from masters table
-      const { error: masterError } = await supabase
-        .from('masters')
-        .delete()
-        .eq('user_id', user.id);
-
-      if (masterError) {
-        console.error('Error deleting master profile:', masterError);
-        throw new Error('Chyba pri mazaní profilu majstra');
-      }
-
-      // Delete user account
-      const { error: authError } = await supabase.auth.admin.deleteUser(user.id);
+      const { data: files } = await supabase.storage
+        .from('profile-images')
+        .list(user.id, { limit: 100 });
       
-      if (authError) {
-        console.error('Error deleting user account:', authError);
-        // Continue anyway as profile is deleted
+      if (files && files.length > 0) {
+        const filesToDelete = files.map(file => `${user.id}/${file.name}`);
+        await supabase.storage
+          .from('profile-images')
+          .remove(filesToDelete);
       }
-
-      // Sign out and redirect
-      await signOut();
-      alert('Profil bol úspešne zmazaný');
-      window.location.href = '/';
-      
-    } catch (error) {
-      console.error('Delete profile error:', error);
-      alert('Nastala chyba pri mazaní profilu. Skúste to znovu.');
-    } finally {
-      setIsDeleting(false);
+    } catch (storageError) {
+      console.log('Storage cleanup error:', storageError);
     }
-  };
+
+    // 2. Помечаем профиль как удаленный (мягкое удаление)
+    const { error: masterError } = await supabase
+      .from('masters')
+      .update({
+        is_deleted: true,
+        is_active: false,
+        profile_completed: false,
+        deleted_at: new Date().toISOString(),
+        // Обнуляем персональные данные для безопасности
+        name: `Deleted User ${user.id.substring(0, 8)}`,
+        email: `deleted_${user.id}@deleted.com`,
+        phone: '',
+        description: '',
+        profile_image_url: null,
+        work_images_urls: [],
+        work_video_url: []
+      })
+      .eq('user_id', user.id);
+
+    if (masterError) {
+      console.error('Error soft deleting master profile:', masterError);
+      throw new Error('Chyba pri mazaní profilu');
+    }
+
+    // 3. Выходим из системы
+    await signOut();
+    
+    // 4. Очищаем локальные данные
+    localStorage.clear();
+    sessionStorage.clear();
+    
+    // 5. Показываем сообщение и редиректим
+    alert('Váš profil bol úspešne zmazaný');
+    
+    // Принудительный редирект на главную
+    window.location.href = '/';
+    
+  } catch (error) {
+    console.error('Delete profile error:', error);
+    alert('Nastala chyba pri mazaní profilu. Skúste to znovu.');
+  } finally {
+    setIsDeleting(false);
+  }
+};
 
   const handleFieldChange = (field: string, value: any) => {
     setProfileData(prev => ({ ...prev, [field]: value }));
