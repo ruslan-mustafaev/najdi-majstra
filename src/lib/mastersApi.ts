@@ -12,20 +12,22 @@ export const getTopRatedMasters = async () => {
       console.error('Supabase connection error:', healthError);
       return [];
     }
-
+    
     const { data, error } = await supabase
       .from('masters')
       .select('*')
       .eq('is_active', true)
       .eq('profile_completed', true)
+      .neq('is_deleted', true) // Исключаем удаленные профили
+      .is('deleted_at', null)   // Дополнительная проверка
       .order('rating', { ascending: false })
       .limit(10);
-
+      
     if (error) {
       console.error('Error loading masters:', error);
       return [];
     }
-
+    
     // Преобразуем данные из базы в формат Master
     return (data || []).map(master => ({
       id: master.id, // Оставляем UUID как есть
