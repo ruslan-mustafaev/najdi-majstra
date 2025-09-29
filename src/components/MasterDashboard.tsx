@@ -567,24 +567,39 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
 
                 {/* Work Photos */}
                 <div>
-                  <h4 className="font-medium mb-3">Ukážky práce</h4>
+                  <h4 className="font-medium mb-3">Fotky práce (max 20MB)</h4>
+                  <div className="grid grid-cols-2 gap-3 mb-4">
+                    {[1,2,3,4].map((i) => (
+                      <div key={i} className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center">
+                        <Camera size={24} className="text-gray-400" />
+                      </div>
+                    ))}
+                  </div>
                   <FileUploadManager
                     fileType="work-images"
                     onUploadComplete={(urls) => {
                       console.log('Work images uploaded:', urls);
+                      // Можно добавить обновление состояния если нужно
                     }}
                   />
-                </div>
-                
-                {/* Work Videos */}
-                <div className="mt-6">
-                  <h4 className="font-medium mb-3">Video ukážky práce</h4>
-                  <FileUploadManager
-                    fileType="work-videos"
-                    onUploadComplete={(urls) => {
-                      console.log('Work videos uploaded:', urls);
-                    }}
-                  />
+                  
+                  {/* Work Video */}
+                  <div className="mt-4">
+                    <h4 className="font-medium mb-3">Video práce (max 1, 50MB)</h4>
+                    <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center mb-3">
+                      <div className="text-center">
+                        <Play size={32} className="text-gray-400 mx-auto mb-2" />
+                        <p className="text-sm text-gray-500">Žiadne video</p>
+                      </div>
+                    </div>
+                    <FileUploadManager
+                      fileType="work-videos"
+                      onUploadComplete={(urls) => {
+                        console.log('Work videos uploaded:', urls);
+                        // Можно добавить обновление состояния если нужно
+                      }}
+                    />
+                  </div>
                   
                   <div className="mt-3 p-3 bg-green-50 rounded-lg">
                     <p className="text-xs text-green-800">
