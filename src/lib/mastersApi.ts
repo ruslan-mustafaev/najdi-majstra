@@ -78,3 +78,4 @@ export const getTopRatedMasters = async () => {
     // В случае любой ошибки возвращаем демо-данные
     return getDemoMasters();
   }
+}
