@@ -120,10 +120,18 @@ const HomePage: React.FC = () => {
     const loadMasters = async () => {
       setIsLoadingMasters(true);
       try {
-        const masters = await getTopRatedMasters();
-        setRealMasters(masters);
+        // Попробуем загрузить мастеров, если не получится - используем пустой массив
+        try {
+          const masters = await getTopRatedMasters();
+          setRealMasters(masters);
+        } catch (error) {
+          console.error('Error loading masters from Supabase:', error);
+          // Используем пустой массив если Supabase недоступен
+          setRealMasters([]);
+        }
       } catch (error) {
         console.error('Error loading masters:', error);
+        setRealMasters([]);
       } finally {
         setIsLoadingMasters(false);
       }
