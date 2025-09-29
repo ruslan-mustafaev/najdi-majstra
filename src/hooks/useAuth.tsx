@@ -53,8 +53,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         if (error) {
           console.error('Error getting session:', error);
-          setSession(null);
-          setUser(null);
         } else if (session?.user) {
           // Проверяем, не удален ли профиль
           const isDeleted = await checkIfProfileDeleted(session.user.id);
@@ -62,20 +60,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           if (isDeleted) {
             console.log('Profile is deleted, signing out...');
             await supabase.auth.signOut();
-            setSession(null);
-            setUser(null);
           } else {
             setSession(session);
             setUser(session.user);
           }
-        } else {
-          setSession(null);
-          setUser(null);
         }
       } catch (error) {
         console.error('Session error:', error);
-        setSession(null);
-        setUser(null);
       }
       setLoading(false);
     };
@@ -93,8 +84,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (isDeleted) {
           console.log('Profile is deleted, preventing login...');
           await supabase.auth.signOut();
-          setSession(null);
-          setUser(null);
           
           // Показываем сообщение пользователю
           alert('Váš profil bol zmazaný. Nemôžete sa prihlásiť.');
@@ -106,8 +95,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setSession(null);
         setUser(null);
       }
-      
-      setLoading(false);
     });
 
     return () => subscription.unsubscribe();
