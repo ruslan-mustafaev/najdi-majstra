@@ -102,9 +102,6 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
       };
     };
     certifications: string[];
-    profile_image_url?: string;
-    work_images_urls?: string[];
-    work_video_url?: string[];
   }>({
     name: user?.user_metadata?.full_name || user?.user_metadata?.first_name + ' ' + user?.user_metadata?.last_name || '',
     profession: user?.user_metadata?.profession || '',
@@ -544,15 +541,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                 {/* Profile Photo */}
                 <div className="text-center mb-6">
                   <div className="w-32 h-32 mx-auto bg-gray-200 rounded-full flex items-center justify-center mb-4">
-                    {profileData.profile_image_url ? (
-                      <img 
-                        src={profileData.profile_image_url} 
-                        alt="Profile" 
-                        className="w-full h-full rounded-full object-cover"
-                      />
-                    ) : (
-                      <User size={48} className="text-gray-400" />
-                    )}
+                    <Camera size={32} className="text-gray-400" />
                   </div>
                   <p className="text-sm text-gray-600 mb-2">Profilová fotka</p>
                   <div className="flex items-center justify-center space-x-1 mb-2">
@@ -561,16 +550,11 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                     ))}
                     <span className="text-sm text-gray-500 ml-2">0.0 (0 hodnotení)</span>
                   </div>
-                  
                   <FileUploadManager
                     fileType="avatar"
                     onUploadComplete={(urls) => {
-                      if (urls.length > 0) {
-                        setProfileData(prev => ({
-                          ...prev,
-                          profile_image_url: urls[0]
-                        }));
-                      }
+                      console.log('Avatar uploaded:', urls);
+                      // Можно добавить обновление состояния если нужно
                     }}
                   />
                   <div className="mt-4 p-3 bg-blue-50 rounded-lg">
@@ -591,14 +575,11 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                       </div>
                     ))}
                   </div>
-                  
                   <FileUploadManager
                     fileType="work-images"
                     onUploadComplete={(urls) => {
-                      setProfileData(prev => ({
-                        ...prev,
-                        work_images_urls: urls
-                      }));
+                      console.log('Work images uploaded:', urls);
+                      // Можно добавить обновление состояния если нужно
                     }}
                   />
                   
@@ -611,14 +592,11 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                         <p className="text-sm text-gray-500">Žiadne video</p>
                       </div>
                     </div>
-                    
                     <FileUploadManager
                       fileType="work-videos"
                       onUploadComplete={(urls) => {
-                        setProfileData(prev => ({
-                          ...prev,
-                          work_video_url: urls
-                        }));
+                        console.log('Work videos uploaded:', urls);
+                        // Можно добавить обновление состояния если нужно
                       }}
                     />
                   </div>
