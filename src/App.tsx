@@ -120,166 +120,16 @@ const HomePage: React.FC = () => {
     const loadMasters = async () => {
       setIsLoadingMasters(true);
       try {
-        // Устанавливаем таймаут для загрузки
-        const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout')), 8000)
-        );
-        
-        const mastersPromise = getTopRatedMasters();
-        
-        try {
-          const masters = await Promise.race([mastersPromise, timeoutPromise]);
-          if (masters && masters.length > 0) {
-            setRealMasters(masters);
-          } else {
-            // Если нет данных, используем fallback
-            setRealMasters(getFallbackMasters());
-          }
-        } catch (error) {
-          console.log('Using fallback masters due to:', error);
-          setRealMasters(getFallbackMasters());
-        }
+        const masters = await getTopRatedMasters();
+        setRealMasters(masters);
       } catch (error) {
         console.error('Error loading masters:', error);
-        setRealMasters(getFallbackMasters());
       } finally {
         setIsLoadingMasters(false);
       }
     };
     loadMasters();
   }, []);
-
-  // Fallback данные для случаев когда Supabase недоступен
-  const getFallbackMasters = () => {
-    return [
-      {
-        id: 'fallback-1',
-        name: 'Ján Novák',
-        profession: 'Elektrikár',
-        location: 'Bratislava',
-        rating: 4.8,
-        reviewCount: 24,
-        available: true,
-        profileImage: '/placeholder-avatar.svg',
-        workImages: [],
-        workVideos: [],
-        description: 'Skúsený elektrikár s 10-ročnou praxou. Špecializujem sa na domáce a komerčné elektroinštalácie.',
-        services: ['Elektroinštalácie', 'Opravy', 'Revízie'],
-        experience: '10+ rokov',
-        certifications: ['Elektrotechnická spôsobilosť'],
-        expertise: ['Domáce inštalácie'],
-        teamSize: 'individual' as const,
-        serviceTypes: ['individuals'],
-        languages: ['Slovenčina'],
-        priceRange: '30-50 €/hod',
-        subscriptionPlan: 'standard',
-        communicationStyle: 'Profesionálne a vecne',
-        workingHours: {
-          monday: '8:00 - 18:00',
-          tuesday: '8:00 - 18:00',
-          wednesday: '8:00 - 18:00',
-          thursday: '8:00 - 18:00',
-          friday: '8:00 - 18:00',
-          saturday: '9:00 - 16:00',
-          sunday: 'Zatvorené'
-        },
-        contact: {
-          phone: '+421 905 123 456',
-          email: 'jan.novak@email.sk',
-          website: '',
-          socialMedia: {}
-        },
-        availability: {
-          schedule: '8:00 - 18:00',
-          workRadius: 'Bratislava + 30km'
-        }
-      },
-      {
-        id: 'fallback-2',
-        name: 'Peter Kováč',
-        profession: 'Vodoinštalatér',
-        location: 'Košice',
-        rating: 4.6,
-        reviewCount: 18,
-        available: true,
-        profileImage: '/placeholder-avatar.svg',
-        workImages: [],
-        workVideos: [],
-        description: 'Profesionálny vodoinštalatér. Ponúkam komplexné služby v oblasti sanitárnych inštalácií.',
-        services: ['Inštalácie', 'Opravy', 'Servis'],
-        experience: '7+ rokov',
-        certifications: ['Odborná spôsobilosť'],
-        expertise: ['Sanitárne systémy'],
-        teamSize: 'individual' as const,
-        serviceTypes: ['individuals'],
-        languages: ['Slovenčina'],
-        priceRange: '25-40 €/hod',
-        subscriptionPlan: 'standard',
-        communicationStyle: 'Priateľsky a profesionálny',
-        workingHours: {
-          monday: '7:00 - 17:00',
-          tuesday: '7:00 - 17:00',
-          wednesday: '7:00 - 17:00',
-          thursday: '7:00 - 17:00',
-          friday: '7:00 - 17:00',
-          saturday: '8:00 - 14:00',
-          sunday: 'Zatvorené'
-        },
-        contact: {
-          phone: '+421 907 654 321',
-          email: 'peter.kovac@email.sk',
-          website: '',
-          socialMedia: {}
-        },
-        availability: {
-          schedule: '7:00 - 17:00',
-          workRadius: 'Košice + 25km'
-        }
-      },
-      {
-        id: 'fallback-3',
-        name: 'Mária Svobodová',
-        profession: 'Maliar',
-        location: 'Žilina',
-        rating: 4.9,
-        reviewCount: 31,
-        available: false,
-        profileImage: '/placeholder-avatar.svg',
-        workImages: [],
-        workVideos: [],
-        description: 'Špecializujem sa na interiérové a exteriérové maľovanie. Používam len kvalitné materiály.',
-        services: ['Maľovanie', 'Tapetovanie', 'Dekorácie'],
-        experience: '12+ rokov',
-        certifications: ['Certifikát maľovania'],
-        expertise: ['Interiéry', 'Exteriéry'],
-        teamSize: 'small-team' as const,
-        serviceTypes: ['individuals'],
-        languages: ['Slovenčina', 'Čeština'],
-        priceRange: '20-35 €/hod',
-        subscriptionPlan: 'professional',
-        communicationStyle: 'Kreatívny prístup',
-        workingHours: {
-          monday: '8:00 - 16:00',
-          tuesday: '8:00 - 16:00',
-          wednesday: '8:00 - 16:00',
-          thursday: '8:00 - 16:00',
-          friday: '8:00 - 16:00',
-          saturday: 'Na dohode',
-          sunday: 'Zatvorené'
-        },
-        contact: {
-          phone: '+421 903 789 012',
-          email: 'maria.svobodova@email.sk',
-          website: '',
-          socialMedia: {}
-        },
-        availability: {
-          schedule: '8:00 - 16:00',
-          workRadius: 'Žilina + 40km'
-        }
-      }
-    ];
-  };
 
   // ИСПРАВЛЕННЫЙ обработчик выбора типа пользователя
   const handleUserTypeSelect = (type: 'client' | 'master') => {

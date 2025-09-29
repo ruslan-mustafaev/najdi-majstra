@@ -2,7 +2,16 @@ import { supabase } from './supabase';
 
 export const getTopRatedMasters = async () => {
   try {
-    console.log('Attempting to load masters from Supabase...');
+    // Проверяем подключение к Supabase
+    const { data: healthCheck, error: healthError } = await supabase
+      .from('masters')
+      .select('count')
+      .limit(1);
+    
+    if (healthError) {
+      console.error('Supabase connection error:', healthError);
+      return [];
+    }
     
     const { data, error } = await supabase
       .from('masters')
@@ -12,14 +21,12 @@ export const getTopRatedMasters = async () => {
       .neq('is_deleted', true) // Исключаем удаленные профили
       .is('deleted_at', null)   // Дополнительная проверка
       .order('rating', { ascending: false })
-      .limit(20);
+      .limit(10);
       
     if (error) {
       console.error('Error loading masters:', error);
-      throw error;
+      return [];
     }
-    
-    console.log('Loaded masters from Supabase:', data?.length || 0);
     
     // Преобразуем данные из базы в формат Master
     return (data || []).map(master => ({
