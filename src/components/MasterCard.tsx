@@ -14,7 +14,6 @@ export const MasterCard: React.FC<MasterCardProps> = ({ master, featured = false
     e.preventDefault();
     e.stopPropagation();
     if (onClick) {
-      console.log('Master card clicked:', master.name);
       onClick();
     }
   };

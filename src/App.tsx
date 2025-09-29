@@ -32,9 +32,7 @@ const HomePage: React.FC = () => {
 
   // ИСПРАВЛЕНО: Мемоизируем функцию фильтрации
   const handleFiltersChange = useCallback((newFilters: any) => {
-    if (newFilters && Object.keys(newFilters).length > 0) {
-      console.log('Filters applied:', newFilters);
-    }
+    console.log('Filters changed:', newFilters);
     
     // Проверяем есть ли активные фильтры
     const hasFilters = newFilters.city || newFilters.profession || newFilters.availability || newFilters.experience;

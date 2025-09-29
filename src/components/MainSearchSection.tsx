@@ -257,11 +257,7 @@ export const MainSearchSection: React.FC<MainSearchSectionProps> = ({ onFiltersC
 
   // ИСПРАВЛЕНО: Вызываем onFiltersChange только при реальном изменении фильтров
   useEffect(() => {
-    // Проверяем, есть ли реальные изменения в фильтрах
-    const hasActiveFilters = filters.city || filters.profession || filters.availability || filters.experience;
-    if (hasActiveFilters) {
-      onFiltersChange(filters);
-    }
+    onFiltersChange(filters);
   }, [filters.city, filters.profession, filters.availability, filters.experience]); // Убрали onFiltersChange из зависимостей!
 
   const handleFilterChange = (filterName: string, value: string) => {
