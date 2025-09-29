@@ -1,19 +1,7 @@
 import { supabase } from './supabase';
-import { mockMasters } from '../data/mockData';
 
 export const getTopRatedMasters = async () => {
   try {
-    // Проверяем, работаем ли мы в среде разработки Bolt
-    const isDevelopment = window.location.hostname === 'localhost' || 
-                         window.location.hostname.includes('bolt.new') ||
-                         window.location.hostname.includes('stackblitz');
-    
-    if (isDevelopment) {
-      console.log('Development mode detected, using mock data');
-      // В среде разработки возвращаем mock данные
-      return mockMasters;
-    }
-    
     // Проверяем подключение к Supabase
     const { data: healthCheck, error: healthError } = await supabase
       .from('masters')
@@ -85,9 +73,6 @@ export const getTopRatedMasters = async () => {
     }));
   } catch (error) {
     console.error('Get masters error:', error);
-    
-    // Если произошла ошибка, возвращаем mock данные как fallback
-    console.log('Falling back to mock data due to error');
-    return mockMasters;
+    return [];
   }
 };
