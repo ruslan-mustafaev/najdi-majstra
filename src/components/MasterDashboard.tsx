@@ -1494,8 +1494,8 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                 <div className="bg-white rounded-xl shadow-lg p-6">
                   <div className="text-center py-12 text-gray-500">
                     <span className="text-6xl mb-4 block">🏗️</span>
-                    <h3 className="text-xl font-medium mb-2">Vyberte projekt</h3>
-                    <p>Kliknite na projekt v ľavom paneli pre zobrazenie detailov</p>
+                    <h3 className="text-xl font-medium mb-2">Začnite svoj prvý projekt</h3>
+                    <p>Kliknite na "Nový projekt" pre vytvorenie plánu práce s fázami a úlohami</p>
                   </div>
                 </div>
               )}
