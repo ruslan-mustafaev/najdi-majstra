@@ -1211,11 +1211,14 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
         )}
 
         {activeTab === 'calendar' && masterId && (
-          <div className="max-w-2xl mx-auto">
+          <div className="max-w-4xl mx-auto">
             <AvailabilityCalendar masterId={masterId} isEditable={true} />
           </div>
         )}
 
+        {activeTab === 'portfolio' && (
+          <MasterPortfolio isEditable={true} />
+        )}
 
         {activeTab === 'projects' && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

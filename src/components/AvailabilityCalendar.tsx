@@ -170,72 +170,72 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-4">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-base font-semibold flex items-center space-x-2">
-          <Calendar size={18} className="text-[#4169e1]" />
+    <div className="bg-white rounded-xl shadow-lg p-6">
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-xl font-semibold flex items-center space-x-2">
+          <Calendar size={22} className="text-[#4169e1]" />
           <span>{isEditable ? 'Kalendár dostupnosti' : 'Plánovanie práce'}</span>
         </h3>
       </div>
 
       {/* Month Navigation */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-6">
         <button
           onClick={goToPreviousMonth}
-          className="p-1 rounded hover:bg-gray-100"
+          className="p-2 rounded-lg hover:bg-gray-100 border border-gray-300"
         >
-          <ChevronLeft size={18} />
+          <ChevronLeft size={24} />
         </button>
 
-        <h4 className="text-sm font-bold text-gray-900">
+        <h4 className="text-2xl font-bold text-gray-900">
           {months[currentMonth]} {currentYear}
         </h4>
 
         <button
           onClick={goToNextMonth}
-          className="p-1 rounded hover:bg-gray-100"
+          className="p-2 rounded-lg hover:bg-gray-100 border border-gray-300"
         >
-          <ChevronRight size={18} />
+          <ChevronRight size={24} />
         </button>
       </div>
 
       {/* Quick Actions for Master */}
       {isEditable && (
-        <div className="mb-4 p-3 bg-blue-50 rounded-lg">
-          <p className="text-xs text-gray-600 mb-2">Kliknite na deň pre úpravu</p>
-          <div className="grid grid-cols-2 gap-2 text-xs">
-            <div className="flex items-center space-x-1">
-              <div className="w-3 h-3 bg-green-100 border border-green-300 rounded"></div>
-              <span>Dostupný</span>
+        <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+          <p className="text-sm text-gray-700 mb-3 font-medium">💡 Kliknite na deň pre úpravu dostupnosti</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-green-100 border-2 border-green-300 rounded"></div>
+              <span className="font-medium">Dostupný</span>
             </div>
-            <div className="flex items-center space-x-1">
-              <div className="w-3 h-3 bg-red-100 border border-red-300 rounded"></div>
-              <span>Obsadený</span>
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-red-100 border-2 border-red-300 rounded"></div>
+              <span className="font-medium">Obsadený</span>
             </div>
-            <div className="flex items-center space-x-1">
-              <div className="w-3 h-3 bg-yellow-100 border border-yellow-300 rounded"></div>
-              <span>Čiastočne</span>
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-yellow-100 border-2 border-yellow-300 rounded"></div>
+              <span className="font-medium">Čiastočne</span>
             </div>
-            <div className="flex items-center space-x-1">
-              <div className="w-3 h-3 bg-gray-100 border border-gray-300 rounded"></div>
-              <span>Nedostupný</span>
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-gray-100 border-2 border-gray-300 rounded"></div>
+              <span className="font-medium">Nedostupný</span>
             </div>
           </div>
         </div>
       )}
 
       {/* Calendar Grid */}
-      <div className="grid grid-cols-7 gap-1">
+      <div className="grid grid-cols-7 gap-2">
         {/* Week day headers */}
         {weekDays.map((day) => (
-          <div key={day} className="text-center text-xs font-medium text-gray-600 py-1">
+          <div key={day} className="text-center text-sm font-bold text-gray-700 py-3 bg-gray-100 rounded-lg">
             {day}
           </div>
         ))}
 
         {/* Empty cells for days before month start */}
         {Array.from({ length: adjustedFirstDay }).map((_, index) => (
-          <div key={`empty-${index}`} className="h-10"></div>
+          <div key={`empty-${index}`} className="h-16"></div>
         ))}
 
         {/* Calendar days */}
@@ -249,16 +249,16 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
             <div
               key={day}
               onClick={() => handleDayClick(dateStr)}
-              className={`h-10 border rounded text-xs flex flex-col items-center justify-center transition-all ${
+              className={`h-16 border-2 rounded-lg text-sm flex flex-col items-center justify-center transition-all ${
                 getStatusColor(dayData?.status)
-              } ${isEditable ? 'cursor-pointer hover:shadow-md' : ''} ${
-                isToday ? 'ring-2 ring-blue-400' : ''
+              } ${isEditable ? 'cursor-pointer hover:shadow-lg hover:scale-105' : ''} ${
+                isToday ? 'ring-2 ring-blue-500 ring-offset-2' : ''
               }`}
               title={dayData ? `${dayData.status} - ${dayData.work_hours_start?.slice(0,5)} - ${dayData.work_hours_end?.slice(0,5)}` : 'Kliknite pre nastavenie'}
             >
-              <div className="font-medium">{day}</div>
+              <div className="font-bold text-base">{day}</div>
               {dayData && (
-                <div className="text-xs">{getStatusIcon(dayData.status)}</div>
+                <div className="text-lg mt-1">{getStatusIcon(dayData.status)}</div>
               )}
             </div>
           );
@@ -268,9 +268,9 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
       {/* Edit Modal */}
       {editMode && selectedDate && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl w-full max-w-md p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold">
+          <div className="bg-white rounded-xl w-full max-w-lg p-8 shadow-2xl">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-2xl font-bold text-gray-900">
                 {new Date(selectedDate).toLocaleDateString('sk-SK', {
                   day: 'numeric',
                   month: 'long',
@@ -279,28 +279,29 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
               </h3>
               <button
                 onClick={() => setEditMode(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-100 rounded-lg transition-colors"
               >
-                <X size={20} />
+                <X size={24} />
               </button>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-6">
               {/* Status Selection */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Stav
+                <label className="block text-base font-semibold text-gray-800 mb-4">
+                  Vyberte stav dostupnosti:
                 </label>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 gap-4">
                   <button
                     onClick={() => {
                       handleQuickStatus(selectedDate, 'available');
                       setEditMode(false);
                     }}
-                    className="p-3 border-2 border-green-300 bg-green-50 rounded-lg hover:bg-green-100 transition-colors"
+                    className="p-6 border-2 border-green-300 bg-green-50 rounded-xl hover:bg-green-100 hover:border-green-400 transition-all hover:shadow-lg transform hover:scale-105"
                   >
-                    <div className="text-2xl mb-1">✓</div>
-                    <div className="text-xs font-medium">Dostupný</div>
+                    <div className="text-4xl mb-2">✓</div>
+                    <div className="text-sm font-bold text-green-800">Dostupný</div>
+                    <div className="text-xs text-green-600 mt-1">Môžem pracovať</div>
                   </button>
 
                   <button
@@ -308,10 +309,11 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
                       handleQuickStatus(selectedDate, 'busy');
                       setEditMode(false);
                     }}
-                    className="p-3 border-2 border-red-300 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
+                    className="p-6 border-2 border-red-300 bg-red-50 rounded-xl hover:bg-red-100 hover:border-red-400 transition-all hover:shadow-lg transform hover:scale-105"
                   >
-                    <div className="text-2xl mb-1">✕</div>
-                    <div className="text-xs font-medium">Obsadený</div>
+                    <div className="text-4xl mb-2">✕</div>
+                    <div className="text-sm font-bold text-red-800">Obsadený</div>
+                    <div className="text-xs text-red-600 mt-1">Celý deň</div>
                   </button>
 
                   <button
@@ -319,10 +321,11 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
                       handleQuickStatus(selectedDate, 'partially-busy');
                       setEditMode(false);
                     }}
-                    className="p-3 border-2 border-yellow-300 bg-yellow-50 rounded-lg hover:bg-yellow-100 transition-colors"
+                    className="p-6 border-2 border-yellow-300 bg-yellow-50 rounded-xl hover:bg-yellow-100 hover:border-yellow-400 transition-all hover:shadow-lg transform hover:scale-105"
                   >
-                    <div className="text-2xl mb-1">◐</div>
-                    <div className="text-xs font-medium">Čiastočne</div>
+                    <div className="text-4xl mb-2">◐</div>
+                    <div className="text-sm font-bold text-yellow-800">Čiastočne</div>
+                    <div className="text-xs text-yellow-600 mt-1">Pár hodín voľno</div>
                   </button>
 
                   <button
@@ -330,10 +333,11 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
                       handleQuickStatus(selectedDate, 'unavailable');
                       setEditMode(false);
                     }}
-                    className="p-3 border-2 border-gray-300 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                    className="p-6 border-2 border-gray-300 bg-gray-50 rounded-xl hover:bg-gray-100 hover:border-gray-400 transition-all hover:shadow-lg transform hover:scale-105"
                   >
-                    <div className="text-2xl mb-1">—</div>
-                    <div className="text-xs font-medium">Nedostupný</div>
+                    <div className="text-4xl mb-2">—</div>
+                    <div className="text-sm font-bold text-gray-800">Nedostupný</div>
+                    <div className="text-xs text-gray-600 mt-1">Voľno/dovolenka</div>
                   </button>
                 </div>
               </div>
