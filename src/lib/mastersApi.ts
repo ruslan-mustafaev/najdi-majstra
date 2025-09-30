@@ -1,35 +1,36 @@
 import { supabase } from './supabase';
 
+// Кеш для мастеров
+let mastersCache: any[] | null = null;
+let cacheTimestamp = 0;
+const CACHE_DURATION = 5 * 60 * 1000; // 5 минут
+
 export const getTopRatedMasters = async () => {
   try {
-    // Проверяем подключение к Supabase
-    const { data: healthCheck, error: healthError } = await supabase
-      .from('masters')
-      .select('count')
-      .limit(1);
-    
-    if (healthError) {
-      console.error('Supabase connection error:', healthError);
-      return [];
+    // Проверяем кеш
+    const now = Date.now();
+    if (mastersCache && (now - cacheTimestamp) < CACHE_DURATION) {
+      console.log('Returning cached masters');
+      return mastersCache;
     }
-    
+
     const { data, error } = await supabase
       .from('masters')
       .select('*')
       .eq('is_active', true)
       .eq('profile_completed', true)
-      .or('is_deleted.is.null,is_deleted.eq.false') // Исключаем удаленные профили
-      .is('deleted_at', null)   // Дополнительная проверка
+      .or('is_deleted.is.null,is_deleted.eq.false')
+      .is('deleted_at', null)
       .order('rating', { ascending: false })
       .limit(10);
       
     if (error) {
       console.error('Error loading masters:', error);
-      return [];
+      return mastersCache || [];
     }
-    
+
     // Преобразуем данные из базы в формат Master
-    return (data || []).map(master => ({
+    const masters = (data || []).map(master => ({
       id: master.id, // Оставляем UUID как есть
       name: master.name || 'Без имени',
       profession: master.profession || 'Majster',
@@ -71,8 +72,14 @@ export const getTopRatedMasters = async () => {
         workRadius: 'Lokálne + 50km'
       }
     }));
+
+    // Сохраняем в кеш
+    mastersCache = masters;
+    cacheTimestamp = Date.now();
+
+    return masters;
   } catch (error) {
     console.error('Get masters error:', error);
-    return [];
+    return mastersCache || [];
   }
 };
