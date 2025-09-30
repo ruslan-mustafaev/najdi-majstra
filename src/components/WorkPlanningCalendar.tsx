@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 interface WorkPlanningCalendarProps {
   masterId?: string;
@@ -14,6 +15,8 @@ interface WorkDay {
 
 export const WorkPlanningCalendar: React.FC<WorkPlanningCalendarProps> = ({ masterId }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [availability, setAvailability] = useState<Record<string, any>>({});
+  const [loading, setLoading] = useState(true);
   
   const months = [
     'Január', 'Február', 'Marec', 'Apríl', 'Máj', 'Jún',
@@ -22,40 +25,71 @@ export const WorkPlanningCalendar: React.FC<WorkPlanningCalendarProps> = ({ mast
 
   const weekDays = ['Po', 'Ut', 'St', 'Št', 'Pi', 'So', 'Ne'];
 
-  // Mock data for master's schedule
+  // Load availability from database
+  useEffect(() => {
+    const loadAvailability = async () => {
+      if (!masterId) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+
+        const startDate = new Date(year, month, 1).toISOString().split('T')[0];
+        const endDate = new Date(year, month + 1, 0).toISOString().split('T')[0];
+
+        const { data, error } = await supabase
+          .from('master_availability')
+          .select('*')
+          .eq('master_id', masterId)
+          .gte('date', startDate)
+          .lte('date', endDate);
+
+        if (error) throw error;
+
+        const availabilityMap: Record<string, any> = {};
+        data?.forEach((item) => {
+          const day = new Date(item.date).getDate();
+          availabilityMap[day] = {
+            status: item.status,
+            work_hours_start: item.work_hours_start,
+            work_hours_end: item.work_hours_end,
+            notes: item.notes
+          };
+        });
+
+        setAvailability(availabilityMap);
+      } catch (error) {
+        console.error('Error loading availability:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadAvailability();
+  }, [masterId, currentDate]);
+
+  // Get schedule based on database data
   const getMockSchedule = (month: number, year: number): WorkDay[] => {
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const schedule: WorkDay[] = [];
 
     for (let day = 1; day <= daysInMonth; day++) {
-      const dayOfWeek = new Date(year, month, day).getDay();
-      let status: WorkDay['status'] = 'available';
-      let project = '';
-      let workHours = '7:00 - 19:00';
+      const dayData = availability[day];
 
-      // Weekend logic
-      if (dayOfWeek === 0 || dayOfWeek === 6) {
-        if (day % 3 === 0) {
-          status = 'available';
-          workHours = '8:00 - 16:00';
-        } else {
-          status = 'unavailable';
-          workHours = '';
+      let status: WorkDay['status'] = 'unavailable';
+      let workHours = '';
+      let project = '';
+
+      if (dayData) {
+        status = dayData.status;
+        if (dayData.work_hours_start && dayData.work_hours_end) {
+          workHours = `${dayData.work_hours_start.slice(0,5)} - ${dayData.work_hours_end.slice(0,5)}`;
         }
-      } else {
-        // Weekday logic - simulate different work statuses
-        if (day % 7 === 0) {
-          status = 'busy';
-          project = 'Rekonštrukcia bytu';
-          workHours = '8:00 - 18:00';
-        } else if (day % 5 === 0) {
-          status = 'partially-busy';
-          project = 'Servis kotla';
-          workHours = '9:00 - 12:00';
-        } else if (day % 11 === 0) {
-          status = 'unavailable';
-          workHours = '';
-        }
+        project = dayData.notes || '';
       }
 
       schedule.push({
@@ -116,6 +150,16 @@ export const WorkPlanningCalendar: React.FC<WorkPlanningCalendarProps> = ({ mast
         return '';
     }
   };
+
+  if (loading) {
+    return (
+      <div className="bg-white rounded-xl shadow-lg p-6">
+        <div className="text-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#4169e1] mx-auto"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white rounded-xl shadow-lg p-6">
