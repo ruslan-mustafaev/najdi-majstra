@@ -18,7 +18,7 @@ export const getTopRatedMasters = async () => {
       .select('*')
       .eq('is_active', true)
       .eq('profile_completed', true)
-      .neq('is_deleted', true) // Исключаем удаленные профили
+      .or('is_deleted.is.null,is_deleted.eq.false') // Исключаем удаленные профили
       .is('deleted_at', null)   // Дополнительная проверка
       .order('rating', { ascending: false })
       .limit(10);
