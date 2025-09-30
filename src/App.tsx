@@ -118,14 +118,17 @@ const HomePage: React.FC = () => {
   // Load masters from Supabase
   useEffect(() => {
     const loadMasters = async () => {
+      console.log('Starting to load masters...');
       setIsLoadingMasters(true);
       try {
         const masters = await getTopRatedMasters();
+        console.log('Masters loaded:', masters.length);
         setRealMasters(masters);
       } catch (error) {
         console.error('Error loading masters:', error);
       } finally {
         setIsLoadingMasters(false);
+        console.log('Loading masters finished');
       }
     };
     loadMasters();

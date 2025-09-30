@@ -1,17 +1,50 @@
 import { supabase } from './supabase';
 
-// Кеш для мастеров
-let mastersCache: any[] | null = null;
-let cacheTimestamp = 0;
 const CACHE_DURATION = 5 * 60 * 1000; // 5 минут
+const CACHE_KEY = 'masters_cache';
+const CACHE_TIMESTAMP_KEY = 'masters_cache_timestamp';
+
+// Функция для загрузки кеша из localStorage
+const loadCacheFromStorage = () => {
+  try {
+    const cached = localStorage.getItem(CACHE_KEY);
+    const timestamp = localStorage.getItem(CACHE_TIMESTAMP_KEY);
+
+    if (cached && timestamp) {
+      const now = Date.now();
+      const cacheAge = now - parseInt(timestamp, 10);
+
+      if (cacheAge < CACHE_DURATION) {
+        console.log('Loaded masters from localStorage cache');
+        return JSON.parse(cached);
+      } else {
+        console.log('Cache expired, clearing...');
+        localStorage.removeItem(CACHE_KEY);
+        localStorage.removeItem(CACHE_TIMESTAMP_KEY);
+      }
+    }
+  } catch (error) {
+    console.error('Error loading cache:', error);
+  }
+  return null;
+};
+
+// Функция для сохранения кеша в localStorage
+const saveCacheToStorage = (masters: any[]) => {
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify(masters));
+    localStorage.setItem(CACHE_TIMESTAMP_KEY, Date.now().toString());
+  } catch (error) {
+    console.error('Error saving cache:', error);
+  }
+};
 
 export const getTopRatedMasters = async () => {
   try {
-    // Проверяем кеш
-    const now = Date.now();
-    if (mastersCache && (now - cacheTimestamp) < CACHE_DURATION) {
-      console.log('Returning cached masters');
-      return mastersCache;
+    // Проверяем кеш в localStorage
+    const cachedMasters = loadCacheFromStorage();
+    if (cachedMasters && cachedMasters.length > 0) {
+      return cachedMasters;
     }
 
     console.log('Loading masters from database...');
@@ -83,17 +116,17 @@ export const getTopRatedMasters = async () => {
     }));
 
     // Сохраняем в кеш
-    mastersCache = masters;
-    cacheTimestamp = Date.now();
+    saveCacheToStorage(masters);
 
     console.log(`Loaded ${masters.length} masters from database`);
     return masters;
   } catch (error) {
     console.error('Get masters error:', error);
-    // При ошибке возвращаем кеш или пустой массив
-    if (mastersCache) {
+    // При ошибке возвращаем кеш из localStorage или пустой массив
+    const cachedMasters = loadCacheFromStorage();
+    if (cachedMasters && cachedMasters.length > 0) {
       console.log('Returning cached data due to error');
-      return mastersCache;
+      return cachedMasters;
     }
     console.log('No cached data available, returning empty array');
     return [];
