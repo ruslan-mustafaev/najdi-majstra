@@ -416,7 +416,6 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
                     </label>
                     <input
                       type="month"
-                      lang="sk-SK"
                       value={formData.completion_date}
                       onChange={(e) => setFormData(prev => ({ ...prev, completion_date: e.target.value }))}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
