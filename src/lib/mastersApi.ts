@@ -67,27 +67,30 @@ export const getTopRatedMasters = async () => {
 };
 
 const loadFromDatabase = async () => {
-  console.log('Loading masters from database...');
-  console.log('Supabase client initialized:', !!supabase);
+  console.log('=== LOADING MASTERS FROM DATABASE ===');
+  console.log('Supabase client exists:', !!supabase);
 
-  const { data, error } = await supabase
-    .from('masters')
-    .select('*')
-    .eq('is_active', true)
-    .eq('profile_completed', true)
-    .limit(10);
+  try {
+    const { data, error } = await supabase
+      .from('masters')
+      .select('*')
+      .eq('is_active', true)
+      .eq('profile_completed', true)
+      .limit(10);
 
-  console.log('Query result:', { dataLength: data?.length, hasError: !!error });
+    console.log('✅ Query completed!');
+    console.log('Data received:', data?.length || 0, 'masters');
 
-  if (error) {
-    console.error('Supabase error details:', {
-      message: error.message,
-      details: error.details,
-      hint: error.hint,
-      code: error.code
-    });
-    throw error;
-  }
+    if (error) {
+      console.error('❌ SUPABASE ERROR:', {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code,
+        status: (error as any).status
+      });
+      throw error;
+    }
 
   // Преобразуем данные из базы в формат Master
   const masters = (data || []).map(master => ({
@@ -136,6 +139,11 @@ const loadFromDatabase = async () => {
   // Сохраняем в кеш
   saveCacheToStorage(masters);
 
-  console.log(`Loaded ${masters.length} masters from database`);
+  console.log(`✅ Successfully loaded ${masters.length} masters from database`);
   return masters;
+
+  } catch (err) {
+    console.error('❌ Exception in loadFromDatabase:', err);
+    throw err;
+  }
 };
