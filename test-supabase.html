@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Supabase Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <h1>Supabase Connection Test</h1>
+    <div id="result"></div>
+
+    <script>
+        const SUPABASE_URL = 'https://0ec90b57d6e95fcbda19832f.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJib2x0IiwicmVmIjoiMGVjOTBiNTdkNmU5NWZjYmRhMTk4MzJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4ODE1NzQsImV4cCI6MTc1ODg4MTU3NH0.9I8-U0x86Ak8t2DGaIk0HfvTSLsAyzdnz-Nw00mMkKw';
+
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        async function testConnection() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing connection...<br>';
+
+            try {
+                console.log('Trying to fetch masters...');
+                const { data, error } = await supabase
+                    .from('masters')
+                    .select('*')
+                    .eq('is_active', true)
+                    .limit(3);
+
+                if (error) {
+                    resultDiv.innerHTML += '<strong style="color: red;">Error:</strong> ' + JSON.stringify(error) + '<br>';
+                    console.error('Error:', error);
+                } else {
+                    resultDiv.innerHTML += '<strong style="color: green;">Success!</strong> Found ' + data.length + ' masters<br>';
+                    resultDiv.innerHTML += '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                    console.log('Data:', data);
+                }
+            } catch (err) {
+                resultDiv.innerHTML += '<strong style="color: red;">Exception:</strong> ' + err.message + '<br>';
+                console.error('Exception:', err);
+            }
+        }
+
+        testConnection();
+    </script>
+</body>
+</html>

@@ -68,19 +68,24 @@ export const getTopRatedMasters = async () => {
 
 const loadFromDatabase = async () => {
   console.log('Loading masters from database...');
+  console.log('Supabase client initialized:', !!supabase);
 
   const { data, error } = await supabase
     .from('masters')
     .select('*')
     .eq('is_active', true)
     .eq('profile_completed', true)
-    .or('is_deleted.is.null,is_deleted.eq.false')
-    .is('deleted_at', null)
-    .order('rating', { ascending: false })
     .limit(10);
 
+  console.log('Query result:', { dataLength: data?.length, hasError: !!error });
+
   if (error) {
-    console.error('Error loading masters:', error);
+    console.error('Supabase error details:', {
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+      code: error.code
+    });
     throw error;
   }
 
