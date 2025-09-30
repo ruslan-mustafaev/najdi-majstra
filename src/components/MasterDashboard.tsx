@@ -4,6 +4,7 @@ import { useAuth } from '../hooks/useAuth';
 import { saveMasterProfile, type MasterProfile } from '../lib/masterProfileApi';
 import { FileUploadManager } from './FileUpload/FileUploadManager';
 import { supabase } from '../lib/supabase';
+import { MasterPortfolio } from './MasterPortfolio';
 
 interface MasterDashboardProps {
   onBack: () => void;
@@ -12,7 +13,7 @@ interface MasterDashboardProps {
 
 export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProfileUpdate }) => {
   const { user, signOut } = useAuth();
-  const [activeTab, setActiveTab] = useState<'profile' | 'calendar' | 'projects' | 'payments'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'calendar' | 'portfolio' | 'projects' | 'payments'>('profile');
   const [editingField, setEditingField] = useState<string | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
   const [copiedCoupon, setCopiedCoupon] = useState<string | null>(null);
@@ -1411,6 +1412,10 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
           </div>
         )}
 
+        {activeTab === 'portfolio' && (
+          <MasterPortfolio isEditable={true} />
+        )}
+
         {activeTab === 'projects' && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Left Column - Projects List */}
@@ -1785,6 +1790,16 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                 className="text-gray-400 hover:text-gray-600 transition-colors"
               >
                 <X size={20} />
+              </button>
+              <button
+                onClick={() => setActiveTab('portfolio')}
+                className={`py-4 px-2 border-b-2 font-medium text-sm ${
+                  activeTab === 'portfolio'
+                    ? 'border-[#4169e1] text-[#4169e1]'
+                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                Moja recenzia
               </button>
             </div>
             

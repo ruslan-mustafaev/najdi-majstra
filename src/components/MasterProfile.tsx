@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { ArrowLeft, Star, MapPin, Clock, Phone, Mail, Globe, Award, Users, Calendar, Euro, Play, Facebook, Instagram, Linkedin, Youtube, Twitter, BookText as TikTok } from 'lucide-react';
 import { Master } from '../types';
 import { WorkPlanningCalendar } from './WorkPlanningCalendar';
+import { MasterPortfolio } from './MasterPortfolio';
 
 interface Review {
   id: string;
@@ -315,6 +316,8 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
             </div>
 
             {/* Reviews */}
+            <MasterPortfolio masterId={master.id} isEditable={false} />
+
             <div className="bg-white rounded-xl shadow-lg p-6">
               <h2 className="text-2xl font-bold mb-6">Hodnotenia klientov</h2>
               <div className="space-y-6">
