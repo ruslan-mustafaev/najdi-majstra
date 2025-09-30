@@ -52,7 +52,9 @@ export const WorkPlanningCalendar: React.FC<WorkPlanningCalendarProps> = ({ mast
 
         const availabilityMap: Record<string, any> = {};
         data?.forEach((item) => {
-          const day = new Date(item.date).getDate();
+          // Parse date correctly - add UTC to avoid timezone issues
+          const itemDate = new Date(item.date + 'T00:00:00');
+          const day = itemDate.getDate();
           availabilityMap[day] = {
             status: item.status,
             work_hours_start: item.work_hours_start,
@@ -61,6 +63,7 @@ export const WorkPlanningCalendar: React.FC<WorkPlanningCalendarProps> = ({ mast
           };
         });
 
+        console.log('Loaded availability for', startDate, 'to', endDate, ':', availabilityMap);
         setAvailability(availabilityMap);
       } catch (error) {
         console.error('Error loading availability:', error);
@@ -80,6 +83,7 @@ export const WorkPlanningCalendar: React.FC<WorkPlanningCalendarProps> = ({ mast
     for (let day = 1; day <= daysInMonth; day++) {
       const dayData = availability[day];
 
+      // If no data in DB, status is undefined (will show as gray/empty)
       let status: WorkDay['status'] = 'unavailable';
       let workHours = '';
       let project = '';
@@ -151,6 +155,21 @@ export const WorkPlanningCalendar: React.FC<WorkPlanningCalendarProps> = ({ mast
     }
   };
 
+  const getStatusIcon = (status: WorkDay['status']) => {
+    switch (status) {
+      case 'available':
+        return '✓';
+      case 'busy':
+        return '✕';
+      case 'partially-busy':
+        return '◐';
+      case 'unavailable':
+        return '—';
+      default:
+        return '';
+    }
+  };
+
   if (loading) {
     return (
       <div className="bg-white rounded-xl shadow-lg p-6">
@@ -211,13 +230,13 @@ export const WorkPlanningCalendar: React.FC<WorkPlanningCalendarProps> = ({ mast
         {schedule.map((day) => (
           <div
             key={day.date}
-            className={`h-16 border rounded-lg p-1 cursor-pointer hover:shadow-md transition-all ${getStatusColor(day.status)}`}
+            className={`h-16 border-2 rounded-lg p-2 transition-all flex flex-col items-center justify-center ${getStatusColor(day.status)}`}
             title={`${day.date}. ${months[currentMonth]} - ${getStatusText(day.status)}${day.project ? ` (${day.project})` : ''}${day.workHours ? ` - ${day.workHours}` : ''}`}
           >
-            <div className="text-sm font-medium">{day.date}</div>
-            {day.status !== 'unavailable' && (
-              <div className="text-xs truncate">
-                {day.project || getStatusText(day.status)}
+            <div className="text-base font-bold">{day.date}</div>
+            {day.status && day.status !== 'unavailable' && (
+              <div className="text-lg mt-1">
+                {getStatusIcon(day.status)}
               </div>
             )}
           </div>
@@ -227,22 +246,22 @@ export const WorkPlanningCalendar: React.FC<WorkPlanningCalendarProps> = ({ mast
       {/* Legend */}
       <div className="border-t pt-4">
         <h5 className="text-sm font-medium text-gray-700 mb-3">Legenda:</h5>
-        <div className="grid grid-cols-2 gap-2 text-xs">
+        <div className="grid grid-cols-2 gap-3 text-sm">
           <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-green-100 border border-green-200 rounded"></div>
-            <span>Dostupný</span>
+            <div className="w-4 h-4 bg-green-100 border-2 border-green-300 rounded flex items-center justify-center text-xs">✓</div>
+            <span className="font-medium">Dostupný</span>
           </div>
           <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-red-100 border border-red-200 rounded"></div>
-            <span>Obsadený</span>
+            <div className="w-4 h-4 bg-red-100 border-2 border-red-300 rounded flex items-center justify-center text-xs">✕</div>
+            <span className="font-medium">Obsadený</span>
           </div>
           <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-yellow-100 border border-yellow-200 rounded"></div>
-            <span>Čiastočne obsadený</span>
+            <div className="w-4 h-4 bg-yellow-100 border-2 border-yellow-300 rounded flex items-center justify-center text-xs">◐</div>
+            <span className="font-medium">Čiastočne</span>
           </div>
           <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-gray-100 border border-gray-200 rounded"></div>
-            <span>Nedostupný</span>
+            <div className="w-4 h-4 bg-gray-100 border-2 border-gray-300 rounded flex items-center justify-center text-xs">—</div>
+            <span className="font-medium">Nedostupný</span>
           </div>
         </div>
       </div>
