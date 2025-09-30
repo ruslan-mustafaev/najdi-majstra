@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus, CreditCard as Edit, Trash2, MapPin, Calendar, Clock, Star, Camera, Save, X, Upload, AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
+import { uploadMultipleFiles } from '../lib/fileUpload';
 import { ProjectStorageManager } from '../lib/projectStorage';
 
 interface PortfolioProject {
