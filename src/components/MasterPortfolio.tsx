@@ -562,6 +562,7 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
                   <button
                     onClick={handleSaveProject}
                     disabled={!formData.project_title || !formData.location || !formData.completion_date}
+                    disabled={uploadingImages || !formData.project_title || !formData.location || !formData.completion_date}
                     className="bg-[#4169e1] text-white px-6 py-2 rounded-lg hover:bg-[#3558d4] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center space-x-2"
                   >
                     <Save size={16} />
