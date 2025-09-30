@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, CreditCard as Edit, Trash2, MapPin, Calendar, Clock, Star, Camera, Save, X, Upload } from 'lucide-react';
+import { Plus, CreditCard as Edit, Trash2, MapPin, Calendar, Clock, Star, Camera, Save, X, Upload, AlertCircle } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
-import { FileUploadManager } from './FileUpload/FileUploadManager';
+import { uploadMultipleFiles } from '../lib/fileUpload';
 
 interface PortfolioProject {
   id: string;
@@ -29,6 +29,8 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingProject, setEditingProject] = useState<PortfolioProject | null>(null);
+  const [uploadingImages, setUploadingImages] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     project_title: '',
     location: '',
@@ -484,12 +486,66 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Fotografie z projektu (max 5)
                   </label>
-                  <FileUploadManager
-                    fileType="work-images"
-                    onUploadComplete={(urls) => {
-                      setFormData(prev => ({ ...prev, project_images: urls.slice(0, 5) }));
-                    }}
-                  />
+                  {/* Custom project image upload */}
+                  <div className="space-y-4">
+                    <div
+                      className="relative border-2 border-dashed rounded-xl p-8 text-center transition-all duration-200 cursor-pointer border-gray-300 hover:border-blue-400 hover:bg-blue-50"
+                      onClick={() => document.getElementById('project-images-input')?.click()}
+                    >
+                      <input
+                        id="project-images-input"
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={handleProjectImagesSelect}
+                        className="hidden"
+                      />
+                      <div className="flex flex-col items-center space-y-4">
+                        <div className="w-16 h-16 rounded-full flex items-center justify-center bg-blue-100">
+                          <Upload size={32} className="text-blue-600" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                            Fotografie projektu
+                          </h3>
+                          <p className="text-gray-600 mb-2">
+                            Nahrajte fotografie konkrétne z tohto projektu (max 5)
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            Kliknite alebo pretiahnite súbory sem • Max veľkosť: 10MB každá
+                          </p>
+                        </div>
+                        <div className="flex items-center space-x-2 text-blue-600">
+                          <Upload size={20} />
+                          <span className="font-medium">Vybrať fotografie</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Current Project Images */}
+                    {formData.project_images.length > 0 && (
+                      <div className="space-y-3">
+                        <h4 className="font-medium text-gray-900">Vybrané fotografie ({formData.project_images.length}/5):</h4>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                          {formData.project_images.map((imageUrl, index) => (
+                            <div key={index} className="relative group">
+                              <img
+                                src={imageUrl}
+                                alt={`Projekt foto ${index + 1}`}
+                                className="w-full aspect-square object-cover rounded-lg shadow-md"
+                              />
+                              <button
+                                onClick={() => handleRemoveProjectImage(index)}
+                                className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                              >
+                                <X size={16} />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Action Buttons */}
