@@ -209,8 +209,12 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
       <div className="bg-white rounded-xl shadow-lg p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Moja recenzia</h2>
-            <p className="text-gray-600 mt-1">Ukážte svoje najlepšie projekty</p>
+            <h2 className="text-2xl font-bold text-gray-900">
+              {isEditable ? 'Moja recenzia' : 'Vyplnené projekty'}
+            </h2>
+            <p className="text-gray-600 mt-1">
+              {isEditable ? 'Ukážte svoje najlepšie projekty' : 'Portfólio dokončených prác'}
+            </p>
           </div>
           {isEditable && projects.length < 5 && (
             <button
