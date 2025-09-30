@@ -189,6 +189,56 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
     setShowAddModal(true);
   };
 
+  // Обработчик выбора фотографий проекта
+  const handleProjectImagesSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files || files.length === 0 || !user?.id) return;
+
+    // Проверяем лимит фотографий
+    const currentCount = formData.project_images.length;
+    const newCount = files.length;
+    const totalCount = currentCount + newCount;
+
+    if (totalCount > 5) {
+      setUploadError(`Môžete nahrať maximálne 5 fotiek na projekt. Aktuálne máte ${currentCount}, pokúšate sa pridať ${newCount}.`);
+      return;
+    }
+
+    setUploadingImages(true);
+    setUploadError(null);
+
+    try {
+      const result = await uploadMultipleFiles(files, 'work-images', user.id);
+
+      if (result.success && result.urls) {
+        // Pridáme nové URL k existujúcim
+        setFormData(prev => ({
+          ...prev,
+          project_images: [...prev.project_images, ...result.urls]
+        }));
+      } else {
+        setUploadError(result.errors?.join(', ') || 'Chyba pri nahrávaní fotiek');
+      }
+    } catch (error) {
+      console.error('Project images upload error:', error);
+      setUploadError('Nastala neočakávaná chyba pri nahrávaní');
+    } finally {
+      setUploadingImages(false);
+      // Vyčistíme input
+      if (event.target) {
+        event.target.value = '';
+      }
+    }
+  };
+
+  // Obработчик удаления фотографии проекта
+  const handleRemoveProjectImage = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      project_images: prev.project_images.filter((_, i) => i !== index)
+    }));
+  };
+
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
       <Star
