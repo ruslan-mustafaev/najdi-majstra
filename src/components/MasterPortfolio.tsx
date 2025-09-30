@@ -101,11 +101,14 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
 
       if (!master) throw new Error('Master profile not found');
 
+      // Преобразуем формат даты из "2025-09" в "2025-09-01"
+      const completionDate = formData.completion_date ? `${formData.completion_date}-01` : null;
+
       const projectData = {
         master_id: master.id,
         project_title: formData.project_title,
         location: formData.location,
-        completion_date: formData.completion_date,
+        completion_date: completionDate,
         duration_months: formData.duration_months,
         difficulty_rating: formData.difficulty_rating,
         description: formData.description,
@@ -170,10 +173,12 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
 
   const handleEditProject = (project: PortfolioProject) => {
     setEditingProject(project);
+    // Преобразуем дату обратно в формат YYYY-MM для input type="month"
+    const dateForInput = project.completion_date ? project.completion_date.substring(0, 7) : '';
     setFormData({
       project_title: project.project_title,
       location: project.location,
-      completion_date: project.completion_date,
+      completion_date: dateForInput,
       duration_months: project.duration_months,
       difficulty_rating: project.difficulty_rating,
       description: project.description,
