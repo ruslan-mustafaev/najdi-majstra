@@ -514,6 +514,7 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
                   )}
                 </div>
               </div>
+            </React.Fragment>
             </div>
           )}
 
@@ -899,7 +900,8 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
   );
 };
               {/* Project Images */}
-              <div className="relative h-48 bg-gray-200">
+            <React.Fragment key={project.id}>
+              <div className="bg-white rounded-xl shadow-lg overflow-hidden">
                 {project.project_images.length > 0 ? (
                   <img
                     src={project.project_images[0]}
