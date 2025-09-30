@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, User, Mail, Phone, MapPin, FileText, Camera, Video, Settings, Save, Eye, EyeOff, Clock, Euro, Users, Award, Globe, Facebook, Instagram, Linkedin, Youtube, Twitter, MessageCircle, CheckCircle, AlertCircle, Upload, X, Image, Play, AlertTriangle, Plus, Copy, Check, Calendar, Star } from 'lucide-react';
+import { ArrowLeft, User, Mail, Phone, MapPin, FileText, Camera, Video, Settings, Save, Eye, EyeOff, Clock, Euro, Users, Award, Globe, Facebook, Instagram, Linkedin, Youtube, Twitter, MessageCircle, CheckCircle, AlertCircle, Upload, X, Image, Play, AlertTriangle, Plus, Copy, Check, Calendar, Star, Trash2 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { saveMasterProfile, type MasterProfile } from '../lib/masterProfileApi';
 import { MasterPortfolio } from './MasterPortfolio';
 import { FileUploadManager } from './FileUpload/FileUploadManager';
 import { AvailabilityCalendar } from './AvailabilityCalendar';
 import { supabase } from '../lib/supabase';
+import * as ProjectsAPI from '../lib/projectsApi';
 
 interface MasterDashboardProps {
   onBack: () => void;
@@ -41,39 +42,10 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
       realizacia: { notes: { id: string; text: string; completed: boolean }[] };
       ukoncenie: { notes: { id: string; text: string; completed: boolean }[] };
     };
-  }>>({
-    'project1': {
-      name: 'Rekonštrukcia kúpeľne',
-      phases: {
-        priprava: { notes: [
-          { id: '1', text: 'Nakúpiť obkladačky', completed: true },
-          { id: '2', text: 'Zmerať priestor', completed: true },
-          { id: '3', text: 'Objednať vanu', completed: false }
-        ]},
-        realizacia: { notes: [
-          { id: '4', text: 'Zdemontovať staré obklady', completed: true },
-          { id: '5', text: 'Inštalovať nové potrubie', completed: false }
-        ]},
-        ukoncenie: { notes: [
-          { id: '6', text: 'Finálne čistenie', completed: false }
-        ]}
-      }
-    },
-    'project2': {
-      name: 'Elektroinštalácia v byte',
-      phases: {
-        priprava: { notes: [
-          { id: '7', text: 'Nakresliť schému', completed: true }
-        ]},
-        realizacia: { notes: [
-          { id: '8', text: 'Vyfrézovať drážky', completed: false }
-        ]},
-        ukoncenie: { notes: [] }
-      }
-    }
-  });
+  }>>({});
   const [newNoteText, setNewNoteText] = useState('');
   const [activePhase, setActivePhase] = useState<'priprava' | 'realizacia' | 'ukoncenie'>('priprava');
+  const [isLoadingProjects, setIsLoadingProjects] = useState(false);
   
   const [profileData, setProfileData] = useState<{
     name: string;
@@ -351,11 +323,30 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
     setDateStatus(today, status);
   };
 
+  // Load projects from database
+  useEffect(() => {
+    const loadProjectsData = async () => {
+      if (!masterId) return;
+
+      setIsLoadingProjects(true);
+      const projectsData = await ProjectsAPI.loadProjects(masterId);
+      setProjects(projectsData);
+      setIsLoadingProjects(false);
+    };
+
+    loadProjectsData();
+  }, [masterId]);
+
   // Project functions
-  const addNewProject = () => {
-    if (!newProjectName.trim() || Object.keys(projects).length >= 20) return;
-    
-    const projectId = `project${Date.now()}`;
+  const addNewProject = async () => {
+    if (!newProjectName.trim() || Object.keys(projects).length >= 20 || !masterId) return;
+
+    const projectId = await ProjectsAPI.createProject(masterId, newProjectName.trim());
+    if (!projectId) {
+      alert('Chyba pri vytváraní projektu');
+      return;
+    }
+
     const newProject = {
       name: newProjectName.trim(),
       phases: {
@@ -364,29 +355,31 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
         ukoncenie: { notes: [] }
       }
     };
-    
+
     setProjects(prev => ({
       ...prev,
       [projectId]: newProject
     }));
-    
+
     setNewProjectName('');
     setShowNewProjectModal(false);
-    setSelectedProject(projectId); // Automatically select the new project
+    setSelectedProject(projectId);
   };
 
-  const addNote = (projectId: string, phase: 'priprava' | 'realizacia' | 'ukoncenie', text: string) => {
+  const addNote = async (projectId: string, phase: 'priprava' | 'realizacia' | 'ukoncenie', text: string) => {
     if (!text.trim()) return;
-    
+
     const currentPhaseNotes = projects[projectId]?.phases[phase]?.notes || [];
     if (currentPhaseNotes.length >= 10) return;
-    
-    const newNote = {
-      id: Date.now().toString(),
-      text: text.trim(),
-      completed: false
-    };
-    
+
+    const orderIndex = currentPhaseNotes.length;
+    const newNote = await ProjectsAPI.addTask(projectId, phase, text.trim(), orderIndex);
+
+    if (!newNote) {
+      alert('Chyba pri pridávaní úlohy');
+      return;
+    }
+
     setProjects(prev => ({
       ...prev,
       [projectId]: {
@@ -399,11 +392,20 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
         }
       }
     }));
-    
+
     setNewNoteText('');
   };
 
-  const toggleNoteCompletion = (projectId: string, phase: 'priprava' | 'realizacia' | 'ukoncenie', noteId: string) => {
+  const toggleNoteCompletion = async (projectId: string, phase: 'priprava' | 'realizacia' | 'ukoncenie', noteId: string) => {
+    const note = projects[projectId]?.phases[phase]?.notes.find(n => n.id === noteId);
+    if (!note) return;
+
+    const success = await ProjectsAPI.toggleTaskCompletion(noteId, !note.completed);
+    if (!success) {
+      alert('Chyba pri aktualizácii úlohy');
+      return;
+    }
+
     setProjects(prev => ({
       ...prev,
       [projectId]: {
@@ -420,7 +422,13 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
     }));
   };
 
-  const deleteNote = (projectId: string, phase: 'priprava' | 'realizacia' | 'ukoncenie', noteId: string) => {
+  const deleteNote = async (projectId: string, phase: 'priprava' | 'realizacia' | 'ukoncenie', noteId: string) => {
+    const success = await ProjectsAPI.deleteTask(noteId);
+    if (!success) {
+      alert('Chyba pri mazaní úlohy');
+      return;
+    }
+
     setProjects(prev => ({
       ...prev,
       [projectId]: {
@@ -433,6 +441,26 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
         }
       }
     }));
+  };
+
+  const deleteProject = async (projectId: string) => {
+    if (!confirm('Naozaj chcete odstrániť tento projekt? Táto akcia je nevratná.')) return;
+
+    const success = await ProjectsAPI.deleteProject(projectId);
+    if (!success) {
+      alert('Chyba pri mazaní projektu');
+      return;
+    }
+
+    setProjects(prev => {
+      const newProjects = { ...prev };
+      delete newProjects[projectId];
+      return newProjects;
+    });
+
+    if (selectedProject === projectId) {
+      setSelectedProject(null);
+    }
   };
 
   const calculateProjectProgress = (projectId: string) => {
@@ -1241,23 +1269,51 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                 <div className="mb-4 text-sm text-gray-600 bg-gray-50 p-2 rounded-lg">
                   Projekty: {Object.keys(projects).length}/20
                 </div>
-                
-                <div className="space-y-3">
-                  {Object.entries(projects).map(([projectId, project]) => {
+
+                {isLoadingProjects ? (
+                  <div className="text-center py-8 text-gray-500">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#4169e1] mx-auto"></div>
+                    <p className="mt-2">Načítavam projekty...</p>
+                  </div>
+                ) : Object.keys(projects).length === 0 ? (
+                  <div className="text-center py-8 text-gray-500">
+                    <span className="text-4xl mb-4 block">📋</span>
+                    <p className="mb-2">Zatiaľ nemáte žiadne projekty</p>
+                    <p className="text-sm">Vytvorte si prvý projekt pomocou tlačidla vyššie</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {Object.entries(projects).map(([projectId, project]) => {
                     const progress = calculateProjectProgress(projectId);
                     const isSelected = selectedProject === projectId;
                     
                     return (
                       <div
                         key={projectId}
-                        onClick={() => setSelectedProject(projectId)}
-                        className={`p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
-                          isSelected 
-                            ? 'border-[#4169e1] bg-blue-50' 
+                        className={`p-4 rounded-lg border-2 transition-all duration-200 ${
+                          isSelected
+                            ? 'border-[#4169e1] bg-blue-50'
                             : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                         }`}
                       >
-                        <h4 className="font-medium mb-2">{project.name}</h4>
+                        <div className="flex items-start justify-between mb-2">
+                          <h4
+                            onClick={() => setSelectedProject(projectId)}
+                            className="font-medium cursor-pointer flex-1"
+                          >
+                            {project.name}
+                          </h4>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              deleteProject(projectId);
+                            }}
+                            className="text-red-500 hover:text-red-700 transition-colors p-1 ml-2"
+                            title="Odstrániť projekt"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
                         <div className="flex items-center justify-between text-sm">
                           <span className="text-gray-600">Hotovosť:</span>
                           <span className={`font-semibold ${
@@ -1282,6 +1338,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                     );
                   })}
                 </div>
+                )}
               </div>
             </div>
 
@@ -1292,6 +1349,14 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                   <div className="flex items-center justify-between mb-6">
                     <h3 className="text-xl font-semibold">{projects[selectedProject].name}</h3>
                     <div className="flex items-center space-x-4">
+                      <button
+                        onClick={() => deleteProject(selectedProject)}
+                        className="text-red-500 hover:text-red-700 transition-colors p-2 hover:bg-red-50 rounded-lg flex items-center space-x-2"
+                        title="Odstrániť projekt"
+                      >
+                        <Trash2 size={18} />
+                        <span className="text-sm">Odstrániť</span>
+                      </button>
                       <span className="text-lg font-semibold text-[#4169e1]">
                         {calculateProjectProgress(selectedProject)}% hotové
                       </span>
