@@ -520,10 +520,10 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
       {/* Navigation Tabs */}
       <div className="bg-white shadow-sm">
         <div className="container mx-auto px-4">
-          <div className="flex overflow-x-auto gap-2 sm:gap-4 md:gap-8 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
+          <div className="flex overflow-x-auto md:overflow-x-visible gap-2 md:space-x-8 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
             <button
               onClick={() => setActiveTab('profile')}
-              className={`py-4 px-3 border-b-2 font-medium text-sm whitespace-nowrap flex-shrink-0 ${
+              className={`py-4 px-3 md:px-2 border-b-2 font-medium text-sm whitespace-nowrap flex-shrink-0 ${
                 activeTab === 'profile'
                   ? 'border-[#4169e1] text-[#4169e1]'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
@@ -533,7 +533,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
             </button>
             <button
               onClick={() => setActiveTab('calendar')}
-              className={`py-4 px-3 border-b-2 font-medium text-sm whitespace-nowrap flex-shrink-0 ${
+              className={`py-4 px-3 md:px-2 border-b-2 font-medium text-sm whitespace-nowrap flex-shrink-0 ${
                 activeTab === 'calendar'
                   ? 'border-[#4169e1] text-[#4169e1]'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
@@ -543,7 +543,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
             </button>
             <button
               onClick={() => setActiveTab('portfolio')}
-              className={`py-4 px-3 border-b-2 font-medium text-sm whitespace-nowrap flex-shrink-0 ${
+              className={`py-4 px-3 md:px-2 border-b-2 font-medium text-sm whitespace-nowrap flex-shrink-0 ${
                 activeTab === 'portfolio'
                   ? 'border-[#4169e1] text-[#4169e1]'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
@@ -553,7 +553,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
             </button>
             <button
               onClick={() => setActiveTab('projects')}
-              className={`py-4 px-3 border-b-2 font-medium text-sm whitespace-nowrap flex-shrink-0 ${
+              className={`py-4 px-3 md:px-2 border-b-2 font-medium text-sm whitespace-nowrap flex-shrink-0 ${
                 activeTab === 'projects'
                   ? 'border-[#4169e1] text-[#4169e1]'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
@@ -563,7 +563,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
             </button>
             <button
               onClick={() => setActiveTab('payments')}
-              className={`py-4 px-3 border-b-2 font-medium text-sm whitespace-nowrap flex-shrink-0 ${
+              className={`py-4 px-3 md:px-2 border-b-2 font-medium text-sm whitespace-nowrap flex-shrink-0 ${
                 activeTab === 'payments'
                   ? 'border-[#4169e1] text-[#4169e1]'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
