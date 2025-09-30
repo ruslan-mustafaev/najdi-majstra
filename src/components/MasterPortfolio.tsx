@@ -39,8 +39,6 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
   const [galleryProject, setGalleryProject] = useState<PortfolioProject | null>(null);
   const [galleryImageIndex, setGalleryImageIndex] = useState(0);
   const [currentProjectIndex, setCurrentProjectIndex] = useState(0);
-  const [selectedProject, setSelectedProject] = useState<PortfolioProject | null>(null);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [formData, setFormData] = useState({
     project_title: '',
     location: '',
@@ -221,7 +219,7 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
       const result = await uploadMultipleFiles(files, 'work-images', user.id);
 
       if (result.success && result.urls) {
-        // Придáme nové URL k existujúcim
+        // Придаме нové URL k existujúcim
         setFormData(prev => ({
           ...prev,
           project_images: [...prev.project_images, ...result.urls]
@@ -260,8 +258,6 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
     setShowGallery(false);
     setGalleryProject(null);
     setGalleryImageIndex(0);
-    setSelectedProject(null);
-    setCurrentImageIndex(0);
   };
 
   const nextGalleryImage = () => {
@@ -276,22 +272,6 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
     if (galleryProject && galleryProject.project_images) {
       setGalleryImageIndex(prev => 
         prev <= 0 ? galleryProject.project_images.length - 1 : prev - 1
-      );
-    }
-  };
-
-  const nextImage = () => {
-    if (selectedProject && selectedProject.project_images) {
-      setCurrentImageIndex(prev => 
-        prev >= selectedProject.project_images.length - 1 ? 0 : prev + 1
-      );
-    }
-  };
-
-  const prevImage = () => {
-    if (selectedProject && selectedProject.project_images) {
-      setCurrentImageIndex(prev => 
-        prev <= 0 ? selectedProject.project_images.length - 1 : prev - 1
       );
     }
   };
@@ -913,105 +893,6 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* Photo Gallery Modal */}
-      {selectedProject && selectedProject.project_images.length > 0 && (
-        <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
-          <div className="relative w-full max-w-4xl">
-            {/* Close Button */}
-            <button
-              onClick={closeGallery}
-              className="absolute top-4 right-4 z-10 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors"
-            >
-              <X size={24} />
-            </button>
-
-            {/* Image Counter */}
-            <div className="absolute top-4 left-4 z-10 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
-              {currentImageIndex + 1} / {selectedProject.project_images.length}
-            </div>
-
-            {/* Main Image */}
-            <div className="relative">
-              <img
-                src={selectedProject.project_images[currentImageIndex]}
-                alt={`${selectedProject.project_title} - fotka ${currentImageIndex + 1}`}
-                className="w-full max-h-[80vh] object-contain rounded-lg"
-              />
-
-              {/* Navigation Arrows */}
-              {selectedProject.project_images.length > 1 && (
-                <>
-                  <button
-                    onClick={prevImage}
-                    className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-3 rounded-full hover:bg-black/70 transition-colors"
-                  >
-                    <ChevronLeft size={24} />
-                  </button>
-                  <button
-                    onClick={nextImage}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-3 rounded-full hover:bg-black/70 transition-colors"
-                  >
-                    <ChevronRight size={24} />
-                  </button>
-                </>
-              )}
-            </div>
-
-            {/* Project Info */}
-            <div className="mt-4 text-center text-white">
-              <h3 className="text-xl font-semibold mb-2">{selectedProject.project_title}</h3>
-              <div className="flex items-center justify-center space-x-4 text-sm text-gray-300">
-                <div className="flex items-center space-x-1">
-                  <MapPin size={14} />
-                  <span>{selectedProject.location}</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <Calendar size={14} />
-                  <span>{new Date(selectedProject.completion_date).toLocaleDateString('sk-SK', { 
-                    year: 'numeric', 
-                    month: 'long' 
-                  })}</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <span>Náročnosť:</span>
-                  <div className="flex">
-                    {renderStars(selectedProject.difficulty_rating)}
-                  </div>
-                </div>
-              </div>
-              {selectedProject.description && (
-                <p className="mt-3 text-gray-300 max-w-2xl mx-auto">
-                  {selectedProject.description}
-                </p>
-              )}
-            </div>
-
-            {/* Thumbnail Navigation */}
-            {selectedProject.project_images.length > 1 && (
-              <div className="mt-6 flex justify-center space-x-2 overflow-x-auto pb-2">
-                {selectedProject.project_images.map((image, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentImageIndex(index)}
-                    className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${
-                      index === currentImageIndex 
-                        ? 'border-white shadow-lg' 
-                        : 'border-transparent opacity-60 hover:opacity-80'
-                    }`}
-                  >
-                    <img
-                      src={image}
-                      alt={`Náhľad ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                  </button>
-                ))}
-              </div>
-            )}
           </div>
         </div>
       )}
