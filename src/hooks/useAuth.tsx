@@ -50,13 +50,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const getInitialSession = async () => {
       try {
         const { data: { session }, error } = await supabase.auth.getSession();
-        
+
         if (error) {
           console.error('Error getting session:', error);
         } else if (session?.user) {
           // Проверяем, не удален ли профиль
           const isDeleted = await checkIfProfileDeleted(session.user.id);
-          
+
           if (isDeleted) {
             console.log('Profile is deleted, signing out...');
             await supabase.auth.signOut();
@@ -74,28 +74,36 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     getInitialSession();
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((async (event, session) => {
       console.log('Auth state changed:', event, session?.user?.email);
-      
-      if (session?.user) {
-        // При каждом изменении состояния проверяем, не удален ли профиль
+
+      // Обрабатываем только события SIGNED_IN и SIGNED_OUT
+      // Игнорируем INITIAL_SESSION чтобы избежать дублирования с getInitialSession
+      if (event === 'INITIAL_SESSION') {
+        return;
+      }
+
+      if (event === 'SIGNED_IN' && session?.user) {
+        // Проверяем профиль только при явном входе
         const isDeleted = await checkIfProfileDeleted(session.user.id);
-        
+
         if (isDeleted) {
           console.log('Profile is deleted, preventing login...');
           await supabase.auth.signOut();
-          
-          // Показываем сообщение пользователю
           alert('Váš profil bol zmazaný. Nemôžete sa prihlásiť.');
         } else {
           setSession(session);
           setUser(session.user);
         }
-      } else {
+      } else if (event === 'SIGNED_OUT') {
         setSession(null);
         setUser(null);
+      } else if (event === 'TOKEN_REFRESHED' && session) {
+        // При обновлении токена просто обновляем сессию без дополнительных проверок
+        setSession(session);
+        setUser(session.user);
       }
-    });
+    }));
 
     return () => subscription.unsubscribe();
   }, []);
