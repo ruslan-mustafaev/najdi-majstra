@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, CreditCard as Edit, Trash2, MapPin, Calendar, Clock, Star, Camera, Save, X, Upload, AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Plus, CreditCard as Edit, Trash2, MapPin, Calendar, Clock, Star, Camera, Save, X, Upload, AlertCircle, ChevronLeft, ChevronRight, Eye } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { uploadMultipleFiles } from '../lib/fileUpload';
@@ -34,8 +34,10 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
   const [editingProject, setEditingProject] = useState<PortfolioProject | null>(null);
   const [uploadingImages, setUploadingImages] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
-  const [selectedProject, setSelectedProject] = useState<PortfolioProject | null>(null);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showGallery, setShowGallery] = useState(false);
+  const [galleryProject, setGalleryProject] = useState<PortfolioProject | null>(null);
+  const [galleryImageIndex, setGalleryImageIndex] = useState(0);
+  const [currentProjectIndex, setCurrentProjectIndex] = useState(0);
   const [formData, setFormData] = useState({
     project_title: '',
     location: '',
@@ -244,6 +246,66 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
     }));
   };
 
+  // Функции для галереи фотографий
+  const openGallery = (project: PortfolioProject, imageIndex: number = 0) => {
+    setGalleryProject(project);
+    setGalleryImageIndex(imageIndex);
+    setShowGallery(true);
+  };
+
+  const closeGallery = () => {
+    setShowGallery(false);
+    setGalleryProject(null);
+    setGalleryImageIndex(0);
+  };
+
+  const nextGalleryImage = () => {
+    if (galleryProject && galleryProject.project_images) {
+      setGalleryImageIndex(prev => 
+        prev >= galleryProject.project_images.length - 1 ? 0 : prev + 1
+      );
+    }
+  };
+
+  const prevGalleryImage = () => {
+    if (galleryProject && galleryProject.project_images) {
+      setGalleryImageIndex(prev => 
+        prev <= 0 ? galleryProject.project_images.length - 1 : prev - 1
+      );
+    }
+  };
+
+  // Функции для карусели проектов
+  const nextProject = () => {
+    setCurrentProjectIndex(prev => 
+      prev >= projects.length - 1 ? 0 : prev + 1
+    );
+  };
+
+  const prevProject = () => {
+    setCurrentProjectIndex(prev => 
+      prev <= 0 ? projects.length - 1 : prev - 1
+    );
+  };
+
+  // Обработка клавиш для галереи
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (showGallery) {
+        if (e.key === 'ArrowLeft') {
+          prevGalleryImage();
+        } else if (e.key === 'ArrowRight') {
+          nextGalleryImage();
+        } else if (e.key === 'Escape') {
+          closeGallery();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [showGallery, galleryProject]);
+
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
       <Star
@@ -298,9 +360,544 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
 
       {/* Projects Grid */}
       {projects.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projects.map((project) => (
-            <div key={project.id} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+          {/* Project Navigation Header */}
+          <div className="flex items-center justify-between p-4 border-b border-gray-200">
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={prevProject}
+                disabled={projects.length <= 1}
+                className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                <ChevronLeft size={20} />
+              </button>
+              
+              <div className="text-center">
+                <span className="text-sm text-gray-600">
+                  Projekt {currentProjectIndex + 1} z {projects.length}
+                </span>
+              </div>
+              
+              <button
+                onClick={nextProject}
+                disabled={projects.length <= 1}
+                className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                <ChevronRight size={20} />
+              </button>
+            </div>
+            
+            {/* Edit/Delete buttons for current project */}
+            {isEditable && (
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => handleEditProject(projects[currentProjectIndex])}
+                  className="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center space-x-1"
+                >
+                  <Edit size={16} />
+                  <span className="hidden sm:inline">Upraviť</span>
+                </button>
+                <button
+                  onClick={() => handleDeleteProject(projects[currentProjectIndex].id)}
+                  className="bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 transition-colors flex items-center space-x-1"
+                >
+                  <Trash2 size={16} />
+                  <span className="hidden sm:inline">Zmazať</span>
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Current Project Display */}
+          {projects[currentProjectIndex] && (
+            <div className="p-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Project Images */}
+                <div className="space-y-4">
+                  {/* Main Image */}
+                  <div className="relative h-64 bg-gray-200 rounded-xl overflow-hidden group">
+                    {projects[currentProjectIndex].project_images && projects[currentProjectIndex].project_images.length > 0 ? (
+                      <>
+                        <img
+                          src={projects[currentProjectIndex].project_images[0]}
+                          alt={projects[currentProjectIndex].project_title}
+                          className="w-full h-full object-cover cursor-pointer transition-transform group-hover:scale-105"
+                          onClick={() => openGallery(projects[currentProjectIndex], 0)}
+                        />
+                        
+                        {/* Photo count indicator */}
+                        <div className="absolute top-3 right-3 bg-black/70 text-white px-3 py-1 rounded-full text-sm font-medium">
+                          📷 {projects[currentProjectIndex].project_images.length}/5
+                        </div>
+                        
+                        {/* View all photos overlay */}
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
+                          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 px-4 py-2 rounded-lg flex items-center space-x-2">
+                            <Eye size={16} />
+                            <span className="font-medium">Zobraziť všetky fotky</span>
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Camera size={48} className="text-gray-400" />
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Thumbnail strip */}
+                  {projects[currentProjectIndex].project_images && projects[currentProjectIndex].project_images.length > 1 && (
+                    <div className="flex space-x-2 overflow-x-auto pb-2">
+                      {projects[currentProjectIndex].project_images.slice(1, 5).map((image, index) => (
+                        <img
+                          key={index}
+                          src={image}
+                          alt={`${projects[currentProjectIndex].project_title} - foto ${index + 2}`}
+                          className="w-16 h-16 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity flex-shrink-0"
+                          onClick={() => openGallery(projects[currentProjectIndex], index + 1)}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Project Info */}
+                <div className="space-y-4">
+                  <h3 className="text-2xl font-bold text-gray-900">
+                    {projects[currentProjectIndex].project_title}
+                  </h3>
+                  
+                  <div className="space-y-3 text-gray-600">
+                    <div className="flex items-center space-x-2">
+                      <MapPin size={18} />
+                      <span className="font-medium">{projects[currentProjectIndex].location}</span>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2">
+                      <Calendar size={18} />
+                      <span>{new Date(projects[currentProjectIndex].completion_date).toLocaleDateString('sk-SK', { 
+                        year: 'numeric', 
+                        month: 'long' 
+                      })}</span>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2">
+                      <Clock size={18} />
+                      <span>
+                        {projects[currentProjectIndex].duration_months === 1 
+                          ? '1 mesiac' 
+                          : `${projects[currentProjectIndex].duration_months} mesiacov`
+                        }
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Difficulty Rating */}
+                  <div className="flex items-center space-x-2">
+                    <span className="text-gray-700 font-medium">Náročnosť:</span>
+                    <div className="flex">
+                      {renderStars(projects[currentProjectIndex].difficulty_rating)}
+                    </div>
+                    <span className="text-sm text-gray-500">
+                      ({projects[currentProjectIndex].difficulty_rating}/5)
+                    </span>
+                  </div>
+
+                  {/* Description */}
+                  {projects[currentProjectIndex].description && (
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <h4 className="font-medium text-gray-900 mb-2">Popis projektu:</h4>
+                      <p className="text-gray-700 leading-relaxed">
+                        {projects[currentProjectIndex].description}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Project indicators */}
+          {projects.length > 1 && (
+            <div className="flex justify-center space-x-2 p-4 border-t border-gray-200">
+              {projects.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentProjectIndex(index)}
+                  className={`w-3 h-3 rounded-full transition-all duration-200 ${
+                    index === currentProjectIndex 
+                      ? 'bg-[#4169e1] scale-125' 
+                      : 'bg-gray-300 hover:bg-gray-400'
+                  }`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="bg-white rounded-xl shadow-lg p-8">
+          <div className="text-center text-gray-500">
+            <div className="text-6xl mb-4">📁</div>
+            <h3 className="text-xl font-medium mb-2">
+              {isEditable ? 'Zatiaľ žiadne projekty' : 'Majster ešte nepridál žiadne projekty'}
+            </h3>
+            <p className="text-gray-400">
+              {isEditable 
+                ? 'Pridajte svoj prvý projekt a ukážte klientom svoju prácu'
+                : 'Portfólio projektov zatiaľ nie je k dispozícii'
+              }
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Photo Gallery Modal */}
+      {showGallery && galleryProject && galleryProject.project_images && galleryProject.project_images.length > 0 && (
+        <div className="fixed inset-0 bg-black/95 flex items-center justify-center z-50 p-4">
+          <div className="relative w-full max-w-6xl">
+            {/* Close Button */}
+            <button
+              onClick={closeGallery}
+              className="absolute top-4 right-4 z-10 bg-black/50 text-white p-3 rounded-full hover:bg-black/70 transition-colors"
+            >
+              <X size={24} />
+            </button>
+
+            {/* Image Counter */}
+            <div className="absolute top-4 left-4 z-10 bg-black/50 text-white px-4 py-2 rounded-full text-lg font-medium">
+              {galleryImageIndex + 1} / {galleryProject.project_images.length}
+            </div>
+
+            {/* Main Image */}
+            <div className="relative">
+              <img
+                src={galleryProject.project_images[galleryImageIndex]}
+                alt={`${galleryProject.project_title} - fotka ${galleryImageIndex + 1}`}
+                className="w-full max-h-[80vh] object-contain rounded-lg"
+              />
+
+              {/* Navigation Arrows */}
+              {galleryProject.project_images.length > 1 && (
+                <>
+                  <button
+                    onClick={prevGalleryImage}
+                    className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-4 rounded-full hover:bg-black/70 transition-colors"
+                  >
+                    <ChevronLeft size={32} />
+                  </button>
+                  <button
+                    onClick={nextGalleryImage}
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-4 rounded-full hover:bg-black/70 transition-colors"
+                  >
+                    <ChevronRight size={32} />
+                  </button>
+                </>
+              )}
+            </div>
+
+            {/* Project Info */}
+            <div className="mt-6 text-center text-white">
+              <h3 className="text-2xl font-bold mb-3">{galleryProject.project_title}</h3>
+              <div className="flex items-center justify-center space-x-6 text-gray-300">
+                <div className="flex items-center space-x-2">
+                  <MapPin size={16} />
+                  <span>{galleryProject.location}</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Calendar size={16} />
+                  <span>{new Date(galleryProject.completion_date).toLocaleDateString('sk-SK', { 
+                    year: 'numeric', 
+                    month: 'long' 
+                  })}</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span>Náročnosť:</span>
+                  <div className="flex">
+                    {renderStars(galleryProject.difficulty_rating)}
+                  </div>
+                </div>
+              </div>
+              {galleryProject.description && (
+                <p className="mt-4 text-gray-300 max-w-3xl mx-auto leading-relaxed">
+                  {galleryProject.description}
+                </p>
+              )}
+            </div>
+
+            {/* Thumbnail Navigation */}
+            {galleryProject.project_images.length > 1 && (
+              <div className="mt-8 flex justify-center space-x-3 overflow-x-auto pb-4">
+                {galleryProject.project_images.map((image, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setGalleryImageIndex(index)}
+                    className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-3 transition-all ${
+                      index === galleryImageIndex 
+                        ? 'border-white shadow-lg scale-110' 
+                        : 'border-transparent opacity-60 hover:opacity-80'
+                    }`}
+                  >
+                    <img
+                      src={image}
+                      alt={`Náhľad ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Keyboard hints */}
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-gray-400 text-sm text-center">
+              <p>Použite ← → pre navigáciu • ESC pre zatvorenie</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add/Edit Project Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-semibold">
+                  {editingProject ? 'Upraviť projekt' : 'Pridať nový projekt'}
+                </h3>
+                <button
+                  onClick={() => {
+                    setShowAddModal(false);
+                    setEditingProject(null);
+                    setFormData({
+                      project_title: '',
+                      location: '',
+                      completion_date: '',
+                      duration_months: 1,
+                      difficulty_rating: 3,
+                      description: '',
+                      project_images: []
+                    });
+                  }}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                {/* Project Title */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Zákazka - Čo som robil *
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.project_title}
+                    onChange={(e) => setFormData(prev => ({ ...prev, project_title: e.target.value }))}
+                    placeholder="napr. Kompletná rekonštrukcia kúpeľne"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
+                  />
+                </div>
+
+                {/* Location */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Lokalita - Kde som to robil *
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.location}
+                    onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
+                    placeholder="napr. Bratislava, Petržalka"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
+                  />
+                </div>
+
+                {/* Completion Date and Duration */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Kedy - Rok a mesiac *
+                    </label>
+                    <input
+                      type="month"
+                      value={formData.completion_date}
+                      onChange={(e) => setFormData(prev => ({ ...prev, completion_date: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Čas trvania (mesiace) *
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="60"
+                      value={formData.duration_months}
+                      onChange={(e) => setFormData(prev => ({ ...prev, duration_months: parseInt(e.target.value) || 1 }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
+                    />
+                  </div>
+                </div>
+
+                {/* Difficulty Rating */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Vlastné hodnotenie náročnosti (1-5 hviezdičiek) *
+                  </label>
+                  <div className="flex items-center space-x-2">
+                    {[1, 2, 3, 4, 5].map((rating) => (
+                      <button
+                        key={rating}
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, difficulty_rating: rating }))}
+                        className="p-1"
+                      >
+                        <Star
+                          size={24}
+                          className={rating <= formData.difficulty_rating 
+                            ? 'text-yellow-400 fill-current' 
+                            : 'text-gray-300'
+                          }
+                        />
+                      </button>
+                    ))}
+                    <span className="text-sm text-gray-600 ml-2">
+                      ({formData.difficulty_rating}/5)
+                    </span>
+                  </div>
+                </div>
+
+                {/* Description */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Voľný opis zákazky
+                  </label>
+                  <textarea
+                    value={formData.description}
+                    onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                    placeholder="Opíšte detaily projektu, použité materiály, výzvy ktoré ste riešili..."
+                    rows={4}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
+                  />
+                </div>
+
+                {/* Project Images */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Fotografie z projektu (max 5)
+                  </label>
+                  {/* Custom project image upload */}
+                  <div className="space-y-4">
+                    <div
+                      className="relative border-2 border-dashed rounded-xl p-8 text-center transition-all duration-200 cursor-pointer border-gray-300 hover:border-blue-400 hover:bg-blue-50"
+                      onClick={() => document.getElementById('project-images-input')?.click()}
+                    >
+                      <input
+                        id="project-images-input"
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={handleProjectImagesSelect}
+                        className="hidden"
+                        disabled={uploadingImages}
+                      />
+                      <div className="flex flex-col items-center space-y-4">
+                        <div className={`w-16 h-16 rounded-full flex items-center justify-center ${
+                          uploadingImages ? 'bg-gray-200' : 'bg-blue-100'
+                        }`}>
+                          {uploadingImages ? (
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                          ) : (
+                            <Upload size={32} className="text-blue-600" />
+                          )}
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                            Fotografie projektu
+                          </h3>
+                          <p className="text-gray-600 mb-2">
+                            Nahrajte fotografie konkrétne z tohto projektu (max 5)
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            Kliknite alebo pretiahnite súbory sem • Max veľkosť: 10MB každá
+                          </p>
+                        </div>
+                        {!uploadingImages && (
+                          <div className="flex items-center space-x-2 text-blue-600">
+                            <Upload size={20} />
+                            <span className="font-medium">Vybrať fotografie</span>
+                          </div>
+                        )}
+                        {uploadingImages && (
+                          <p className="text-blue-600 font-medium">Nahrávam fotografie...</p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Upload Error */}
+                    {uploadError && (
+                      <div className="flex items-center space-x-2 text-red-600 bg-red-50 p-3 rounded-lg">
+                        <AlertCircle size={20} />
+                        <span>{uploadError}</span>
+                      </div>
+                    )}
+                    {/* Current Project Images */}
+                    {formData.project_images.length > 0 && (
+                      <div className="space-y-3">
+                        <h4 className="font-medium text-gray-900">Vybrané fotografie ({formData.project_images.length}/5):</h4>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                          {formData.project_images.map((imageUrl, index) => (
+                            <div key={index} className="relative group">
+                              <img
+                                src={imageUrl}
+                                alt={`Projekt foto ${index + 1}`}
+                                className="w-full aspect-square object-cover rounded-lg shadow-md"
+                              />
+                              <button
+                                onClick={() => handleRemoveProjectImage(index)}
+                                className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                              >
+                                <X size={16} />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex justify-end space-x-3 pt-4">
+                  <button
+                    onClick={() => {
+                      setShowAddModal(false);
+                      setEditingProject(null);
+                    }}
+                    className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                  >
+                    Zrušiť
+                  </button>
+                  <button
+                    onClick={handleSaveProject}
+                    disabled={uploadingImages || !formData.project_title || !formData.location || !formData.completion_date}
+                    className="bg-[#4169e1] text-white px-6 py-2 rounded-lg hover:bg-[#3558d4] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center space-x-2"
+                  >
+                    <Save size={16} />
+                    <span>{editingProject ? 'Uložiť zmeny' : 'Pridať projekt'}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
               {/* Project Images */}
               <div className="relative h-48 bg-gray-200">
                 {project.project_images.length > 0 ? (
