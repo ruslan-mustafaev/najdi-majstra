@@ -15,7 +15,7 @@
 
   2. Security
     - Enable RLS on `master_availability` table
-    - Add policy for authenticated users to read availability data
+    - Add policy for EVERYONE (including anonymous) to read availability data
     - Add policy for master to manage their own availability
 
   3. Indexes
@@ -46,11 +46,15 @@ CREATE INDEX IF NOT EXISTS idx_master_availability_master_date ON master_availab
 -- Enable RLS
 ALTER TABLE master_availability ENABLE ROW LEVEL SECURITY;
 
--- Policy: Anyone can view availability (for clients to see when master is available)
-CREATE POLICY "Anyone can view master availability"
+-- DROP old policies if they exist
+DROP POLICY IF EXISTS "Anyone can view master availability" ON master_availability;
+DROP POLICY IF EXISTS "Everyone can view master availability" ON master_availability;
+
+-- Policy: EVERYONE (including anonymous users) can view availability
+-- This allows clients to see when masters are available WITHOUT authentication
+CREATE POLICY "Everyone can view master availability"
   ON master_availability
   FOR SELECT
-  TO authenticated
   USING (true);
 
 -- Policy: Masters can insert their own availability

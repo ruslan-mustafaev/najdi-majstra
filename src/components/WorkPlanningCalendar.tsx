@@ -63,10 +63,14 @@ export const WorkPlanningCalendar: React.FC<WorkPlanningCalendarProps> = ({ mast
           };
         });
 
-        console.log('Loaded availability for', startDate, 'to', endDate, ':', availabilityMap);
+        console.log('✅ Loaded availability for', startDate, 'to', endDate);
+        console.log('📅 Days with status:', Object.keys(availabilityMap).length);
+        console.log('📊 Data:', availabilityMap);
         setAvailability(availabilityMap);
       } catch (error) {
-        console.error('Error loading availability:', error);
+        console.error('❌ Error loading availability:', error);
+        // Set empty availability on error
+        setAvailability({});
       } finally {
         setLoading(false);
       }
@@ -268,26 +272,34 @@ export const WorkPlanningCalendar: React.FC<WorkPlanningCalendarProps> = ({ mast
 
       {/* Current month summary */}
       <div className="border-t pt-4 mt-4">
-        <div className="text-sm text-gray-600">
-          <div className="flex justify-between">
-            <span>Dostupné dni:</span>
-            <span className="font-medium text-green-600">
-              {schedule.filter(d => d.status === 'available').length}
-            </span>
+        {Object.keys(availability).length === 0 ? (
+          <div className="text-center py-4">
+            <p className="text-sm text-gray-500">
+              Majster zatiaľ nenastavil kalendár dostupnosti pre tento mesiac.
+            </p>
           </div>
-          <div className="flex justify-between">
-            <span>Obsadené dni:</span>
-            <span className="font-medium text-red-600">
-              {schedule.filter(d => d.status === 'busy').length}
-            </span>
+        ) : (
+          <div className="text-sm text-gray-600">
+            <div className="flex justify-between">
+              <span>Dostupné dni:</span>
+              <span className="font-medium text-green-600">
+                {schedule.filter(d => d.status === 'available').length}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span>Obsadené dni:</span>
+              <span className="font-medium text-red-600">
+                {schedule.filter(d => d.status === 'busy').length}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span>Čiastočne obsadené:</span>
+              <span className="font-medium text-yellow-600">
+                {schedule.filter(d => d.status === 'partially-busy').length}
+              </span>
+            </div>
           </div>
-          <div className="flex justify-between">
-            <span>Čiastočne obsadené:</span>
-            <span className="font-medium text-yellow-600">
-              {schedule.filter(d => d.status === 'partially-busy').length}
-            </span>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );
