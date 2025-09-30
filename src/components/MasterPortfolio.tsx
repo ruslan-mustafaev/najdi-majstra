@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, CreditCard as Edit, Trash2, MapPin, Calendar, Clock, Star, Camera, Save, X, Upload, AlertCircle } from 'lucide-react';
+import { Plus, CreditCard as Edit, Trash2, MapPin, Calendar, Clock, Star, Camera, Save, X, Upload, AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { uploadMultipleFiles } from '../lib/fileUpload';
@@ -31,6 +31,8 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
   const [editingProject, setEditingProject] = useState<PortfolioProject | null>(null);
   const [uploadingImages, setUploadingImages] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [selectedProject, setSelectedProject] = useState<PortfolioProject | null>(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [formData, setFormData] = useState({
     project_title: '',
     location: '',
@@ -237,6 +239,35 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
       ...prev,
       project_images: prev.project_images.filter((_, i) => i !== index)
     }));
+  };
+
+  // Открытие галереи фотографий
+  const openGallery = (project: PortfolioProject, imageIndex: number = 0) => {
+    setSelectedProject(project);
+    setCurrentImageIndex(imageIndex);
+  };
+
+  // Закрытие галереи
+  const closeGallery = () => {
+    setSelectedProject(null);
+    setCurrentImageIndex(0);
+  };
+
+  // Навигация по фотографиям
+  const nextImage = () => {
+    if (selectedProject && selectedProject.project_images.length > 0) {
+      setCurrentImageIndex((prev) => 
+        prev === selectedProject.project_images.length - 1 ? 0 : prev + 1
+      );
+    }
+  };
+
+  const prevImage = () => {
+    if (selectedProject && selectedProject.project_images.length > 0) {
+      setCurrentImageIndex((prev) => 
+        prev === 0 ? selectedProject.project_images.length - 1 : prev - 1
+      );
+    }
   };
 
   const renderStars = (rating: number) => {
@@ -563,13 +594,13 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
                         </div>
                         <div>
                           <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                            Fotografie projektu
+                            Fotografie projektu ({formData.project_images.length}/5)
                           </h3>
                           <p className="text-gray-600 mb-2">
-                            Nahrajte fotografie konkrétne z tohto projektu (max 5)
+                            Nahrajte fotografie konkrétne z tohto projektu
                           </p>
                           <p className="text-sm text-gray-500">
-                            Kliknite alebo pretiahnite súbory sem • Max veľkosť: 10MB každá
+                            Kliknite alebo pretiahnite súbory sem • Max 5 fotiek, 10MB každá
                           </p>
                         </div>
                         {!uploadingImages && (
