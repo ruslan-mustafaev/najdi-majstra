@@ -591,26 +591,26 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
       {/* Photo Gallery Modal */}
       {showGallery && galleryProject && galleryProject.project_images && galleryProject.project_images.length > 0 && (
         <div className="fixed inset-0 bg-black/95 flex items-center justify-center z-50 p-4" onClick={closeGallery}>
-          <div className="relative w-full max-w-6xl">
+          <div className="relative w-full max-w-6xl h-full flex items-center">
             {/* Close Button */}
             <button
               onClick={closeGallery}
-              className="absolute -top-12 right-0 z-50 bg-white/20 text-white p-3 rounded-full hover:bg-white/30 transition-colors backdrop-blur-sm"
+              className="absolute top-4 right-4 z-50 bg-white/20 text-white p-3 rounded-full hover:bg-white/30 transition-colors backdrop-blur-sm"
             >
               <X size={24} />
             </button>
 
             {/* Image Counter */}
-            <div className="absolute -top-12 left-0 z-50 bg-white/20 text-white px-4 py-2 rounded-full text-lg font-medium backdrop-blur-sm">
+            <div className="absolute top-4 left-4 z-50 bg-white/20 text-white px-4 py-2 rounded-full text-lg font-medium backdrop-blur-sm">
               {galleryImageIndex + 1} / {galleryProject.project_images.length}
             </div>
 
             {/* Main Image */}
-            <div className="relative" onClick={(e) => e.stopPropagation()}>
+            <div className="relative w-full" onClick={(e) => e.stopPropagation()}>
               <img
                 src={galleryProject.project_images[galleryImageIndex]}
-                alt={`${galleryProject.project_title} - fotka ${galleryImageIndex + 1}`}
-                className="w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
+                alt={`Foto ${galleryImageIndex + 1}`}
+                className="w-full max-h-[90vh] object-contain"
               />
 
               {/* Navigation Arrows */}
@@ -630,63 +630,6 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
                   </button>
                 </>
               )}
-            </div>
-
-            {/* Project Info */}
-            <div className="mt-6 text-center text-white" onClick={(e) => e.stopPropagation()}>
-              <h3 className="text-2xl font-bold mb-3">{galleryProject.project_title}</h3>
-              <div className="flex items-center justify-center space-x-6 text-gray-300">
-                <div className="flex items-center space-x-2">
-                  <MapPin size={16} />
-                  <span>{galleryProject.location}</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Calendar size={16} />
-                  <span>{new Date(galleryProject.completion_date).toLocaleDateString('sk-SK', { 
-                    year: 'numeric', 
-                    month: 'long' 
-                  })}</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <span>Náročnosť:</span>
-                  <div className="flex">
-                    {renderStars(galleryProject.difficulty_rating)}
-                  </div>
-                </div>
-              </div>
-              {galleryProject.description && (
-                <p className="mt-4 text-gray-300 max-w-3xl mx-auto leading-relaxed">
-                  {galleryProject.description}
-                </p>
-              )}
-            </div>
-
-            {/* Thumbnail Navigation */}
-            {galleryProject.project_images.length > 1 && (
-              <div className="mt-8 flex justify-center space-x-3 overflow-x-auto pb-4" onClick={(e) => e.stopPropagation()}>
-                {galleryProject.project_images.map((image, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setGalleryImageIndex(index)}
-                    className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
-                      index === galleryImageIndex 
-                        ? 'border-white shadow-lg scale-110' 
-                        : 'border-transparent opacity-60 hover:opacity-80'
-                    }`}
-                  >
-                    <img
-                      src={image}
-                      alt={`Náhľad ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                  </button>
-                ))}
-              </div>
-            )}
-
-            {/* Keyboard hints */}
-            <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 text-gray-400 text-sm text-center" onClick={(e) => e.stopPropagation()}>
-              <p>Použite ← → pre navigáciu • ESC pre zatvorenie</p>
             </div>
           </div>
         </div>
