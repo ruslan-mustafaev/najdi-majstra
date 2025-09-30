@@ -499,10 +499,17 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
                         multiple
                         onChange={handleProjectImagesSelect}
                         className="hidden"
+                        disabled={uploadingImages}
                       />
                       <div className="flex flex-col items-center space-y-4">
-                        <div className="w-16 h-16 rounded-full flex items-center justify-center bg-blue-100">
-                          <Upload size={32} className="text-blue-600" />
+                        <div className={`w-16 h-16 rounded-full flex items-center justify-center ${
+                          uploadingImages ? 'bg-gray-200' : 'bg-blue-100'
+                        }`}>
+                          {uploadingImages ? (
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                          ) : (
+                            <Upload size={32} className="text-blue-600" />
+                          )}
                         </div>
                         <div>
                           <h3 className="text-lg font-semibold text-gray-900 mb-2">
@@ -515,13 +522,25 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
                             Kliknite alebo pretiahnite súbory sem • Max veľkosť: 10MB každá
                           </p>
                         </div>
-                        <div className="flex items-center space-x-2 text-blue-600">
-                          <Upload size={20} />
-                          <span className="font-medium">Vybrať fotografie</span>
-                        </div>
+                        {!uploadingImages && (
+                          <div className="flex items-center space-x-2 text-blue-600">
+                            <Upload size={20} />
+                            <span className="font-medium">Vybrať fotografie</span>
+                          </div>
+                        )}
+                        {uploadingImages && (
+                          <p className="text-blue-600 font-medium">Nahrávam fotografie...</p>
+                        )}
                       </div>
                     </div>
 
+                    {/* Upload Error */}
+                    {uploadError && (
+                      <div className="flex items-center space-x-2 text-red-600 bg-red-50 p-3 rounded-lg">
+                        <AlertCircle size={20} />
+                        <span>{uploadError}</span>
+                      </div>
+                    )}
                     {/* Current Project Images */}
                     {formData.project_images.length > 0 && (
                       <div className="space-y-3">
