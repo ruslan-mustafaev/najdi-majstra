@@ -442,8 +442,7 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
                         <img
                           src={projects[currentProjectIndex].project_images[0]}
                           alt={projects[currentProjectIndex].project_title}
-                          className="w-full h-full object-cover cursor-pointer transition-transform group-hover:scale-105"
-                          onClick={() => openGallery(projects[currentProjectIndex], 0)}
+                          className="w-full h-full object-cover transition-transform group-hover:scale-105"
                         />
                         
                         {/* Photo count indicator */}
@@ -452,8 +451,15 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
                         </div>
                         
                         {/* View all photos overlay */}
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
-                          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 px-4 py-2 rounded-lg flex items-center space-x-2">
+                        <div 
+                          className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center cursor-pointer"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            openGallery(projects[currentProjectIndex], 0);
+                          }}
+                        >
+                          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 px-4 py-2 rounded-lg flex items-center space-x-2 pointer-events-none">
                             <Eye size={16} />
                             <span className="font-medium">Zobraziť všetky fotky</span>
                           </div>
@@ -474,10 +480,20 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
                           key={index}
                           src={image}
                           alt={`${projects[currentProjectIndex].project_title} - foto ${index + 2}`}
-                          className="w-16 h-16 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity flex-shrink-0"
+                          className="w-16 h-16 object-cover rounded-lg cursor-pointer hover:opacity-80 hover:scale-105 transition-all flex-shrink-0 border-2 border-transparent hover:border-blue-400"
                           onClick={() => openGallery(projects[currentProjectIndex], index + 1)}
                         />
                       ))}
+                      
+                      {/* Show more button if there are more than 4 images */}
+                      {projects[currentProjectIndex].project_images.length > 4 && (
+                        <button
+                          onClick={() => openGallery(projects[currentProjectIndex], 4)}
+                          className="w-16 h-16 bg-gray-200 rounded-lg cursor-pointer hover:bg-gray-300 transition-colors flex-shrink-0 flex items-center justify-center text-gray-600 hover:text-gray-800 border-2 border-transparent hover:border-blue-400"
+                        >
+                          <span className="text-xs font-medium">+{projects[currentProjectIndex].project_images.length - 4}</span>
+                        </button>
+                      )}
                     </div>
                   )}
                 </div>
