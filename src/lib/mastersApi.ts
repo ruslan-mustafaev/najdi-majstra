@@ -44,28 +44,48 @@ export const getTopRatedMasters = async () => {
     // Проверяем кеш в localStorage
     const cachedMasters = loadCacheFromStorage();
     if (cachedMasters && cachedMasters.length > 0) {
+      // Запускаем обновление в фоне
+      setTimeout(() => {
+        console.log('Updating cache in background...');
+        loadFromDatabase();
+      }, 100);
       return cachedMasters;
     }
 
-    console.log('Loading masters from database...');
-
-    const { data, error } = await supabase
-      .from('masters')
-      .select('*')
-      .eq('is_active', true)
-      .eq('profile_completed', true)
-      .or('is_deleted.is.null,is_deleted.eq.false')
-      .is('deleted_at', null)
-      .order('rating', { ascending: false })
-      .limit(10);
-      
-    if (error) {
-      console.error('Error loading masters:', error);
-      return mastersCache || [];
+    return await loadFromDatabase();
+  } catch (error) {
+    console.error('Get masters error:', error);
+    // При ошибке возвращаем кеш из localStorage или пустой массив
+    const cachedMasters = loadCacheFromStorage();
+    if (cachedMasters && cachedMasters.length > 0) {
+      console.log('Returning cached data due to error');
+      return cachedMasters;
     }
+    console.log('No cached data available, returning empty array');
+    return [];
+  }
+};
 
-    // Преобразуем данные из базы в формат Master
-    const masters = (data || []).map(master => ({
+const loadFromDatabase = async () => {
+  console.log('Loading masters from database...');
+
+  const { data, error } = await supabase
+    .from('masters')
+    .select('*')
+    .eq('is_active', true)
+    .eq('profile_completed', true)
+    .or('is_deleted.is.null,is_deleted.eq.false')
+    .is('deleted_at', null)
+    .order('rating', { ascending: false })
+    .limit(10);
+
+  if (error) {
+    console.error('Error loading masters:', error);
+    throw error;
+  }
+
+  // Преобразуем данные из базы в формат Master
+  const masters = (data || []).map(master => ({
       id: master.id, // Оставляем UUID как есть
       name: master.name || 'Без имени',
       profession: master.profession || 'Majster',
@@ -106,22 +126,11 @@ export const getTopRatedMasters = async () => {
         schedule: '8:00 - 18:00',
         workRadius: 'Lokálne + 50km'
       }
-    }));
+  }));
 
-    // Сохраняем в кеш
-    saveCacheToStorage(masters);
+  // Сохраняем в кеш
+  saveCacheToStorage(masters);
 
-    console.log(`Loaded ${masters.length} masters from database`);
-    return masters;
-  } catch (error) {
-    console.error('Get masters error:', error);
-    // При ошибке возвращаем кеш из localStorage или пустой массив
-    const cachedMasters = loadCacheFromStorage();
-    if (cachedMasters && cachedMasters.length > 0) {
-      console.log('Returning cached data due to error');
-      return cachedMasters;
-    }
-    console.log('No cached data available, returning empty array');
-    return [];
-  }
+  console.log(`Loaded ${masters.length} masters from database`);
+  return masters;
 };

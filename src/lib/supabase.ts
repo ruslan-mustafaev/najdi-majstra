@@ -8,6 +8,9 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing Supabase environment variables')
 }
 
+console.log('Supabase URL:', supabaseUrl);
+console.log('Supabase Key length:', supabaseAnonKey?.length);
+
 // Определяем базовый URL в зависимости от окружения
 const getBaseUrl = () => {
   // В production (Netlify или ваш домен)

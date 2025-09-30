@@ -126,6 +126,13 @@ const HomePage: React.FC = () => {
         setRealMasters(masters);
       } catch (error) {
         console.error('Error loading masters:', error);
+        // Если ошибка - очищаем весь кеш Supabase
+        console.log('Clearing Supabase cache...');
+        Object.keys(localStorage).forEach(key => {
+          if (key.startsWith('sb-')) {
+            localStorage.removeItem(key);
+          }
+        });
       } finally {
         setIsLoadingMasters(false);
         console.log('Loading masters finished');
