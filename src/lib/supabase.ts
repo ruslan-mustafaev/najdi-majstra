@@ -1,8 +1,12 @@
 // src/lib/supabase.ts
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://budlyqnloyiyexsocpbb.supabase.co'
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ1ZGx5cW5sb3lpeWV4c29jcGJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5MzM0NDksImV4cCI6MjA3MTUwOTQ0OX0.5vPCIu5yvtEossIEYfMGqha5Xj1eEwEDmvU-g-rUttw'
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Missing Supabase environment variables')
+}
 
 // Определяем базовый URL в зависимости от окружения
 const getBaseUrl = () => {
@@ -30,12 +34,6 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   global: {
     headers: {
       'apikey': supabaseAnonKey
-    },
-    fetch: (url, options = {}) => {
-      return fetch(url, {
-        ...options,
-        signal: AbortSignal.timeout(15000) // 15 секунд таймаут для всех запросов
-      });
     }
   },
   db: {
