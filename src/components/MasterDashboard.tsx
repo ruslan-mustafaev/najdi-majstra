@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ArrowLeft, User, Mail, Phone, MapPin, FileText, Camera, Video, Settings, Save, Eye, EyeOff, Clock, Euro, Users, Award, Globe, Facebook, Instagram, Linkedin, Youtube, Twitter, MessageCircle, CheckCircle, AlertCircle, Upload, X, Image, Play, AlertTriangle, Plus, Copy, Check, Calendar, Star } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { saveMasterProfile, type MasterProfile } from '../lib/masterProfileApi';
+import { MasterPortfolio } from './MasterPortfolio';
 import { FileUploadManager } from './FileUpload/FileUploadManager';
 import { supabase } from '../lib/supabase';
 import { MasterPortfolio } from './MasterPortfolio';
@@ -487,6 +488,17 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
             >
               Kalendár dostupnosti
             </button>
+          <button
+            onClick={() => setActiveTab('portfolio')}
+            className={`px-6 py-3 font-medium transition-colors ${
+              activeTab === 'portfolio'
+                ? 'text-[#4169e1] border-b-2 border-[#4169e1]'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            Moja recenzia
+          </button>
+          
             <button
               onClick={() => setActiveTab('projects')}
               className={`py-4 px-2 border-b-2 font-medium text-sm ${
@@ -1180,6 +1192,10 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center space-x-4">
                   <h2 className="text-2xl font-bold">Kalendár dostupnosti</h2>
+        {activeTab === 'portfolio' && (
+          <MasterPortfolio isEditable={true} />
+        )}
+        
                   <div className="flex items-center space-x-2">
                     <button
                       onClick={() => navigateMonth('prev')}
