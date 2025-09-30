@@ -590,27 +590,27 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
 
       {/* Photo Gallery Modal */}
       {showGallery && galleryProject && galleryProject.project_images && galleryProject.project_images.length > 0 && (
-        <div className="fixed inset-0 bg-black/95 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/95 flex items-center justify-center z-50 p-4" onClick={closeGallery}>
           <div className="relative w-full max-w-6xl">
             {/* Close Button */}
             <button
               onClick={closeGallery}
-              className="absolute top-4 right-4 z-10 bg-black/50 text-white p-3 rounded-full hover:bg-black/70 transition-colors"
+              className="absolute -top-12 right-0 z-50 bg-white/20 text-white p-3 rounded-full hover:bg-white/30 transition-colors backdrop-blur-sm"
             >
               <X size={24} />
             </button>
 
             {/* Image Counter */}
-            <div className="absolute top-4 left-4 z-10 bg-black/50 text-white px-4 py-2 rounded-full text-lg font-medium">
+            <div className="absolute -top-12 left-0 z-50 bg-white/20 text-white px-4 py-2 rounded-full text-lg font-medium backdrop-blur-sm">
               {galleryImageIndex + 1} / {galleryProject.project_images.length}
             </div>
 
             {/* Main Image */}
-            <div className="relative">
+            <div className="relative" onClick={(e) => e.stopPropagation()}>
               <img
                 src={galleryProject.project_images[galleryImageIndex]}
                 alt={`${galleryProject.project_title} - fotka ${galleryImageIndex + 1}`}
-                className="w-full max-h-[80vh] object-contain rounded-lg"
+                className="w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
               />
 
               {/* Navigation Arrows */}
@@ -618,13 +618,13 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
                 <>
                   <button
                     onClick={prevGalleryImage}
-                    className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-4 rounded-full hover:bg-black/70 transition-colors"
+                    className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 text-white p-4 rounded-full hover:bg-white/30 transition-colors backdrop-blur-sm"
                   >
                     <ChevronLeft size={32} />
                   </button>
                   <button
                     onClick={nextGalleryImage}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-4 rounded-full hover:bg-black/70 transition-colors"
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 text-white p-4 rounded-full hover:bg-white/30 transition-colors backdrop-blur-sm"
                   >
                     <ChevronRight size={32} />
                   </button>
@@ -633,7 +633,7 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
             </div>
 
             {/* Project Info */}
-            <div className="mt-6 text-center text-white">
+            <div className="mt-6 text-center text-white" onClick={(e) => e.stopPropagation()}>
               <h3 className="text-2xl font-bold mb-3">{galleryProject.project_title}</h3>
               <div className="flex items-center justify-center space-x-6 text-gray-300">
                 <div className="flex items-center space-x-2">
@@ -663,12 +663,12 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
 
             {/* Thumbnail Navigation */}
             {galleryProject.project_images.length > 1 && (
-              <div className="mt-8 flex justify-center space-x-3 overflow-x-auto pb-4">
+              <div className="mt-8 flex justify-center space-x-3 overflow-x-auto pb-4" onClick={(e) => e.stopPropagation()}>
                 {galleryProject.project_images.map((image, index) => (
                   <button
                     key={index}
                     onClick={() => setGalleryImageIndex(index)}
-                    className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-3 transition-all ${
+                    className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
                       index === galleryImageIndex 
                         ? 'border-white shadow-lg scale-110' 
                         : 'border-transparent opacity-60 hover:opacity-80'
@@ -685,7 +685,7 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
             )}
 
             {/* Keyboard hints */}
-            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-gray-400 text-sm text-center">
+            <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 text-gray-400 text-sm text-center" onClick={(e) => e.stopPropagation()}>
               <p>Použite ← → pre navigáciu • ESC pre zatvorenie</p>
             </div>
           </div>
@@ -935,27 +935,27 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
 
       {/* Photo Gallery Modal */}
       {selectedProject && selectedProject.project_images.length > 0 && (
-        <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4" onClick={closeGallery}>
           <div className="relative w-full max-w-4xl">
             {/* Close Button */}
             <button
               onClick={closeGallery}
-              className="absolute top-4 right-4 z-10 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors"
+              className="absolute -top-12 right-0 z-50 bg-white/20 text-white p-3 rounded-full hover:bg-white/30 transition-colors backdrop-blur-sm"
             >
               <X size={24} />
             </button>
 
             {/* Image Counter */}
-            <div className="absolute top-4 left-4 z-10 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
+            <div className="absolute -top-12 left-0 z-50 bg-white/20 text-white px-3 py-1 rounded-full text-sm backdrop-blur-sm">
               {currentImageIndex + 1} / {selectedProject.project_images.length}
             </div>
 
             {/* Main Image */}
-            <div className="relative">
+            <div className="relative" onClick={(e) => e.stopPropagation()}>
               <img
                 src={selectedProject.project_images[currentImageIndex]}
                 alt={`${selectedProject.project_title} - fotka ${currentImageIndex + 1}`}
-                className="w-full max-h-[80vh] object-contain rounded-lg"
+                className="w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
               />
 
               {/* Navigation Arrows */}
@@ -963,13 +963,13 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
                 <>
                   <button
                     onClick={prevImage}
-                    className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-3 rounded-full hover:bg-black/70 transition-colors"
+                    className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 text-white p-3 rounded-full hover:bg-white/30 transition-colors backdrop-blur-sm"
                   >
                     <ChevronLeft size={24} />
                   </button>
                   <button
                     onClick={nextImage}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-3 rounded-full hover:bg-black/70 transition-colors"
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 text-white p-3 rounded-full hover:bg-white/30 transition-colors backdrop-blur-sm"
                   >
                     <ChevronRight size={24} />
                   </button>
@@ -978,7 +978,7 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
             </div>
 
             {/* Project Info */}
-            <div className="mt-4 text-center text-white">
+            <div className="mt-4 text-center text-white" onClick={(e) => e.stopPropagation()}>
               <h3 className="text-xl font-semibold mb-2">{selectedProject.project_title}</h3>
               <div className="flex items-center justify-center space-x-4 text-sm text-gray-300">
                 <div className="flex items-center space-x-1">
@@ -1008,7 +1008,7 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
 
             {/* Thumbnail Navigation */}
             {selectedProject.project_images.length > 1 && (
-              <div className="mt-6 flex justify-center space-x-2 overflow-x-auto pb-2">
+              <div className="mt-6 flex justify-center space-x-2 overflow-x-auto pb-2" onClick={(e) => e.stopPropagation()}>
                 {selectedProject.project_images.map((image, index) => (
                   <button
                     key={index}
