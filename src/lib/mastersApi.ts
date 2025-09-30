@@ -14,7 +14,14 @@ export const getTopRatedMasters = async () => {
       return mastersCache;
     }
 
-    const { data, error } = await supabase
+    console.log('Loading masters from database...');
+
+    // Добавляем таймаут для запроса
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Request timeout')), 10000)
+    );
+
+    const requestPromise = supabase
       .from('masters')
       .select('*')
       .eq('is_active', true)
@@ -23,6 +30,8 @@ export const getTopRatedMasters = async () => {
       .is('deleted_at', null)
       .order('rating', { ascending: false })
       .limit(10);
+
+    const { data, error } = await Promise.race([requestPromise, timeoutPromise]) as any;
       
     if (error) {
       console.error('Error loading masters:', error);
@@ -77,9 +86,16 @@ export const getTopRatedMasters = async () => {
     mastersCache = masters;
     cacheTimestamp = Date.now();
 
+    console.log(`Loaded ${masters.length} masters from database`);
     return masters;
   } catch (error) {
     console.error('Get masters error:', error);
-    return mastersCache || [];
+    // При ошибке возвращаем кеш или пустой массив
+    if (mastersCache) {
+      console.log('Returning cached data due to error');
+      return mastersCache;
+    }
+    console.log('No cached data available, returning empty array');
+    return [];
   }
 };

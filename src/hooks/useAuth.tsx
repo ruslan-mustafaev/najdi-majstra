@@ -54,16 +54,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (error) {
           console.error('Error getting session:', error);
         } else if (session?.user) {
-          // Проверяем, не удален ли профиль
-          const isDeleted = await checkIfProfileDeleted(session.user.id);
-
-          if (isDeleted) {
-            console.log('Profile is deleted, signing out...');
-            await supabase.auth.signOut();
-          } else {
-            setSession(session);
-            setUser(session.user);
-          }
+          // Просто восстанавливаем сессию без проверок
+          // Проверка удаления будет только при явном входе
+          setSession(session);
+          setUser(session.user);
         }
       } catch (error) {
         console.error('Session error:', error);
