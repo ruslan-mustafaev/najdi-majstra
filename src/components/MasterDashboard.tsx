@@ -5,7 +5,6 @@ import { saveMasterProfile, type MasterProfile } from '../lib/masterProfileApi';
 import { MasterPortfolio } from './MasterPortfolio';
 import { FileUploadManager } from './FileUpload/FileUploadManager';
 import { supabase } from '../lib/supabase';
-import { MasterPortfolio } from './MasterPortfolio';
 
 interface MasterDashboardProps {
   onBack: () => void;
