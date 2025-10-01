@@ -49,6 +49,12 @@ const clearCache = () => {
   try {
     localStorage.removeItem(CACHE_KEY);
     localStorage.removeItem(CACHE_TIMESTAMP_KEY);
+    // Также очищаем другие связанные кеши
+    Object.keys(localStorage).forEach(key => {
+      if (key.includes('masters') || key.includes('cache')) {
+        localStorage.removeItem(key);
+      }
+    });
     console.log('Cache cleared due to connection issues');
   } catch (error) {
     console.error('Error clearing cache:', error);
@@ -58,6 +64,14 @@ const clearCache = () => {
 export const getTopRatedMasters = async () => {
   try {
     console.log('🚀 Starting getTopRatedMasters...');
+    
+    // Проверяем состояние аутентификации
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError) {
+      console.error('❌ Session error in getTopRatedMasters:', sessionError);
+      clearCache();
+      throw new Error('Session error: ' + sessionError.message);
+    }
     
     // Проверяем подключение к базе данных
     const isConnected = await checkConnection();
@@ -71,10 +85,14 @@ export const getTopRatedMasters = async () => {
     const cachedMasters = loadCacheFromStorage();
     if (cachedMasters && cachedMasters.length > 0) {
       console.log('📦 Using cached masters:', cachedMasters.length);
-      // Запускаем обновление в фоне
+      // Запускаем обновление в фоне только если сессия валидна
       setTimeout(() => {
-        console.log('🔄 Updating cache in background...');
-        loadFromDatabase();
+        if (!sessionError) {
+          console.log('🔄 Updating cache in background...');
+          loadFromDatabase().catch(err => {
+            console.warn('Background update failed:', err);
+          });
+        }
       }, 100);
       return cachedMasters;
     }
@@ -95,6 +113,15 @@ const loadFromDatabase = async () => {
   console.log('Supabase client exists:', !!supabase);
 
   try {
+    // Дополнительная проверка сессии перед запросом
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError) {
+      console.error('❌ Session error before DB query:', sessionError);
+      throw new Error('Session error: ' + sessionError.message);
+    }
+    
+    console.log('🔐 Session status:', session ? 'Active' : 'Anonymous');
+    
     // Проверяем подключение перед запросом
     const isConnected = await checkConnection();
     if (!isConnected) {
@@ -124,6 +151,13 @@ const loadFromDatabase = async () => {
       
       // При ошибке базы данных очищаем кеш
       clearCache();
+      
+      // Если ошибка связана с аутентификацией, очищаем сессию
+      if (error.message?.includes('JWT') || error.message?.includes('auth') || error.code === 'PGRST301') {
+        console.log('🔐 Auth-related error, clearing session...');
+        await supabase.auth.signOut();
+      }
+      
       throw error;
     }
 

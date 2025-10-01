@@ -54,12 +54,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         if (error) {
           console.error('Error getting session:', error);
-          // Очищаем поврежденную сессию
+          // Очищаем поврежденную сессию и весь кеш
+          console.log('🧹 Clearing corrupted session and cache...');
           await supabase.auth.signOut();
+          // Очищаем весь localStorage от Supabase данных
+          Object.keys(localStorage).forEach(key => {
+            if (key.startsWith('sb-') || key.includes('supabase') || key.includes('cache')) {
+              localStorage.removeItem(key);
+            }
+          });
         } else if (session?.user) {
-          // Просто восстанавливаем сессию без проверок
-          // Проверка удаления будет только при явном входе
           console.log('Session restored for user:', session.user.email);
+          
+          // Проверяем валидность сессии
+          const now = Math.floor(Date.now() / 1000);
+          if (session.expires_at && session.expires_at < now) {
+            console.log('🕐 Session expired, refreshing...');
+            const { error: refreshError } = await supabase.auth.refreshSession();
+            if (refreshError) {
+              console.error('Failed to refresh session:', refreshError);
+              await supabase.auth.signOut();
+              return;
+            }
+          }
+          
           setSession(session);
           setUser(session.user);
         } else {
@@ -67,9 +85,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       } catch (error) {
         console.error('Session error:', error);
-        // При критической ошибке очищаем все
+        // При критической ошибке очищаем все данные
+        console.log('🧹 Critical error, clearing all auth data...');
         try {
           await supabase.auth.signOut();
+          // Полная очистка localStorage
+          Object.keys(localStorage).forEach(key => {
+            if (key.startsWith('sb-') || key.includes('supabase') || key.includes('cache') || key.includes('auth')) {
+              localStorage.removeItem(key);
+            }
+          });
         } catch (signOutError) {
           console.error('Error signing out:', signOutError);
         }
@@ -80,17 +105,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     getInitialSession();
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((async (event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth state changed:', event, session?.user?.email);
 
-      // Обрабатываем только события SIGNED_IN и SIGNED_OUT
-      // Игнорируем INITIAL_SESSION чтобы избежать дублирования с getInitialSession
       if (event === 'INITIAL_SESSION') {
         return;
       }
 
       if (event === 'SIGNED_IN' && session?.user) {
-        // Проверяем профиль только при явном входе
+        console.log('✅ User signed in successfully');
         const isDeleted = await checkIfProfileDeleted(session.user.id);
 
         if (isDeleted) {
@@ -98,20 +121,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           await supabase.auth.signOut();
           alert('Váš profil bol zmazaný. Nemôžete sa prihlásiť.');
         } else {
+          // Очищаем старый кеш при новом входе
+          console.log('🧹 Clearing old cache on new login...');
+          Object.keys(localStorage).forEach(key => {
+            if (key.includes('cache') && !key.includes('auth')) {
+              localStorage.removeItem(key);
+            }
+          });
           setSession(session);
           setUser(session.user);
         }
       } else if (event === 'SIGNED_OUT') {
         console.log('User signed out');
+        // Полная очистка при выходе
+        console.log('🧹 Clearing all data on sign out...');
+        Object.keys(localStorage).forEach(key => {
+          if (key.startsWith('sb-') || key.includes('supabase') || key.includes('cache') || key.includes('auth')) {
+            localStorage.removeItem(key);
+          }
+        });
         setSession(null);
         setUser(null);
       } else if (event === 'TOKEN_REFRESHED' && session) {
-        // При обновлении токена просто обновляем сессию без дополнительных проверок
         console.log('Token refreshed for user:', session.user?.email);
         setSession(session);
         setUser(session.user);
+      } else if (event === 'USER_UPDATED' && session) {
+        console.log('User updated:', session.user?.email);
+        setSession(session);
+        setUser(session.user);
       }
-    }));
+    });
 
     return () => subscription.unsubscribe();
   }, []);

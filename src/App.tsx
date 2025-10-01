@@ -125,6 +125,20 @@ const HomePage: React.FC = () => {
       setIsLoadingMasters(true);
       setConnectionError(null);
       try {
+        // Проверяем состояние аутентификации перед загрузкой
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        if (sessionError) {
+          console.error('❌ App: Session error before loading masters:', sessionError);
+          // Очищаем поврежденную сессию
+          await supabase.auth.signOut();
+          // Очищаем весь кеш
+          Object.keys(localStorage).forEach(key => {
+            if (key.startsWith('sb-') || key.includes('cache')) {
+              localStorage.removeItem(key);
+            }
+          });
+        }
+        
         const masters = await getTopRatedMasters();
         console.log('✅ App: Masters loaded successfully:', masters.length);
         setRealMasters(masters);
@@ -132,7 +146,20 @@ const HomePage: React.FC = () => {
       } catch (error) {
         console.error('❌ App: Error loading masters:', error);
         
-        setConnectionError('Problém s pripojením k databáze. Skúšam znovu...');
+        // Проверяем тип ошибки
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        
+        if (errorMessage.includes('JWT') || errorMessage.includes('auth') || errorMessage.includes('Session')) {
+          setConnectionError('Problém s autentifikáciou. Obnovujem pripojenie...');
+          // Очищаем все данные аутентификации
+          Object.keys(localStorage).forEach(key => {
+            if (key.startsWith('sb-') || key.includes('supabase') || key.includes('cache')) {
+              localStorage.removeItem(key);
+            }
+          });
+        } else {
+          setConnectionError('Problém s pripojením k databáze. Skúšam znovu...');
+        }
         
         // Автоматическая повторная попытка с экспоненциальной задержкой
         if (retryCount < 3) {
@@ -140,14 +167,13 @@ const HomePage: React.FC = () => {
           console.log(`🔄 App: Retrying in ${delay}ms... (attempt ${retryCount + 1}/3)`);
           setTimeout(() => {
             setRetryCount(prev => prev + 1);
-            loadMasters();
           }, delay);
         } else {
           setConnectionError('Nepodarilo sa pripojiť k databáze. Skúste obnoviť stránku.');
           // Очищаем кеш только после всех неудачных попыток
           console.log('🧹 App: Clearing all cache after failed retries...');
           Object.keys(localStorage).forEach(key => {
-            if (key.startsWith('sb-') || key.includes('cache')) {
+            if (key.startsWith('sb-') || key.includes('cache') || key.includes('supabase')) {
               localStorage.removeItem(key);
             }
           });
@@ -157,8 +183,24 @@ const HomePage: React.FC = () => {
         console.log('🏁 App: Loading masters finished');
       }
     };
+    
     loadMasters();
   }, [retryCount]); // Добавляем retryCount в зависимости
+  
+  // Дополнительный эффект для отслеживания изменений пользователя
+  useEffect(() => {
+    if (user) {
+      console.log('👤 User changed, clearing masters cache...');
+      // Очищаем кеш мастеров при смене пользователя
+      Object.keys(localStorage).forEach(key => {
+        if (key.includes('masters') || key.includes('cache')) {
+          localStorage.removeItem(key);
+        }
+      });
+      // Перезагружаем мастеров
+      setRetryCount(0);
+    }
+  }, [user?.id]); // Зависимость от ID пользователя
 
   // ИСПРАВЛЕННЫЙ обработчик выбора типа пользователя
   const handleUserTypeSelect = (type: 'client' | 'master') => {
