@@ -9,49 +9,45 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 console.log('Supabase URL:', supabaseUrl);
-console.log('Supabase Key length:', supabaseAnonKey?.length);
-
-// Определяем базовый URL в зависимости от окружения
-const getBaseUrl = () => {
-  // В production (Netlify или ваш домен)
-  if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-    return window.location.origin
-  }
-  
-  // В разработке
-  if (import.meta.env.VITE_SITE_URL) {
-    return import.meta.env.VITE_SITE_URL
-  }
-  
-  return 'http://localhost:5173'
-}
+console.log('Supabase Key valid:', !!supabaseAnonKey && supabaseAnonKey.length > 100);
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
-    redirectTo: `${getBaseUrl()}/`,
     autoRefreshToken: true,
     persistSession: true,
-    detectSessionInUrl: true,
+    detectSessionInUrl: false, // Отключаем для SPA
     flowType: 'pkce'
+  },
+  db: {
+    schema: 'public'
   },
   global: {
     headers: {
       'apikey': supabaseAnonKey
     }
-  },
-  db: {
-    schema: 'public'
   }
 })
 
+// Функция проверки подключения
+export const checkConnection = async (): Promise<boolean> => {
+  try {
+    const { error } = await supabase.from('masters').select('id').limit(1);
+    return !error;
+  } catch (error) {
+    console.error('Connection check failed:', error);
+    return false;
+  }
+};
+
 // Helper функции для аутентификации
 export const signUp = async (email: string, password: string, userData?: any) => {
+  const redirectTo = window.location.origin;
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
       data: userData,
-      emailRedirectTo: getBaseUrl()
+      emailRedirectTo: redirectTo
     }
   })
   

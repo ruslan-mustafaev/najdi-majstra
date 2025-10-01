@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { checkConnection } from './supabase';
 
 const CACHE_DURATION = 5 * 60 * 1000; // 5 минут
 const CACHE_KEY = 'masters_cache';
@@ -25,6 +26,9 @@ const loadCacheFromStorage = () => {
     }
   } catch (error) {
     console.error('Error loading cache:', error);
+    // Очищаем поврежденный кеш
+    localStorage.removeItem(CACHE_KEY);
+    localStorage.removeItem(CACHE_TIMESTAMP_KEY);
   }
   return null;
 };
@@ -34,13 +38,33 @@ const saveCacheToStorage = (masters: any[]) => {
   try {
     localStorage.setItem(CACHE_KEY, JSON.stringify(masters));
     localStorage.setItem(CACHE_TIMESTAMP_KEY, Date.now().toString());
+    console.log('Masters cached successfully:', masters.length);
   } catch (error) {
     console.error('Error saving cache:', error);
   }
 };
 
+// Функция очистки кеша при ошибках
+const clearCache = () => {
+  try {
+    localStorage.removeItem(CACHE_KEY);
+    localStorage.removeItem(CACHE_TIMESTAMP_KEY);
+    console.log('Cache cleared due to connection issues');
+  } catch (error) {
+    console.error('Error clearing cache:', error);
+  }
+};
+
 export const getTopRatedMasters = async () => {
   try {
+    // Проверяем подключение к базе данных
+    const isConnected = await checkConnection();
+    if (!isConnected) {
+      console.warn('Database connection failed, clearing cache');
+      clearCache();
+      throw new Error('Database connection failed');
+    }
+
     // Проверяем кеш в localStorage
     const cachedMasters = loadCacheFromStorage();
     if (cachedMasters && cachedMasters.length > 0) {
@@ -55,14 +79,10 @@ export const getTopRatedMasters = async () => {
     return await loadFromDatabase();
   } catch (error) {
     console.error('Get masters error:', error);
-    // При ошибке возвращаем кеш из localStorage или пустой массив
-    const cachedMasters = loadCacheFromStorage();
-    if (cachedMasters && cachedMasters.length > 0) {
-      console.log('Returning cached data due to error');
-      return cachedMasters;
-    }
-    console.log('No cached data available, returning empty array');
-    return [];
+    
+    // При ошибке подключения очищаем кеш и возвращаем пустой массив
+    clearCache();
+    throw error; // Пробрасываем ошибку дальше для обработки в компоненте
   }
 };
 
@@ -71,6 +91,12 @@ const loadFromDatabase = async () => {
   console.log('Supabase client exists:', !!supabase);
 
   try {
+    // Проверяем подключение перед запросом
+    const isConnected = await checkConnection();
+    if (!isConnected) {
+      throw new Error('Database connection check failed');
+    }
+
     const { data, error } = await supabase
       .from('masters')
       .select('*')
@@ -89,6 +115,9 @@ const loadFromDatabase = async () => {
         code: error.code,
         status: (error as any).status
       });
+      
+      // При ошибке базы данных очищаем кеш
+      clearCache();
       throw error;
     }
 
@@ -137,13 +166,16 @@ const loadFromDatabase = async () => {
   }));
 
   // Сохраняем в кеш
-  saveCacheToStorage(masters);
+  if (masters.length > 0) {
+    saveCacheToStorage(masters);
+  }
 
   console.log(`✅ Successfully loaded ${masters.length} masters from database`);
   return masters;
 
   } catch (err) {
     console.error('❌ Exception in loadFromDatabase:', err);
+    clearCache();
     throw err;
   }
 };

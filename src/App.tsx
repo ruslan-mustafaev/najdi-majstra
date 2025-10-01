@@ -15,6 +15,7 @@ import { MasterDashboard } from './components/MasterDashboard';
 import { EmailConfirmation } from './components/EmailConfirmation';
 import { Master } from './data/mockData';
 import { getTopRatedMasters } from './lib/mastersApi';
+import { checkConnection } from './lib/supabase';
 
 // Главная страница
 const HomePage: React.FC = () => {
@@ -29,6 +30,8 @@ const HomePage: React.FC = () => {
   const [recentlyViewed, setRecentlyViewed] = useState<Master[]>([]);
   const [filteredMasters, setFilteredMasters] = useState<Master[]>([]);
   const [hasActiveFilters, setHasActiveFilters] = useState(false);
+  const [connectionError, setConnectionError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
 
   // ИСПРАВЛЕНО: Мемоизируем функцию фильтрации
   const handleFiltersChange = useCallback((newFilters: any) => {
@@ -120,26 +123,42 @@ const HomePage: React.FC = () => {
     const loadMasters = async () => {
       console.log('Starting to load masters...');
       setIsLoadingMasters(true);
+      setConnectionError(null);
       try {
         const masters = await getTopRatedMasters();
         console.log('Masters loaded:', masters.length);
         setRealMasters(masters);
+        setRetryCount(0); // Сбрасываем счетчик попыток при успехе
       } catch (error) {
         console.error('Error loading masters:', error);
-        // Если ошибка - очищаем весь кеш Supabase
-        console.log('Clearing Supabase cache...');
-        Object.keys(localStorage).forEach(key => {
-          if (key.startsWith('sb-')) {
-            localStorage.removeItem(key);
-          }
-        });
+        
+        setConnectionError('Problém s pripojením k databáze. Skúšam znovu...');
+        
+        // Автоматическая повторная попытка с экспоненциальной задержкой
+        if (retryCount < 3) {
+          const delay = Math.pow(2, retryCount) * 1000; // 1s, 2s, 4s
+          console.log(`Retrying in ${delay}ms... (attempt ${retryCount + 1}/3)`);
+          setTimeout(() => {
+            setRetryCount(prev => prev + 1);
+            loadMasters();
+          }, delay);
+        } else {
+          setConnectionError('Nepodarilo sa pripojiť k databáze. Skúste obnoviť stránku.');
+          // Очищаем кеш только после всех неудачных попыток
+          console.log('Clearing all cache after failed retries...');
+          Object.keys(localStorage).forEach(key => {
+            if (key.startsWith('sb-') || key.includes('cache')) {
+              localStorage.removeItem(key);
+            }
+          });
+        }
       } finally {
         setIsLoadingMasters(false);
         console.log('Loading masters finished');
       }
     };
     loadMasters();
-  }, []);
+  }, [retryCount]); // Добавляем retryCount в зависимости
 
   // ИСПРАВЛЕННЫЙ обработчик выбора типа пользователя
   const handleUserTypeSelect = (type: 'client' | 'master') => {
@@ -211,12 +230,34 @@ const HomePage: React.FC = () => {
               </div>
             </div>
           )
+        ) : connectionError ? (
+          // Показываем ошибку подключения
+          <div className="container mx-auto px-4 py-8">
+            <div className="text-center bg-red-50 border border-red-200 rounded-xl p-8 max-w-2xl mx-auto">
+              <h3 className="text-xl font-semibold text-red-800 mb-2">
+                Problém s pripojením
+              </h3>
+              <p className="text-red-700 mb-4">{connectionError}</p>
+              <button 
+                onClick={() => {
+                  setRetryCount(0);
+                  window.location.reload();
+                }}
+                className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Obnoviť stránku
+              </button>
+            </div>
+          </div>
         ) : isLoadingMasters ? (
           // Показываем загрузку
           <div className="container mx-auto px-4 py-8">
-            <div className="text-center">
+            <div className="text-center bg-white rounded-lg p-8 shadow-sm">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#4169e1] mx-auto"></div>
-              <p className="text-gray-600 mt-4">Načítavam majstrov...</p>
+              <p className="text-gray-600 mt-4">
+                Načítavam majstrov...
+                {retryCount > 0 && ` (pokus ${retryCount + 1}/4)`}
+              </p>
             </div>
           </div>
         ) : realMasters.length > 0 ? (

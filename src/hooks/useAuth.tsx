@@ -49,18 +49,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Get initial session
     const getInitialSession = async () => {
       try {
+        console.log('Getting initial session...');
         const { data: { session }, error } = await supabase.auth.getSession();
 
         if (error) {
           console.error('Error getting session:', error);
+          // Очищаем поврежденную сессию
+          await supabase.auth.signOut();
         } else if (session?.user) {
           // Просто восстанавливаем сессию без проверок
           // Проверка удаления будет только при явном входе
+          console.log('Session restored for user:', session.user.email);
           setSession(session);
           setUser(session.user);
+        } else {
+          console.log('No active session found');
         }
       } catch (error) {
         console.error('Session error:', error);
+        // При критической ошибке очищаем все
+        try {
+          await supabase.auth.signOut();
+        } catch (signOutError) {
+          console.error('Error signing out:', signOutError);
+        }
       }
       setLoading(false);
     };
@@ -90,10 +102,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setUser(session.user);
         }
       } else if (event === 'SIGNED_OUT') {
+        console.log('User signed out');
         setSession(null);
         setUser(null);
       } else if (event === 'TOKEN_REFRESHED' && session) {
         // При обновлении токена просто обновляем сессию без дополнительных проверок
+        console.log('Token refreshed for user:', session.user?.email);
         setSession(session);
         setUser(session.user);
       }
