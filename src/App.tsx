@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useParams } from 'react-router-dom';
+import { supabase } from './lib/supabase';
 import { LanguageProvider } from './hooks/useLanguage';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import { Header } from './components/Header';
