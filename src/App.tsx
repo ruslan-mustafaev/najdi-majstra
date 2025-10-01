@@ -121,23 +121,23 @@ const HomePage: React.FC = () => {
   // Load masters from Supabase
   useEffect(() => {
     const loadMasters = async () => {
-      console.log('Starting to load masters...');
+      console.log('🚀 App: Starting to load masters...');
       setIsLoadingMasters(true);
       setConnectionError(null);
       try {
         const masters = await getTopRatedMasters();
-        console.log('Masters loaded:', masters.length);
+        console.log('✅ App: Masters loaded successfully:', masters.length);
         setRealMasters(masters);
         setRetryCount(0); // Сбрасываем счетчик попыток при успехе
       } catch (error) {
-        console.error('Error loading masters:', error);
+        console.error('❌ App: Error loading masters:', error);
         
         setConnectionError('Problém s pripojením k databáze. Skúšam znovu...');
         
         // Автоматическая повторная попытка с экспоненциальной задержкой
         if (retryCount < 3) {
           const delay = Math.pow(2, retryCount) * 1000; // 1s, 2s, 4s
-          console.log(`Retrying in ${delay}ms... (attempt ${retryCount + 1}/3)`);
+          console.log(`🔄 App: Retrying in ${delay}ms... (attempt ${retryCount + 1}/3)`);
           setTimeout(() => {
             setRetryCount(prev => prev + 1);
             loadMasters();
@@ -145,7 +145,7 @@ const HomePage: React.FC = () => {
         } else {
           setConnectionError('Nepodarilo sa pripojiť k databáze. Skúste obnoviť stránku.');
           // Очищаем кеш только после всех неудачных попыток
-          console.log('Clearing all cache after failed retries...');
+          console.log('🧹 App: Clearing all cache after failed retries...');
           Object.keys(localStorage).forEach(key => {
             if (key.startsWith('sb-') || key.includes('cache')) {
               localStorage.removeItem(key);
@@ -154,7 +154,7 @@ const HomePage: React.FC = () => {
         }
       } finally {
         setIsLoadingMasters(false);
-        console.log('Loading masters finished');
+        console.log('🏁 App: Loading masters finished');
       }
     };
     loadMasters();

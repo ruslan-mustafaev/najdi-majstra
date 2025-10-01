@@ -57,10 +57,12 @@ const clearCache = () => {
 
 export const getTopRatedMasters = async () => {
   try {
+    console.log('🚀 Starting getTopRatedMasters...');
+    
     // Проверяем подключение к базе данных
     const isConnected = await checkConnection();
     if (!isConnected) {
-      console.warn('Database connection failed, clearing cache');
+      console.warn('❌ Database connection failed, clearing cache');
       clearCache();
       throw new Error('Database connection failed');
     }
@@ -68,17 +70,19 @@ export const getTopRatedMasters = async () => {
     // Проверяем кеш в localStorage
     const cachedMasters = loadCacheFromStorage();
     if (cachedMasters && cachedMasters.length > 0) {
+      console.log('📦 Using cached masters:', cachedMasters.length);
       // Запускаем обновление в фоне
       setTimeout(() => {
-        console.log('Updating cache in background...');
+        console.log('🔄 Updating cache in background...');
         loadFromDatabase();
       }, 100);
       return cachedMasters;
     }
 
+    console.log('🔄 Loading fresh data from database...');
     return await loadFromDatabase();
   } catch (error) {
-    console.error('Get masters error:', error);
+    console.error('❌ Get masters error:', error);
     
     // При ошибке подключения очищаем кеш и возвращаем пустой массив
     clearCache();
@@ -87,7 +91,7 @@ export const getTopRatedMasters = async () => {
 };
 
 const loadFromDatabase = async () => {
-  console.log('=== LOADING MASTERS FROM DATABASE ===');
+  console.log('📊 === LOADING MASTERS FROM DATABASE ===');
   console.log('Supabase client exists:', !!supabase);
 
   try {
@@ -97,6 +101,7 @@ const loadFromDatabase = async () => {
       throw new Error('Database connection check failed');
     }
 
+    console.log('🔍 Executing database query...');
     const { data, error } = await supabase
       .from('masters')
       .select('*')
@@ -104,16 +109,17 @@ const loadFromDatabase = async () => {
       .eq('profile_completed', true)
       .limit(10);
 
-    console.log('✅ Query completed!');
-    console.log('Data received:', data?.length || 0, 'masters');
+    console.log('✅ Database query completed!');
+    console.log('📈 Data received:', data?.length || 0, 'masters');
 
     if (error) {
-      console.error('❌ SUPABASE ERROR:', {
+      console.error('❌ SUPABASE DATABASE ERROR:', {
         message: error.message,
         details: error.details,
         hint: error.hint,
         code: error.code,
-        status: (error as any).status
+        status: (error as any).status,
+        timestamp: new Date().toISOString()
       });
       
       // При ошибке базы данных очищаем кеш
@@ -121,8 +127,9 @@ const loadFromDatabase = async () => {
       throw error;
     }
 
-  // Преобразуем данные из базы в формат Master
-  const masters = (data || []).map(master => ({
+    // Преобразуем данные из базы в формат Master
+    console.log('🔄 Converting database records to Master format...');
+    const masters = (data || []).map(master => ({
       id: master.id, // Оставляем UUID как есть
       name: master.name || 'Без имени',
       profession: master.profession || 'Majster',
@@ -132,7 +139,7 @@ const loadFromDatabase = async () => {
       available: master.is_active,
       profileImage: master.profile_image_url || '/placeholder-avatar.svg',
       workImages: master.work_images_urls || [],
-      workVideos: master.work_video_url || [], // Теперь массив видео
+      workVideos: master.work_video_url || [],
       description: master.description || 'Profesionálny majster s pracovnými skúsenosťami',
       services: ['Opravy', 'Inštalácie', 'Servis'],
       experience: '5+ rokov',
@@ -163,18 +170,23 @@ const loadFromDatabase = async () => {
         schedule: '8:00 - 18:00',
         workRadius: 'Lokálne + 50km'
       }
-  }));
+    }));
 
-  // Сохраняем в кеш
-  if (masters.length > 0) {
-    saveCacheToStorage(masters);
-  }
+    // Сохраняем в кеш
+    if (masters.length > 0) {
+      console.log('💾 Saving to cache:', masters.length, 'masters');
+      saveCacheToStorage(masters);
+    }
 
-  console.log(`✅ Successfully loaded ${masters.length} masters from database`);
-  return masters;
+    console.log(`✅ Successfully loaded ${masters.length} masters from database`);
+    return masters;
 
   } catch (err) {
-    console.error('❌ Exception in loadFromDatabase:', err);
+    console.error('❌ Exception in loadFromDatabase:', {
+      error: err,
+      timestamp: new Date().toISOString(),
+      stack: err instanceof Error ? err.stack : 'No stack trace'
+    });
     clearCache();
     throw err;
   }

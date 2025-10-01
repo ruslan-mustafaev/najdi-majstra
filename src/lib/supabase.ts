@@ -8,14 +8,24 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing Supabase environment variables')
 }
 
-console.log('Supabase URL:', supabaseUrl);
-console.log('Supabase Key valid:', !!supabaseAnonKey && supabaseAnonKey.length > 100);
+// Детальная диагностика подключения
+console.log('🔧 Supabase Configuration:');
+console.log('URL:', supabaseUrl);
+console.log('Key length:', supabaseAnonKey?.length);
+console.log('Key starts with:', supabaseAnonKey?.substring(0, 20) + '...');
+
+// Проверяем, что это правильный проект
+const expectedProject = 'budlyqnloyiyexsocpbb';
+const actualProject = supabaseUrl?.match(/https:\/\/(.+?)\.supabase\.co/)?.[1];
+console.log('Expected project:', expectedProject);
+console.log('Actual project:', actualProject);
+console.log('Project match:', actualProject === expectedProject ? '✅' : '❌');
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     autoRefreshToken: true,
     persistSession: true,
-    detectSessionInUrl: false, // Отключаем для SPA
+    detectSessionInUrl: false,
     flowType: 'pkce'
   },
   db: {
@@ -28,13 +38,26 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   }
 })
 
-// Функция проверки подключения
+// Улучшенная функция проверки подключения
 export const checkConnection = async (): Promise<boolean> => {
   try {
+    console.log('🔍 Testing database connection...');
+    const startTime = Date.now();
+    
     const { error } = await supabase.from('masters').select('id').limit(1);
-    return !error;
+    
+    const duration = Date.now() - startTime;
+    console.log(`⏱️ Connection test took ${duration}ms`);
+    
+    if (error) {
+      console.error('❌ Connection test failed:', error);
+      return false;
+    }
+    
+    console.log('✅ Connection test successful');
+    return true;
   } catch (error) {
-    console.error('Connection check failed:', error);
+    console.error('❌ Connection check exception:', error);
     return false;
   }
 };
