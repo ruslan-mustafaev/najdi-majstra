@@ -65,14 +65,6 @@ export const getTopRatedMasters = async () => {
   try {
     console.log('🚀 Starting getTopRatedMasters...');
     
-    // Проверяем состояние аутентификации
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-    if (sessionError) {
-      console.error('❌ Session error in getTopRatedMasters:', sessionError);
-      clearCache();
-      throw new Error('Session error: ' + sessionError.message);
-    }
-    
     // Проверяем подключение к базе данных
     const isConnected = await checkConnection();
     if (!isConnected) {
@@ -85,14 +77,12 @@ export const getTopRatedMasters = async () => {
     const cachedMasters = loadCacheFromStorage();
     if (cachedMasters && cachedMasters.length > 0) {
       console.log('📦 Using cached masters:', cachedMasters.length);
-      // Запускаем обновление в фоне только если сессия валидна
+      // Запускаем обновление в фоне
       setTimeout(() => {
-        if (!sessionError) {
-          console.log('🔄 Updating cache in background...');
-          loadFromDatabase().catch(err => {
-            console.warn('Background update failed:', err);
-          });
-        }
+        console.log('🔄 Updating cache in background...');
+        loadFromDatabase().catch(err => {
+          console.warn('Background update failed:', err);
+        });
       }, 100);
       return cachedMasters;
     }
@@ -102,8 +92,8 @@ export const getTopRatedMasters = async () => {
   } catch (error) {
     console.error('❌ Get masters error:', error);
     
-    // При ошибке подключения очищаем кеш и возвращаем пустой массив
-    clearCache();
+    // При ошибке подключения только логируем, не очищаем кеш агрессивно
+    console.warn('Masters loading failed, but keeping existing cache');
     throw error; // Пробрасываем ошибку дальше для обработки в компоненте
   }
 };
@@ -113,15 +103,6 @@ const loadFromDatabase = async () => {
   console.log('Supabase client exists:', !!supabase);
 
   try {
-    // Дополнительная проверка сессии перед запросом
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-    if (sessionError) {
-      console.error('❌ Session error before DB query:', sessionError);
-      throw new Error('Session error: ' + sessionError.message);
-    }
-    
-    console.log('🔐 Session status:', session ? 'Active' : 'Anonymous');
-    
     // Проверяем подключение перед запросом
     const isConnected = await checkConnection();
     if (!isConnected) {
@@ -149,14 +130,8 @@ const loadFromDatabase = async () => {
         timestamp: new Date().toISOString()
       });
       
-      // При ошибке базы данных очищаем кеш
-      clearCache();
-      
-      // Если ошибка связана с аутентификацией, очищаем сессию
-      if (error.message?.includes('JWT') || error.message?.includes('auth') || error.code === 'PGRST301') {
-        console.log('🔐 Auth-related error, clearing session...');
-        await supabase.auth.signOut();
-      }
+      // Только логируем ошибку, не очищаем сессию
+      console.warn('Database error, but preserving session');
       
       throw error;
     }
