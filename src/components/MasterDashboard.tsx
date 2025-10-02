@@ -639,7 +639,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
 
                 {/* Profile Photo */}
                 <div className="text-center mb-6">
-                  <div className="w-32 h-32 mx-auto bg-gray-200 rounded-full flex items-center justify-center mb-4 overflow-hidden">
+                  <div className="w-32 h-32 mx-auto bg-gray-200 rounded-xl flex items-center justify-center mb-4 overflow-hidden">
                     {profileData.profileImageUrl ? (
                       <img
                         src={profileData.profileImageUrl}

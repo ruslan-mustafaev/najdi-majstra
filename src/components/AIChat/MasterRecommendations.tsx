@@ -69,7 +69,7 @@ export const MasterRecommendations: React.FC<MasterRecommendationsProps> = ({
                   <img
                     src={master.profileImage}
                     alt={master.name}
-                    className="w-16 h-16 rounded-full object-cover"
+                    className="w-16 h-16 rounded-lg object-cover"
                   />
                   <div className="flex-1">
                     <h3 className="text-lg font-semibold text-gray-900 mb-1">
