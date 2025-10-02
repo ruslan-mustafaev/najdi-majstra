@@ -8,7 +8,11 @@ export interface MasterProfile {
   location: string;
   description: string;
   is_active?: boolean;
+  is_available?: boolean;
   profile_completed?: boolean;
+  service_regular?: boolean;
+  service_urgent?: boolean;
+  service_realization?: boolean;
 }
 
 export const saveMasterProfile = async (profileData: MasterProfile): Promise<MasterProfile> => {
@@ -30,7 +34,11 @@ export const saveMasterProfile = async (profileData: MasterProfile): Promise<Mas
       location: profileData.location,
       description: profileData.description,
       is_active: profileData.is_active ?? true,
+      is_available: profileData.is_available ?? false,
       profile_completed: profileData.profile_completed ?? true,
+      service_regular: profileData.service_regular ?? false,
+      service_urgent: profileData.service_urgent ?? false,
+      service_realization: profileData.service_realization ?? false,
       updated_at: new Date().toISOString()
     };
 

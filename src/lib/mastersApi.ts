@@ -139,13 +139,13 @@ const loadFromDatabase = async () => {
     // Преобразуем данные из базы в формат Master
     console.log('🔄 Converting database records to Master format...');
     const masters = (data || []).map(master => ({
-      id: master.id, // Оставляем UUID как есть
+      id: master.id,
       name: master.name || 'Без имени',
       profession: master.profession || 'Majster',
       location: master.location || 'Не указано',
       rating: master.rating || 4.5,
       reviewCount: master.reviews_count || 0,
-      available: master.is_active,
+      available: master.is_available ?? master.is_active,
       profileImage: master.profile_image_url || '/placeholder-avatar.svg',
       workImages: master.work_images_urls || [],
       workVideos: master.work_video_url || [],
@@ -178,7 +178,10 @@ const loadFromDatabase = async () => {
       availability: {
         schedule: '8:00 - 18:00',
         workRadius: 'Lokálne + 50km'
-      }
+      },
+      serviceRegular: master.service_regular ?? false,
+      serviceUrgent: master.service_urgent ?? false,
+      serviceRealization: master.service_realization ?? false
     }));
 
     // Сохраняем в кеш

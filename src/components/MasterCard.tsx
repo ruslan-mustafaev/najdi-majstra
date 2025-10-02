@@ -18,44 +18,23 @@ export const MasterCard: React.FC<MasterCardProps> = ({ master, featured = false
     }
   };
 
-  // Определяем какие индикаторы показывать
-  const getServiceIndicators = () => {
-    const services = master.emergencyServices || [];
-    const indicators = [];
-    
-    if (services.includes('urgent')) {
-      indicators.push({ color: 'bg-red-500', label: 'Akútna porucha' });
+  const getServiceTypes = (): ServiceType[] => {
+    const types: ServiceType[] = [];
+
+    if (master.serviceUrgent) {
+      types.push('urgent');
     }
-    if (services.includes('regular')) {
-      indicators.push({ color: 'bg-blue-500', label: 'Pravidelný servis' });
+    if (master.serviceRegular) {
+      types.push('regular');
     }
-    if (services.includes('realization')) {
-      indicators.push({ color: 'bg-green-500', label: 'Plánovaná realizácia' });
+    if (master.serviceRealization) {
+      types.push('realization');
     }
-    
-    return indicators;
+
+    return types;
   };
 
-  // Генерируем разные комбинации индикаторов для демонстрации (макет)
-  const getMockServiceTypes = (masterId: string): ServiceType[] => {
-    const combinations: ServiceType[][] = [
-      ['urgent'], // только аварийные
-      ['regular'], // только сервис
-      ['realization'], // только реализация
-      ['urgent', 'regular'], // аварийные + сервис
-      ['regular', 'realization'], // сервис + реализация
-      ['urgent', 'realization'], // аварийные + реализация
-      ['urgent', 'regular', 'realization'], // все три
-      [], // без индикаторов
-    ];
-    
-    // Используем ID мастера для получения стабильной комбинации
-    const index = parseInt(masterId) % combinations.length;
-    return combinations[index] || [];
-  };
-
-  const serviceTypes = getMockServiceTypes(master.id);
-  const serviceIndicators = getServiceIndicators();
+  const serviceTypes = getServiceTypes();
 
   return (
     <div 

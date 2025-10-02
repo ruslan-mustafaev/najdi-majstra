@@ -77,6 +77,9 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
       };
     };
     certifications: string[];
+    serviceRegular: boolean;
+    serviceUrgent: boolean;
+    serviceRealization: boolean;
   }>({
     name: user?.user_metadata?.full_name || user?.user_metadata?.first_name + ' ' + user?.user_metadata?.last_name || '',
     profession: user?.user_metadata?.profession || '',
@@ -105,7 +108,10 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
         tiktok: ''
       }
     },
-    certifications: []
+    certifications: [],
+    serviceRegular: false,
+    serviceUrgent: false,
+    serviceRealization: false
   });
 
   const handleCopyCoupon = (code: string) => {
@@ -116,7 +122,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
   
   const handleSave = async () => {
   setIsSaving(true);
-  
+
   try {
     // Подготавливаем данные только с полями из таблицы masters
     const profileForDB: MasterProfile = {
@@ -127,7 +133,11 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
       location: profileData.location,
       description: profileData.description,
       is_active: profileData.availability.available,
-      profile_completed: true
+      is_available: profileData.availability.available,
+      profile_completed: true,
+      service_regular: profileData.serviceRegular,
+      service_urgent: profileData.serviceUrgent,
+      service_realization: profileData.serviceRealization
     };
 
     // Сохраняем в Supabase
@@ -892,36 +902,77 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Čo riešim
                     </label>
+                    <p className="text-xs text-gray-500 mb-3">
+                      Tieto indikátory sa zobrazia na vašej avatarke ako farebné polоsky
+                    </p>
                     {editingField === 'services' ? (
-                      <div className="space-y-2">
-                        {['Realizácia', 'Servis', 'Poruchy'].map(service => (
-                          <label key={service} className="flex items-center space-x-2">
-                            <input
-                              type="checkbox"
-                              checked={profileData.serviceTypes.includes(service)}
-                              onChange={(e) => {
-                                if (e.target.checked) {
-                                  handleFieldChange('serviceTypes', [...profileData.serviceTypes, service]);
-                                } else {
-                                  handleFieldChange('serviceTypes', profileData.serviceTypes.filter(s => s !== service));
-                                }
-                              }}
-                              className="w-4 h-4 text-[#4169e1] rounded focus:ring-[#4169e1]"
-                            />
-                            <span className="text-sm">{service}</span>
-                          </label>
-                        ))}
+                      <div className="space-y-3">
+                        <label className="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg border-2 border-transparent hover:border-blue-300 transition-colors">
+                          <input
+                            type="checkbox"
+                            checked={profileData.serviceRegular}
+                            onChange={(e) => handleFieldChange('serviceRegular', e.target.checked)}
+                            className="w-5 h-5 text-blue-500 rounded focus:ring-blue-500"
+                          />
+                          <div className="flex items-center space-x-2">
+                            <div className="w-3 h-8 bg-blue-500 rounded"></div>
+                            <span className="text-sm font-medium">Pravidelný servis</span>
+                          </div>
+                        </label>
+                        <label className="flex items-center space-x-3 p-3 bg-red-50 rounded-lg border-2 border-transparent hover:border-red-300 transition-colors">
+                          <input
+                            type="checkbox"
+                            checked={profileData.serviceUrgent}
+                            onChange={(e) => handleFieldChange('serviceUrgent', e.target.checked)}
+                            className="w-5 h-5 text-red-500 rounded focus:ring-red-500"
+                          />
+                          <div className="flex items-center space-x-2">
+                            <div className="w-3 h-8 bg-red-500 rounded"></div>
+                            <span className="text-sm font-medium">Akútna porucha</span>
+                          </div>
+                        </label>
+                        <label className="flex items-center space-x-3 p-3 bg-green-50 rounded-lg border-2 border-transparent hover:border-green-300 transition-colors">
+                          <input
+                            type="checkbox"
+                            checked={profileData.serviceRealization}
+                            onChange={(e) => handleFieldChange('serviceRealization', e.target.checked)}
+                            className="w-5 h-5 text-green-500 rounded focus:ring-green-500"
+                          />
+                          <div className="flex items-center space-x-2">
+                            <div className="w-3 h-8 bg-green-500 rounded"></div>
+                            <span className="text-sm font-medium">Plánovaná realizácia</span>
+                          </div>
+                        </label>
                       </div>
                     ) : (
-                      <p 
-                        className="text-gray-700 cursor-pointer hover:bg-gray-50 p-2 rounded border-2 border-transparent hover:border-gray-200 transition-colors"
+                      <div
+                        className="cursor-pointer hover:bg-gray-50 p-3 rounded border-2 border-transparent hover:border-gray-200 transition-colors"
                         onClick={() => startEditing('services')}
                       >
-                        {profileData.serviceTypes.length > 0 
-                          ? profileData.serviceTypes.join(', ')
-                          : 'Nevyplnené - kliknite pre úpravu'
-                        }
-                      </p>
+                        <div className="flex items-center space-x-3">
+                          {profileData.serviceRegular && (
+                            <div className="flex items-center space-x-1">
+                              <div className="w-3 h-8 bg-blue-500 rounded"></div>
+                              <span className="text-xs">Servis</span>
+                            </div>
+                          )}
+                          {profileData.serviceUrgent && (
+                            <div className="flex items-center space-x-1">
+                              <div className="w-3 h-8 bg-red-500 rounded"></div>
+                              <span className="text-xs">Porucha</span>
+                            </div>
+                          )}
+                          {profileData.serviceRealization && (
+                            <div className="flex items-center space-x-1">
+                              <div className="w-3 h-8 bg-green-500 rounded"></div>
+                              <span className="text-xs">Realizácia</span>
+                            </div>
+                          )}
+                          {!profileData.serviceRegular && !profileData.serviceUrgent && !profileData.serviceRealization && (
+                            <span className="text-gray-500">Nevyplnené - kliknite pre úpravu</span>
+                          )}
+                        </div>
+                      </div>
                     )}
                   </div>
 

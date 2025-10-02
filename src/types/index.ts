@@ -8,7 +8,7 @@ export interface Master {
   available: boolean;
   profileImage: string;
   workImages: string[];
-  workVideos?: string[]; // URLs to work videos (max 5)
+  workVideos?: string[];
   description: string;
   services: string[];
   experience: string;
@@ -47,6 +47,9 @@ export interface Master {
     schedule: string;
     workRadius: string;
   };
+  serviceRegular?: boolean;
+  serviceUrgent?: boolean;
+  serviceRealization?: boolean;
 }
 
 export interface Language {
