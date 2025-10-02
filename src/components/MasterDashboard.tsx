@@ -80,6 +80,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
     serviceRegular: boolean;
     serviceUrgent: boolean;
     serviceRealization: boolean;
+    profileImageUrl?: string;
   }>({
     name: user?.user_metadata?.full_name || user?.user_metadata?.first_name + ' ' + user?.user_metadata?.last_name || '',
     profession: user?.user_metadata?.profession || '',
@@ -111,7 +112,8 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
     certifications: [],
     serviceRegular: false,
     serviceUrgent: false,
-    serviceRealization: false
+    serviceRealization: false,
+    profileImageUrl: undefined
   });
 
   const handleCopyCoupon = (code: string) => {
@@ -251,6 +253,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
             profession: data.profession || prev.profession,
             location: data.location || prev.location,
             description: data.description || prev.description,
+            profileImageUrl: data.profile_image_url || undefined,
             contact: {
               ...prev.contact,
               phone: data.phone || prev.contact.phone,
@@ -636,10 +639,19 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
 
                 {/* Profile Photo */}
                 <div className="text-center mb-6">
-                  <div className="w-32 h-32 mx-auto bg-gray-200 rounded-full flex items-center justify-center mb-4">
-                    <Camera size={32} className="text-gray-400" />
+                  <div className="w-32 h-32 mx-auto bg-gray-200 rounded-full flex items-center justify-center mb-4 overflow-hidden">
+                    {profileData.profileImageUrl ? (
+                      <img
+                        src={profileData.profileImageUrl}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <Camera size={32} className="text-gray-400" />
+                    )}
                   </div>
                   <p className="text-sm text-gray-600 mb-2">Profilová fotka</p>
+                  <p className="text-xs text-gray-500 mb-2">Takto vyzerá na webe</p>
                   <div className="flex items-center justify-center space-x-1 mb-2">
                     {[1,2,3,4,5].map((star) => (
                       <Star key={star} size={16} className="text-gray-300" />
@@ -650,12 +662,15 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                     fileType="avatar"
                     onUploadComplete={(urls) => {
                       console.log('Avatar uploaded:', urls);
-                      // Можно добавить обновление состояния если нужно
+                      if (urls && urls.length > 0) {
+                        setProfileData(prev => ({ ...prev, profileImageUrl: urls[0] }));
+                        setHasChanges(true);
+                      }
                     }}
                   />
                   <div className="mt-4 p-3 bg-blue-50 rounded-lg">
                     <p className="text-xs text-blue-800">
-                      💡 <strong>Tip:</strong> Majstri s profilovou fotkou majú o 70% vyššiu šancu získať zákazku! 
+                      💡 <strong>Tip:</strong> Majstri s profilovou fotkou majú o 70% vyššiu šancu získať zákazku!
                       Ukážte svoju tvár - vzbudzuje to dôveru u klientov.
                     </p>
                   </div>
