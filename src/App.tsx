@@ -105,7 +105,10 @@ const HomePage: React.FC = () => {
 
   useEffect(() => {
     if (!loading && !user) {
-      setShowWelcomePopup(true);
+      const welcomeShown = localStorage.getItem('welcomePopupShown');
+      if (!welcomeShown) {
+        setShowWelcomePopup(true);
+      }
     }
 
     // Load recently viewed
