@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, User, Camera, Briefcase, Calendar, Settings, Save, Upload, AlertCircle, CheckCircle, Star, MapPin, Phone, Mail, Globe, Award, Users, Euro, Clock, X, Plus, Edit, Trash2 } from 'lucide-react';
+import { ArrowLeft, User, Camera, Briefcase, Calendar, Settings, Save, Upload, AlertCircle, CheckCircle, Star, MapPin, Phone, Mail, Globe, Award, Users, Euro, Clock, X, Plus, CreditCard as Edit, Trash2 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useLanguage } from '../hooks/useLanguage';
 import { supabase } from '../lib/supabase';
