@@ -228,28 +228,49 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
   }
 };
 
-  // Load master ID on mount
+  // Load master ID and profile data on mount
   useEffect(() => {
-    const loadMasterId = async () => {
+    const loadMasterData = async () => {
       if (!user) return;
 
       try {
         const { data, error } = await supabase
           .from('masters')
-          .select('id')
+          .select('*')
           .eq('user_id', user.id)
           .single();
 
         if (error) throw error;
         if (data) {
           setMasterId(data.id);
+
+          // Update profile data with loaded values
+          setProfileData(prev => ({
+            ...prev,
+            name: data.name || prev.name,
+            profession: data.profession || prev.profession,
+            location: data.location || prev.location,
+            description: data.description || prev.description,
+            contact: {
+              ...prev.contact,
+              phone: data.phone || prev.contact.phone,
+              email: data.email || prev.contact.email,
+            },
+            availability: {
+              ...prev.availability,
+              available: data.is_available ?? prev.availability.available,
+            },
+            serviceRegular: data.service_regular || false,
+            serviceUrgent: data.service_urgent || false,
+            serviceRealization: data.service_realization || false,
+          }));
         }
       } catch (error) {
-        console.error('Error loading master ID:', error);
+        console.error('Error loading master data:', error);
       }
     };
 
-    loadMasterId();
+    loadMasterData();
   }, [user]);
 
   const handleFieldChange = (field: string, value: any) => {

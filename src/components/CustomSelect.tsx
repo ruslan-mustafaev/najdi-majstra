@@ -12,14 +12,14 @@ interface CustomSelectProps {
   onToggle: (isOpen: boolean) => void;
 }
 
-export const CustomSelect: React.FC<CustomSelectProps> = ({ 
-  label, 
-  value, 
-  onChange, 
-  options, 
-  placeholder, 
-  isOpen, 
-  onToggle 
+export const CustomSelect: React.FC<CustomSelectProps> = ({
+  label,
+  value,
+  onChange,
+  options,
+  placeholder,
+  isOpen,
+  onToggle
 }) => {
   const handleSelect = (optionValue: string) => {
     // Don't select regions, only cities
@@ -28,6 +28,13 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
       onChange(optionValue);
       onToggle(false);
     }
+  };
+
+  // Find the label for the current value
+  const getDisplayValue = () => {
+    if (!value) return placeholder;
+    const selectedOption = options.find(opt => opt.value === value);
+    return selectedOption?.label || value;
   };
 
   return (
@@ -42,10 +49,10 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
           onClick={() => onToggle(!isOpen)}
         >
           <span className={value ? 'text-gray-900' : 'text-gray-500'}>
-            {value || placeholder}
+            {getDisplayValue()}
           </span>
-          <ChevronDown 
-            size={16} 
+          <ChevronDown
+            size={16}
             className={`text-gray-500 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
           />
         </button>
