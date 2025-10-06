@@ -14,6 +14,8 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  console.log('🔐 AUTH: AuthProvider rendering...');
+
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
@@ -46,25 +48,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
+    console.log('🔄 AUTH: useEffect triggered');
     let isMounted = true;
 
     const getInitialSession = async () => {
+      console.log('🔍 AUTH: Getting initial session...');
+
       try {
         const { data: { session }, error } = await supabase.auth.getSession();
+        console.log('📊 AUTH: Session result:', { session: !!session, error });
 
-        if (!isMounted) return;
+        if (!isMounted) {
+          console.log('⚠️ AUTH: Component unmounted, skipping');
+          return;
+        }
 
         if (error) {
-          console.error('Error getting session:', error);
+          console.error('❌ AUTH: Error getting session:', error);
           setLoading(false);
           return;
         }
 
         if (session?.user) {
+          console.log('✅ AUTH: Session found:', session.user.email);
+
           // Проверяем не удален ли профиль (только для мастеров)
           if (session.user.user_metadata?.user_type === 'master') {
             const isDeleted = await checkIfProfileDeleted(session.user.id);
             if (isDeleted) {
+              console.log('⚠️ AUTH: Profile deleted, signing out');
               await supabase.auth.signOut();
               if (isMounted) setLoading(false);
               return;
@@ -74,13 +86,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           if (isMounted) {
             setSession(session);
             setUser(session.user);
+            console.log('✅ AUTH: User state updated');
           }
+        } else {
+          console.log('ℹ️ AUTH: No session found');
         }
       } catch (error) {
-        console.error('Session initialization error:', error);
+        console.error('❌ AUTH: Session initialization error:', error);
       } finally {
         if (isMounted) {
           setLoading(false);
+          console.log('✅ AUTH: Loading complete');
         }
       }
     };

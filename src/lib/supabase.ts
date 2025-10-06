@@ -1,8 +1,16 @@
 // src/lib/supabase.ts
 import { createClient } from '@supabase/supabase-js'
 
+console.log('📦 SUPABASE: Module loading...');
+
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+
+console.log('🔑 SUPABASE: Config:', {
+  url: supabaseUrl,
+  keyLength: supabaseAnonKey?.length,
+  urlValid: supabaseUrl === 'https://budlyqnloyiyexsocpbb.supabase.co'
+});
 
 if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing Supabase environment variables')

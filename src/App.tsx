@@ -582,6 +582,8 @@ const AppContent: React.FC = () => {
 };
 
 function App() {
+  console.log('🔷 APP: App component rendering...');
+
   return (
     <Router>
       <LanguageProvider>
@@ -592,5 +594,7 @@ function App() {
     </Router>
   );
 }
+
+console.log('✅ APP: App component defined');
 
 export default App;
