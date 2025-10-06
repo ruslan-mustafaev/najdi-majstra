@@ -105,6 +105,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('🔔 AUTH: Auth state changed:', event, !!session);
+
       if (event === 'INITIAL_SESSION') {
         return;
       }
@@ -112,6 +114,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (!isMounted) return;
 
       if (event === 'SIGNED_IN' && session?.user) {
+        console.log('✅ AUTH: User signed in:', session.user.email);
         if (session.user.user_metadata?.user_type === 'master') {
           const isDeleted = await checkIfProfileDeleted(session.user.id);
           if (isDeleted) {
@@ -156,29 +159,41 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signIn = async (email: string, password: string) => {
+    console.log('🔐 AUTH: Sign in attempt for:', email);
     setLoading(true);
-    
+
     try {
       // Сначала пытаемся войти
       const result = await auth.signIn(email, password);
+      console.log('📊 AUTH: Sign in result:', {
+        success: !!result.data?.session,
+        error: result.error
+      });
       
       if (result.data?.user) {
+        // Проверяем что сессия сохранилась
+        const storedSession = localStorage.getItem('sb-budlyqnloyiyexsocpbb-auth-token');
+        console.log('💾 AUTH: Session stored in localStorage:', !!storedSession);
+        if (storedSession) {
+          console.log('💾 AUTH: Stored session preview:', storedSession.substring(0, 100) + '...');
+        }
+
         // Проверяем, не удален ли профиль
         const isDeleted = await checkIfProfileDeleted(result.data.user.id);
-        
+
         if (isDeleted) {
           // Если профиль удален, выходим и возвращаем ошибку
           await supabase.auth.signOut();
           setLoading(false);
           return {
             data: null,
-            error: { 
-              message: 'Váš profil bol zmazaný. Vytvorte si nový účet.' 
+            error: {
+              message: 'Váš profil bol zmazaný. Vytvorte si nový účet.'
             }
           };
         }
       }
-      
+
       setLoading(false);
       return result;
     } catch (error) {
