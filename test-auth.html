@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <h1>Supabase Auth Test</h1>
+    <div id="status"></div>
+    <div id="session"></div>
+
+    <script>
+        const supabaseUrl = 'https://budlyqnloyiyexsocpbb.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ1ZGx5cW5sb3lpeWV4c29jcGJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5MzM0NDksImV4cCI6MjA3MTUwOTQ0OX0.5vPCIu5yvtEossIEYfMGqha5Xj1eEwEDmvU-g-rUttw';
+
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey, {
+            auth: {
+                autoRefreshToken: true,
+                persistSession: true,
+                detectSessionInUrl: true,
+                storage: window.localStorage,
+                storageKey: 'supabase.auth.token'
+            }
+        });
+
+        async function testAuth() {
+            const statusDiv = document.getElementById('status');
+            const sessionDiv = document.getElementById('session');
+
+            // Проверяем текущую сессию
+            const { data: { session }, error } = await supabase.auth.getSession();
+
+            if (error) {
+                statusDiv.innerHTML = `<p style="color: red;">❌ Error: ${error.message}</p>`;
+                console.error('Session error:', error);
+            } else if (session) {
+                statusDiv.innerHTML = `<p style="color: green;">✅ Session active</p>`;
+                sessionDiv.innerHTML = `
+                    <h3>Session Info:</h3>
+                    <p><strong>User:</strong> ${session.user.email}</p>
+                    <p><strong>User Type:</strong> ${session.user.user_metadata?.user_type || 'N/A'}</p>
+                    <p><strong>Expires at:</strong> ${new Date(session.expires_at * 1000).toLocaleString()}</p>
+                `;
+                console.log('Session:', session);
+            } else {
+                statusDiv.innerHTML = `<p style="color: orange;">⚠️ No active session</p>`;
+            }
+
+            // Проверяем localStorage
+            const keys = Object.keys(localStorage).filter(k => k.includes('supabase'));
+            console.log('Supabase keys in localStorage:', keys);
+            keys.forEach(key => {
+                console.log(`${key}:`, localStorage.getItem(key)?.substring(0, 100) + '...');
+            });
+
+            // Проверяем подключение к БД
+            try {
+                const { data, error: dbError } = await supabase.from('masters').select('id').limit(1);
+                if (dbError) {
+                    console.error('❌ DB Error:', dbError);
+                    statusDiv.innerHTML += `<p style="color: red;">❌ DB Connection failed: ${dbError.message}</p>`;
+                } else {
+                    console.log('✅ DB Connection OK');
+                    statusDiv.innerHTML += `<p style="color: green;">✅ DB Connection OK</p>`;
+                }
+            } catch (e) {
+                console.error('❌ DB Exception:', e);
+                statusDiv.innerHTML += `<p style="color: red;">❌ DB Exception: ${e.message}</p>`;
+            }
+        }
+
+        // Тест при загрузке
+        testAuth();
+
+        // Слушаем изменения авторизации
+        supabase.auth.onAuthStateChange((event, session) => {
+            console.log('Auth event:', event);
+            console.log('Session:', session);
+        });
+    </script>
+</body>
+</html>

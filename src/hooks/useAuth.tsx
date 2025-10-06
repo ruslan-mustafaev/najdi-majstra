@@ -48,23 +48,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     // Get initial session
     const getInitialSession = async () => {
+      console.log('🔍 useAuth: Getting initial session...');
+
       try {
+        // Проверяем что есть в localStorage
+        const storageKeys = Object.keys(localStorage).filter(k => k.includes('supabase'));
+        console.log('📦 Storage keys:', storageKeys);
+
         const { data: { session }, error } = await supabase.auth.getSession();
 
         if (error) {
-          console.error('Error getting session:', error);
+          console.error('❌ Error getting session:', error);
           setLoading(false);
           return;
         }
 
         if (session?.user) {
-          console.log('✅ Session restored:', session.user.email);
+          console.log('✅ Session found:', {
+            email: session.user.email,
+            userType: session.user.user_metadata?.user_type,
+            expiresAt: new Date(session.expires_at * 1000).toLocaleString()
+          });
 
           // Проверяем не удален ли профиль (только для мастеров)
           if (session.user.user_metadata?.user_type === 'master') {
             const isDeleted = await checkIfProfileDeleted(session.user.id);
             if (isDeleted) {
-              console.log('Profile deleted, signing out...');
+              console.log('⚠️ Profile deleted, signing out...');
               await supabase.auth.signOut();
               setLoading(false);
               return;
@@ -73,11 +83,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
           setSession(session);
           setUser(session.user);
+          console.log('✅ User state updated');
+        } else {
+          console.log('ℹ️ No active session');
         }
       } catch (error) {
-        console.error('Session initialization error:', error);
+        console.error('❌ Session initialization error:', error);
       } finally {
         setLoading(false);
+        console.log('✅ useAuth initialization complete');
       }
     };
 
