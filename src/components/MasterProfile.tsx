@@ -191,15 +191,6 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                   <p className="text-xl text-[#4169e1] font-semibold mb-2">
                     {master.profession}
                   </p>
-                  {/* Communication Style */}
-                  {master.communicationStyle && (
-                    <div className="mb-3">
-                      <p className="text-sm text-gray-600 font-medium mb-1">Rád komunikujem:</p>
-                      <p className="text-sm text-gray-800 bg-blue-50 px-3 py-2 rounded-lg border-l-4 border-blue-400">
-                        {master.communicationStyle}
-                      </p>
-                    </div>
-                  )}
                   <div className="flex items-center text-gray-600 mb-4">
                     <MapPin size={18} className="mr-2" />
                     <span>{master.location}</span>

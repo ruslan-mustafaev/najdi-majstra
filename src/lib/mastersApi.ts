@@ -159,7 +159,7 @@ const loadFromDatabase = async () => {
       languages: ['Slovenčina'],
       priceRange: '25-45 €/hod',
       subscriptionPlan: 'standard',
-      communicationStyle: 'Profesionálne a vecne',
+      communicationStyle: master.communication_style || undefined,
       workingHours: {
         monday: '8:00 - 18:00',
         tuesday: '8:00 - 18:00',

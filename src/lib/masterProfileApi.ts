@@ -7,6 +7,7 @@ export interface MasterProfile {
   phone: string;
   location: string;
   description: string;
+  communication_style?: string;
   is_active?: boolean;
   is_available?: boolean;
   profile_completed?: boolean;
@@ -33,6 +34,7 @@ export const saveMasterProfile = async (profileData: MasterProfile): Promise<Mas
       phone: profileData.phone,
       location: profileData.location,
       description: profileData.description,
+      communication_style: profileData.communication_style || null,
       is_active: profileData.is_active ?? true,
       is_available: profileData.is_available ?? false,
       profile_completed: profileData.profile_completed ?? true,

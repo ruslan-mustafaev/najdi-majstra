@@ -61,6 +61,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
     serviceTypes: string[];
     languages: string;
     hourlyRate: string;
+    communicationStyle: string;
     availability: {
       schedule: string;
       available: boolean;
@@ -94,6 +95,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
     serviceTypes: [],
     languages: '',
     hourlyRate: '',
+    communicationStyle: '',
     availability: {
       schedule: '',
       available: true
@@ -134,6 +136,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
       phone: profileData.contact.phone,
       location: profileData.location,
       description: profileData.description,
+      communication_style: profileData.communicationStyle,
       is_active: profileData.availability.available,
       is_available: profileData.availability.available,
       profile_completed: true,
@@ -253,6 +256,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
             profession: data.profession || prev.profession,
             location: data.location || prev.location,
             description: data.description || prev.description,
+            communicationStyle: data.communication_style || '',
             profileImageUrl: data.profile_image_url || undefined,
             contact: {
               ...prev.contact,
@@ -1091,6 +1095,36 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                     )}
                   </div>
 
+                  {/* Communication Style */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Rád komunikujem
+                    </label>
+                    {editingField === 'communicationStyle' ? (
+                      <div className="space-y-2">
+                        <select
+                          value={profileData.communicationStyle}
+                          onChange={(e) => handleFieldChange('communicationStyle', e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
+                        >
+                          <option value="">Vyberte štýl komunikácie</option>
+                          <option value="Profesionálne a vecne">Profesionálne a vecne</option>
+                          <option value="Priateľsky a uvoľnene">Priateľsky a uvoľnene</option>
+                          <option value="Rýchlo a jasno">Rýchlo a jasno</option>
+                          <option value="Podrobne a trpezlivo">Podrobne a trpezlivo</option>
+                          <option value="Jednoducho a zrozumiteľne">Jednoducho a zrozumiteľne</option>
+                        </select>
+                      </div>
+                    ) : (
+                      <p
+                        className="text-gray-700 cursor-pointer hover:bg-gray-50 p-2 rounded border-2 border-transparent hover:border-gray-200 transition-colors"
+                        onClick={() => startEditing('communicationStyle')}
+                      >
+                        {profileData.communicationStyle || 'Nevyplnené - kliknite pre úpravu'}
+                      </p>
+                    )}
+                  </div>
+
                   {/* Hourly Rate */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -1108,7 +1142,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                         <span className="text-gray-600">€/hod</span>
                       </div>
                     ) : (
-                      <p 
+                      <p
                         className="text-gray-700 cursor-pointer hover:bg-gray-50 p-2 rounded border-2 border-transparent hover:border-gray-200 transition-colors"
                         onClick={() => startEditing('hourlyRate')}
                       >
