@@ -551,6 +551,19 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
 
   return (
     <div className="min-h-screen bg-gray-50 pt-16">
+      {/* Back Button */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="container mx-auto px-4 py-3">
+          <button
+            onClick={onBack}
+            className="flex items-center space-x-2 text-gray-600 hover:text-[#4169e1] transition-colors"
+          >
+            <ArrowLeft size={20} />
+            <span className="font-medium">Späť na zoznam</span>
+          </button>
+        </div>
+      </div>
+
       {/* Navigation Tabs */}
       <div className="bg-white shadow-sm">
         <div className="container mx-auto px-4">
