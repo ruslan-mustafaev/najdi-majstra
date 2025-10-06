@@ -57,10 +57,18 @@ const clearCache = () => {
 };
 
 export const getTopRatedMasters = async () => {
+  console.log('🔍 MASTERS_API: getTopRatedMasters called');
+
   try {
     // Сначала проверяем кеш - если есть, отдаем его сразу
     const cachedMasters = loadCacheFromStorage();
+    console.log('📦 MASTERS_API: Cache check result:', {
+      hasCached: !!cachedMasters,
+      count: cachedMasters?.length || 0
+    });
+
     if (cachedMasters && cachedMasters.length > 0) {
+      console.log('✅ MASTERS_API: Returning cached masters');
       // Запускаем обновление в фоне без проверки подключения
       setTimeout(() => {
         loadFromDatabase().catch(err => {
@@ -71,26 +79,38 @@ export const getTopRatedMasters = async () => {
     }
 
     // Если кеша нет, проверяем подключение и загружаем
+    console.log('🔌 MASTERS_API: No cache, checking connection...');
     const isConnected = await checkConnection();
+    console.log('🔌 MASTERS_API: Connection result:', isConnected);
+
     if (!isConnected) {
       throw new Error('Database connection failed');
     }
 
-    return await loadFromDatabase();
+    console.log('📡 MASTERS_API: Loading from database...');
+    const result = await loadFromDatabase();
+    console.log('✅ MASTERS_API: Loaded from DB:', result.length, 'masters');
+    return result;
   } catch (error) {
-    console.error('Get masters error:', error);
+    console.error('❌ MASTERS_API: Get masters error:', error);
     throw error;
   }
 };
 
 const loadFromDatabase = async () => {
+  console.log('💾 LOAD_DB: Starting database load...');
+
   try {
     // Проверяем подключение перед запросом
+    console.log('🔌 LOAD_DB: Checking connection...');
     const isConnected = await checkConnection();
+    console.log('🔌 LOAD_DB: Connection check result:', isConnected);
+
     if (!isConnected) {
       throw new Error('Database connection check failed');
     }
 
+    console.log('📡 LOAD_DB: Executing query to masters table...');
     const { data, error } = await supabase
       .from('masters')
       .select('*')
@@ -98,10 +118,19 @@ const loadFromDatabase = async () => {
       .eq('profile_completed', true)
       .limit(10);
 
+    console.log('📊 LOAD_DB: Query result:', {
+      hasData: !!data,
+      count: data?.length || 0,
+      hasError: !!error,
+      error: error?.message
+    });
+
     if (error) {
-      console.error('Database error:', {
+      console.error('❌ LOAD_DB: Database error:', {
         message: error.message,
-        code: error.code
+        code: error.code,
+        details: error.details,
+        hint: error.hint
       });
 
       throw error;
