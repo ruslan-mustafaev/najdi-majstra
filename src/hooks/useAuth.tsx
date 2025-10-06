@@ -54,9 +54,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const getInitialSession = async () => {
       console.log('🔍 AUTH: Getting initial session...');
 
+      // КРИТИЧЕСКАЯ ПРОВЕРКА: что в localStorage?
+      const allKeys = Object.keys(localStorage);
+      const authKeys = allKeys.filter(k => k.includes('sb-') || k.includes('supabase'));
+      console.log('🔑 AUTH: LocalStorage keys:', authKeys);
+
+      authKeys.forEach(key => {
+        const value = localStorage.getItem(key);
+        console.log(`  - ${key}:`, value ? value.substring(0, 50) + '...' : 'null');
+      });
+
       try {
         const { data: { session }, error } = await supabase.auth.getSession();
-        console.log('📊 AUTH: Session result:', { session: !!session, error });
+        console.log('📊 AUTH: Session result:', {
+          hasSession: !!session,
+          hasUser: !!session?.user,
+          email: session?.user?.email,
+          error
+        });
 
         if (!isMounted) {
           console.log('⚠️ AUTH: Component unmounted, skipping');
