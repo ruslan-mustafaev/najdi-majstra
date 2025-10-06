@@ -216,21 +216,6 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
               <p className="text-gray-700 mb-6 leading-relaxed">
                 {master.description}
               </p>
-
-              {/* Services */}
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold mb-3">Služby</h3>
-                <div className="flex flex-wrap gap-2">
-                  {master.services.map((service, index) => (
-                    <span
-                      key={index}
-                      className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
-                    >
-                      {service}
-                    </span>
-                  ))}
-                </div>
-              </div>
             </div>
 
             {/* Reviews */}
