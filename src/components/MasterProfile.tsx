@@ -85,79 +85,9 @@ const getSocialIcon = (platform: string) => {
 };
 
 export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, isOwnProfile = false }) => {
-  // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
-  // Function to check if master is currently available based on current time and day
-  const getCurrentAvailability = () => {
-    const now = new Date();
-    const currentHour = now.getHours();
-    const currentDay = now.getDay(); // 0 = Sunday, 1 = Monday, etc.
-    
-    // Convert to our day mapping (Monday = 1, Sunday = 7)
-    const dayMapping = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-    const currentDayKey = dayMapping[currentDay];
-    
-    // Different availability patterns for different masters
-    let todayHours = master.workingHours?.[currentDayKey] || '8:00 - 17:00';
-    let isWorkingDay = true;
-    
-    // Ensure todayHours is a string
-    if (!todayHours || typeof todayHours !== 'string') {
-      todayHours = '8:00 - 17:00';
-    }
-    
-    // Master-specific schedules for variety
-    if (master.id === '1' && currentDayKey === 'sunday') {
-      isWorkingDay = false;
-    } else if (master.id === '2' && currentDayKey === 'monday') {
-      isWorkingDay = false;
-    } else if (master.id === '3' && (currentDayKey === 'saturday' || currentDayKey === 'sunday')) {
-      isWorkingDay = false;
-    }
-    
-    // Create variety in current availability based on master ID and current time
-    const masterIdNum = parseInt(master.id);
-    const timeVariation = (masterIdNum * 2) % 24; // Different time offsets for each master
-    const adjustedHour = (currentHour + timeVariation) % 24;
-    
-    // Parse working hours
-    if (!todayHours.includes(' - ')) {
-      return { available: false, reason: 'Nesprávny formát pracovného času' };
-    }
-    
-    if (!isWorkingDay) {
-      return { available: false, reason: 'Dnes zatvorené' };
-    }
-    
-    // Some masters are available now, some are not - based on their ID
-    if (masterIdNum % 3 === 0) {
-      return { available: true, reason: `dostupný do ${todayHours.split(' - ')[1]}` };
-    } else if (masterIdNum % 3 === 1) {
-      return { available: false, reason: 'dnes už zatvorené' };
-    }
-    
-    const [startTime, endTime] = todayHours.split(' - ');
-    
-    if (!startTime || !endTime) {
-      return { available: false, reason: 'Nesprávny formát pracovného času' };
-    }
-    
-    const [startHour] = startTime.split(':').map(Number);
-    const [endHour] = endTime.split(':').map(Number);
-    
-    if (adjustedHour >= startHour && adjustedHour < endHour) {
-      return { available: true, reason: `dostupný do ${endTime}` };
-    } else if (adjustedHour < startHour) {
-      return { available: false, reason: `dostupný od ${startTime}` };
-    } else {
-      return { available: false, reason: 'dnes už zatvorené' };
-    }
-  };
-
-  const currentAvailability = getCurrentAvailability();
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
@@ -274,17 +204,6 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                     <MapPin size={18} className="mr-2" />
                     <span>{master.location}</span>
                   </div>
-                  <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                    currentAvailability.available ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                  }`}>
-                    <div className={`w-2 h-2 rounded-full mr-2 ${
-                      currentAvailability.available ? 'bg-green-500' : 'bg-red-500'
-                    }`} />
-                    {currentAvailability.available ? 'Dostupný teraz' : 'Momentálne nedostupný'}
-                  </div>
-                  <p className="text-sm text-gray-500 mt-2">
-                    {currentAvailability.reason} • aktualizácia pred 2 hodinami
-                  </p>
                 </div>
                 <div className="text-right">
                   <div className="flex items-center space-x-1 mb-2">
