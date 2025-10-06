@@ -124,41 +124,51 @@ const HomePage: React.FC = () => {
 
   // Load masters from Supabase
   useEffect(() => {
+    let isMounted = true;
+
     const loadMasters = async () => {
-      console.log('🚀 App: Starting to load masters...');
+      if (!isMounted) return;
+
       setIsLoadingMasters(true);
       setConnectionError(null);
+
       try {
         const masters = await getTopRatedMasters();
-        console.log('✅ App: Masters loaded successfully:', masters.length);
-        setRealMasters(masters);
-        setRetryCount(0); // Сбрасываем счетчик попыток при успехе
+
+        if (isMounted) {
+          setRealMasters(masters);
+          setRetryCount(0);
+        }
       } catch (error) {
-        console.error('❌ App: Error loading masters:', error);
-        
-        // Проверяем тип ошибки
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        
-        setConnectionError('Problém s pripojením k databáze. Skúšam znovu...');
-        
-        // Автоматическая повторная попытка с экспоненциальной задержкой
-        if (retryCount < 3) {
-          const delay = Math.pow(2, retryCount) * 1000; // 1s, 2s, 4s
-          console.log(`🔄 App: Retrying in ${delay}ms... (attempt ${retryCount + 1}/3)`);
+        console.error('Error loading masters:', error);
+
+        if (!isMounted) return;
+
+        // Автоматическая повторная попытка (максимум 2 раза)
+        if (retryCount < 2) {
+          const delay = (retryCount + 1) * 2000; // 2s, 4s
+          setConnectionError('Načítavam dáta...');
           setTimeout(() => {
-            setRetryCount(prev => prev + 1);
+            if (isMounted) {
+              setRetryCount(prev => prev + 1);
+            }
           }, delay);
         } else {
-          setConnectionError('Nepodarilo sa pripojiť k databáze. Skúste obnoviť stránku.');
+          setConnectionError('Problém s pripojením. Obnovte stránku.');
         }
       } finally {
-        setIsLoadingMasters(false);
-        console.log('🏁 App: Loading masters finished');
+        if (isMounted) {
+          setIsLoadingMasters(false);
+        }
       }
     };
-    
+
     loadMasters();
-  }, [retryCount]); // Добавляем retryCount в зависимости
+
+    return () => {
+      isMounted = false;
+    };
+  }, [retryCount]);
   
 
   // ИСПРАВЛЕННЫЙ обработчик выбора типа пользователя

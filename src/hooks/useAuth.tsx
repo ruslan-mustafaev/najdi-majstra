@@ -49,83 +49,80 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Get initial session
     const getInitialSession = async () => {
       try {
-        console.log('Getting initial session...');
         const { data: { session }, error } = await supabase.auth.getSession();
 
         if (error) {
           console.error('Error getting session:', error);
-          // Только логируем ошибку, не очищаем сессию автоматически
-          console.warn('Session error, but keeping existing session:', error.message);
-        } else if (session?.user) {
-          console.log('Session restored for user:', session.user.email);
-          
-          // Проверяем валидность сессии
-          const now = Math.floor(Date.now() / 1000);
-          if (session.expires_at && session.expires_at < now) {
-            console.log('🕐 Session expired, refreshing...');
-            const { error: refreshError } = await supabase.auth.refreshSession();
-            if (refreshError) {
-              console.error('Failed to refresh session:', refreshError);
-              console.warn('Session refresh failed, but keeping session');
+          setLoading(false);
+          return;
+        }
+
+        if (session?.user) {
+          console.log('✅ Session restored:', session.user.email);
+
+          // Проверяем не удален ли профиль (только для мастеров)
+          if (session.user.user_metadata?.user_type === 'master') {
+            const isDeleted = await checkIfProfileDeleted(session.user.id);
+            if (isDeleted) {
+              console.log('Profile deleted, signing out...');
+              await supabase.auth.signOut();
+              setLoading(false);
+              return;
             }
           }
-          
+
           setSession(session);
           setUser(session.user);
-        } else {
-          console.log('No active session found');
         }
       } catch (error) {
-        console.error('Session error:', error);
-        // Только логируем критические ошибки, не выходим автоматически
-        console.warn('Critical session error, but preserving user session');
+        console.error('Session initialization error:', error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     getInitialSession();
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth state changed:', event, session?.user?.email);
+      console.log('Auth event:', event);
 
       if (event === 'INITIAL_SESSION') {
+        // Уже обработано в getInitialSession
         return;
       }
 
       if (event === 'SIGNED_IN' && session?.user) {
-        console.log('✅ User signed in successfully');
-        const isDeleted = await checkIfProfileDeleted(session.user.id);
-
-        if (isDeleted) {
-          console.log('Profile is deleted, preventing login...');
-          await supabase.auth.signOut();
-          alert('Váš profil bol zmazaný. Nemôžete sa prihlásiť.');
-        } else {
-          // Очищаем только кеш мастеров, не трогаем auth данные
-          console.log('🧹 Clearing masters cache on login...');
-          localStorage.removeItem('masters_cache');
-          localStorage.removeItem('masters_cache_timestamp');
-          setSession(session);
-          setUser(session.user);
+        // Проверяем удален ли профиль (только для мастеров)
+        if (session.user.user_metadata?.user_type === 'master') {
+          const isDeleted = await checkIfProfileDeleted(session.user.id);
+          if (isDeleted) {
+            await supabase.auth.signOut();
+            alert('Váš profil bol zmazaný. Nemôžete sa prihlásiť.');
+            return;
+          }
         }
+
+        // Обновляем состояние
+        setSession(session);
+        setUser(session.user);
+
+        // Очищаем кеш мастеров при входе
+        localStorage.removeItem('masters_cache');
+        localStorage.removeItem('masters_cache_timestamp');
       } else if (event === 'SIGNED_OUT') {
-        console.log('User signed out');
-        // Очищаем только при явном выходе
-        console.log('🧹 Clearing cache on explicit sign out...');
+        // Очищаем только кеши, НЕ трогаем supabase.auth данные
         Object.keys(localStorage).forEach(key => {
-          if (key.includes('cache') || key.includes('recently-viewed')) {
+          if ((key.includes('cache') || key.includes('master_profile_')) && !key.includes('supabase.auth')) {
             localStorage.removeItem(key);
           }
         });
         setSession(null);
         setUser(null);
       } else if (event === 'TOKEN_REFRESHED' && session) {
-        console.log('Token refreshed for user:', session.user?.email);
         setSession(session);
         setUser(session.user);
       } else if (event === 'USER_UPDATED' && session) {
-        console.log('User updated:', session.user?.email);
         setSession(session);
         setUser(session.user);
       }
