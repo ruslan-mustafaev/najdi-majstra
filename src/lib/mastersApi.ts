@@ -16,17 +16,14 @@ const loadCacheFromStorage = () => {
       const cacheAge = now - parseInt(timestamp, 10);
 
       if (cacheAge < CACHE_DURATION) {
-        console.log('Loaded masters from localStorage cache');
         return JSON.parse(cached);
       } else {
-        console.log('Cache expired, clearing...');
         localStorage.removeItem(CACHE_KEY);
         localStorage.removeItem(CACHE_TIMESTAMP_KEY);
       }
     }
   } catch (error) {
     console.error('Error loading cache:', error);
-    // Очищаем поврежденный кеш
     localStorage.removeItem(CACHE_KEY);
     localStorage.removeItem(CACHE_TIMESTAMP_KEY);
   }
@@ -38,24 +35,22 @@ const saveCacheToStorage = (masters: any[]) => {
   try {
     localStorage.setItem(CACHE_KEY, JSON.stringify(masters));
     localStorage.setItem(CACHE_TIMESTAMP_KEY, Date.now().toString());
-    console.log('Masters cached successfully:', masters.length);
   } catch (error) {
     console.error('Error saving cache:', error);
   }
 };
 
-// Функция очистки кеша при ошибках
+// Функция очистки кеша при ошибках (НЕ ТРОГАЕТ СЕССИЮ!)
 const clearCache = () => {
   try {
     localStorage.removeItem(CACHE_KEY);
     localStorage.removeItem(CACHE_TIMESTAMP_KEY);
-    // Также очищаем другие связанные кеши
+    // Очищаем ТОЛЬКО кеши мастеров, НЕ ТРОГАЕМ supabase сессию!
     Object.keys(localStorage).forEach(key => {
-      if (key.includes('masters') || key.includes('cache')) {
+      if ((key.includes('masters') || key.includes('cache')) && !key.includes('supabase')) {
         localStorage.removeItem(key);
       }
     });
-    console.log('Cache cleared due to connection issues');
   } catch (error) {
     console.error('Error clearing cache:', error);
   }
@@ -63,45 +58,32 @@ const clearCache = () => {
 
 export const getTopRatedMasters = async () => {
   try {
-    console.log('🚀 Starting getTopRatedMasters...');
-    
-    // Проверяем подключение к базе данных
-    const isConnected = await checkConnection();
-    if (!isConnected) {
-      console.warn('❌ Database connection failed, clearing cache');
-      clearCache();
-      throw new Error('Database connection failed');
-    }
-
-    // Проверяем кеш в localStorage
+    // Сначала проверяем кеш - если есть, отдаем его сразу
     const cachedMasters = loadCacheFromStorage();
     if (cachedMasters && cachedMasters.length > 0) {
-      console.log('📦 Using cached masters:', cachedMasters.length);
-      // Запускаем обновление в фоне
+      // Запускаем обновление в фоне без проверки подключения
       setTimeout(() => {
-        console.log('🔄 Updating cache in background...');
         loadFromDatabase().catch(err => {
-          console.warn('Background update failed:', err);
+          console.warn('Background update failed:', err.message);
         });
       }, 100);
       return cachedMasters;
     }
 
-    console.log('🔄 Loading fresh data from database...');
+    // Если кеша нет, проверяем подключение и загружаем
+    const isConnected = await checkConnection();
+    if (!isConnected) {
+      throw new Error('Database connection failed');
+    }
+
     return await loadFromDatabase();
   } catch (error) {
-    console.error('❌ Get masters error:', error);
-    
-    // При ошибке подключения только логируем, не очищаем кеш агрессивно
-    console.warn('Masters loading failed, but keeping existing cache');
-    throw error; // Пробрасываем ошибку дальше для обработки в компоненте
+    console.error('Get masters error:', error);
+    throw error;
   }
 };
 
 const loadFromDatabase = async () => {
-  console.log('📊 === LOADING MASTERS FROM DATABASE ===');
-  console.log('Supabase client exists:', !!supabase);
-
   try {
     // Проверяем подключение перед запросом
     const isConnected = await checkConnection();
@@ -109,7 +91,6 @@ const loadFromDatabase = async () => {
       throw new Error('Database connection check failed');
     }
 
-    console.log('🔍 Executing database query...');
     const { data, error } = await supabase
       .from('masters')
       .select('*')
@@ -117,27 +98,16 @@ const loadFromDatabase = async () => {
       .eq('profile_completed', true)
       .limit(10);
 
-    console.log('✅ Database query completed!');
-    console.log('📈 Data received:', data?.length || 0, 'masters');
-
     if (error) {
-      console.error('❌ SUPABASE DATABASE ERROR:', {
+      console.error('Database error:', {
         message: error.message,
-        details: error.details,
-        hint: error.hint,
-        code: error.code,
-        status: (error as any).status,
-        timestamp: new Date().toISOString()
+        code: error.code
       });
-      
-      // Только логируем ошибку, не очищаем сессию
-      console.warn('Database error, but preserving session');
-      
+
       throw error;
     }
 
     // Преобразуем данные из базы в формат Master
-    console.log('🔄 Converting database records to Master format...');
     const masters = (data || []).map(master => ({
       id: master.id,
       name: master.name || 'Без имени',
@@ -186,20 +156,14 @@ const loadFromDatabase = async () => {
 
     // Сохраняем в кеш
     if (masters.length > 0) {
-      console.log('💾 Saving to cache:', masters.length, 'masters');
       saveCacheToStorage(masters);
     }
 
-    console.log(`✅ Successfully loaded ${masters.length} masters from database`);
     return masters;
 
   } catch (err) {
-    console.error('❌ Exception in loadFromDatabase:', {
-      error: err,
-      timestamp: new Date().toISOString(),
-      stack: err instanceof Error ? err.stack : 'No stack trace'
-    });
-    clearCache();
+    console.error('Exception in loadFromDatabase:', err);
+    // НЕ очищаем кеш при ошибке загрузки!
     throw err;
   }
 };

@@ -294,6 +294,39 @@ const HomePage: React.FC = () => {
   );
 };
 
+// Вспомогательные функции для кеширования профилей
+const saveMasterToCache = (id: string, master: Master) => {
+  try {
+    const cacheData = {
+      data: master,
+      timestamp: Date.now()
+    };
+    localStorage.setItem(`master_profile_${id}`, JSON.stringify(cacheData));
+    console.log('✅ Saved master to profile cache:', id);
+  } catch (e) {
+    console.warn('Failed to save master to cache:', e);
+  }
+};
+
+const loadMasterFromSource = async (id: string): Promise<Master | null> => {
+  try {
+    // Сначала ищем в mockMasters
+    const { mockMasters } = await import('./data/mockData');
+    let foundMaster = mockMasters.find(m => m.id === id);
+
+    // Если не найден в mock, пробуем загрузить из Supabase
+    if (!foundMaster) {
+      const masters = await getTopRatedMasters();
+      foundMaster = masters.find(m => m.id === id);
+    }
+
+    return foundMaster || null;
+  } catch (error) {
+    console.error('Error loading master from source:', error);
+    return null;
+  }
+};
+
 // Страница профиля мастера
 const ProfilePage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -301,27 +334,49 @@ const ProfilePage: React.FC = () => {
   const [master, setMaster] = useState<Master | null>(null);
   const [loading, setLoading] = useState(true);
 
-  console.log('ProfilePage rendered with ID:', id); // Debug log
+  console.log('ProfilePage rendered with ID:', id);
 
   useEffect(() => {
     const loadMaster = async () => {
-      console.log('Loading master with ID:', id); // Debug log
+      console.log('Loading master with ID:', id);
       setLoading(true);
       try {
-        // Сначала ищем в mockMasters
-        const { mockMasters } = await import('./data/mockData');
-        let foundMaster = mockMasters.find(m => m.id === id);
-        
-        // Если не найден в mock, пробуем загрузить из Supabase
-        if (!foundMaster) {
-          const masters = await getTopRatedMasters();
-          foundMaster = masters.find(m => m.id === id);
+        // 1. Проверяем кеш просмотренного профиля
+        const cachedProfile = localStorage.getItem(`master_profile_${id}`);
+        if (cachedProfile) {
+          try {
+            const cached = JSON.parse(cachedProfile);
+            const cacheAge = Date.now() - cached.timestamp;
+            // Кеш профиля действителен 1 час
+            if (cacheAge < 60 * 60 * 1000) {
+              console.log('✅ Loaded master from profile cache');
+              setMaster(cached.data);
+              setLoading(false);
+
+              // Обновляем в фоне
+              setTimeout(() => {
+                loadMasterFromSource(id).then(m => {
+                  if (m) {
+                    setMaster(m);
+                    saveMasterToCache(id, m);
+                  }
+                }).catch(err => console.warn('Background profile update failed:', err));
+              }, 100);
+              return;
+            }
+          } catch (e) {
+            console.warn('Failed to parse cached profile:', e);
+          }
         }
-        
-        console.log('Found master:', foundMaster); // Debug log
-        
+
+        // 2. Загружаем из источников
+        const foundMaster = await loadMasterFromSource(id);
+
+        console.log('Found master:', foundMaster);
+
         if (foundMaster) {
           setMaster(foundMaster);
+          saveMasterToCache(id, foundMaster);
         } else {
           console.error('Master not found with ID:', id);
         }
@@ -331,7 +386,7 @@ const ProfilePage: React.FC = () => {
         setLoading(false);
       }
     };
-    
+
     if (id) {
       loadMaster();
     }
