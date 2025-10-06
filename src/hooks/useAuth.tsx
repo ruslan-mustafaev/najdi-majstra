@@ -46,52 +46,42 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
-    // Get initial session
+    let isMounted = true;
+
     const getInitialSession = async () => {
-      console.log('🔍 useAuth: Getting initial session...');
-
       try {
-        // Проверяем что есть в localStorage
-        const storageKeys = Object.keys(localStorage).filter(k => k.includes('supabase'));
-        console.log('📦 Storage keys:', storageKeys);
-
         const { data: { session }, error } = await supabase.auth.getSession();
 
+        if (!isMounted) return;
+
         if (error) {
-          console.error('❌ Error getting session:', error);
+          console.error('Error getting session:', error);
           setLoading(false);
           return;
         }
 
         if (session?.user) {
-          console.log('✅ Session found:', {
-            email: session.user.email,
-            userType: session.user.user_metadata?.user_type,
-            expiresAt: new Date(session.expires_at * 1000).toLocaleString()
-          });
-
           // Проверяем не удален ли профиль (только для мастеров)
           if (session.user.user_metadata?.user_type === 'master') {
             const isDeleted = await checkIfProfileDeleted(session.user.id);
             if (isDeleted) {
-              console.log('⚠️ Profile deleted, signing out...');
               await supabase.auth.signOut();
-              setLoading(false);
+              if (isMounted) setLoading(false);
               return;
             }
           }
 
-          setSession(session);
-          setUser(session.user);
-          console.log('✅ User state updated');
-        } else {
-          console.log('ℹ️ No active session');
+          if (isMounted) {
+            setSession(session);
+            setUser(session.user);
+          }
         }
       } catch (error) {
-        console.error('❌ Session initialization error:', error);
+        console.error('Session initialization error:', error);
       } finally {
-        setLoading(false);
-        console.log('✅ useAuth initialization complete');
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
@@ -99,15 +89,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth event:', event);
-
       if (event === 'INITIAL_SESSION') {
-        // Уже обработано в getInitialSession
         return;
       }
 
+      if (!isMounted) return;
+
       if (event === 'SIGNED_IN' && session?.user) {
-        // Проверяем удален ли профиль (только для мастеров)
         if (session.user.user_metadata?.user_type === 'master') {
           const isDeleted = await checkIfProfileDeleted(session.user.id);
           if (isDeleted) {
@@ -117,15 +105,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           }
         }
 
-        // Обновляем состояние
         setSession(session);
         setUser(session.user);
-
-        // Очищаем кеш мастеров при входе
         localStorage.removeItem('masters_cache');
         localStorage.removeItem('masters_cache_timestamp');
       } else if (event === 'SIGNED_OUT') {
-        // Очищаем только кеши, НЕ трогаем supabase.auth данные
         Object.keys(localStorage).forEach(key => {
           if ((key.includes('cache') || key.includes('master_profile_')) && !key.includes('supabase.auth')) {
             localStorage.removeItem(key);
@@ -142,7 +126,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signUp = async (email: string, password: string, userData?: any) => {
