@@ -3,10 +3,6 @@ import { createClient } from '@supabase/supabase-js'
 
 console.log('📦 SUPABASE: Module loading...');
 
-if (typeof window === 'undefined') {
-  console.warn('⚠️ SUPABASE: Client loaded on server side — skipping');
-}
-
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
@@ -25,9 +21,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     autoRefreshToken: true,
     persistSession: true,
-    detectSessionInUrl: true,
-    storage: typeof window !== 'undefined' ? window.localStorage : undefined,
-    storageKey: 'sb-budlyqnloyiyexsocpbb-auth-token'
+    detectSessionInUrl: true
   }
 })
 
