@@ -54,6 +54,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const getInitialSession = async () => {
       console.log('🔍 AUTH: Getting initial session...');
 
+      // ✅ Проверка валидности JSON токена Supabase
+      const tokenKey = 'sb-budlyqnloyiyexsocpbb-auth-token';
+      const rawToken = localStorage.getItem(tokenKey);
+
+      if (rawToken) {
+        try {
+          JSON.parse(rawToken);
+          console.log('✅ AUTH: Token is valid JSON');
+        } catch (e) {
+          console.error('⚠️ AUTH: Corrupted Supabase token detected, clearing...');
+          localStorage.removeItem(tokenKey);
+        }
+      }
+
       // КРИТИЧЕСКАЯ ПРОВЕРКА: что в localStorage?
       const allKeys = Object.keys(localStorage);
       const authKeys = allKeys.filter(k => k.includes('sb-') || k.includes('supabase'));
@@ -78,8 +92,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           return;
         }
 
-        if (error) {
-          console.error('❌ AUTH: Error getting session:', error);
+        if (error || !session) {
+          console.error('❌ AUTH: Invalid or missing session:', error);
+          console.log('🔧 AUTH: Forcing session reset...');
+          localStorage.removeItem(tokenKey);
+          await supabase.auth.signOut();
+          setSession(null);
+          setUser(null);
           setLoading(false);
           return;
         }
