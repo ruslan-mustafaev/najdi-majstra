@@ -119,45 +119,49 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     getInitialSession();
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       console.log('🔔 AUTH: Auth state changed:', event, !!session);
 
       if (event === 'INITIAL_SESSION') {
+        setLoading(false);
         return;
       }
 
       if (!isMounted) return;
 
-      if (event === 'SIGNED_IN' && session?.user) {
-        console.log('✅ AUTH: User signed in:', session.user.email);
-        if (session.user.user_metadata?.user_type === 'master') {
-          const isDeleted = await checkIfProfileDeleted(session.user.id);
-          if (isDeleted) {
-            await supabase.auth.signOut();
-            alert('Váš profil bol zmazaný. Nemôžete sa prihlásiť.');
-            return;
+      // Use async IIFE to avoid deadlock
+      (async () => {
+        if (event === 'SIGNED_IN' && session?.user) {
+          console.log('✅ AUTH: User signed in:', session.user.email);
+          if (session.user.user_metadata?.user_type === 'master') {
+            const isDeleted = await checkIfProfileDeleted(session.user.id);
+            if (isDeleted) {
+              await supabase.auth.signOut();
+              alert('Váš profil bol zmazaný. Nemôžete sa prihlásiť.');
+              return;
+            }
           }
-        }
 
-        setSession(session);
-        setUser(session.user);
-        localStorage.removeItem('masters_cache');
-        localStorage.removeItem('masters_cache_timestamp');
-      } else if (event === 'SIGNED_OUT') {
-        Object.keys(localStorage).forEach(key => {
-          if ((key.includes('cache') || key.includes('master_profile_')) && !key.includes('supabase.auth')) {
-            localStorage.removeItem(key);
-          }
-        });
-        setSession(null);
-        setUser(null);
-      } else if (event === 'TOKEN_REFRESHED' && session) {
-        setSession(session);
-        setUser(session.user);
-      } else if (event === 'USER_UPDATED' && session) {
-        setSession(session);
-        setUser(session.user);
-      }
+          setSession(session);
+          setUser(session.user);
+          localStorage.removeItem('masters_cache');
+          localStorage.removeItem('masters_cache_timestamp');
+        } else if (event === 'SIGNED_OUT') {
+          Object.keys(localStorage).forEach(key => {
+            if ((key.includes('cache') || key.includes('master_profile_')) && !key.includes('supabase.auth')) {
+              localStorage.removeItem(key);
+            }
+          });
+          setSession(null);
+          setUser(null);
+        } else if (event === 'TOKEN_REFRESHED' && session) {
+          setSession(session);
+          setUser(session.user);
+        } else if (event === 'USER_UPDATED' && session) {
+          setSession(session);
+          setUser(session.user);
+        }
+      })();
     });
 
     return () => {
