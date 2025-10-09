@@ -1,6 +1,6 @@
 import React from 'react';
 import { useEffect } from 'react';
-import { ArrowLeft, Star, MapPin, Clock, Phone, Mail, Globe, Award, Users, Calendar, Euro, Play, Facebook, Instagram, Linkedin, Youtube, Twitter, BookText as TikTok, MessageCircle } from 'lucide-react';
+import { ArrowLeft, Star, MapPin, Clock, Phone, Mail, Globe, Award, Users, Calendar, Euro, Play, Facebook, Instagram, Linkedin, Youtube, Twitter, MessageCircle } from 'lucide-react';
 import { Master } from '../types';
 import { WorkPlanningCalendar } from './WorkPlanningCalendar';
 import { MasterPortfolio } from './MasterPortfolio';
@@ -76,7 +76,7 @@ const getSocialIcon = (platform: string) => {
     case 'twitter':
       return <Twitter size={20} className="text-blue-400" />;
     case 'tiktok':
-      return <TikTok size={20} className="text-black" />;
+      return <img src="/svg_social/tiktok-icon.svg" alt="TikTok" className="w-5 h-5" />;
     case 'telegram':
       return <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold">T</div>;
     default:
@@ -223,7 +223,7 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                       className="flex items-center justify-center w-10 h-10 rounded-full bg-black hover:bg-gray-800 transition-colors"
                       title="TikTok"
                     >
-                      <TikTok size={20} className="text-white" />
+                      <img src="/svg_social/tiktok-icon.svg" alt="TikTok" className="w-5 h-5" />
                     </a>
                   )}
                   {(master as any).socialTelegram && (
