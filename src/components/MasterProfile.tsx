@@ -223,7 +223,7 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                       className="flex items-center justify-center w-10 h-10 rounded-full bg-black hover:bg-gray-800 transition-colors"
                       title="TikTok"
                     >
-                      <img src="/svg_social/tiktok-icon.svg" alt="TikTok" className="w-5 h-5" />
+                      <img src="/svg_social/tiktok-icon.svg" alt="TikTok" className="w-6 h-6" />
                     </a>
                   )}
                   {(master as any).socialTelegram && (
