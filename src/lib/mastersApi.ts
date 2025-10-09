@@ -119,7 +119,7 @@ const loadFromDatabase = async () => {
       profileImage: master.profile_image_url || '/placeholder-avatar.svg',
       workImages: master.work_images_urls || [],
       workVideos: master.work_video_url || [],
-      description: master.description || 'Profesionálny majster s pracovnými skúsenosťami',
+      description: master.description || '',
       services: ['Opravy', 'Inštalácie', 'Servis'],
       experience: master.experience_years ? `${master.experience_years} rokov` : '5+ rokov',
       certifications: master.certificates ? [master.certificates] : ['Odborná spôsobilosť'],
