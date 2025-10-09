@@ -52,7 +52,6 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
     profession: string;
     age?: number;
     location: string;
-    workRadius: string;
     description: string;
     experience: string;
     services: string;
@@ -92,7 +91,6 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
     name: user?.user_metadata?.full_name || user?.user_metadata?.first_name + ' ' + user?.user_metadata?.last_name || '',
     profession: user?.user_metadata?.profession || '',
     location: user?.user_metadata?.location || '',
-    workRadius: '',
     description: user?.user_metadata?.description || '',
     experience: user?.user_metadata?.experience || '',
     services: '',
@@ -826,13 +824,6 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                           onChange={(e) => handleFieldChange('location', e.target.value)}
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
                         />
-                        <input
-                          type="text"
-                          placeholder="Pracovný rádius (napr. +50km)"
-                          value={profileData.workRadius}
-                          onChange={(e) => handleFieldChange('workRadius', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
-                        />
                         <div className="flex items-center space-x-3">
                           <input
                             type="checkbox"
@@ -845,7 +836,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                         </div>
                       </div>
                     ) : (
-                      <div 
+                      <div
                         className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded border-2 border-transparent hover:border-gray-200 transition-colors"
                         onClick={() => startEditing('location')}
                       >
