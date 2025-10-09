@@ -47,6 +47,8 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
       const startDate = new Date(year, month, 1).toISOString().split('T')[0];
       const endDate = new Date(year, month + 1, 0).toISOString().split('T')[0];
 
+      console.log('📅 Loading availability from', startDate, 'to', endDate);
+
       const { data, error } = await supabase
         .from('master_availability')
         .select('*')
@@ -55,6 +57,8 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
         .lte('date', endDate);
 
       if (error) throw error;
+
+      console.log('📊 Loaded data:', data);
 
       const availabilityMap: Record<string, AvailabilityDay> = {};
       data?.forEach((item) => {
@@ -67,6 +71,7 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
         };
       });
 
+      console.log('🗺️ Availability map keys:', Object.keys(availabilityMap));
       setAvailability(availabilityMap);
     } catch (error) {
       console.error('Error loading availability:', error);
