@@ -673,7 +673,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
             <div className="space-y-6">
               <div className="bg-white rounded-xl shadow-lg p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2">Fotky</h3>
+                  <h3 className="text-xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2">Vaše fotky</h3>
                   {hasChanges && (
                     <div className="flex space-x-2">
                       <button
@@ -768,7 +768,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
             <div className="space-y-6">
               <div className="bg-white rounded-xl shadow-lg p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2">Identita a detaily</h3>
+                  <h3 className="text-xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2">Vaša prezentácia</h3>
                   {hasChanges && (
                     <div className="flex space-x-2">
                       <button
@@ -1301,7 +1301,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
             {/* Column 3: Calendar & Contact */}
             <div className="space-y-6">
               <div className="bg-white rounded-xl shadow-lg p-6">
-                <h3 className="text-xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2 mb-6">Kalendár a kontakt</h3>
+                <h3 className="text-xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2 mb-6">Váš kalendár a kontakty</h3>
                 
                 {/* Availability Schedule */}
                 <div className="mb-6">
