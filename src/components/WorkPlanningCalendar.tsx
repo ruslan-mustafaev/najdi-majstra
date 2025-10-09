@@ -38,8 +38,11 @@ export const WorkPlanningCalendar: React.FC<WorkPlanningCalendarProps> = ({ mast
         const year = currentDate.getFullYear();
         const month = currentDate.getMonth();
 
-        const startDate = new Date(year, month, 1).toISOString().split('T')[0];
-        const endDate = new Date(year, month + 1, 0).toISOString().split('T')[0];
+        // Get last day of the month
+        const lastDay = new Date(year, month + 1, 0).getDate();
+
+        const startDate = `${year}-${String(month + 1).padStart(2, '0')}-01`;
+        const endDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
 
         const { data, error } = await supabase
           .from('master_availability')
@@ -52,9 +55,8 @@ export const WorkPlanningCalendar: React.FC<WorkPlanningCalendarProps> = ({ mast
 
         const availabilityMap: Record<string, any> = {};
         data?.forEach((item) => {
-          // Parse date correctly - add UTC to avoid timezone issues
-          const itemDate = new Date(item.date + 'T00:00:00');
-          const day = itemDate.getDate();
+          // Extract day from date string (YYYY-MM-DD)
+          const day = parseInt(item.date.split('-')[2], 10);
           availabilityMap[day] = {
             status: item.status,
             work_hours_start: item.work_hours_start,
