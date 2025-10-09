@@ -277,6 +277,17 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                 )}
               </div>
 
+              <div className="mt-6 space-y-3">
+                <button className="w-full bg-green-500 text-white py-3 rounded-lg font-medium hover:bg-green-600 transition-colors flex items-center justify-center space-x-2">
+                  <Phone size={20} />
+                  <span>{isOwnProfile ? 'Upraviť profil' : 'Zavolať'}</span>
+                </button>
+                <button className="w-full bg-blue-500 text-white py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors flex items-center justify-center space-x-2">
+                  <Mail size={20} />
+                  <span>{isOwnProfile ? 'Zobraziť ako Dashboard' : 'Napísať email'}</span>
+                </button>
+              </div>
+
               {/* Social Media */}
               {((master as any).socialFacebook || (master as any).socialInstagram || (master as any).socialYoutube ||
                 (master as any).socialTiktok || (master as any).socialTelegram || (master as any).socialWhatsapp) && (
@@ -352,17 +363,6 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                   </div>
                 </div>
               )}
-              
-              <div className="mt-6 space-y-3">
-                <button className="w-full bg-green-500 text-white py-3 rounded-lg font-medium hover:bg-green-600 transition-colors flex items-center justify-center space-x-2">
-                  <Phone size={20} />
-                  <span>{isOwnProfile ? 'Upraviť profil' : 'Zavolať'}</span>
-                </button>
-                <button className="w-full bg-blue-500 text-white py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors flex items-center justify-center space-x-2">
-                  <Mail size={20} />
-                  <span>{isOwnProfile ? 'Zobraziť ako Dashboard' : 'Napísať email'}</span>
-                </button>
-              </div>
             </div>
 
             {/* Details */}
