@@ -298,16 +298,20 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                   <Award className="text-[#4169e1] mt-1" size={20} />
                   <div>
                     <p className="font-medium">Skúsenosti</p>
-                    <p className="text-gray-600 text-sm">{master.experience}</p>
+                    <p className="text-gray-600 text-sm">
+                      {(master as any).experienceYears
+                        ? `${(master as any).experienceYears} rokov`
+                        : master.experience || 'Neuvedené'}
+                    </p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start space-x-3">
                   <Users className="text-[#4169e1] mt-1" size={20} />
                   <div>
                     <p className="font-medium">Tím</p>
                     <p className="text-gray-600 text-sm">
-                      {master.teamSize === 'individual' ? 'Individuálne' : 'Malý tím'}
+                      {(master as any).teamType || (master.teamSize === 'individual' ? 'Individuálne' : 'Malý tím')}
                     </p>
                   </div>
                 </div>
@@ -316,7 +320,9 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                   <MapPin className="text-[#4169e1] mt-1" size={20} />
                   <div>
                     <p className="font-medium">Oblasť pôsobenia</p>
-                    <p className="text-gray-600 text-sm">{master.availability?.workRadius || master.location}</p>
+                    <p className="text-gray-600 text-sm">
+                      {(master as any).serviceArea || master.availability?.workRadius || master.location}
+                    </p>
                   </div>
                 </div>
 
@@ -324,7 +330,11 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                   <Euro className="text-[#4169e1] mt-1" size={20} />
                   <div>
                     <p className="font-medium">Cenové rozpätie</p>
-                    <p className="text-gray-600 text-sm">{master.priceRange}</p>
+                    <p className="text-gray-600 text-sm">
+                      {(master as any).hourlyRateMin && (master as any).hourlyRateMax
+                        ? `${(master as any).hourlyRateMin} - ${(master as any).hourlyRateMax} €/hod`
+                        : master.priceRange || 'Neuvedené'}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -337,12 +347,20 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
             <div className="bg-white rounded-xl shadow-lg p-6">
               <h3 className="text-lg font-semibold mb-4">Certifikáty</h3>
               <div className="space-y-2">
-                {master.certifications.map((cert, index) => (
-                  <div key={index} className="flex items-center space-x-2">
-                    <Award className="text-green-600" size={16} />
-                    <span className="text-sm">{cert}</span>
+                {(master as any).certificatesText ? (
+                  <div className="text-sm text-gray-700 whitespace-pre-wrap">
+                    {(master as any).certificatesText}
                   </div>
-                ))}
+                ) : master.certifications && master.certifications.length > 0 ? (
+                  master.certifications.map((cert, index) => (
+                    <div key={index} className="flex items-center space-x-2">
+                      <Award className="text-green-600" size={16} />
+                      <span className="text-sm">{cert}</span>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-sm text-gray-500">Zatiaľ neuvedené</p>
+                )}
               </div>
             </div>
           </div>

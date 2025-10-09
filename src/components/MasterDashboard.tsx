@@ -82,6 +82,12 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
     serviceUrgent: boolean;
     serviceRealization: boolean;
     profileImageUrl?: string;
+    experienceYears: number;
+    teamType: string;
+    serviceArea: string;
+    hourlyRateMin: string;
+    hourlyRateMax: string;
+    certificatesText: string;
   }>({
     name: user?.user_metadata?.full_name || user?.user_metadata?.first_name + ' ' + user?.user_metadata?.last_name || '',
     profession: user?.user_metadata?.profession || '',
@@ -115,7 +121,13 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
     serviceRegular: false,
     serviceUrgent: false,
     serviceRealization: false,
-    profileImageUrl: undefined
+    profileImageUrl: undefined,
+    experienceYears: 0,
+    teamType: 'individuálne',
+    serviceArea: 'lokálne',
+    hourlyRateMin: '',
+    hourlyRateMax: '',
+    certificatesText: ''
   });
 
   const handleCopyCoupon = (code: string) => {
@@ -142,7 +154,13 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
       profile_completed: true,
       service_regular: profileData.serviceRegular,
       service_urgent: profileData.serviceUrgent,
-      service_realization: profileData.serviceRealization
+      service_realization: profileData.serviceRealization,
+      experience_years: profileData.experienceYears,
+      team_type: profileData.teamType,
+      service_area: profileData.serviceArea,
+      hourly_rate_min: profileData.hourlyRateMin ? parseFloat(profileData.hourlyRateMin) : 0,
+      hourly_rate_max: profileData.hourlyRateMax ? parseFloat(profileData.hourlyRateMax) : 0,
+      certificates: profileData.certificatesText
     };
 
     // Сохраняем в Supabase
@@ -270,6 +288,12 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
             serviceRegular: data.service_regular || false,
             serviceUrgent: data.service_urgent || false,
             serviceRealization: data.service_realization || false,
+            experienceYears: data.experience_years || 0,
+            teamType: data.team_type || 'individuálne',
+            serviceArea: data.service_area || 'lokálne',
+            hourlyRateMin: data.hourly_rate_min?.toString() || '',
+            hourlyRateMax: data.hourly_rate_max?.toString() || '',
+            certificatesText: data.certificates || '',
           }));
         }
       } catch (error) {
@@ -1125,18 +1149,115 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                     )}
                   </div>
 
-                  {/* Hourly Rate */}
+                  {/* Experience Years */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Hodinová sadzba
+                      Skúsenosti (roky)
                     </label>
-                    {editingField === 'hourlyRate' ? (
+                    {editingField === 'experienceYears' ? (
+                      <input
+                        type="number"
+                        placeholder="5"
+                        min="0"
+                        value={profileData.experienceYears}
+                        onChange={(e) => handleFieldChange('experienceYears', parseInt(e.target.value) || 0)}
+                        className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
+                      />
+                    ) : (
+                      <p
+                        className="text-gray-700 cursor-pointer hover:bg-gray-50 p-2 rounded border-2 border-transparent hover:border-gray-200 transition-colors"
+                        onClick={() => startEditing('experienceYears')}
+                      >
+                        {profileData.experienceYears ? `${profileData.experienceYears} rokov` : 'Nevyplnené - kliknite pre úpravu'}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Team Type */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Tím
+                    </label>
+                    {editingField === 'teamType' ? (
+                      <div className="space-y-2">
+                        <label className="flex items-center space-x-2">
+                          <input
+                            type="radio"
+                            name="teamTypeRadio"
+                            value="individuálne"
+                            checked={profileData.teamType === 'individuálne'}
+                            onChange={(e) => handleFieldChange('teamType', e.target.value)}
+                            className="w-4 h-4 text-[#4169e1] focus:ring-[#4169e1]"
+                          />
+                          <span className="text-sm">Individuálne</span>
+                        </label>
+                        <label className="flex items-center space-x-2">
+                          <input
+                            type="radio"
+                            name="teamTypeRadio"
+                            value="tím"
+                            checked={profileData.teamType === 'tím'}
+                            onChange={(e) => handleFieldChange('teamType', e.target.value)}
+                            className="w-4 h-4 text-[#4169e1] focus:ring-[#4169e1]"
+                          />
+                          <span className="text-sm">Tím</span>
+                        </label>
+                      </div>
+                    ) : (
+                      <p
+                        className="text-gray-700 cursor-pointer hover:bg-gray-50 p-2 rounded border-2 border-transparent hover:border-gray-200 transition-colors"
+                        onClick={() => startEditing('teamType')}
+                      >
+                        {profileData.teamType || 'Nevyplnené - kliknite pre úpravu'}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Service Area */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Oblasť pôsobenia
+                    </label>
+                    {editingField === 'serviceArea' ? (
+                      <select
+                        value={profileData.serviceArea}
+                        onChange={(e) => handleFieldChange('serviceArea', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
+                      >
+                        <option value="lokálne">Lokálne</option>
+                        <option value="lokálne + 50km">Lokálne + 50km</option>
+                        <option value="celé slovensko">Celé Slovensko</option>
+                      </select>
+                    ) : (
+                      <p
+                        className="text-gray-700 cursor-pointer hover:bg-gray-50 p-2 rounded border-2 border-transparent hover:border-gray-200 transition-colors"
+                        onClick={() => startEditing('serviceArea')}
+                      >
+                        {profileData.serviceArea || 'Nevyplnené - kliknite pre úpravu'}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Hourly Rate Range */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Cenové rozpätie (Hodinová sadzba)
+                    </label>
+                    {editingField === 'hourlyRateRange' ? (
                       <div className="flex items-center space-x-2">
                         <input
                           type="number"
                           placeholder="25"
-                          value={profileData.hourlyRate}
-                          onChange={(e) => handleFieldChange('hourlyRate', e.target.value)}
+                          value={profileData.hourlyRateMin}
+                          onChange={(e) => handleFieldChange('hourlyRateMin', e.target.value)}
+                          className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
+                        />
+                        <span className="text-gray-600">-</span>
+                        <input
+                          type="number"
+                          placeholder="45"
+                          value={profileData.hourlyRateMax}
+                          onChange={(e) => handleFieldChange('hourlyRateMax', e.target.value)}
                           className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
                         />
                         <span className="text-gray-600">€/hod</span>
@@ -1144,16 +1265,36 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                     ) : (
                       <p
                         className="text-gray-700 cursor-pointer hover:bg-gray-50 p-2 rounded border-2 border-transparent hover:border-gray-200 transition-colors"
-                        onClick={() => startEditing('hourlyRate')}
+                        onClick={() => startEditing('hourlyRateRange')}
                       >
-                        {profileData.hourlyRate ? `${profileData.hourlyRate} €/hod` : 'Nevyplnené - kliknite pre úpravu'}
+                        {profileData.hourlyRateMin && profileData.hourlyRateMax
+                          ? `${profileData.hourlyRateMin} - ${profileData.hourlyRateMax} €/hod`
+                          : 'Nevyplnené - kliknite pre úpravu'}
                       </p>
                     )}
-                    <div className="mt-2 p-3 bg-yellow-50 rounded-lg">
-                      <p className="text-xs text-yellow-800">
-                        💡 <strong>AI Tip:</strong> Odporúčaná cena pre vašu oblasť: 25-45 €/hod
+                  </div>
+
+                  {/* Certificates */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Certifikáty (Odborná spôsobilosť)
+                    </label>
+                    {editingField === 'certificatesText' ? (
+                      <textarea
+                        placeholder="Napíšte vaše certifikáty, napríklad:&#10;1) Certifikát XYZ&#10;2) Oprávnenie ABC&#10;3) Vzdelanie DEF"
+                        value={profileData.certificatesText}
+                        onChange={(e) => handleFieldChange('certificatesText', e.target.value)}
+                        rows={5}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
+                      />
+                    ) : (
+                      <p
+                        className="text-gray-700 cursor-pointer hover:bg-gray-50 p-2 rounded border-2 border-transparent hover:border-gray-200 transition-colors whitespace-pre-wrap"
+                        onClick={() => startEditing('certificatesText')}
+                      >
+                        {profileData.certificatesText || 'Nevyplnené - kliknite pre úpravu'}
                       </p>
-                    </div>
+                    )}
                   </div>
                 </div>
               </div>

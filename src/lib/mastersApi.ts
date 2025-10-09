@@ -121,13 +121,15 @@ const loadFromDatabase = async () => {
       workVideos: master.work_video_url || [],
       description: master.description || 'Profesionálny majster s pracovnými skúsenosťami',
       services: ['Opravy', 'Inštalácie', 'Servis'],
-      experience: '5+ rokov',
-      certifications: ['Odborná spôsobilosť'],
+      experience: master.experience_years ? `${master.experience_years} rokov` : '5+ rokov',
+      certifications: master.certificates ? [master.certificates] : ['Odborná spôsobilosť'],
       expertise: ['Všeobecné práce'],
       teamSize: 'individual' as const,
       serviceTypes: ['individuals'],
       languages: ['Slovenčina'],
-      priceRange: '25-45 €/hod',
+      priceRange: master.hourly_rate_min && master.hourly_rate_max
+        ? `${master.hourly_rate_min}-${master.hourly_rate_max} €/hod`
+        : '25-45 €/hod',
       subscriptionPlan: 'standard',
       communicationStyle: master.communication_style || undefined,
       workingHours: {
@@ -147,11 +149,17 @@ const loadFromDatabase = async () => {
       },
       availability: {
         schedule: '8:00 - 18:00',
-        workRadius: 'Lokálne + 50km'
+        workRadius: master.service_area || 'Lokálne + 50km'
       },
       serviceRegular: master.service_regular ?? false,
       serviceUrgent: master.service_urgent ?? false,
-      serviceRealization: master.service_realization ?? false
+      serviceRealization: master.service_realization ?? false,
+      experienceYears: master.experience_years || 0,
+      teamType: master.team_type || 'individuálne',
+      serviceArea: master.service_area || 'lokálne',
+      hourlyRateMin: master.hourly_rate_min || 0,
+      hourlyRateMax: master.hourly_rate_max || 0,
+      certificatesText: master.certificates || ''
     }));
 
     // Сохраняем в кеш

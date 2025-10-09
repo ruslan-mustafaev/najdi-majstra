@@ -14,6 +14,12 @@ export interface MasterProfile {
   service_regular?: boolean;
   service_urgent?: boolean;
   service_realization?: boolean;
+  experience_years?: number;
+  team_type?: string;
+  service_area?: string;
+  hourly_rate_min?: number;
+  hourly_rate_max?: number;
+  certificates?: string;
 }
 
 export const saveMasterProfile = async (profileData: MasterProfile): Promise<MasterProfile> => {
@@ -41,6 +47,12 @@ export const saveMasterProfile = async (profileData: MasterProfile): Promise<Mas
       service_regular: profileData.service_regular ?? false,
       service_urgent: profileData.service_urgent ?? false,
       service_realization: profileData.service_realization ?? false,
+      experience_years: profileData.experience_years ?? 0,
+      team_type: profileData.team_type || 'individuálne',
+      service_area: profileData.service_area || 'lokálne',
+      hourly_rate_min: profileData.hourly_rate_min ?? 0,
+      hourly_rate_max: profileData.hourly_rate_max ?? 0,
+      certificates: profileData.certificates || '',
       updated_at: new Date().toISOString()
     };
 
