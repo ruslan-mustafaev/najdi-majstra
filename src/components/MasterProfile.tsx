@@ -109,7 +109,7 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
             className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
           >
             <ArrowLeft size={20} />
-            <span>{isOwnProfile ? 'Späť na hlavnú stránku' : 'Späť na zoznam'}</span>
+            <span>{isOwnProfile ? 'Späť na hlavnú stránku' : 'Späť na úvod'}</span>
           </button>
         </div>
       </div>

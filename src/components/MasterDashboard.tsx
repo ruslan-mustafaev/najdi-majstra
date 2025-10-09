@@ -603,7 +603,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
             className="flex items-center space-x-2 text-gray-600 hover:text-[#4169e1] transition-colors"
           >
             <ArrowLeft size={20} />
-            <span className="font-medium">Späť na zoznam</span>
+            <span className="font-medium">Späť na úvod</span>
           </button>
         </div>
       </div>
