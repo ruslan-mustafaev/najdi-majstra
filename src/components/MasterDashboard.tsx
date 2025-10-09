@@ -1018,7 +1018,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                       Čo riešim
                     </label>
                     <p className="text-xs text-gray-500 mb-3">
-                      Tieto indikátory sa zobrazia na vašej avatarke ako farebné polоsky
+                      Tieto indikátory sa zobrazia na vašej profilovej fotke
                     </p>
                     {editingField === 'services' ? (
                       <div className="space-y-3">
