@@ -673,7 +673,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
             <div className="space-y-6">
               <div className="bg-white rounded-xl shadow-lg p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold">Fotky</h3>
+                  <h3 className="text-xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2">Fotky</h3>
                   {hasChanges && (
                     <div className="flex space-x-2">
                       <button
@@ -768,7 +768,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
             <div className="space-y-6">
               <div className="bg-white rounded-xl shadow-lg p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-semibold">Identita a detaily</h3>
+                  <h3 className="text-xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2">Identita a detaily</h3>
                   {hasChanges && (
                     <div className="flex space-x-2">
                       <button
@@ -792,7 +792,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                 <div className="space-y-4">
                   {/* Name & Profession */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-blue-600 mb-2">
                       Meno a profesia
                     </label>
                     {editingField === 'name-profession' ? (
@@ -830,7 +830,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
 
                   {/* Location & Availability */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-blue-600 mb-2">
                       Lokalita a dostupnosť
                     </label>
                     {editingField === 'location' ? (
@@ -869,7 +869,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
 
                   {/* Social Media */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-blue-600 mb-2">
                       Sociálne siete (voliteľné)
                     </label>
                     <p className="text-xs text-gray-500 mb-2">Vložte úplné URL adresy k vašim profilom</p>
@@ -960,7 +960,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
 
                   {/* Description */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-blue-600 mb-2">
                       Čo robíte a ponúkate (max 1000 znakov)
                     </label>
                     <p className="text-sm text-gray-600 mb-2">
@@ -989,7 +989,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
 
                   {/* Age */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-blue-600 mb-2">
                       Vek (voliteľné)
                     </label>
                     {editingField === 'age' ? (
@@ -1014,7 +1014,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
 
                   {/* Services */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-blue-600 mb-2">
                       Čo riešim
                     </label>
                     <p className="text-xs text-gray-500 mb-3">
@@ -1093,7 +1093,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
 
                   {/* Experience */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-blue-600 mb-2">
                       Ako dlho to robím
                     </label>
                     {editingField === 'experience' ? (
@@ -1119,7 +1119,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
 
                   {/* Communication Style */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-blue-600 mb-2">
                       Rád komunikujem
                     </label>
                     {editingField === 'communicationStyle' ? (
@@ -1149,7 +1149,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
 
                   {/* Experience Years */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-blue-600 mb-2">
                       Skúsenosti (roky)
                     </label>
                     {editingField === 'experienceYears' ? (
@@ -1173,7 +1173,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
 
                   {/* Team Type */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-blue-600 mb-2">
                       Pracujem
                     </label>
                     {editingField === 'teamType' ? (
@@ -1213,7 +1213,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
 
                   {/* Service Area */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-blue-600 mb-2">
                       Oblasť pôsobenia
                     </label>
                     {editingField === 'serviceArea' ? (
@@ -1238,7 +1238,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
 
                   {/* Hourly Rate Range */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-blue-600 mb-2">
                       Cenové rozpätie (Hodinová sadzba)
                     </label>
                     {editingField === 'hourlyRateRange' ? (
@@ -1274,7 +1274,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
 
                   {/* Certificates */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-blue-600 mb-2">
                       Certifikáty (Odborná spôsobilosť)
                     </label>
                     {editingField === 'certificatesText' ? (
@@ -1301,7 +1301,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
             {/* Column 3: Calendar & Contact */}
             <div className="space-y-6">
               <div className="bg-white rounded-xl shadow-lg p-6">
-                <h3 className="text-lg font-semibold mb-4">Kalendár a kontakt</h3>
+                <h3 className="text-xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2 mb-6">Kalendár a kontakt</h3>
                 
                 {/* Availability Schedule */}
                 <div className="mb-6">
@@ -1330,7 +1330,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                 {/* Contact Info */}
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-blue-600 mb-2">
                       Telefón
                     </label>
                     {editingField === 'phone' ? (
@@ -1353,7 +1353,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-blue-600 mb-2">
                       Email
                     </label>
                     {editingField === 'email' ? (
@@ -1376,7 +1376,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-blue-600 mb-2">
                       Webstránka (voliteľné)
                     </label>
                     {editingField === 'website' ? (
@@ -1526,7 +1526,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
             <div className="lg:col-span-1">
               <div className="bg-white rounded-xl shadow-lg p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-semibold">Moje projekty</h3>
+                  <h3 className="text-xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2">Moje projekty</h3>
                   <button 
                     onClick={() => setShowNewProjectModal(true)}
                     disabled={Object.keys(projects).length >= 20}
@@ -1922,7 +1922,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl p-6 w-full max-w-md mx-4">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold">Nový projekt</h3>
+              <h3 className="text-xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2">Nový projekt</h3>
               <button
                 onClick={() => {
                   setShowNewProjectModal(false);
