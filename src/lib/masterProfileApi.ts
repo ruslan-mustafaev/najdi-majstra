@@ -20,6 +20,12 @@ export interface MasterProfile {
   hourly_rate_min?: number;
   hourly_rate_max?: number;
   certificates?: string;
+  social_facebook?: string;
+  social_instagram?: string;
+  social_youtube?: string;
+  social_tiktok?: string;
+  social_telegram?: string;
+  social_whatsapp?: string;
 }
 
 export const saveMasterProfile = async (profileData: MasterProfile): Promise<MasterProfile> => {
@@ -53,6 +59,12 @@ export const saveMasterProfile = async (profileData: MasterProfile): Promise<Mas
       hourly_rate_min: profileData.hourly_rate_min ?? 0,
       hourly_rate_max: profileData.hourly_rate_max ?? 0,
       certificates: profileData.certificates || '',
+      social_facebook: profileData.social_facebook || '',
+      social_instagram: profileData.social_instagram || '',
+      social_youtube: profileData.social_youtube || '',
+      social_tiktok: profileData.social_tiktok || '',
+      social_telegram: profileData.social_telegram || '',
+      social_whatsapp: profileData.social_whatsapp || '',
       updated_at: new Date().toISOString()
     };
 

@@ -74,6 +74,8 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
         instagram?: string;
         youtube?: string;
         tiktok?: string;
+        telegram?: string;
+        whatsapp?: string;
       };
     };
     certifications: string[];
@@ -112,7 +114,9 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
         facebook: '',
         instagram: '',
         youtube: '',
-        tiktok: ''
+        tiktok: '',
+        telegram: '',
+        whatsapp: ''
       }
     },
     certifications: [],
@@ -158,7 +162,13 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
       service_area: profileData.serviceArea,
       hourly_rate_min: profileData.hourlyRateMin ? parseFloat(profileData.hourlyRateMin) : 0,
       hourly_rate_max: profileData.hourlyRateMax ? parseFloat(profileData.hourlyRateMax) : 0,
-      certificates: profileData.certificatesText
+      certificates: profileData.certificatesText,
+      social_facebook: profileData.contact.socialMedia?.facebook || '',
+      social_instagram: profileData.contact.socialMedia?.instagram || '',
+      social_youtube: profileData.contact.socialMedia?.youtube || '',
+      social_tiktok: profileData.contact.socialMedia?.tiktok || '',
+      social_telegram: profileData.contact.socialMedia?.telegram || '',
+      social_whatsapp: profileData.contact.socialMedia?.whatsapp || ''
     };
 
     // Сохраняем в Supabase
@@ -278,6 +288,14 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
               ...prev.contact,
               phone: data.phone || prev.contact.phone,
               email: data.email || prev.contact.email,
+              socialMedia: {
+                facebook: data.social_facebook || '',
+                instagram: data.social_instagram || '',
+                youtube: data.social_youtube || '',
+                tiktok: data.social_tiktok || '',
+                telegram: data.social_telegram || '',
+                whatsapp: data.social_whatsapp || ''
+              }
             },
             availability: {
               ...prev.availability,
@@ -854,52 +872,81 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Sociálne siete (voliteľné)
                     </label>
+                    <p className="text-xs text-gray-500 mb-2">Vložte úplné URL adresy k vašim profilom</p>
                     {editingField === 'social' ? (
-                      <div className="space-y-3">
-                        <div className="grid grid-cols-2 gap-3">
-                          <input
-                            type="text"
-                            placeholder="Facebook používateľ"
-                            value={profileData.contact.socialMedia?.facebook || ''}
-                            onChange={(e) => handleNestedFieldChange('contact', 'socialMedia', {
-                              ...profileData.contact.socialMedia,
-                              facebook: e.target.value
-                            })}
-                            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent text-sm"
-                          />
-                          <input
-                            type="text"
-                            placeholder="YouTube kanál"
-                            value={profileData.contact.socialMedia?.youtube || ''}
-                            onChange={(e) => handleNestedFieldChange('contact', 'socialMedia', {
-                              ...profileData.contact.socialMedia,
-                              youtube: e.target.value
-                            })}
-                            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent text-sm"
-                          />
-                          <input
-                            type="text"
-                            placeholder="TikTok používateľ"
-                            value={profileData.contact.socialMedia?.tiktok || ''}
-                            onChange={(e) => handleNestedFieldChange('contact', 'socialMedia', {
-                              ...profileData.contact.socialMedia,
-                              tiktok: e.target.value
-                            })}
-                            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent text-sm"
-                          />
-                        </div>
+                      <div className="space-y-2">
+                        <input
+                          type="url"
+                          placeholder="Facebook URL (napr. https://facebook.com/vaseprofil)"
+                          value={profileData.contact.socialMedia?.facebook || ''}
+                          onChange={(e) => handleNestedFieldChange('contact', 'socialMedia', {
+                            ...profileData.contact.socialMedia,
+                            facebook: e.target.value
+                          })}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent text-sm"
+                        />
+                        <input
+                          type="url"
+                          placeholder="Instagram URL (napr. https://instagram.com/vaseprofil)"
+                          value={profileData.contact.socialMedia?.instagram || ''}
+                          onChange={(e) => handleNestedFieldChange('contact', 'socialMedia', {
+                            ...profileData.contact.socialMedia,
+                            instagram: e.target.value
+                          })}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent text-sm"
+                        />
+                        <input
+                          type="url"
+                          placeholder="YouTube URL (napr. https://youtube.com/@vaskanal)"
+                          value={profileData.contact.socialMedia?.youtube || ''}
+                          onChange={(e) => handleNestedFieldChange('contact', 'socialMedia', {
+                            ...profileData.contact.socialMedia,
+                            youtube: e.target.value
+                          })}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent text-sm"
+                        />
+                        <input
+                          type="url"
+                          placeholder="TikTok URL (napr. https://tiktok.com/@vaseprofil)"
+                          value={profileData.contact.socialMedia?.tiktok || ''}
+                          onChange={(e) => handleNestedFieldChange('contact', 'socialMedia', {
+                            ...profileData.contact.socialMedia,
+                            tiktok: e.target.value
+                          })}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent text-sm"
+                        />
+                        <input
+                          type="url"
+                          placeholder="Telegram URL (napr. https://t.me/vaseprofil)"
+                          value={profileData.contact.socialMedia?.telegram || ''}
+                          onChange={(e) => handleNestedFieldChange('contact', 'socialMedia', {
+                            ...profileData.contact.socialMedia,
+                            telegram: e.target.value
+                          })}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent text-sm"
+                        />
+                        <input
+                          type="url"
+                          placeholder="WhatsApp URL (napr. https://wa.me/421xxxxxxxxx)"
+                          value={profileData.contact.socialMedia?.whatsapp || ''}
+                          onChange={(e) => handleNestedFieldChange('contact', 'socialMedia', {
+                            ...profileData.contact.socialMedia,
+                            whatsapp: e.target.value
+                          })}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent text-sm"
+                        />
                       </div>
                     ) : (
-                      <div 
+                      <div
                         className="cursor-pointer hover:bg-gray-50 p-2 rounded border-2 border-transparent hover:border-gray-200 transition-colors"
                         onClick={() => startEditing('social')}
                       >
                         {profileData.contact.socialMedia && Object.values(profileData.contact.socialMedia).some(v => v) ? (
                           <div className="flex flex-wrap gap-2">
-                            {Object.entries(profileData.contact.socialMedia).map(([platform, handle]) => (
-                              handle && (
-                                <span key={platform} className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
-                                  {platform}: @{handle}
+                            {Object.entries(profileData.contact.socialMedia).map(([platform, url]) => (
+                              url && (
+                                <span key={platform} className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs capitalize">
+                                  {platform}
                                 </span>
                               )
                             ))}
@@ -1070,46 +1117,6 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                     )}
                   </div>
 
-                  {/* Team Size */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Tím
-                    </label>
-                    {editingField === 'team' ? (
-                      <div className="space-y-2">
-                        <label className="flex items-center space-x-2">
-                          <input
-                            type="radio"
-                            name="teamSize"
-                            value="individual"
-                            checked={profileData.teamSize === 'individual'}
-                            onChange={(e) => handleFieldChange('teamSize', e.target.value as 'individual' | 'small-team')}
-                            className="w-4 h-4 text-[#4169e1] focus:ring-[#4169e1]"
-                          />
-                          <span className="text-sm">Som sám jednotlivec</span>
-                        </label>
-                        <label className="flex items-center space-x-2">
-                          <input
-                            type="radio"
-                            name="teamSize"
-                            value="small-team"
-                            checked={profileData.teamSize === 'small-team'}
-                            onChange={(e) => handleFieldChange('teamSize', e.target.value as 'individual' | 'small-team')}
-                            className="w-4 h-4 text-[#4169e1] focus:ring-[#4169e1]"
-                          />
-                          <span className="text-sm">Som jednotlivec s partiou (2-3 členov)</span>
-                        </label>
-                      </div>
-                    ) : (
-                      <p 
-                        className="text-gray-700 cursor-pointer hover:bg-gray-50 p-2 rounded border-2 border-transparent hover:border-gray-200 transition-colors"
-                        onClick={() => startEditing('team')}
-                      >
-                        {profileData.teamSize === 'individual' ? 'Jednotlivec' : 'Malý tím'}
-                      </p>
-                    )}
-                  </div>
-
                   {/* Communication Style */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -1167,7 +1174,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                   {/* Team Type */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Tím
+                      Pracujem
                     </label>
                     {editingField === 'teamType' ? (
                       <div className="space-y-2">
@@ -1186,12 +1193,12 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                           <input
                             type="radio"
                             name="teamTypeRadio"
-                            value="tím"
-                            checked={profileData.teamType === 'tím'}
+                            value="s pomocníkmi"
+                            checked={profileData.teamType === 's pomocníkmi'}
                             onChange={(e) => handleFieldChange('teamType', e.target.value)}
                             className="w-4 h-4 text-[#4169e1] focus:ring-[#4169e1]"
                           />
-                          <span className="text-sm">Tím</span>
+                          <span className="text-sm">S pomocníkmi</span>
                         </label>
                       </div>
                     ) : (

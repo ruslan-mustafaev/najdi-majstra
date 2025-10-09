@@ -159,7 +159,13 @@ const loadFromDatabase = async () => {
       serviceArea: master.service_area || 'lokálne',
       hourlyRateMin: master.hourly_rate_min || 0,
       hourlyRateMax: master.hourly_rate_max || 0,
-      certificatesText: master.certificates || ''
+      certificatesText: master.certificates || '',
+      socialFacebook: master.social_facebook || '',
+      socialInstagram: master.social_instagram || '',
+      socialYoutube: master.social_youtube || '',
+      socialTiktok: master.social_tiktok || '',
+      socialTelegram: master.social_telegram || '',
+      socialWhatsapp: master.social_whatsapp || ''
     }));
 
     // Сохраняем в кеш
