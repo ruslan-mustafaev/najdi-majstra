@@ -44,8 +44,11 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth();
 
-      const startDate = new Date(year, month, 1).toISOString().split('T')[0];
-      const endDate = new Date(year, month + 1, 0).toISOString().split('T')[0];
+      // Get last day of the month
+      const lastDay = new Date(year, month + 1, 0).getDate();
+
+      const startDate = `${year}-${String(month + 1).padStart(2, '0')}-01`;
+      const endDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
 
       console.log('📅 Loading availability from', startDate, 'to', endDate);
 
