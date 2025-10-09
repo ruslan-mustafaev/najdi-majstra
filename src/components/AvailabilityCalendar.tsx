@@ -78,6 +78,7 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
   const saveAvailability = async (date: string, data: Partial<AvailabilityDay>) => {
     try {
       const dateStr = date.split('T')[0];
+      console.log('💾 Saving availability for:', dateStr, data);
 
       const availabilityData = {
         master_id: masterId,
@@ -94,15 +95,17 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
 
       if (error) throw error;
 
+      console.log('✅ Saved successfully');
       await loadAvailability();
     } catch (error) {
-      console.error('Error saving availability:', error);
+      console.error('❌ Error saving availability:', error);
       alert('Chyba pri ukladaní dostupnosti');
     }
   };
 
   const handleDayClick = (date: string) => {
     if (!isEditable) return;
+    console.log('🔵 Day clicked:', date);
     setSelectedDate(date);
     setEditMode(true);
   };
@@ -277,7 +280,7 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
       )}
 
       {/* Calendar Grid */}
-      <div className="grid grid-cols-7 gap-2">
+      <div className="grid grid-cols-7 gap-2 p-1">
         {/* Week day headers */}
         {weekDays.map((day) => (
           <div key={day} className="text-center text-sm font-bold text-gray-700 py-3 bg-gray-100 rounded-lg">
