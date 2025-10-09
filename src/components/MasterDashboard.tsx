@@ -1193,12 +1193,12 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                           <input
                             type="radio"
                             name="teamTypeRadio"
-                            value="s pomocníkmi"
-                            checked={profileData.teamType === 's pomocníkmi'}
+                            value="skupina"
+                            checked={profileData.teamType === 'skupina'}
                             onChange={(e) => handleFieldChange('teamType', e.target.value)}
                             className="w-4 h-4 text-[#4169e1] focus:ring-[#4169e1]"
                           />
-                          <span className="text-sm">S pomocníkmi</span>
+                          <span className="text-sm">Skupina</span>
                         </label>
                       </div>
                     ) : (

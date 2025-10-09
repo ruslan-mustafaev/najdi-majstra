@@ -383,9 +383,9 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                 <div className="flex items-start space-x-3">
                   <Users className="text-[#4169e1] mt-1" size={20} />
                   <div>
-                    <p className="font-medium">Tím</p>
+                    <p className="font-medium">Pracujem</p>
                     <p className="text-gray-600 text-sm">
-                      {(master as any).teamType || (master.teamSize === 'individual' ? 'Individuálne' : 'Malý tím')}
+                      {(master as any).teamType || (master.teamSize === 'individual' ? 'Individuálne' : 'Skupina')}
                     </p>
                   </div>
                 </div>
