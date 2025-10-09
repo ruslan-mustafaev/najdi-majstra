@@ -842,15 +842,20 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                           onChange={(e) => handleFieldChange('location', e.target.value)}
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
                         />
-                        <div className="flex items-center space-x-3">
-                          <input
-                            type="checkbox"
-                            id="available"
-                            checked={profileData.availability.available}
-                            onChange={(e) => handleNestedFieldChange('availability', 'available', e.target.checked)}
-                            className="w-4 h-4 text-[#4169e1] rounded focus:ring-[#4169e1]"
-                          />
-                          <label htmlFor="available" className="text-sm">Som momentálne dostupný</label>
+                        <div className="space-y-2">
+                          <div className="flex items-center space-x-3">
+                            <input
+                              type="checkbox"
+                              id="available"
+                              checked={profileData.availability.available}
+                              onChange={(e) => handleNestedFieldChange('availability', 'available', e.target.checked)}
+                              className="w-4 h-4 text-[#4169e1] rounded focus:ring-[#4169e1]"
+                            />
+                            <label htmlFor="available" className="text-sm font-medium">Chcem, aby zákazníci videli môj profil</label>
+                          </div>
+                          <p className="text-xs text-gray-500 ml-7">
+                            Ak zrušíte označenie, váš profil nebude zobrazený na webovej stránke
+                          </p>
                         </div>
                       </div>
                     ) : (
