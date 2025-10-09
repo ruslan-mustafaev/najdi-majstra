@@ -176,81 +176,6 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
               )}
             </div>
 
-            {/* Social Media */}
-            {((master as any).socialFacebook || (master as any).socialInstagram || (master as any).socialYoutube ||
-              (master as any).socialTiktok || (master as any).socialTelegram || (master as any).socialWhatsapp) && (
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h4 className="font-semibold text-gray-900 mb-4">Sledujte ma</h4>
-                <div className="flex flex-wrap gap-3">
-                  {(master as any).socialFacebook && (
-                    <a
-                      href={(master as any).socialFacebook}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 hover:bg-blue-700 transition-colors"
-                      title="Facebook"
-                    >
-                      <Facebook size={20} className="text-white" />
-                    </a>
-                  )}
-                  {(master as any).socialInstagram && (
-                    <a
-                      href={(master as any).socialInstagram}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center w-10 h-10 rounded-full bg-pink-600 hover:bg-pink-700 transition-colors"
-                      title="Instagram"
-                    >
-                      <Instagram size={20} className="text-white" />
-                    </a>
-                  )}
-                  {(master as any).socialYoutube && (
-                    <a
-                      href={(master as any).socialYoutube}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center w-10 h-10 rounded-full bg-red-600 hover:bg-red-700 transition-colors"
-                      title="YouTube"
-                    >
-                      <Youtube size={20} className="text-white" />
-                    </a>
-                  )}
-                  {(master as any).socialTiktok && (
-                    <a
-                      href={(master as any).socialTiktok}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center w-10 h-10 rounded-full bg-black hover:bg-gray-800 transition-colors"
-                      title="TikTok"
-                    >
-                      <img src="/svg_social/tiktok-icon.svg" alt="TikTok" className="w-6 h-6" />
-                    </a>
-                  )}
-                  {(master as any).socialTelegram && (
-                    <a
-                      href={(master as any).socialTelegram}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-500 hover:bg-blue-600 transition-colors"
-                      title="Telegram"
-                    >
-                      <MessageCircle size={20} className="text-white" />
-                    </a>
-                  )}
-                  {(master as any).socialWhatsapp && (
-                    <a
-                      href={(master as any).socialWhatsapp}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors"
-                      title="WhatsApp"
-                    >
-                      <Phone size={20} className="text-white" />
-                    </a>
-                  )}
-                </div>
-              </div>
-            )}
           </div>
 
           {/* Main Content */}
@@ -351,6 +276,82 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                   </div>
                 )}
               </div>
+
+              {/* Social Media */}
+              {((master as any).socialFacebook || (master as any).socialInstagram || (master as any).socialYoutube ||
+                (master as any).socialTiktok || (master as any).socialTelegram || (master as any).socialWhatsapp) && (
+                <div className="mt-6">
+                  <h4 className="font-semibold text-gray-900 mb-3">Sledujte ma</h4>
+                  <div className="flex flex-wrap gap-3">
+                    {(master as any).socialFacebook && (
+                      <a
+                        href={(master as any).socialFacebook}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 hover:bg-blue-700 transition-colors"
+                        title="Facebook"
+                      >
+                        <Facebook size={20} className="text-white" />
+                      </a>
+                    )}
+                    {(master as any).socialInstagram && (
+                      <a
+                        href={(master as any).socialInstagram}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center w-10 h-10 rounded-full bg-pink-600 hover:bg-pink-700 transition-colors"
+                        title="Instagram"
+                      >
+                        <Instagram size={20} className="text-white" />
+                      </a>
+                    )}
+                    {(master as any).socialYoutube && (
+                      <a
+                        href={(master as any).socialYoutube}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center w-10 h-10 rounded-full bg-red-600 hover:bg-red-700 transition-colors"
+                        title="YouTube"
+                      >
+                        <Youtube size={20} className="text-white" />
+                      </a>
+                    )}
+                    {(master as any).socialTiktok && (
+                      <a
+                        href={(master as any).socialTiktok}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center w-10 h-10 rounded-full bg-black hover:bg-gray-800 transition-colors"
+                        title="TikTok"
+                      >
+                        <img src="/svg_social/tiktok-icon.svg" alt="TikTok" className="w-6 h-6" />
+                      </a>
+                    )}
+                    {(master as any).socialTelegram && (
+                      <a
+                        href={(master as any).socialTelegram}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-500 hover:bg-blue-600 transition-colors"
+                        title="Telegram"
+                      >
+                        <MessageCircle size={20} className="text-white" />
+                      </a>
+                    )}
+                    {(master as any).socialWhatsapp && (
+                      <a
+                        href={(master as any).socialWhatsapp}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors"
+                        title="WhatsApp"
+                      >
+                        <Phone size={20} className="text-white" />
+                      </a>
+                    )}
+                  </div>
+                </div>
+              )}
               
               <div className="mt-6 space-y-3">
                 <button className="w-full bg-green-500 text-white py-3 rounded-lg font-medium hover:bg-green-600 transition-colors flex items-center justify-center space-x-2">
