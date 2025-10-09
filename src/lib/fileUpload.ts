@@ -78,11 +78,11 @@ const optimizeImage = async (file: File, fileType: FileType): Promise<File> => {
   try {
     // Конфигурация оптимизации
     const options = {
-      maxSizeMB: fileType === 'avatar' ? 0.5 : 1, // Аватар: 500KB, Фото работ: 1MB
-      maxWidthOrHeight: fileType === 'avatar' ? 800 : 2000, // Аватар: 800px, Фото работ: 2000px
+      maxSizeMB: fileType === 'avatar' ? 2 : 3, // Аватар: 2MB, Фото работ: 3MB
+      maxWidthOrHeight: fileType === 'avatar' ? 1200 : 2400, // Аватар: 1200px, Фото работ: 2400px
       useWebWorker: true,
       fileType: 'image/webp' as const, // Конвертация в WebP
-      initialQuality: 0.8, // Качество 80%
+      initialQuality: 0.89, // Качество 89% (оригинал -11%)
     };
 
     // Сжатие и конвертация в WebP
