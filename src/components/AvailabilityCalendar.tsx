@@ -115,6 +115,41 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
     });
   };
 
+  const markEntireMonthAvailable = async () => {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      await saveAvailability(dateStr, {
+        status: 'available',
+        work_hours_start: '08:00:00',
+        work_hours_end: '17:00:00'
+      });
+    }
+  };
+
+  const markWeekendsAsBusy = async () => {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      const dayOfWeek = new Date(dateStr).getDay();
+
+      // 0 = Sunday, 6 = Saturday
+      if (dayOfWeek === 0 || dayOfWeek === 6) {
+        await saveAvailability(dateStr, {
+          status: 'busy',
+          work_hours_start: '08:00:00',
+          work_hours_end: '17:00:00'
+        });
+      }
+    }
+  };
+
   const currentMonth = currentDate.getMonth();
   const currentYear = currentDate.getFullYear();
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
@@ -201,25 +236,42 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
 
       {/* Quick Actions for Master */}
       {isEditable && (
-        <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-          <p className="text-sm text-gray-700 mb-3 font-medium">💡 Kliknite na deň pre úpravu dostupnosti</p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-            <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-green-100 border-2 border-green-300 rounded"></div>
-              <span className="font-medium">Dostupný</span>
+        <div className="mb-6 space-y-4">
+          <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+            <p className="text-sm text-gray-700 mb-3 font-medium">💡 Kliknite na deň pre úpravu dostupnosti</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+              <div className="flex items-center space-x-2">
+                <div className="w-4 h-4 bg-green-100 border-2 border-green-300 rounded"></div>
+                <span className="font-medium">Dostupný</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-4 h-4 bg-red-100 border-2 border-red-300 rounded"></div>
+                <span className="font-medium">Obsadený</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-4 h-4 bg-yellow-100 border-2 border-yellow-300 rounded"></div>
+                <span className="font-medium">Čiastočne</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-4 h-4 bg-gray-100 border-2 border-gray-300 rounded"></div>
+                <span className="font-medium">Nedostupný</span>
+              </div>
             </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-red-100 border-2 border-red-300 rounded"></div>
-              <span className="font-medium">Obsadený</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-yellow-100 border-2 border-yellow-300 rounded"></div>
-              <span className="font-medium">Čiastočne</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-gray-100 border-2 border-gray-300 rounded"></div>
-              <span className="font-medium">Nedostupný</span>
-            </div>
+          </div>
+
+          <div className="flex gap-3">
+            <button
+              onClick={markEntireMonthAvailable}
+              className="flex-1 px-4 py-3 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg transition-colors"
+            >
+              Označiť celý mesiac ako dostupný
+            </button>
+            <button
+              onClick={markWeekendsAsBusy}
+              className="flex-1 px-4 py-3 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-colors"
+            >
+              Označiť víkendy ako obsadené
+            </button>
           </div>
         </div>
       )}
