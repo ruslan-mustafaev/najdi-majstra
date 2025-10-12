@@ -22,49 +22,6 @@ interface MasterProfileProps {
   isOwnProfile?: boolean;
 }
 
-const mockReviews: Review[] = [
-  {
-    id: '1',
-    clientName: 'Mária Novotná',
-    rating: 5,
-    comment: 'Výborná práca, veľmi profesionálny prístup. Všetko bolo dokončené včas a kvalitne. Určite odporúčam!',
-    date: '15.12.2024',
-    service: 'Inštalácia kotla'
-  },
-  {
-    id: '2',
-    clientName: 'Peter Kováč',
-    rating: 5,
-    comment: 'Rýchla reakcia na pohotovostnú výzvu. Problém vyriešil do hodiny. Ceny primerané, komunikácia na vysokej úrovni.',
-    date: '08.12.2024',
-    service: 'Pohotovostný servis'
-  },
-  {
-    id: '3',
-    clientName: 'Jana Svobodová',
-    rating: 4,
-    comment: 'Solídna práca, len trochu dlhšie trvalo ako sme sa dohodli. Inak spokojnosť, kvalita v poriadku.',
-    date: '02.12.2024',
-    service: 'Revízia plynu'
-  },
-  {
-    id: '4',
-    clientName: 'Tomáš Horváth',
-    rating: 5,
-    comment: 'Už druhýkrát využívam služby tohto majstra. Vždy spoľahlivý, presný a ceny férové. Môžem len odporučiť.',
-    date: '28.11.2024',
-    service: 'Servis kotla'
-  },
-  {
-    id: '5',
-    clientName: 'Eva Kratochvílová',
-    rating: 5,
-    comment: 'Perfektná komunikácia už od prvého kontaktu. Práca vykonaná na jednotku, všetko vysvetlil a poradil.',
-    date: '20.11.2024',
-    service: 'Inštalácia plynového rozvodu'
-  }
-];
-
 const getSocialIcon = (platform: string) => {
   switch (platform) {
     case 'facebook':
