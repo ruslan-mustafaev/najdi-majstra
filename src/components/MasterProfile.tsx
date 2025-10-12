@@ -92,10 +92,39 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
   const [reviews, setReviews] = useState<any[]>([]);
   const [averageRating, setAverageRating] = useState<number>(0);
   const [showReviewForm, setShowReviewForm] = useState(false);
+  const [isUserMaster, setIsUserMaster] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  useEffect(() => {
+    const checkIfUserIsMaster = async () => {
+      if (!user) {
+        setIsUserMaster(false);
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('masters')
+          .select('id')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        if (!error && data) {
+          setIsUserMaster(true);
+        } else {
+          setIsUserMaster(false);
+        }
+      } catch (error) {
+        console.error('Error checking if user is master:', error);
+        setIsUserMaster(false);
+      }
+    };
+
+    checkIfUserIsMaster();
+  }, [user]);
 
   useEffect(() => {
     const loadContactHours = async () => {
@@ -323,7 +352,7 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                     </div>
                   )}
                 </div>
-                {!isOwnProfile && user && (
+                {!isOwnProfile && user && !isUserMaster && (
                   <button
                     onClick={() => setShowReviewForm(true)}
                     className="bg-[#4169e1] text-white px-4 py-2 rounded-lg hover:bg-[#3155c7] transition-colors text-sm font-medium"
