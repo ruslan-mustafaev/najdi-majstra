@@ -147,19 +147,22 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
     try {
       const { data, error } = await supabase
         .from('master_reviews')
-        .select(`
-          *,
-          client:client_id (
-            raw_user_meta_data
-          )
-        `)
+        .select('*')
         .eq('master_id', master.userId)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
 
       if (data) {
-        setReviews(data);
+        // Добавляем базовую информацию о клиенте к каждому отзыву
+        const reviewsWithClients = data.map((review) => ({
+          ...review,
+          client: {
+            name: 'Клиент'
+          }
+        }));
+
+        setReviews(reviewsWithClients);
 
         if (data.length > 0) {
           const avgRating = data.reduce((sum, review) => sum + review.rating, 0) / data.length;
@@ -337,7 +340,7 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                       <div className="flex justify-between items-start mb-3">
                         <div>
                           <h4 className="font-semibold text-gray-900">
-                            {review.client?.raw_user_meta_data?.full_name || 'Anonym'}
+                            {review.client?.name || 'Клиент'}
                           </h4>
                         </div>
                         <div className="text-right">
