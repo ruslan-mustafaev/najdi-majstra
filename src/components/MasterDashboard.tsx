@@ -1311,7 +1311,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                 {/* Availability Schedule */}
                 <div className="mb-6">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Volacie hodiny
+                    Kontaktujte ma
                   </label>
                   {editingField === 'schedule' ? (
                     <input
