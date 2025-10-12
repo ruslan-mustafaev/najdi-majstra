@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Menu, UserPlus } from 'lucide-react';
-import { LanguageSwitcher } from './LanguageSwitcher';
 import { AuthModal } from './AuthModal';
 import { UserMenu } from './UserMenu';
 import { useAuth } from '../hooks/useAuth';
@@ -69,21 +68,19 @@ export const Header: React.FC = () => {
 
             {/* Right Section */}
             <div className="flex items-center space-x-4">
-              <LanguageSwitcher />
-
               {/* Auth Section */}
               {user ? (
                 <UserMenu />
               ) : (
                 <>
-                  <button 
+                  <button
                     onClick={handleLoginClick}
                     className="flex items-center space-x-2 text-white/90 hover:text-white transition-colors"
                   >
                     <span className="hidden sm:inline">{t.navigation.login}</span>
                   </button>
-                  
-                  <button 
+
+                  <button
                     onClick={handleRegisterClick}
                     className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2"
                   >
@@ -92,7 +89,6 @@ export const Header: React.FC = () => {
                   </button>
                 </>
               )}
-
             </div>
           </div>
         </div>
