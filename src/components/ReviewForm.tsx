@@ -82,6 +82,12 @@ export const ReviewForm: React.FC<ReviewFormProps> = ({ masterId, onClose, onRev
     setError('');
 
     try {
+      // Получаем имя и фамилию клиента из метаданных
+      const clientName = user.user_metadata?.full_name ||
+                        user.user_metadata?.name ||
+                        user.email?.split('@')[0] ||
+                        'Клиент';
+
       const { error: insertError } = await supabase
         .from('master_reviews')
         .insert({
@@ -89,6 +95,7 @@ export const ReviewForm: React.FC<ReviewFormProps> = ({ masterId, onClose, onRev
           client_id: user.id,
           rating,
           comment: comment.trim(),
+          client_name: clientName,
         });
 
       if (insertError) {

@@ -154,11 +154,11 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
       if (error) throw error;
 
       if (data) {
-        // Добавляем базовую информацию о клиенте к каждому отзыву
+        // Используем client_name из базы данных или показываем "Клиент" по умолчанию
         const reviewsWithClients = data.map((review) => ({
           ...review,
           client: {
-            name: 'Клиент'
+            name: review.client_name || 'Клиент'
           }
         }));
 

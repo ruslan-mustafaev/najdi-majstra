@@ -18,7 +18,7 @@
 
       try {
         // Fetch the migration file
-        const response = await fetch('/supabase/migrations/20251012000000_add_contact_hours_and_reviews.sql');
+        const response = await fetch('/supabase/migrations/20251012000001_add_client_name_to_reviews.sql');
         const sql = await response.text();
 
         output.innerHTML += '<p>Migration file loaded. Executing SQL...</p>';
@@ -39,20 +39,20 @@
         output.innerHTML += '<li>Refresh this page to see if tables were created</li>';
         output.innerHTML += '</ol>';
 
-        // Try to check if tables exist
-        const { data: tables, error } = await supabase
-          .from('master_contact_hours')
-          .select('id')
+        // Try to check if column exists
+        const { data: reviews, error } = await supabase
+          .from('master_reviews')
+          .select('client_name')
           .limit(1);
 
         if (error) {
-          if (error.code === 'PGRST205') {
-            output.innerHTML += '<p style="color: orange;">❌ Tables do not exist yet. Please run the migration manually.</p>';
+          if (error.code === 'PGRST116' || error.message.includes('client_name')) {
+            output.innerHTML += '<p style="color: orange;">❌ Column client_name does not exist yet. Please run the migration manually.</p>';
           } else {
             output.innerHTML += '<p style="color: red;">Error: ' + error.message + '</p>';
           }
         } else {
-          output.innerHTML += '<p style="color: green;">✅ Tables already exist!</p>';
+          output.innerHTML += '<p style="color: green;">✅ Column client_name already exists!</p>';
         }
 
       } catch (err) {
@@ -85,7 +85,7 @@
   </style>
 </head>
 <body>
-  <h1>Apply Database Migration</h1>
+  <h1>Apply Migration: Add Client Name to Reviews</h1>
   <div id="output">
     <p>Initializing...</p>
   </div>
