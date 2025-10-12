@@ -5,6 +5,7 @@ import { saveMasterProfile, type MasterProfile } from '../lib/masterProfileApi';
 import { MasterPortfolio } from './MasterPortfolio';
 import { FileUploadManager } from './FileUpload/FileUploadManager';
 import { AvailabilityCalendar } from './AvailabilityCalendar';
+import { ContactHoursSelector } from './ContactHoursSelector';
 import { supabase } from '../lib/supabase';
 import * as ProjectsAPI from '../lib/projectsApi';
 
@@ -46,6 +47,8 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
   const [newNoteText, setNewNoteText] = useState('');
   const [activePhase, setActivePhase] = useState<'priprava' | 'realizacia' | 'ukoncenie'>('priprava');
   const [isLoadingProjects, setIsLoadingProjects] = useState(false);
+  const [showContactHoursModal, setShowContactHoursModal] = useState(false);
+  const [contactHoursDisplay, setContactHoursDisplay] = useState<string>('');
   
   const [profileData, setProfileData] = useState<{
     name: string;
@@ -319,6 +322,51 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
 
     loadMasterData();
   }, [user]);
+
+  // Load contact hours display
+  useEffect(() => {
+    const loadContactHours = async () => {
+      if (!masterId) return;
+
+      try {
+        const { data, error } = await supabase
+          .from('master_contact_hours')
+          .select('*')
+          .eq('master_id', masterId)
+          .maybeSingle();
+
+        if (error) throw error;
+
+        if (data) {
+          if (data.is_24_7) {
+            setContactHoursDisplay('Dostupný 24/7');
+          } else {
+            const schedule = data.schedule as any;
+            const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+            const dayLabels = ['Po', 'Ut', 'St', 'Št', 'Pi', 'So', 'Ne'];
+
+            const activeDays = days
+              .map((day, index) => {
+                if (schedule[day] && schedule[day].length > 0) {
+                  const times = schedule[day].map((slot: any) => `${slot.start}-${slot.end}`).join(', ');
+                  return `${dayLabels[index]}: ${times}`;
+                }
+                return null;
+              })
+              .filter(Boolean);
+
+            if (activeDays.length > 0) {
+              setContactHoursDisplay(activeDays.join(' | '));
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error loading contact hours:', error);
+      }
+    };
+
+    loadContactHours();
+  }, [masterId]);
 
   const handleFieldChange = (field: string, value: any) => {
     setProfileData(prev => ({ ...prev, [field]: value }));
@@ -1313,23 +1361,18 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Kontaktujte ma
                   </label>
-                  {editingField === 'schedule' ? (
-                    <input
-                      type="text"
-                      placeholder="napr. 7:00 - 19:00 alebo Nonstop 24/7"
-                      value={profileData.availability.schedule}
-                      onChange={(e) => handleNestedFieldChange('availability', 'schedule', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
-                    />
-                  ) : (
-                    <div 
-                      className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded border-2 border-transparent hover:border-gray-200 transition-colors"
-                      onClick={() => startEditing('schedule')}
-                    >
-                      <Clock size={16} className="text-gray-500" />
-                      <span>{profileData.availability.schedule || 'Nevyplnené - kliknite pre úpravu'}</span>
+                  <button
+                    onClick={() => setShowContactHoursModal(true)}
+                    className="w-full flex items-center justify-between p-3 border-2 border-gray-200 rounded-lg hover:border-[#4169e1] hover:bg-blue-50 transition-colors text-left"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <Clock size={20} className="text-[#4169e1]" />
+                      <span className="text-gray-900">
+                        {contactHoursDisplay || 'Nastaviť kontaktné hodiny'}
+                      </span>
                     </div>
-                  )}
+                    <Settings size={18} className="text-gray-400" />
+                  </button>
                 </div>
 
                 {/* Contact Info */}
@@ -1995,6 +2038,55 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
             </div>
           </div>
         </div>
+      )}
+
+      {/* Contact Hours Modal */}
+      {showContactHoursModal && masterId && (
+        <ContactHoursSelector
+          masterId={masterId}
+          onClose={() => setShowContactHoursModal(false)}
+          onSave={() => {
+            const loadContactHours = async () => {
+              try {
+                const { data, error } = await supabase
+                  .from('master_contact_hours')
+                  .select('*')
+                  .eq('master_id', masterId)
+                  .maybeSingle();
+
+                if (error) throw error;
+
+                if (data) {
+                  if (data.is_24_7) {
+                    setContactHoursDisplay('Dostupný 24/7');
+                  } else {
+                    const schedule = data.schedule as any;
+                    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+                    const dayLabels = ['Po', 'Ut', 'St', 'Št', 'Pi', 'So', 'Ne'];
+
+                    const activeDays = days
+                      .map((day, index) => {
+                        if (schedule[day] && schedule[day].length > 0) {
+                          const times = schedule[day].map((slot: any) => `${slot.start}-${slot.end}`).join(', ');
+                          return `${dayLabels[index]}: ${times}`;
+                        }
+                        return null;
+                      })
+                      .filter(Boolean);
+
+                    if (activeDays.length > 0) {
+                      setContactHoursDisplay(activeDays.join(' | '));
+                    }
+                  }
+                }
+              } catch (error) {
+                console.error('Error loading contact hours:', error);
+              }
+            };
+
+            loadContactHours();
+          }}
+        />
       )}
     </div>
   );

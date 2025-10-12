@@ -1,9 +1,11 @@
-import React from 'react';
-import { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Star, MapPin, Clock, Phone, Mail, Globe, Award, Users, Calendar, Euro, Play, Facebook, Instagram, Linkedin, Youtube, Twitter, MessageCircle } from 'lucide-react';
 import { Master } from '../types';
 import { WorkPlanningCalendar } from './WorkPlanningCalendar';
 import { MasterPortfolio } from './MasterPortfolio';
+import { ReviewForm } from './ReviewForm';
+import { supabase } from '../lib/supabase';
+import { useAuth } from '../hooks/useAuth';
 
 interface Review {
   id: string;
@@ -85,9 +87,89 @@ const getSocialIcon = (platform: string) => {
 };
 
 export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, isOwnProfile = false }) => {
+  const { user } = useAuth();
+  const [contactHours, setContactHours] = useState<string>('');
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [averageRating, setAverageRating] = useState<number>(0);
+  const [showReviewForm, setShowReviewForm] = useState(false);
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  useEffect(() => {
+    const loadContactHours = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('master_contact_hours')
+          .select('*')
+          .eq('master_id', master.id)
+          .maybeSingle();
+
+        if (error) throw error;
+
+        if (data) {
+          if (data.is_24_7) {
+            setContactHours('Dostupný 24/7');
+          } else {
+            const schedule = data.schedule as any;
+            const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+            const dayLabels = ['Pondelok', 'Utorok', 'Streda', 'Štvrtok', 'Piatok', 'Sobota', 'Nedeľa'];
+
+            const activeDays = days
+              .map((day, index) => {
+                if (schedule[day] && schedule[day].length > 0) {
+                  const times = schedule[day].map((slot: any) => `${slot.start}-${slot.end}`).join(', ');
+                  return `${dayLabels[index]}: ${times}`;
+                }
+                return null;
+              })
+              .filter(Boolean);
+
+            if (activeDays.length > 0) {
+              setContactHours(activeDays.join('\n'));
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error loading contact hours:', error);
+      }
+    };
+
+    loadContactHours();
+  }, [master.id]);
+
+  const loadReviews = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('master_reviews')
+        .select(`
+          *,
+          client:client_id (
+            raw_user_meta_data
+          )
+        `)
+        .eq('master_id', master.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      if (data) {
+        setReviews(data);
+
+        if (data.length > 0) {
+          const avgRating = data.reduce((sum, review) => sum + review.rating, 0) / data.length;
+          setAverageRating(Math.round(avgRating * 10) / 10);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading reviews:', error);
+    }
+  };
+
+  useEffect(() => {
+    loadReviews();
+  }, [master.id]);
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
@@ -221,26 +303,60 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
             <MasterPortfolio masterId={master.id} isEditable={false} />
 
             <div className="bg-white rounded-xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold mb-6">Hodnotenia klientov</h2>
-              <div className="space-y-6">
-                {mockReviews.map((review) => (
-                  <div key={review.id} className="border-b border-gray-200 pb-6 last:border-b-0">
-                    <div className="flex justify-between items-start mb-3">
-                      <div>
-                        <h4 className="font-semibold text-gray-900">{review.clientName}</h4>
-                        <p className="text-sm text-gray-600">{review.service}</p>
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold">Hodnotenia klientov</h2>
+                  {averageRating > 0 && (
+                    <div className="flex items-center space-x-2 mt-2">
+                      <div className="flex items-center">
+                        {renderStars(Math.round(averageRating))}
                       </div>
-                      <div className="text-right">
-                        <div className="flex items-center space-x-1 mb-1">
-                          {renderStars(review.rating)}
-                        </div>
-                        <p className="text-sm text-gray-500">{review.date}</p>
-                      </div>
+                      <span className="text-lg font-semibold text-gray-900">{averageRating.toFixed(1)}</span>
+                      <span className="text-sm text-gray-500">({reviews.length} {reviews.length === 1 ? 'recenzia' : 'recenzií'})</span>
                     </div>
-                    <p className="text-gray-700">{review.comment}</p>
-                  </div>
-                ))}
+                  )}
+                </div>
+                {!isOwnProfile && user && (
+                  <button
+                    onClick={() => setShowReviewForm(true)}
+                    className="bg-[#4169e1] text-white px-4 py-2 rounded-lg hover:bg-[#3155c7] transition-colors text-sm font-medium"
+                  >
+                    Zanechať recenziu
+                  </button>
+                )}
               </div>
+
+              {reviews.length > 0 ? (
+                <div className="space-y-6">
+                  {reviews.map((review) => (
+                    <div key={review.id} className="border-b border-gray-200 pb-6 last:border-b-0">
+                      <div className="flex justify-between items-start mb-3">
+                        <div>
+                          <h4 className="font-semibold text-gray-900">
+                            {review.client?.raw_user_meta_data?.full_name || 'Anonym'}
+                          </h4>
+                        </div>
+                        <div className="text-right">
+                          <div className="flex items-center space-x-1 mb-1">
+                            {renderStars(review.rating)}
+                          </div>
+                          <p className="text-sm text-gray-500">
+                            {new Date(review.created_at).toLocaleDateString('sk-SK')}
+                          </p>
+                        </div>
+                      </div>
+                      <p className="text-gray-700">{review.comment}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <p>Zatiaľ žiadne recenzie</p>
+                  {!isOwnProfile && user && (
+                    <p className="text-sm mt-2">Buďte prvý, kto zanechá recenziu!</p>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
@@ -276,6 +392,19 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                   </div>
                 )}
               </div>
+
+              {/* Contact Hours */}
+              {contactHours && (
+                <div className="mt-6 pt-6 border-t">
+                  <div className="flex items-start space-x-3">
+                    <Clock className="text-[#4169e1] mt-1 flex-shrink-0" size={20} />
+                    <div>
+                      <h4 className="font-semibold text-gray-900 mb-2">Kontaktné hodiny</h4>
+                      <p className="text-sm text-gray-700 whitespace-pre-line">{contactHours}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <div className="mt-6 space-y-3">
                 <button className="w-full bg-green-500 text-white py-3 rounded-lg font-medium hover:bg-green-600 transition-colors flex items-center justify-center space-x-2">
@@ -441,6 +570,18 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
           </div>
         </div>
       </div>
+
+      {/* Review Form Modal */}
+      {showReviewForm && (
+        <ReviewForm
+          masterId={master.id}
+          onClose={() => setShowReviewForm(false)}
+          onReviewSubmitted={() => {
+            loadReviews();
+            setShowReviewForm(false);
+          }}
+        />
+      )}
     </div>
   );
 };

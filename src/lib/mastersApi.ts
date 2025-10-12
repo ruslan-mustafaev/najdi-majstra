@@ -107,14 +107,38 @@ const loadFromDatabase = async () => {
       throw error;
     }
 
+    // Get ratings for all masters
+    const masterIds = (data || []).map(m => m.id);
+    const { data: reviewsData } = await supabase
+      .from('master_reviews')
+      .select('master_id, rating')
+      .in('master_id', masterIds);
+
+    // Calculate average ratings
+    const ratingsMap = new Map();
+    const reviewCountMap = new Map();
+
+    (reviewsData || []).forEach(review => {
+      if (!ratingsMap.has(review.master_id)) {
+        ratingsMap.set(review.master_id, []);
+      }
+      ratingsMap.get(review.master_id).push(review.rating);
+    });
+
+    ratingsMap.forEach((ratings, masterId) => {
+      const avgRating = ratings.reduce((sum: number, r: number) => sum + r, 0) / ratings.length;
+      ratingsMap.set(masterId, Math.round(avgRating * 10) / 10);
+      reviewCountMap.set(masterId, ratings.length);
+    });
+
     // Преобразуем данные из базы в формат Master
     const masters = (data || []).map(master => ({
       id: master.id,
       name: master.name || 'Без имени',
       profession: master.profession || 'Majster',
       location: master.location || 'Не указано',
-      rating: master.rating || 4.5,
-      reviewCount: master.reviews_count || 0,
+      rating: ratingsMap.get(master.id) || 0,
+      reviewCount: reviewCountMap.get(master.id) || 0,
       available: master.is_available ?? master.is_active,
       profileImage: master.profile_image_url || '/placeholder-avatar.svg',
       workImages: master.work_images_urls || [],
