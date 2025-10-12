@@ -1,5 +1,6 @@
 export interface Master {
   id: string;
+  userId?: string;
   name: string;
   profession: string;
   location: string;

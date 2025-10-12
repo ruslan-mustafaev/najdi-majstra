@@ -326,13 +326,13 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
   // Load contact hours display
   useEffect(() => {
     const loadContactHours = async () => {
-      if (!masterId) return;
+      if (!user?.id) return;
 
       try {
         const { data, error } = await supabase
           .from('master_contact_hours')
           .select('*')
-          .eq('master_id', masterId)
+          .eq('master_id', user.id)
           .maybeSingle();
 
         if (error) throw error;
@@ -366,7 +366,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
     };
 
     loadContactHours();
-  }, [masterId]);
+  }, [user?.id]);
 
   const handleFieldChange = (field: string, value: any) => {
     setProfileData(prev => ({ ...prev, [field]: value }));
@@ -2041,9 +2041,9 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
       )}
 
       {/* Contact Hours Modal */}
-      {showContactHoursModal && masterId && (
+      {showContactHoursModal && user && (
         <ContactHoursSelector
-          masterId={masterId}
+          masterId={user.id}
           onClose={() => setShowContactHoursModal(false)}
           onSave={() => {
             const loadContactHours = async () => {
@@ -2051,7 +2051,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                 const { data, error } = await supabase
                   .from('master_contact_hours')
                   .select('*')
-                  .eq('master_id', masterId)
+                  .eq('master_id', user.id)
                   .maybeSingle();
 
                 if (error) throw error;

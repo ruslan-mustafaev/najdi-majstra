@@ -99,11 +99,13 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
 
   useEffect(() => {
     const loadContactHours = async () => {
+      if (!master.userId) return;
+
       try {
         const { data, error } = await supabase
           .from('master_contact_hours')
           .select('*')
-          .eq('master_id', master.id)
+          .eq('master_id', master.userId)
           .maybeSingle();
 
         if (error) throw error;
@@ -137,9 +139,11 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
     };
 
     loadContactHours();
-  }, [master.id]);
+  }, [master.userId]);
 
   const loadReviews = async () => {
+    if (!master.userId) return;
+
     try {
       const { data, error } = await supabase
         .from('master_reviews')
@@ -149,7 +153,7 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
             raw_user_meta_data
           )
         `)
-        .eq('master_id', master.id)
+        .eq('master_id', master.userId)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -169,7 +173,7 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
 
   useEffect(() => {
     loadReviews();
-  }, [master.id]);
+  }, [master.userId]);
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
@@ -572,9 +576,9 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
       </div>
 
       {/* Review Form Modal */}
-      {showReviewForm && (
+      {showReviewForm && master.userId && (
         <ReviewForm
-          masterId={master.id}
+          masterId={master.userId}
           onClose={() => setShowReviewForm(false)}
           onReviewSubmitted={() => {
             loadReviews();

@@ -134,6 +134,7 @@ const loadFromDatabase = async () => {
     // Преобразуем данные из базы в формат Master
     const masters = (data || []).map(master => ({
       id: master.id,
+      userId: master.user_id,
       name: master.name || 'Без имени',
       profession: master.profession || 'Majster',
       location: master.location || 'Не указано',
