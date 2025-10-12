@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apply Migration</title>
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+    const SUPABASE_URL = 'https://budlyqnloyiyexsocpbb.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ1ZGx5cW5sb3lpeWV4c29jcGJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5MzM0NDksImV4cCI6MjA3MTUwOTQ0OX0.5vPCIu5yvtEossIEYfMGqha5Xj1eEwEDmvU-g-rUttw';
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    async function applyMigration() {
+      const output = document.getElementById('output');
+      output.innerHTML = '<p>Loading migration file...</p>';
+
+      try {
+        // Fetch the migration file
+        const response = await fetch('/supabase/migrations/20251012000000_add_contact_hours_and_reviews.sql');
+        const sql = await response.text();
+
+        output.innerHTML += '<p>Migration file loaded. Executing SQL...</p>';
+        output.innerHTML += '<pre style="background: #f0f0f0; padding: 10px; max-height: 200px; overflow-y: auto;">' + sql + '</pre>';
+
+        // Split by semicolons and execute each statement
+        const statements = sql
+          .split(';')
+          .map(s => s.trim())
+          .filter(s => s.length > 0 && !s.startsWith('/*') && !s.startsWith('--'));
+
+        output.innerHTML += '<p style="color: red;">⚠️ IMPORTANT: This migration needs to be run with elevated privileges.</p>';
+        output.innerHTML += '<p>Please copy the SQL from above and run it in your Supabase SQL Editor:</p>';
+        output.innerHTML += '<ol>';
+        output.innerHTML += '<li>Go to <a href="https://supabase.com/dashboard/project/budlyqnloyiyexsocpbb/sql/new" target="_blank">Supabase SQL Editor</a></li>';
+        output.innerHTML += '<li>Paste the SQL migration from above</li>';
+        output.innerHTML += '<li>Click "Run" to execute</li>';
+        output.innerHTML += '<li>Refresh this page to see if tables were created</li>';
+        output.innerHTML += '</ol>';
+
+        // Try to check if tables exist
+        const { data: tables, error } = await supabase
+          .from('master_contact_hours')
+          .select('id')
+          .limit(1);
+
+        if (error) {
+          if (error.code === 'PGRST205') {
+            output.innerHTML += '<p style="color: orange;">❌ Tables do not exist yet. Please run the migration manually.</p>';
+          } else {
+            output.innerHTML += '<p style="color: red;">Error: ' + error.message + '</p>';
+          }
+        } else {
+          output.innerHTML += '<p style="color: green;">✅ Tables already exist!</p>';
+        }
+
+      } catch (err) {
+        output.innerHTML += '<p style="color: red;">Error: ' + err.message + '</p>';
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', applyMigration);
+  </script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      color: #4169e1;
+    }
+    #output {
+      margin-top: 20px;
+    }
+    a {
+      color: #4169e1;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <h1>Apply Database Migration</h1>
+  <div id="output">
+    <p>Initializing...</p>
+  </div>
+</body>
+</html>
