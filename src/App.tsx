@@ -14,6 +14,7 @@ import { MasterProfile } from './components/MasterProfile';
 import { SearchResults } from './components/SearchResults';
 import { MasterDashboard } from './components/MasterDashboard';
 import { EmailConfirmation } from './components/EmailConfirmation';
+import { AIAssistantSettings } from './components/AIAssistantSettings';
 import { Master } from './data/mockData';
 import { getTopRatedMasters } from './lib/mastersApi';
 import { checkConnection } from './lib/supabase';
@@ -476,10 +477,34 @@ const DashboardPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      <MasterDashboard 
+      <MasterDashboard
         onBack={() => navigate('/')}
         onProfileUpdate={handleProfileUpdate}
       />
+      <Footer />
+    </div>
+  );
+};
+
+// Страница настроек AI ассистента
+const AISettingsPage: React.FC = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (!user || user.user_metadata?.user_type !== 'master') {
+      navigate('/');
+    }
+  }, [user, navigate]);
+
+  if (!user || user.user_metadata?.user_type !== 'master') {
+    return null;
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Header />
+      <AIAssistantSettings onBack={() => navigate('/')} />
       <Footer />
     </div>
   );
@@ -571,7 +596,10 @@ const AppContent: React.FC = () => {
       
       {/* Дашборд мастера (только для авторизованных мастеров) */}
       <Route path="/dashboard" element={<DashboardPage />} />
-      
+
+      {/* AI настройки (только для мастеров) */}
+      <Route path="/ai-settings" element={<AISettingsPage />} />
+
       {/* Результаты поиска */}
       <Route path="/search" element={<SearchPage />} />
       

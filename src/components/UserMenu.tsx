@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, LogOut, Settings, Heart, FileText, ChevronDown, Wrench } from 'lucide-react';
+import { User, LogOut, ChevronDown, Wrench, Sparkles } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useLanguage } from '../hooks/useLanguage';
 import { useNavigate } from 'react-router-dom';
@@ -19,6 +19,11 @@ export const UserMenu: React.FC = () => {
 
   const handleDashboardClick = () => {
     navigate('/dashboard');
+    setIsOpen(false);
+  };
+
+  const handleAISettingsClick = () => {
+    navigate('/ai-settings');
     setIsOpen(false);
   };
 
@@ -67,29 +72,24 @@ export const UserMenu: React.FC = () => {
             {/* Menu Items */}
             <div className="py-2">
               {isMaster && (
-                <button 
-                  onClick={handleDashboardClick}
-                  className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 text-gray-700"
-                >
-                  <Wrench size={16} />
-                  <span>{language === 'sk' ? 'Moj Profil' : 'Master Dashboard'}</span>
-                </button>
+                <>
+                  <button
+                    onClick={handleDashboardClick}
+                    className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 text-gray-700"
+                  >
+                    <Wrench size={16} />
+                    <span>{language === 'sk' ? 'Môj profil' : 'Master Dashboard'}</span>
+                  </button>
+
+                  <button
+                    onClick={handleAISettingsClick}
+                    className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 text-gray-700"
+                  >
+                    <Sparkles size={16} />
+                    <span>{language === 'sk' ? 'Môj AI predajca' : 'My AI Seller'}</span>
+                  </button>
+                </>
               )}
-              
-              <button className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 text-gray-700">
-                <Settings size={16} />
-                <span>{language === 'sk' ? 'Nastavenia' : 'Settings'}</span>
-              </button>
-              
-              <button className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 text-gray-700">
-                <Heart size={16} />
-                <span>{language === 'sk' ? 'Obľúbené' : 'Favorites'}</span>
-              </button>
-              
-              <button className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 text-gray-700">
-                <FileText size={16} />
-                <span>{language === 'sk' ? 'Moje objednávky' : 'My Orders'}</span>
-              </button>
             </div>
 
             {/* Sign Out */}
