@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, User, Mail, Phone, MapPin, FileText, Camera, Video, Settings, Save, Eye, EyeOff, Clock, Euro, Users, Award, Globe, Facebook, Instagram, Linkedin, Youtube, Twitter, MessageCircle, CheckCircle, AlertCircle, Upload, X, Image, Play, AlertTriangle, Plus, Copy, Check, Calendar, Star, Trash2 } from 'lucide-react';
+import { ArrowLeft, User, Mail, Phone, MapPin, FileText, Camera, Video, Settings, Save, Eye, EyeOff, Clock, Euro, Users, Award, Globe, Facebook, Instagram, Linkedin, Youtube, Twitter, MessageCircle, CheckCircle, AlertCircle, Upload, X, Image, Play, AlertTriangle, Plus, Copy, Check, Calendar, Star, Trash2, Info, Sparkles } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { saveMasterProfile, type MasterProfile } from '../lib/masterProfileApi';
 import { MasterPortfolio } from './MasterPortfolio';
@@ -21,6 +21,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
   const [hasChanges, setHasChanges] = useState(false);
   const [copiedCoupon, setCopiedCoupon] = useState<string | null>(null);
   const [isProfileSaved, setIsProfileSaved] = useState(false);
+  const [selectedPlanForDetails, setSelectedPlanForDetails] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [deleteConfirmationText, setDeleteConfirmationText] = useState('');
@@ -1802,76 +1803,114 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
             <h2 className="text-2xl font-bold">Platby a predplatné</h2>
             
             {/* Subscription Plans */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <div className="text-center mb-6">
-                <h3 className="text-xl font-semibold mb-2">Využite teraz garantovanú dotovanú cenu</h3>
-                <p className="text-gray-600">Nestratíte pozornosť a zákaziek bude viac.</p>
+            <div className="bg-gradient-to-br from-blue-50 via-white to-purple-50 rounded-2xl shadow-xl p-8">
+              <div className="text-center mb-8">
+                <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full mb-4">
+                  <Sparkles className="w-5 h-5" />
+                  <span className="font-semibold">Využite teraz garantovanú dotovanú cenu</span>
+                </div>
+                <p className="text-lg text-gray-700">Nestratíte pozornosť a zákaziek bude viac.</p>
               </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {/* Basic Plan */}
+                <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105">
+                  <div className="bg-gradient-to-r from-blue-400 to-blue-500 p-6 text-white">
+                    <div className="text-4xl mb-2">⭐</div>
+                    <h4 className="font-bold text-xl mb-2">Basic</h4>
+                    <div className="flex items-baseline">
+                      <span className="text-4xl font-bold">9.9</span>
+                      <span className="text-xl ml-1">€</span>
+                      <span className="text-sm ml-2 opacity-90">/mesiac</span>
+                    </div>
+                    <p className="text-xs mt-2 opacity-90">z 19,9€</p>
+                  </div>
+                  <div className="p-6 space-y-3">
+                    <button
+                      onClick={() => setSelectedPlanForDetails('Basic')}
+                      className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all mb-2"
+                    >
+                      Čítať podrobnejšie
+                    </button>
+                    <button className="w-full bg-gray-100 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-all">
+                      Vybrať plán
+                    </button>
+                  </div>
+                </div>
+
                 {/* Standard Plan */}
-                <div className="border-2 border-gray-200 rounded-xl p-4 hover:border-blue-500 transition-colors">
-                  <div className="text-center">
-                    <h4 className="font-semibold text-lg mb-2">Štandard</h4>
-                    <div className="mb-3">
-                      <span className="text-gray-500 line-through text-sm">z 19,9€</span>
-                      <div className="text-2xl font-bold text-green-600">9,9€</div>
-                      <span className="text-sm text-gray-600">mesačne</span>
+                <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 ring-4 ring-blue-500 ring-offset-4 relative">
+                  <div className="absolute top-4 right-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg z-10">
+                    NAJPOPULÁRNEJŠÍ
+                  </div>
+                  <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-6 text-white">
+                    <div className="text-4xl mb-2">🚀</div>
+                    <h4 className="font-bold text-xl mb-2">Standard</h4>
+                    <div className="flex items-baseline">
+                      <span className="text-4xl font-bold">19.9</span>
+                      <span className="text-xl ml-1">€</span>
+                      <span className="text-sm ml-2 opacity-90">/mesiac</span>
                     </div>
-                    <button className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors">
+                    <p className="text-xs mt-2 opacity-90">z 39,9€</p>
+                  </div>
+                  <div className="p-6 space-y-3">
+                    <button
+                      onClick={() => setSelectedPlanForDetails('Standard')}
+                      className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all mb-2"
+                    >
+                      Čítať podrobnejšie
+                    </button>
+                    <button className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all">
                       Vybrať plán
                     </button>
                   </div>
                 </div>
 
-                {/* Professional Plan */}
-                <div className="border-2 border-blue-500 rounded-xl p-4 relative">
-                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-blue-500 text-white px-3 py-1 rounded-full text-sm">Populárne</span>
-                  </div>
-                  <div className="text-center">
-                    <h4 className="font-semibold text-lg mb-2">Professional</h4>
-                    <div className="mb-3">
-                      <span className="text-gray-500 line-through text-sm">z 39,9€</span>
-                      <div className="text-2xl font-bold text-green-600">19,9€</div>
-                      <span className="text-sm text-gray-600">mesačne</span>
+                {/* Premium Plan */}
+                <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105">
+                  <div className="bg-gradient-to-r from-orange-400 to-red-500 p-6 text-white">
+                    <div className="text-4xl mb-2">👑</div>
+                    <h4 className="font-bold text-xl mb-2">Premium</h4>
+                    <div className="flex items-baseline">
+                      <span className="text-4xl font-bold">25.5</span>
+                      <span className="text-xl ml-1">€</span>
+                      <span className="text-sm ml-2 opacity-90">/mesiac</span>
                     </div>
-                    <button className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors">
+                    <p className="text-xs mt-2 opacity-90">z 59€ - zvyšovanie zisku</p>
+                  </div>
+                  <div className="p-6 space-y-3">
+                    <button
+                      onClick={() => setSelectedPlanForDetails('Premium')}
+                      className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all mb-2"
+                    >
+                      Čítať podrobnejšie
+                    </button>
+                    <button className="w-full bg-gray-100 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-all">
                       Vybrať plán
                     </button>
                   </div>
                 </div>
 
-                {/* Professional + Expert Plan */}
-                <div className="border-2 border-gray-200 rounded-xl p-4 hover:border-blue-500 transition-colors">
-                  <div className="text-center">
-                    <h4 className="font-semibold text-lg mb-2">Professional + Expert</h4>
-                    <p className="text-xs text-gray-600 mb-2">na zvyšovanie zisku</p>
-                    <div className="mb-3">
-                      <span className="text-gray-500 line-through text-sm">z 59€</span>
-                      <div className="text-2xl font-bold text-green-600">25,5€</div>
-                      <span className="text-sm text-gray-600">mesačne</span>
+                {/* Ultimate Plan */}
+                <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 ring-4 ring-yellow-400 ring-offset-4">
+                  <div className="bg-gradient-to-r from-yellow-400 to-amber-500 p-6 text-white">
+                    <div className="text-4xl mb-2">💎</div>
+                    <h4 className="font-bold text-xl mb-2">Ultimate</h4>
+                    <div className="flex items-baseline">
+                      <span className="text-4xl font-bold">4979</span>
+                      <span className="text-xl ml-1">€</span>
+                      <span className="text-sm ml-2 opacity-90">/mesiac</span>
                     </div>
-                    <button className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors">
-                      Vybrať plán
+                    <p className="text-xs mt-2 opacity-90">z 9999€ - VIP služby</p>
+                  </div>
+                  <div className="p-6 space-y-3">
+                    <button
+                      onClick={() => setSelectedPlanForDetails('Ultimate')}
+                      className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all mb-2"
+                    >
+                      Čítať podrobnejšie
                     </button>
-                  </div>
-                </div>
-
-                {/* Premier Top Profi Plan */}
-                <div className="border-2 border-yellow-400 rounded-xl p-4 relative">
-                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-yellow-400 text-black px-3 py-1 rounded-full text-sm font-semibold">VIP</span>
-                  </div>
-                  <div className="text-center">
-                    <h4 className="font-semibold text-lg mb-1">Premier Top Profi</h4>
-                    <p className="text-xs text-gray-600 mb-2">+osobný konzultant, budovanie firmy, automatizácia, koučing</p>
-                    <div className="mb-3">
-                      <span className="text-gray-500 line-through text-sm">z 9999€</span>
-                      <div className="text-2xl font-bold text-green-600">4979€</div>
-                      <span className="text-sm text-gray-600">mesačne</span>
-                    </div>
-                    <button className="w-full bg-yellow-400 text-black py-2 rounded-lg hover:bg-yellow-500 transition-colors font-semibold">
+                    <button className="w-full bg-gradient-to-r from-yellow-400 to-amber-500 text-black py-3 rounded-lg font-semibold hover:shadow-lg transition-all">
                       Vybrať VIP plán
                     </button>
                   </div>
@@ -2061,6 +2100,139 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
             loadContactHours();
           }}
         />
+      )}
+
+      {/* Plan Details Modal */}
+      {selectedPlanForDetails && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 rounded-t-2xl">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h2 className="text-3xl font-bold mb-2">{selectedPlanForDetails}</h2>
+                  <p className="text-lg opacity-90">Kompletný prehľad funkcií</p>
+                </div>
+                <button
+                  onClick={() => setSelectedPlanForDetails(null)}
+                  className="text-white hover:bg-white/20 rounded-full p-2 transition-colors"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+            </div>
+
+            <div className="p-8">
+              <h3 className="text-xl font-bold mb-6 text-gray-800 flex items-center gap-2">
+                <Sparkles className="w-6 h-6 text-blue-600" />
+                Všetky funkcie tohto plánu:
+              </h3>
+
+              <div className="space-y-3 mb-8">
+                {(() => {
+                  const planFeatures = {
+                    'Basic': [
+                      'Predajný profil',
+                      'Rozvoj podnikania profesionálne on-line kurzy a certifikácie (v príprave)',
+                      'Benefit weba najdiMajstra.sk: Zvýšenie zisku',
+                      'Vlastný plánovací kalendár',
+                      'On-line zmluvy (v príprave)',
+                      'Hodnotenie od klientov',
+                      'Zvýšenie vašej propagácie',
+                      'Propagácia seba a zvýšenie zaujmu o vaše služby a výsledné produkty',
+                      'Predaj platených služieb',
+                      'Vaš zisková aplikácia nM (najdiMajstra.sk) v mobile v príprave 2026',
+                      'Vaša odbornosť: Kurzy a certifikáty'
+                    ],
+                    'Standard': [
+                      'Predajný profil',
+                      'Osobný AI predajca ktorý šetrí váš čas a aktívne predá vaše služby alebo produkty',
+                      'Rozvoj podnikania profesionálne on-line kurzy a certifikácie (v príprave)',
+                      'Benefit weba najdiMajstra.sk: Zvýšenie zisku',
+                      'Osobný plánovač času',
+                      'Vlastný plánovací kalendár',
+                      'On-line zmluvy (v príprave)',
+                      'Hodnotenie od klientov',
+                      'Zvýšenie vašej propagácie',
+                      'Propagácia seba a zvýšenie zaujmu o vaše služby a výsledné produkty',
+                      'Predaj platených služieb',
+                      'Vaš zisková aplikácia nM (najdiMajstra.sk) v mobile v príprave 2026',
+                      'Vaša odbornosť: Kurzy a certifikáty'
+                    ],
+                    'Premium': [
+                      'Predajný profil',
+                      'Osobný AI predajca ktorý šetrí váš čas a aktívne predá vaše služby alebo produkty',
+                      'Rozvoj podnikania profesionálne on-line kurzy a certifikácie (v príprave)',
+                      'Benefit weba najdiMajstra.sk: Zvýšenie zisku',
+                      'Osobný plánovač času',
+                      'Vlastný plánovací kalendár',
+                      'On-line zmluvy (v príprave)',
+                      'Hodnotenie od klientov',
+                      'Zvýšenie vašej propagácie',
+                      'Propagácia seba a zvýšenie zaujmu o vaše služby a výsledné produkty',
+                      'Predaj platených služieb',
+                      'Vaš zisková aplikácia nM (najdiMajstra.sk) v mobile v príprave 2026',
+                      'Vaša odbornosť: Kurzy a certifikáty'
+                    ],
+                    'Ultimate': [
+                      'Predajný profil',
+                      'Osobný AI predajca ktorý šetrí váš čas a aktívne predá vaše služby alebo produkty',
+                      'Rozvoj podnikania profesionálne on-line kurzy a certifikácie (v príprave)',
+                      'Benefit weba najdiMajstra.sk: Zvýšenie zisku',
+                      'Osobný plánovač času',
+                      'Vlastný plánovací kalendár',
+                      'On-line zmluvy (v príprave)',
+                      'Možnosť pridania svojích prác ktoré ste predajú',
+                      'Hodnotenie od klientov',
+                      'Zvýšenie vašej propagácie',
+                      'Propagácia seba a zvýšenie zaujmu o vaše služby a výsledné produkty',
+                      'Predaj platených služieb',
+                      'Vaš zisková aplikácia nM (najdiMajstra.sk) v mobile v príprave 2026',
+                      'Vaša odbornosť: Kurzy a certifikáty',
+                      'Vzdelávanie, Rozvoj, Mentoring, Osobnostný rozvoj, Psychológia predaja, Líderstvo'
+                    ]
+                  };
+
+                  const features = planFeatures[selectedPlanForDetails as keyof typeof planFeatures] || [];
+
+                  return features.map((feature, index) => (
+                    <div key={index} className="flex items-start gap-3 p-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-xl border border-green-100 hover:shadow-md transition-shadow">
+                      <div className="flex-shrink-0 mt-1">
+                        <div className="w-6 h-6 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center">
+                          <Check className="w-4 h-4 text-white" />
+                        </div>
+                      </div>
+                      <span className="text-gray-800 leading-relaxed">{feature}</span>
+                    </div>
+                  ));
+                })()}
+              </div>
+
+              <div className="border-t pt-6">
+                <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 mb-6">
+                  <h4 className="font-bold text-lg mb-2 text-gray-800">Cena plánu</h4>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-bold text-blue-600">
+                      {selectedPlanForDetails === 'Basic' && '9.9'}
+                      {selectedPlanForDetails === 'Standard' && '19.9'}
+                      {selectedPlanForDetails === 'Premium' && '25.5'}
+                      {selectedPlanForDetails === 'Ultimate' && '4979'}
+                    </span>
+                    <span className="text-2xl text-gray-600">€</span>
+                    <span className="text-gray-600">/mesiac</span>
+                  </div>
+                  <p className="text-sm text-gray-600 mt-2">Automatické mesačné predplatné. Systém vám automaticky vyšle faktúru.</p>
+                </div>
+
+                <button
+                  onClick={() => setSelectedPlanForDetails(null)}
+                  className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 rounded-xl font-bold text-lg hover:shadow-xl transform hover:scale-[1.02] transition-all"
+                >
+                  Vybrať tento plán
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
