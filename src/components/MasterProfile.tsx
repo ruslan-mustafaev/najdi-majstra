@@ -468,7 +468,7 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                         className="flex items-center justify-center hover:opacity-80 transition-opacity"
                         title="Telegram"
                       >
-                        <img src="/svg_social/telegram_svg.svg" alt="Telegram" className="w-10.5 h-11" />
+                        <img src="/svg_social/telegram_svg.svg" alt="Telegram" className="w-10 h-11" />
                       </a>
                     )}
                     {(master as any).socialWhatsapp && (
