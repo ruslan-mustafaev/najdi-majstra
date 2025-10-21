@@ -15,6 +15,7 @@ import { SearchResults } from './components/SearchResults';
 import { MasterDashboard } from './components/MasterDashboard';
 import { EmailConfirmation } from './components/EmailConfirmation';
 import { AIAssistantSettings } from './components/AIAssistantSettings';
+import { SubscriptionPlans } from './components/SubscriptionPlans';
 import { Master } from './data/mockData';
 import { getTopRatedMasters } from './lib/mastersApi';
 import { checkConnection } from './lib/supabase';
@@ -602,7 +603,10 @@ const AppContent: React.FC = () => {
 
       {/* Результаты поиска */}
       <Route path="/search" element={<SearchPage />} />
-      
+
+      {/* Страница подписки */}
+      <Route path="/subscription" element={<SubscriptionPlans />} />
+
       {/* Перенаправление на главную для несуществующих путей */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
