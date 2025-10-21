@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, User, Mail, Phone, MapPin, FileText, Camera, Video, Settings, Save, Eye, EyeOff, Clock, Euro, Users, Award, Globe, Facebook, Instagram, Linkedin, Youtube, Twitter, MessageCircle, CheckCircle, AlertCircle, Upload, X, Image, Play, AlertTriangle, Plus, Copy, Check, Calendar, Star, Trash2, Info, Sparkles } from 'lucide-react';
+import { ArrowLeft, User, Mail, Phone, MapPin, FileText, Camera, Video, Settings, Save, Eye, EyeOff, Clock, Euro, Users, Award, Globe, Facebook, Instagram, Linkedin, Youtube, Twitter, MessageCircle, CheckCircle, AlertCircle, Upload, X, Image, Play, AlertTriangle, Plus, Check, Calendar, Star, Trash2, Info, Sparkles } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { saveMasterProfile, type MasterProfile } from '../lib/masterProfileApi';
 import { MasterPortfolio } from './MasterPortfolio';
@@ -19,7 +19,6 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
   const [activeTab, setActiveTab] = useState<'profile' | 'calendar' | 'portfolio' | 'projects' | 'payments'>('profile');
   const [editingField, setEditingField] = useState<string | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
-  const [copiedCoupon, setCopiedCoupon] = useState<string | null>(null);
   const [isProfileSaved, setIsProfileSaved] = useState(false);
   const [selectedPlanForDetails, setSelectedPlanForDetails] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -136,12 +135,6 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
     certificatesText: ''
   });
 
-  const handleCopyCoupon = (code: string) => {
-    navigator.clipboard.writeText(code);
-    setCopiedCoupon(code);
-    setTimeout(() => setCopiedCoupon(null), 2000);
-  };
-  
   const handleSave = async () => {
   setIsSaving(true);
 
@@ -1977,63 +1970,6 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                   Automatické mesačné predplatné. Systém vám automaticky vyšle faktúru.
                 </p>
               </div>
-            </div>
-
-            {/* Discount Coupons */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-xl font-semibold mb-4">Zľavové kupóny</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="border border-green-200 rounded-lg p-4 bg-green-50">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <span className="text-2xl font-bold text-green-600">25%</span>
-                      <p className="text-sm text-gray-600">zľava</p>
-                    </div>
-                    <button 
-                      onClick={() => handleCopyCoupon('SAVE25')}
-                      className="flex items-center space-x-2 bg-green-500 text-white px-3 py-1 rounded-lg hover:bg-green-600 transition-colors"
-                    >
-                      {copiedCoupon === 'SAVE25' ? <Check size={16} /> : <Copy size={16} />}
-                      <span className="text-sm">SAVE25</span>
-                    </button>
-                  </div>
-                </div>
-                
-                <div className="border border-blue-200 rounded-lg p-4 bg-blue-50">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <span className="text-2xl font-bold text-blue-600">50%</span>
-                      <p className="text-sm text-gray-600">zľava</p>
-                    </div>
-                    <button 
-                      onClick={() => handleCopyCoupon('HALF50')}
-                      className="flex items-center space-x-2 bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600 transition-colors"
-                    >
-                      {copiedCoupon === 'HALF50' ? <Check size={16} /> : <Copy size={16} />}
-                      <span className="text-sm">HALF50</span>
-                    </button>
-                  </div>
-                </div>
-                
-                <div className="border border-purple-200 rounded-lg p-4 bg-purple-50">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <span className="text-2xl font-bold text-purple-600">100%</span>
-                      <p className="text-sm text-gray-600">zdarma</p>
-                    </div>
-                    <button 
-                      onClick={() => handleCopyCoupon('FREE100')}
-                      className="flex items-center space-x-2 bg-purple-500 text-white px-3 py-1 rounded-lg hover:bg-purple-600 transition-colors"
-                    >
-                      {copiedCoupon === 'FREE100' ? <Check size={16} /> : <Copy size={16} />}
-                      <span className="text-sm">FREE100</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <p className="text-sm text-gray-600 mt-4">
-                Automatické mesačné predplatné. Systém vám automaticky vyšle faktúru.
-              </p>
             </div>
           </div>
         )}
