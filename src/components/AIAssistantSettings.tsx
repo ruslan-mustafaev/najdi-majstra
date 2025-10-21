@@ -72,19 +72,18 @@ export const AIAssistantSettings: React.FC<AIAssistantSettingsProps> = ({ onBack
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      {/* Fixed Back to Home Button */}
-      <div className="fixed top-4 left-4 z-50">
-        <button
-          onClick={() => navigate('/')}
-          className="flex items-center space-x-2 px-4 py-2 bg-white text-gray-600 hover:text-white hover:bg-[#4169e1] rounded-lg transition-all duration-200 group border border-gray-300 hover:border-[#4169e1] shadow-lg hover:shadow-xl"
-        >
-          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-          <Home size={18} className="group-hover:scale-110 transition-transform" />
-          <span className="font-medium">Späť na úvod</span>
-        </button>
-      </div>
-
       <div className="max-w-4xl mx-auto px-4">
+        {/* Back to Home Button */}
+        <div className="mb-6">
+          <button
+            onClick={() => navigate('/')}
+            className="flex items-center space-x-2 px-4 py-2 bg-white text-gray-700 hover:text-white hover:bg-[#4169e1] rounded-lg transition-all duration-200 group border border-gray-300 hover:border-[#4169e1] shadow-md hover:shadow-lg"
+          >
+            <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+            <Home size={18} className="group-hover:scale-110 transition-transform" />
+            <span className="font-medium">Späť na úvod</span>
+          </button>
+        </div>
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center space-x-3 mb-2">
