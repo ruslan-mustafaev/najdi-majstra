@@ -1802,119 +1802,180 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
           <div className="space-y-6">
             <h2 className="text-2xl font-bold">Platby a predplatné</h2>
             
-            {/* Subscription Plans */}
-            <div className="bg-gradient-to-br from-blue-50 via-white to-purple-50 rounded-2xl shadow-xl p-8">
-              <div className="text-center mb-8">
-                <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full mb-4">
+            {/* Subscription Plans Table */}
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+              <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 text-center">
+                <div className="inline-flex items-center gap-2 bg-white/20 px-4 py-2 rounded-full mb-3">
                   <Sparkles className="w-5 h-5" />
                   <span className="font-semibold">Využite teraz garantovanú dotovanú cenu</span>
                 </div>
-                <p className="text-lg text-gray-700">Nestratíte pozornosť a zákaziek bude viac.</p>
+                <p className="text-lg opacity-90">Nestratíte pozornosť a zákaziek bude viac.</p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {/* Basic Plan */}
-                <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105">
-                  <div className="bg-gradient-to-r from-blue-400 to-blue-500 p-6 text-white">
-                    <div className="text-4xl mb-2">⭐</div>
-                    <h4 className="font-bold text-xl mb-2">Basic</h4>
-                    <div className="flex items-baseline">
-                      <span className="text-4xl font-bold">9.9</span>
-                      <span className="text-xl ml-1">€</span>
-                      <span className="text-sm ml-2 opacity-90">/mesiac</span>
-                    </div>
-                    <p className="text-xs mt-2 opacity-90">z 19,9€</p>
-                  </div>
-                  <div className="p-6 space-y-3">
-                    <button
-                      onClick={() => setSelectedPlanForDetails('Basic')}
-                      className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all mb-2"
-                    >
-                      Čítať podrobnejšie
-                    </button>
-                    <button className="w-full bg-gray-100 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-all">
-                      Vybrať plán
-                    </button>
-                  </div>
-                </div>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="bg-gradient-to-r from-gray-100 to-gray-200">
+                      <th className="text-left p-4 font-bold text-gray-800 border-r border-gray-300 min-w-[350px]">
+                        Profil a registrácia
+                      </th>
+                      <th className="text-center p-4 font-bold text-gray-800 border-r border-gray-300 min-w-[120px]">
+                        <div className="text-sm text-gray-600 mb-1">Zdarma</div>
+                        <div className="text-2xl font-bold text-blue-600">0€</div>
+                      </th>
+                      <th className="text-center p-4 font-bold text-gray-800 border-r border-gray-300 min-w-[120px]">
+                        <div className="text-sm text-gray-600 mb-1">Basic</div>
+                        <div className="text-2xl font-bold text-blue-600">9.9€</div>
+                      </th>
+                      <th className="text-center p-4 font-bold text-gray-800 border-r border-gray-300 min-w-[120px] bg-gradient-to-b from-yellow-50 to-orange-50">
+                        <div className="text-xs bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-2 py-1 rounded-full inline-block mb-1 font-bold">
+                          POPULÁRNE
+                        </div>
+                        <div className="text-sm text-gray-600 mb-1">Standard</div>
+                        <div className="text-2xl font-bold text-orange-600">19.9€</div>
+                      </th>
+                      <th className="text-center p-4 font-bold text-gray-800 border-r border-gray-300 min-w-[120px]">
+                        <div className="text-sm text-gray-600 mb-1">Premium</div>
+                        <div className="text-2xl font-bold text-blue-600">25.5€</div>
+                      </th>
+                      <th className="text-center p-4 font-bold text-gray-800 min-w-[120px] bg-gradient-to-b from-yellow-50 to-amber-50">
+                        <div className="text-xs bg-gradient-to-r from-yellow-400 to-amber-500 text-black px-2 py-1 rounded-full inline-block mb-1 font-bold">
+                          VIP
+                        </div>
+                        <div className="text-sm text-gray-600 mb-1">Ultimate</div>
+                        <div className="text-2xl font-bold text-amber-600">4979€</div>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      { id: 1, name: 'Predajný profil', free: true, basic: true, standard: true, premium: true, ultimate: true },
+                      { id: 2, name: 'Osobný AI predajca ktorý šetrí váš čas a aktívne predá vaše služby alebo produkty', free: false, basic: false, standard: true, premium: true, ultimate: true },
+                      { id: 3, name: 'Rozvoj podnikania profesionálne on-line kurzy a certifikácie (v príprave)', free: true, basic: true, standard: true, premium: true, ultimate: true },
+                      { id: 4, name: 'Benefit webu najdiMajstra.sk: Zvýšenie zisku', free: true, basic: true, standard: true, premium: true, ultimate: true },
+                      { id: 5, name: 'Osobný plánovač času', free: false, basic: false, standard: true, premium: true, ultimate: true },
+                      { id: 6, name: 'Vlastný plánovací kalendár', free: true, basic: true, standard: true, premium: true, ultimate: true },
+                      { id: 7, name: 'On-line zmluvy (v príprave)', free: true, basic: true, standard: true, premium: true, ultimate: true },
+                      { id: 8, name: 'Možnosť pridania svojích prác ktoré ste predajú', free: false, basic: false, standard: false, premium: false, ultimate: true },
+                      { id: 9, name: 'Hodnotenie od klientov', free: true, basic: true, standard: true, premium: true, ultimate: true },
+                      { id: 10, name: 'Zvýšenie vašej propagácie', free: true, basic: true, standard: true, premium: true, ultimate: true },
+                      { id: 11, name: 'Propagácia seba a zvýšenie zaujmu o vaše služby a výsledné produkty', free: true, basic: true, standard: true, premium: true, ultimate: true },
+                      { id: 12, name: 'Predaj vlastných služieb', free: true, basic: true, standard: true, premium: true, ultimate: true },
+                      { id: 13, name: 'Vaš zisková aplikácia nM (najdiMajstra.sk) v mobile v príprave 2026', free: true, basic: true, standard: true, premium: true, ultimate: true },
+                      { id: 14, name: 'Vaša odbornosť: Kurzy a certifikáty', free: true, basic: true, standard: true, premium: true, ultimate: true },
+                      { id: 15, name: 'Vzdelávanie, Rozvoj, Mentoring, Osobnostný rozvoj, Psychológia predaja, Líderstvo', free: false, basic: false, standard: false, premium: false, ultimate: true }
+                    ].map((feature, index) => (
+                      <tr
+                        key={feature.id}
+                        className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-blue-50 transition-colors border-b border-gray-200`}
+                      >
+                        <td className="p-4 text-gray-800 font-medium border-r border-gray-300">
+                          <div className="flex items-center justify-between gap-3">
+                            <span className="flex-1">{feature.name}</span>
+                            <button
+                              onClick={() => setSelectedPlanForDetails(`Feature-${feature.id}`)}
+                              className="flex-shrink-0 text-blue-600 hover:text-blue-800 font-semibold text-sm flex items-center gap-1 hover:underline whitespace-nowrap"
+                            >
+                              <Info size={16} />
+                              Čítať viac
+                            </button>
+                          </div>
+                        </td>
+                        <td className="text-center p-4 border-r border-gray-300">
+                          {feature.free ? (
+                            <div className="flex justify-center">
+                              <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                                <Check className="w-4 h-4 text-white" />
+                              </div>
+                            </div>
+                          ) : (
+                            <span className="text-gray-400 text-sm">nie</span>
+                          )}
+                        </td>
+                        <td className="text-center p-4 border-r border-gray-300">
+                          {feature.basic ? (
+                            <div className="flex justify-center">
+                              <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                                <Check className="w-4 h-4 text-white" />
+                              </div>
+                            </div>
+                          ) : (
+                            <span className="text-gray-400 text-sm">nie</span>
+                          )}
+                        </td>
+                        <td className="text-center p-4 border-r border-gray-300 bg-gradient-to-b from-yellow-50/30 to-orange-50/30">
+                          {feature.standard ? (
+                            <div className="flex justify-center">
+                              <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                                <Check className="w-4 h-4 text-white" />
+                              </div>
+                            </div>
+                          ) : (
+                            <span className="text-gray-400 text-sm">nie</span>
+                          )}
+                        </td>
+                        <td className="text-center p-4 border-r border-gray-300">
+                          {feature.premium ? (
+                            <div className="flex justify-center">
+                              <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                                <Check className="w-4 h-4 text-white" />
+                              </div>
+                            </div>
+                          ) : (
+                            <span className="text-gray-400 text-sm">nie</span>
+                          )}
+                        </td>
+                        <td className="text-center p-4 bg-gradient-to-b from-yellow-50/30 to-amber-50/30">
+                          {feature.ultimate ? (
+                            <div className="flex justify-center">
+                              <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                                <Check className="w-4 h-4 text-white" />
+                              </div>
+                            </div>
+                          ) : (
+                            <span className="text-gray-400 text-sm">nie</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                    <tr className="bg-gradient-to-r from-gray-100 to-gray-200">
+                      <td className="p-4 font-bold text-gray-800 border-r border-gray-300">
+                        Vyberte váš plán
+                      </td>
+                      <td className="text-center p-4 border-r border-gray-300">
+                        <button className="bg-gray-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-gray-700 transition-all">
+                          Vybrať
+                        </button>
+                      </td>
+                      <td className="text-center p-4 border-r border-gray-300">
+                        <button className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-all">
+                          Vybrať
+                        </button>
+                      </td>
+                      <td className="text-center p-4 border-r border-gray-300 bg-gradient-to-b from-yellow-50/30 to-orange-50/30">
+                        <button className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-2 rounded-lg font-semibold hover:shadow-lg transition-all">
+                          Vybrať
+                        </button>
+                      </td>
+                      <td className="text-center p-4 border-r border-gray-300">
+                        <button className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-all">
+                          Vybrať
+                        </button>
+                      </td>
+                      <td className="text-center p-4 bg-gradient-to-b from-yellow-50/30 to-amber-50/30">
+                        <button className="bg-gradient-to-r from-yellow-400 to-amber-500 text-black px-6 py-2 rounded-lg font-semibold hover:shadow-lg transition-all">
+                          Vybrať VIP
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
 
-                {/* Standard Plan */}
-                <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 ring-4 ring-blue-500 ring-offset-4 relative">
-                  <div className="absolute top-4 right-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg z-10">
-                    NAJPOPULÁRNEJŠÍ
-                  </div>
-                  <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-6 text-white">
-                    <div className="text-4xl mb-2">🚀</div>
-                    <h4 className="font-bold text-xl mb-2">Standard</h4>
-                    <div className="flex items-baseline">
-                      <span className="text-4xl font-bold">19.9</span>
-                      <span className="text-xl ml-1">€</span>
-                      <span className="text-sm ml-2 opacity-90">/mesiac</span>
-                    </div>
-                    <p className="text-xs mt-2 opacity-90">z 39,9€</p>
-                  </div>
-                  <div className="p-6 space-y-3">
-                    <button
-                      onClick={() => setSelectedPlanForDetails('Standard')}
-                      className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all mb-2"
-                    >
-                      Čítať podrobnejšie
-                    </button>
-                    <button className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all">
-                      Vybrať plán
-                    </button>
-                  </div>
-                </div>
-
-                {/* Premium Plan */}
-                <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105">
-                  <div className="bg-gradient-to-r from-orange-400 to-red-500 p-6 text-white">
-                    <div className="text-4xl mb-2">👑</div>
-                    <h4 className="font-bold text-xl mb-2">Premium</h4>
-                    <div className="flex items-baseline">
-                      <span className="text-4xl font-bold">25.5</span>
-                      <span className="text-xl ml-1">€</span>
-                      <span className="text-sm ml-2 opacity-90">/mesiac</span>
-                    </div>
-                    <p className="text-xs mt-2 opacity-90">z 59€ - zvyšovanie zisku</p>
-                  </div>
-                  <div className="p-6 space-y-3">
-                    <button
-                      onClick={() => setSelectedPlanForDetails('Premium')}
-                      className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all mb-2"
-                    >
-                      Čítať podrobnejšie
-                    </button>
-                    <button className="w-full bg-gray-100 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-all">
-                      Vybrať plán
-                    </button>
-                  </div>
-                </div>
-
-                {/* Ultimate Plan */}
-                <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 ring-4 ring-yellow-400 ring-offset-4">
-                  <div className="bg-gradient-to-r from-yellow-400 to-amber-500 p-6 text-white">
-                    <div className="text-4xl mb-2">💎</div>
-                    <h4 className="font-bold text-xl mb-2">Ultimate</h4>
-                    <div className="flex items-baseline">
-                      <span className="text-4xl font-bold">4979</span>
-                      <span className="text-xl ml-1">€</span>
-                      <span className="text-sm ml-2 opacity-90">/mesiac</span>
-                    </div>
-                    <p className="text-xs mt-2 opacity-90">z 9999€ - VIP služby</p>
-                  </div>
-                  <div className="p-6 space-y-3">
-                    <button
-                      onClick={() => setSelectedPlanForDetails('Ultimate')}
-                      className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all mb-2"
-                    >
-                      Čítať podrobnejšie
-                    </button>
-                    <button className="w-full bg-gradient-to-r from-yellow-400 to-amber-500 text-black py-3 rounded-lg font-semibold hover:shadow-lg transition-all">
-                      Vybrať VIP plán
-                    </button>
-                  </div>
-                </div>
+              <div className="bg-gray-50 p-6 text-center border-t border-gray-200">
+                <p className="text-sm text-gray-600">
+                  Automatické mesačné predplatné. Systém vám automaticky vyšle faktúru.
+                </p>
               </div>
             </div>
 
@@ -2102,19 +2163,22 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
         />
       )}
 
-      {/* Plan Details Modal */}
+      {/* Feature Details Modal */}
       {selectedPlanForDetails && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 rounded-t-2xl">
               <div className="flex justify-between items-start">
-                <div>
-                  <h2 className="text-3xl font-bold mb-2">{selectedPlanForDetails}</h2>
-                  <p className="text-lg opacity-90">Kompletný prehľad funkcií</p>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Info className="w-6 h-6" />
+                    <h2 className="text-2xl font-bold">Podrobné informácie</h2>
+                  </div>
+                  <p className="text-sm opacity-90">Všetko čo potrebujete vedieť o tejto funkcii</p>
                 </div>
                 <button
                   onClick={() => setSelectedPlanForDetails(null)}
-                  className="text-white hover:bg-white/20 rounded-full p-2 transition-colors"
+                  className="text-white hover:bg-white/20 rounded-full p-2 transition-colors flex-shrink-0"
                 >
                   <X size={24} />
                 </button>
@@ -2122,114 +2186,205 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
             </div>
 
             <div className="p-8">
-              <h3 className="text-xl font-bold mb-6 text-gray-800 flex items-center gap-2">
-                <Sparkles className="w-6 h-6 text-blue-600" />
-                Všetky funkcie tohto plánu:
-              </h3>
-
-              <div className="space-y-3 mb-8">
-                {(() => {
-                  const planFeatures = {
-                    'Basic': [
-                      'Predajný profil',
-                      'Rozvoj podnikania profesionálne on-line kurzy a certifikácie (v príprave)',
-                      'Benefit weba najdiMajstra.sk: Zvýšenie zisku',
-                      'Vlastný plánovací kalendár',
-                      'On-line zmluvy (v príprave)',
-                      'Hodnotenie od klientov',
-                      'Zvýšenie vašej propagácie',
-                      'Propagácia seba a zvýšenie zaujmu o vaše služby a výsledné produkty',
-                      'Predaj platených služieb',
-                      'Vaš zisková aplikácia nM (najdiMajstra.sk) v mobile v príprave 2026',
-                      'Vaša odbornosť: Kurzy a certifikáty'
-                    ],
-                    'Standard': [
-                      'Predajný profil',
-                      'Osobný AI predajca ktorý šetrí váš čas a aktívne predá vaše služby alebo produkty',
-                      'Rozvoj podnikania profesionálne on-line kurzy a certifikácie (v príprave)',
-                      'Benefit weba najdiMajstra.sk: Zvýšenie zisku',
-                      'Osobný plánovač času',
-                      'Vlastný plánovací kalendár',
-                      'On-line zmluvy (v príprave)',
-                      'Hodnotenie od klientov',
-                      'Zvýšenie vašej propagácie',
-                      'Propagácia seba a zvýšenie zaujmu o vaše služby a výsledné produkty',
-                      'Predaj platených služieb',
-                      'Vaš zisková aplikácia nM (najdiMajstra.sk) v mobile v príprave 2026',
-                      'Vaša odbornosť: Kurzy a certifikáty'
-                    ],
-                    'Premium': [
-                      'Predajný profil',
-                      'Osobný AI predajca ktorý šetrí váš čas a aktívne predá vaše služby alebo produkty',
-                      'Rozvoj podnikania profesionálne on-line kurzy a certifikácie (v príprave)',
-                      'Benefit weba najdiMajstra.sk: Zvýšenie zisku',
-                      'Osobný plánovač času',
-                      'Vlastný plánovací kalendár',
-                      'On-line zmluvy (v príprave)',
-                      'Hodnotenie od klientov',
-                      'Zvýšenie vašej propagácie',
-                      'Propagácia seba a zvýšenie zaujmu o vaše služby a výsledné produkty',
-                      'Predaj platených služieb',
-                      'Vaš zisková aplikácia nM (najdiMajstra.sk) v mobile v príprave 2026',
-                      'Vaša odbornosť: Kurzy a certifikáty'
-                    ],
-                    'Ultimate': [
-                      'Predajný profil',
-                      'Osobný AI predajca ktorý šetrí váš čas a aktívne predá vaše služby alebo produkty',
-                      'Rozvoj podnikania profesionálne on-line kurzy a certifikácie (v príprave)',
-                      'Benefit weba najdiMajstra.sk: Zvýšenie zisku',
-                      'Osobný plánovač času',
-                      'Vlastný plánovací kalendár',
-                      'On-line zmluvy (v príprave)',
-                      'Možnosť pridania svojích prác ktoré ste predajú',
-                      'Hodnotenie od klientov',
-                      'Zvýšenie vašej propagácie',
-                      'Propagácia seba a zvýšenie zaujmu o vaše služby a výsledné produkty',
-                      'Predaj platených služieb',
-                      'Vaš zisková aplikácia nM (najdiMajstra.sk) v mobile v príprave 2026',
-                      'Vaša odbornosť: Kurzy a certifikáty',
-                      'Vzdelávanie, Rozvoj, Mentoring, Osobnostný rozvoj, Psychológia predaja, Líderstvo'
+              {(() => {
+                const featureDetails: Record<string, { title: string; description: string; benefits: string[] }> = {
+                  'Feature-1': {
+                    title: 'Predajný profil',
+                    description: 'Vytvorte si profesionálny predajný profil, ktorý vás predstaví potenciálnym zákazníkom. Váš profil obsahuje všetky dôležité informácie o vašich službách, skúsenostiach a certifikáciách.',
+                    benefits: [
+                      'Profesionálna prezentácia vašich služieb',
+                      'Zvýšenie dôveryhodnosti u klientov',
+                      'Možnosť pridať fotografie a certifikáty',
+                      'Detailný opis vašich schopností'
                     ]
-                  };
+                  },
+                  'Feature-2': {
+                    title: 'Osobný AI predajca',
+                    description: 'Inteligentný AI asistent, ktorý za vás komunikuje so zákazníkmi 24/7, odpovedá na otázky a aktívne predáva vaše služby. Šetrí váš čas a zvyšuje obrat.',
+                    benefits: [
+                      'Automatická komunikácia so zákazníkmi',
+                      'Dostupnosť 24 hodín denne, 7 dní v týždni',
+                      'Inteligentné odpovede na otázky',
+                      'Zvýšenie konverzie zákazníkov'
+                    ]
+                  },
+                  'Feature-3': {
+                    title: 'Rozvoj podnikania - Kurzy a certifikácie',
+                    description: 'Prístup k profesionálnym online kurzom a certifikáciám, ktoré vám pomôžu rozvíjať vaše podnikanie a získať nové zručnosti.',
+                    benefits: [
+                      'Široká ponuka odborných kurzov',
+                      'Certifikáty pre zvýšenie dôveryhodnosti',
+                      'Učte sa vlastným tempom',
+                      'Prístup k expertom v odbore'
+                    ]
+                  },
+                  'Feature-4': {
+                    title: 'Benefit webu najdiMajstra.sk: Zvýšenie zisku',
+                    description: 'Využite silu najväčšej platformy pre majstrov na Slovensku. Získajte prístup k tisíckam potenciálnych zákazníkov, ktorí aktívne hľadajú vaše služby.',
+                    benefits: [
+                      'Prístup k veľkej databáze klientov',
+                      'Vyššia viditeľnosť vašich služieb',
+                      'Viac objednávok a zákazníkov',
+                      'Profesionálny marketing vašej firmy'
+                    ]
+                  },
+                  'Feature-5': {
+                    title: 'Osobný plánovač času',
+                    description: 'Inteligentný systém plánovania, ktorý vám pomôže efektívne organizovať pracovný čas, objednávky a stretnutia so zákazníkmi.',
+                    benefits: [
+                      'Automatické plánovanie objednávok',
+                      'Pripomienky a notifikácie',
+                      'Optimalizácia pracovného času',
+                      'Prehľad všetkých stretnutí na jednom mieste'
+                    ]
+                  },
+                  'Feature-6': {
+                    title: 'Vlastný plánovací kalendár',
+                    description: 'Profesionálny kalendár pre správu vašej dostupnosti. Zákazníci môžu vidieť voľné termíny a objednať si vašu službu priamo cez váš profil.',
+                    benefits: [
+                      'Prehľadné zobrazenie voľných termínov',
+                      'Online objednávanie pre zákazníkov',
+                      'Automatická synchronizácia',
+                      'Zníženie administratívnej práce'
+                    ]
+                  },
+                  'Feature-7': {
+                    title: 'On-line zmluvy',
+                    description: 'Elektronické podpisovanie zmlúv priamo v systéme. Rýchle, bezpečné a právne platné uzatváranie dohôd so zákazníkmi.',
+                    benefits: [
+                      'Rýchle uzatváranie dohôd',
+                      'Právna platnosť dokumentov',
+                      'Bezpečné úložisko zmlúv',
+                      'Úspora papiera a času'
+                    ]
+                  },
+                  'Feature-8': {
+                    title: 'Možnosť pridania svojích prác',
+                    description: 'Vytvorte si portfólio svojich najlepších projektov. Ukážte potenciálnym klientom kvalitu vašej práce prostredníctvom fotografií a popisov realizovaných projektov.',
+                    benefits: [
+                      'Vizuálna prezentácia vašej práce',
+                      'Zvýšenie dôvery u nových klientov',
+                      'Neomedzené množstvo projektov',
+                      'Profesionálna galéria prác'
+                    ]
+                  },
+                  'Feature-9': {
+                    title: 'Hodnotenie od klientov',
+                    description: 'Získavajte recenzie a hodnotenia od spokojných zákazníkov. Pozitívne recenzie zvyšujú vašu dôveryhodnosť a prilákajú nových klientov.',
+                    benefits: [
+                      'Budovanie pozitívnej reputácie',
+                      'Autentické recenzie od skutočných zákazníkov',
+                      'Zvýšenie dôvery nových klientov',
+                      'Lepšie umiestnenie vo vyhľadávaní'
+                    ]
+                  },
+                  'Feature-10': {
+                    title: 'Zvýšenie vašej propagácie',
+                    description: 'Využite naše marketingové nástroje na propagáciu vašich služieb. Dosiahnite väčšiu viditeľnosť a prilákajte viac zákazníkov.',
+                    benefits: [
+                      'Profesionálny marketing',
+                      'Cielená reklama na potenciálnych klientov',
+                      'Vyššie umiestnenie vo výsledkoch',
+                      'Väčšia viditeľnosť vášho profilu'
+                    ]
+                  },
+                  'Feature-11': {
+                    title: 'Propagácia seba a zvýšenie zaujmu',
+                    description: 'Komplexné nástroje pre propagáciu vašich služieb a produktov. Zvýšte záujem o vaše služby pomocou našich pokročilých marketingových funkcií.',
+                    benefits: [
+                      'Široká škála propagačných nástrojov',
+                      'Analytika výkonnosti',
+                      'Cielený marketing',
+                      'Zvýšenie počtu objednávok'
+                    ]
+                  },
+                  'Feature-12': {
+                    title: 'Predaj vlastných služieb',
+                    description: 'Vytvorte si vlastný online obchod so službami. Zákazníci môžu priamo nakupovať vaše služby a produkty cez váš profil.',
+                    benefits: [
+                      'Online predaj služieb',
+                      'Bezpečné platobné metódy',
+                      'Automatizované vystavovanie faktúr',
+                      'Prehľad všetkých transakcií'
+                    ]
+                  },
+                  'Feature-13': {
+                    title: 'Mobilná aplikácia najdiMajstra.sk',
+                    description: 'V roku 2026 získate prístup k našej mobilnej aplikácii, kde budete môcť spravovať svoj profil a komunikovať so zákazníkmi priamo z vášho mobilu.',
+                    benefits: [
+                      'Správa profilu odkiaľkoľvek',
+                      'Push notifikácie o nových objednávkach',
+                      'Rýchla komunikácia so zákazníkmi',
+                      'Prístup ku všetkým funkciám na mobile'
+                    ]
+                  },
+                  'Feature-14': {
+                    title: 'Vaša odbornosť: Kurzy a certifikáty',
+                    description: 'Prezentujte svoju odbornosť prostredníctvom získaných kurzov a certifikátov. Zvýšte dôveryhodnosť a ukážte svoju kvalifikáciu.',
+                    benefits: [
+                      'Prezentácia certifikátov',
+                      'Overenie odbornej kvalifikácie',
+                      'Zvýšenie dôveryhodnosti',
+                      'Lepšie hodnotenie v systéme'
+                    ]
+                  },
+                  'Feature-15': {
+                    title: 'Vzdelávanie a osobnostný rozvoj',
+                    description: 'Komplexný program vzdelávania zahŕňajúci mentoring, osobnostný rozvoj, psychológiu predaja a líderstvo. Staňte sa lepším podnikateľom.',
+                    benefits: [
+                      'Osobný mentoring od expertov',
+                      'Kurzy psychológie predaja',
+                      'Rozvoj líderských schopností',
+                      'Komplexný osobnostný rozvoj'
+                    ]
+                  }
+                };
 
-                  const features = planFeatures[selectedPlanForDetails as keyof typeof planFeatures] || [];
+                const feature = featureDetails[selectedPlanForDetails];
 
-                  return features.map((feature, index) => (
-                    <div key={index} className="flex items-start gap-3 p-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-xl border border-green-100 hover:shadow-md transition-shadow">
-                      <div className="flex-shrink-0 mt-1">
-                        <div className="w-6 h-6 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center">
-                          <Check className="w-4 h-4 text-white" />
-                        </div>
-                      </div>
-                      <span className="text-gray-800 leading-relaxed">{feature}</span>
+                if (!feature) {
+                  return (
+                    <div className="text-center py-8">
+                      <p className="text-gray-600">Informácie o tejto funkcii nie sú k dispozícii.</p>
                     </div>
-                  ));
-                })()}
-              </div>
+                  );
+                }
 
-              <div className="border-t pt-6">
-                <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 mb-6">
-                  <h4 className="font-bold text-lg mb-2 text-gray-800">Cena plánu</h4>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-bold text-blue-600">
-                      {selectedPlanForDetails === 'Basic' && '9.9'}
-                      {selectedPlanForDetails === 'Standard' && '19.9'}
-                      {selectedPlanForDetails === 'Premium' && '25.5'}
-                      {selectedPlanForDetails === 'Ultimate' && '4979'}
-                    </span>
-                    <span className="text-2xl text-gray-600">€</span>
-                    <span className="text-gray-600">/mesiac</span>
-                  </div>
-                  <p className="text-sm text-gray-600 mt-2">Automatické mesačné predplatné. Systém vám automaticky vyšle faktúru.</p>
-                </div>
+                return (
+                  <>
+                    <div className="mb-6">
+                      <h3 className="text-2xl font-bold text-gray-900 mb-3">{feature.title}</h3>
+                      <p className="text-gray-700 leading-relaxed">{feature.description}</p>
+                    </div>
 
-                <button
-                  onClick={() => setSelectedPlanForDetails(null)}
-                  className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 rounded-xl font-bold text-lg hover:shadow-xl transform hover:scale-[1.02] transition-all"
-                >
-                  Vybrať tento plán
-                </button>
-              </div>
+                    <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 mb-6">
+                      <h4 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <Sparkles className="w-5 h-5 text-blue-600" />
+                        Výhody tejto funkcie:
+                      </h4>
+                      <div className="space-y-3">
+                        {feature.benefits.map((benefit, index) => (
+                          <div key={index} className="flex items-start gap-3">
+                            <div className="flex-shrink-0 mt-1">
+                              <div className="w-5 h-5 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center">
+                                <Check className="w-3 h-3 text-white" />
+                              </div>
+                            </div>
+                            <span className="text-gray-800">{benefit}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => setSelectedPlanForDetails(null)}
+                      className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all"
+                    >
+                      Zavrieť
+                    </button>
+                  </>
+                );
+              })()}
             </div>
           </div>
         </div>
