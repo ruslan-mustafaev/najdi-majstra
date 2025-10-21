@@ -125,7 +125,7 @@ export const AIAssistantSettings: React.FC<AIAssistantSettingsProps> = ({ onBack
             <textarea
               value={urgentPrompt}
               onChange={(e) => setUrgentPrompt(e.target.value)}
-              placeholder="Napríklad: Som odborník na pohotovostné zásahy s 10-ročnou praxou. Špecializujem sa na riešenie akútnych porúch plynových zariadení. Som dostupný 24/7 a zvyčajne prichádzam do 30 minút. Mojou prioritou je rýchle a bezpečné riešenie problému..."
+              placeholder="Napríklad: Buď vždy zdvorilý a profesionálny. Nehovor nič zbytočné, len to, čo sa týka mojej práce. Špecializujem sa na inštaláciu elektrických rozvodov v bytoch a rodinných domoch. Mám 8 rokov skúseností, som certifikovaný elektrikár a pracujem presne podľa noriem. Som k dispozícii na pohotovostné zásahy do 2 hodín v meste a okolí."
               className="w-full h-40 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent resize-none"
             />
             <p className="text-xs text-gray-500 mt-2">
@@ -148,7 +148,7 @@ export const AIAssistantSettings: React.FC<AIAssistantSettingsProps> = ({ onBack
             <textarea
               value={regularPrompt}
               onChange={(e) => setRegularPrompt(e.target.value)}
-              placeholder="Napríklad: Ponúkam pravidelný servis plynových kotlov a zariadení. Mám certifikáty na prácu s plynovými zariadeniami a pravidelne absolvujem školenia. Vykonávam komplexné revízie, čistenie a údržbu. Poskytnem vám harmonogram údržby a poradím, ako predĺžiť životnosť vašich zariadení..."
+              placeholder="Napríklad: Komunikuj profesionálne a vecne. Ponúkam pravidelný servis elektrických inštalácií, revízie a údržbu. Mám certifikáty a pravidelne sa vzdelávam v nových normách. Vykonávam komplexné kontroly, merania a diagnostiku elektrických rozvodov. Poradím, ako zabezpečiť dlhú životnosť a bezpečnosť vašej elektrickej inštalácie."
               className="w-full h-40 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent resize-none"
             />
             <p className="text-xs text-gray-500 mt-2">
@@ -171,7 +171,7 @@ export const AIAssistantSettings: React.FC<AIAssistantSettingsProps> = ({ onBack
             <textarea
               value={realizationPrompt}
               onChange={(e) => setRealizationPrompt(e.target.value)}
-              placeholder="Napríklad: Špecializujem sa na komplexné projekty plynových inštalácií. Mám skúsenosti s realizáciou od rodinných domov po komerčné objekty. Poskytujem kompletnú dokumentáciu, cenové kalkulácie a garantujem dodržanie termínov. Spolupracujem s overenými dodávateľmi a ponúkam záručný aj pozáručný servis..."
+              placeholder="Napríklad: Buď priateľský, ale profesionálny. Zameraj sa len na fakty o mojej práci. Špecializujem sa na komplexné elektrické projekty – od rodinných domov po komerčné priestory. Zabezpečujem kompletné riešenie vrátane projektu, realizácie a kolaudácie. Mám skúsenosti s moderným smart osvetlením, fotovoltaikou a zabezpečovacími systémami. Poskytujem záruku a dlhodobý servis."
               className="w-full h-40 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent resize-none"
             />
             <p className="text-xs text-gray-500 mt-2">
