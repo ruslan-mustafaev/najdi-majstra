@@ -79,8 +79,8 @@ export const AIAssistantSettings: React.FC<AIAssistantSettingsProps> = ({ onBack
             onClick={() => navigate('/')}
             className="flex items-center gap-2 text-gray-700 hover:text-[#4169e1] transition-colors"
           >
-            <ArrowLeft size={24} strokeWidth={2} />
-            <span className="text-lg">Späť na úvod</span>
+            <ArrowLeft size={20} strokeWidth={2} />
+            <span className="text-base">Späť na úvod</span>
           </button>
         </div>
         {/* Header */}
