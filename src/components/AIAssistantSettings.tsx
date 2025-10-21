@@ -78,7 +78,7 @@ export const AIAssistantSettings: React.FC<AIAssistantSettingsProps> = ({ onBack
             className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 mb-4 transition-colors"
           >
             <ArrowLeft size={20} />
-            <span>Späť</span>
+            <span>Späť na úvod</span>
           </button>
 
           <div className="flex items-center space-x-3 mb-2">
