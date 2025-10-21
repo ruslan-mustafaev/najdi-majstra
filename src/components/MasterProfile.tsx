@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Star, MapPin, Clock, Phone, Mail, Globe, Award, Users, Calendar, Euro, Play, Facebook, Instagram, Linkedin, Youtube, Twitter, MessageCircle } from 'lucide-react';
+import { ArrowLeft, Star, MapPin, Clock, Phone, Mail, Globe, Award, Users, Calendar, Euro, Play, Facebook, Instagram, Linkedin, Youtube, Twitter, MessageCircle, Edit2, Trash2, X, Check } from 'lucide-react';
 import { Master } from '../types';
 import { WorkPlanningCalendar } from './WorkPlanningCalendar';
 import { MasterPortfolio } from './MasterPortfolio';
@@ -50,6 +50,9 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
   const [averageRating, setAverageRating] = useState<number>(0);
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [isUserMaster, setIsUserMaster] = useState(false);
+  const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
+  const [editedComment, setEditedComment] = useState('');
+  const [editedRating, setEditedRating] = useState(5);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -163,6 +166,69 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
   useEffect(() => {
     loadReviews();
   }, [master.userId]);
+
+  const canEditReview = (reviewCreatedAt: string, reviewClientId: string) => {
+    if (!user || reviewClientId !== user.id) return false;
+
+    const reviewDate = new Date(reviewCreatedAt);
+    const now = new Date();
+    const hoursDiff = (now.getTime() - reviewDate.getTime()) / (1000 * 60 * 60);
+
+    return hoursDiff <= 24;
+  };
+
+  const handleEditReview = (review: any) => {
+    setEditingReviewId(review.id);
+    setEditedComment(review.comment);
+    setEditedRating(review.rating);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingReviewId(null);
+    setEditedComment('');
+    setEditedRating(5);
+  };
+
+  const handleSaveEdit = async (reviewId: string) => {
+    try {
+      const { error } = await supabase
+        .from('master_reviews')
+        .update({
+          comment: editedComment,
+          rating: editedRating,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', reviewId);
+
+      if (error) throw error;
+
+      await loadReviews();
+      setEditingReviewId(null);
+      setEditedComment('');
+      setEditedRating(5);
+    } catch (error) {
+      console.error('Error updating review:', error);
+      alert('Chyba pri aktualizácii recenzie');
+    }
+  };
+
+  const handleDeleteReview = async (reviewId: string) => {
+    if (!confirm('Naozaj chcete odstrániť túto recenziu?')) return;
+
+    try {
+      const { error } = await supabase
+        .from('master_reviews')
+        .delete()
+        .eq('id', reviewId);
+
+      if (error) throw error;
+
+      await loadReviews();
+    } catch (error) {
+      console.error('Error deleting review:', error);
+      alert('Chyba pri odstraňovaní recenzie');
+    }
+  };
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
@@ -309,7 +375,7 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                     </div>
                   )}
                 </div>
-                {!isOwnProfile && user && !isUserMaster && (
+                {!isOwnProfile && user && !isUserMaster && !reviews.some(r => r.client_id === user.id) && (
                   <button
                     onClick={() => setShowReviewForm(true)}
                     className="bg-[#4169e1] text-white px-4 py-2 rounded-lg hover:bg-[#3155c7] transition-colors text-sm font-medium"
@@ -321,26 +387,103 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
 
               {reviews.length > 0 ? (
                 <div className="space-y-6">
-                  {reviews.map((review) => (
-                    <div key={review.id} className="border-b border-gray-200 pb-6 last:border-b-0">
-                      <div className="flex justify-between items-start mb-3">
-                        <div>
-                          <h4 className="font-semibold text-gray-900">
-                            {review.client?.name || 'Клиент'}
-                          </h4>
-                        </div>
-                        <div className="text-right">
-                          <div className="flex items-center space-x-1 mb-1">
-                            {renderStars(review.rating)}
+                  {reviews.map((review) => {
+                    const isEditing = editingReviewId === review.id;
+                    const canEdit = canEditReview(review.created_at, review.client_id);
+
+                    return (
+                      <div key={review.id} className="border-b border-gray-200 pb-6 last:border-b-0">
+                        <div className="flex justify-between items-start mb-3">
+                          <div>
+                            <h4 className="font-semibold text-gray-900">
+                              {review.client?.name || 'Клиент'}
+                            </h4>
                           </div>
-                          <p className="text-sm text-gray-500">
-                            {new Date(review.created_at).toLocaleDateString('sk-SK')}
-                          </p>
+                          <div className="flex items-center gap-3">
+                            <div className="text-right">
+                              {isEditing ? (
+                                <div className="flex items-center gap-1 mb-1">
+                                  {Array.from({ length: 5 }, (_, i) => (
+                                    <button
+                                      key={i}
+                                      onClick={() => setEditedRating(i + 1)}
+                                      className="focus:outline-none"
+                                    >
+                                      <Star
+                                        size={20}
+                                        className={i < editedRating ? 'text-yellow-400 fill-current' : 'text-gray-300'}
+                                      />
+                                    </button>
+                                  ))}
+                                </div>
+                              ) : (
+                                <div className="flex items-center space-x-1 mb-1">
+                                  {renderStars(review.rating)}
+                                </div>
+                              )}
+                              <p className="text-sm text-gray-500">
+                                {new Date(review.created_at).toLocaleDateString('sk-SK')}
+                              </p>
+                            </div>
+                            {canEdit && !isEditing && (
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={() => handleEditReview(review)}
+                                  className="text-blue-600 hover:text-blue-800 transition-colors p-1"
+                                  title="Upraviť recenziu"
+                                >
+                                  <Edit2 size={16} />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteReview(review.id)}
+                                  className="text-red-600 hover:text-red-800 transition-colors p-1"
+                                  title="Odstrániť recenziu"
+                                >
+                                  <Trash2 size={16} />
+                                </button>
+                              </div>
+                            )}
+                          </div>
                         </div>
+
+                        {isEditing ? (
+                          <div className="space-y-3">
+                            <textarea
+                              value={editedComment}
+                              onChange={(e) => setEditedComment(e.target.value)}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                              rows={4}
+                              placeholder="Váš komentár..."
+                            />
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => handleSaveEdit(review.id)}
+                                className="flex items-center gap-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm"
+                              >
+                                <Check size={16} />
+                                Uložiť
+                              </button>
+                              <button
+                                onClick={handleCancelEdit}
+                                className="flex items-center gap-1 bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors text-sm"
+                              >
+                                <X size={16} />
+                                Zrušiť
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <p className="text-gray-700">{review.comment}</p>
+                        )}
+
+                        {canEdit && !isEditing && (
+                          <p className="text-xs text-gray-500 mt-2 italic">
+                            Môžete upraviť alebo odstrániť do {new Date(new Date(review.created_at).getTime() + 24 * 60 * 60 * 1000).toLocaleString('sk-SK')}
+                          </p>
+                        )}
                       </div>
-                      <p className="text-gray-700">{review.comment}</p>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="text-center py-8 text-gray-500">
