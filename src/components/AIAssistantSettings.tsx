@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Save, Sparkles, MessageSquare, AlertCircle, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Save, Sparkles, MessageSquare, AlertCircle, CheckCircle, Home } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
+import { useNavigate } from 'react-router-dom';
 
 interface AIAssistantSettingsProps {
   onBack: () => void;
@@ -9,6 +10,7 @@ interface AIAssistantSettingsProps {
 
 export const AIAssistantSettings: React.FC<AIAssistantSettingsProps> = ({ onBack }) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [urgentPrompt, setUrgentPrompt] = useState('');
   const [regularPrompt, setRegularPrompt] = useState('');
   const [realizationPrompt, setRealizationPrompt] = useState('');
@@ -71,16 +73,19 @@ export const AIAssistantSettings: React.FC<AIAssistantSettingsProps> = ({ onBack
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4">
+        {/* Back to Home Button */}
+        <div className="mb-6">
+          <button
+            onClick={() => navigate('/')}
+            className="flex items-center space-x-2 text-gray-600 hover:text-[#4169e1] transition-colors group"
+          >
+            <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+            <span className="font-medium">Späť na úvod</span>
+          </button>
+        </div>
+
         {/* Header */}
         <div className="mb-8">
-          <button
-            onClick={onBack}
-            className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 mb-4 transition-colors"
-          >
-            <ArrowLeft size={20} />
-            <span>Späť</span>
-          </button>
-
           <div className="flex items-center space-x-3 mb-2">
             <div className="w-12 h-12 bg-gradient-to-br from-[#4169e1] to-[#5a7bff] rounded-xl flex items-center justify-center">
               <Sparkles size={24} className="text-white" />
