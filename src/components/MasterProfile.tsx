@@ -37,7 +37,7 @@ const getSocialIcon = (platform: string) => {
     case 'tiktok':
       return <img src="/svg_social/tiktok-icon.svg" alt="TikTok" className="w-5 h-5" />;
     case 'telegram':
-      return <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold">T</div>;
+      return <img src="/svg_social/telegram_svg.svg" alt="Telegram" className="w-5 h-5" />;
     default:
       return <Globe size={20} className="text-gray-600" />;
   }
