@@ -1144,32 +1144,6 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                     )}
                   </div>
 
-                  {/* Experience */}
-                  <div>
-                    <label className="block text-sm font-semibold text-blue-600 mb-2">
-                      Ako dlho to robím
-                    </label>
-                    {editingField === 'experience' ? (
-                      <select
-                        value={profileData.experience}
-                        onChange={(e) => handleFieldChange('experience', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
-                      >
-                        <option value="">Vyberte skúsenosti</option>
-                        {experienceLevels.map(level => (
-                          <option key={level} value={level}>{level}</option>
-                        ))}
-                      </select>
-                    ) : (
-                      <p 
-                        className="text-gray-700 cursor-pointer hover:bg-gray-50 p-2 rounded border-2 border-transparent hover:border-gray-200 transition-colors"
-                        onClick={() => startEditing('experience')}
-                      >
-                        {profileData.experience || 'Nevyplnené - kliknite pre úpravu'}
-                      </p>
-                    )}
-                  </div>
-
                   {/* Communication Style */}
                   <div>
                     <label className="block text-sm font-semibold text-blue-600 mb-2">
