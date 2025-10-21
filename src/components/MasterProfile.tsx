@@ -476,10 +476,10 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                         href={(master as any).socialWhatsapp}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center justify-center w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors"
+                        className="flex items-center justify-center hover:opacity-80 transition-opacity"
                         title="WhatsApp"
                       >
-                        <img src="/svg_social/whatsapp-icon.svg" alt="WhatsApp" className="w-9 h-9" />
+                        <img src="/svg_social/whatsapp-icon.svg" alt="WhatsApp" className="w-10 h-10" />
                       </a>
                     )}
                   </div>
