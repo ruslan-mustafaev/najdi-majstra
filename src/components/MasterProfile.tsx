@@ -479,7 +479,7 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                         className="flex items-center justify-center hover:opacity-80 transition-opacity"
                         title="WhatsApp"
                       >
-                        <img src="/svg_social/whatsapp-icon.svg" alt="WhatsApp" className="w-10 h-10" />
+                        <img src="/svg_social/whatsapp-icon.svg" alt="WhatsApp" className="w-9 h-9" />
                       </a>
                     )}
                   </div>
