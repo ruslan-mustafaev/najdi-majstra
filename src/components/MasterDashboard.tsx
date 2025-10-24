@@ -751,12 +751,6 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                   </div>
                   <p className="text-sm text-gray-600 mb-2">Profilová fotka</p>
                   <p className="text-xs text-gray-500 mb-2">Takto vyzerá na webe</p>
-                  <div className="flex items-center justify-center space-x-1 mb-2">
-                    {[1,2,3,4,5].map((star) => (
-                      <Star key={star} size={16} className="text-gray-300" />
-                    ))}
-                    <span className="text-sm text-gray-500 ml-2">0.0 (0 hodnotení)</span>
-                  </div>
                   <FileUploadManager
                     fileType="avatar"
                     onUploadComplete={(urls) => {
