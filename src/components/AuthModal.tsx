@@ -68,9 +68,27 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   if (!isOpen) return null;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    let filteredValue = value;
+
+    // Validation for phone field - only numbers, spaces, +, -, ()
+    if (name === 'phone') {
+      filteredValue = value.replace(/[^\d\s+\-()]/g, '');
+    }
+
+    // Validation for firstName and lastName - only letters, spaces, and common diacritics
+    if (name === 'firstName' || name === 'lastName') {
+      filteredValue = value.replace(/[^a-zA-ZáäčďéěíľĺňóôŕšťúůýžÁÄČĎÉĚÍĽĹŇÓÔŔŠŤÚŮÝŽ\s-]/g, '');
+    }
+
+    // Validation for location - letters, numbers, spaces, diacritics, and common punctuation
+    if (name === 'location') {
+      filteredValue = value.replace(/[^a-zA-Z0-9áäčďéěíľĺňóôŕšťúůýžÁÄČĎÉĚÍĽĹŇÓÔŔŠŤÚŮÝŽ\s,.-]/g, '');
+    }
+
     setFormData(prev => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [name]: filteredValue
     }));
     setError(null);
   };
@@ -363,6 +381,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   onChange={handleInputChange}
                   className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#4169e1] focus:border-transparent outline-none"
                   placeholder="+421 9xx xxx xxx"
+                  pattern="[\d\s+\-()]+"
+                  title={language === 'sk' ? 'Zadajte platné telefónne číslo (len čísla, +, -, (), medzery)' : 'Enter valid phone number (only numbers, +, -, (), spaces)'}
                 />
               </div>
             </div>
