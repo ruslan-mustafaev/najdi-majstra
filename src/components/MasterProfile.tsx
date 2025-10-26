@@ -608,10 +608,10 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                         href={(master as any).socialTelegram}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center justify-center hover:opacity-80 transition-opacity"
+                        className="flex items-center justify-center w-11 h-11 rounded-full bg-[#0088cc] hover:bg-[#006699] transition-colors"
                         title="Telegram"
                       >
-                        <img src="/svg_social/telegram_svg.svg" alt="Telegram" className="w-11 h-11" />
+                        <img src="/svg_social/telegram_svg.svg" alt="Telegram" className="w-6 h-6" />
                       </a>
                     )}
                     {(master as any).socialWhatsapp && (
