@@ -205,7 +205,7 @@ const BreathingGradient = () => {
 
 interface MainSearchSectionProps {
   onFiltersChange: (filters: any) => void;
-  onMasterClick: (masterId: string) => void;
+  onMasterClick: (master: any) => void;
 }
 
 export const MainSearchSection: React.FC<MainSearchSectionProps> = ({ onFiltersChange, onMasterClick }) => {

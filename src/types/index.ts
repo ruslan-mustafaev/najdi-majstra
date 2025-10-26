@@ -1,6 +1,7 @@
 export interface Master {
   id: string;
   userId?: string;
+  slug?: string;
   name: string;
   profession: string;
   location: string;

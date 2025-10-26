@@ -91,7 +91,7 @@ const HomePage: React.FC = () => {
   // ИСПРАВЛЕНО: Мемоизируем функцию клика по мастеру
   const handleMasterClick = useCallback((master: Master) => {
     console.log('Master clicked:', master.id, master.name);
-    
+
     // Add to recently viewed
     setRecentlyViewed(prev => {
       const filtered = prev.filter(m => m.id !== master.id);
@@ -99,10 +99,11 @@ const HomePage: React.FC = () => {
       localStorage.setItem('recently-viewed', JSON.stringify(updated));
       return updated;
     });
-    
-    // Navigate to profile
-    console.log('Navigating to profile:', `/profile/${master.id}`);
-    navigate(`/profile/${master.id}`);
+
+    // Navigate to profile using slug or ID
+    const profileUrl = master.slug ? `/profile/${master.slug}` : `/profile/${master.id}`;
+    console.log('Navigating to profile:', profileUrl);
+    navigate(profileUrl);
   }, [navigate]);
 
   useEffect(() => {
@@ -219,7 +220,10 @@ const HomePage: React.FC = () => {
       <main>
         <MainSearchSection 
           onFiltersChange={handleFiltersChange} 
-          onMasterClick={(masterId: string) => navigate(`/profile/${masterId}`)} 
+          onMasterClick={(master: Master) => {
+            const profileUrl = master.slug ? `/profile/${master.slug}` : `/profile/${master.id}`;
+            navigate(profileUrl);
+          }} 
         />
         
         {/* Результаты фильтрации или обычный список */}
@@ -320,16 +324,16 @@ const saveMasterToCache = (id: string, master: Master) => {
   }
 };
 
-const loadMasterFromSource = async (id: string): Promise<Master | null> => {
+const loadMasterFromSource = async (idOrSlug: string): Promise<Master | null> => {
   try {
     // Сначала ищем в mockMasters
     const { mockMasters } = await import('./data/mockData');
-    let foundMaster = mockMasters.find(m => m.id === id);
+    let foundMaster = mockMasters.find(m => m.id === idOrSlug || m.slug === idOrSlug);
 
     // Если не найден в mock, пробуем загрузить из Supabase
     if (!foundMaster) {
       const masters = await getTopRatedMasters();
-      foundMaster = masters.find(m => m.id === id);
+      foundMaster = masters.find(m => m.id === idOrSlug || m.slug === idOrSlug);
     }
 
     return foundMaster || null;
@@ -346,11 +350,11 @@ const ProfilePage: React.FC = () => {
   const [master, setMaster] = useState<Master | null>(null);
   const [loading, setLoading] = useState(true);
 
-  console.log('ProfilePage rendered with ID:', id);
+  console.log('ProfilePage rendered with ID/Slug:', id);
 
   useEffect(() => {
     const loadMaster = async () => {
-      console.log('Loading master with ID:', id);
+      console.log('Loading master with ID/Slug:', id);
       setLoading(true);
       try {
         // 1. Проверяем кеш просмотренного профиля
@@ -381,7 +385,7 @@ const ProfilePage: React.FC = () => {
           }
         }
 
-        // 2. Загружаем из источников
+        // 2. Загружаем из источников (поддерживает slug или ID)
         const foundMaster = await loadMasterFromSource(id);
 
         console.log('Found master:', foundMaster);
@@ -390,7 +394,7 @@ const ProfilePage: React.FC = () => {
           setMaster(foundMaster);
           saveMasterToCache(id, foundMaster);
         } else {
-          console.error('Master not found with ID:', id);
+          console.error('Master not found with ID/Slug:', id);
         }
       } catch (error) {
         console.error('Error loading master:', error);
@@ -578,7 +582,10 @@ const SearchPage: React.FC = () => {
         masters={masters}
         filters={filters}
         onBack={() => navigate('/')}
-        onMasterClick={(master) => navigate(`/profile/${master.id}`)}
+        onMasterClick={(master) => {
+          const profileUrl = master.slug ? `/profile/${master.slug}` : `/profile/${master.id}`;
+          navigate(profileUrl);
+        }}
       />
       <Footer />
     </div>
