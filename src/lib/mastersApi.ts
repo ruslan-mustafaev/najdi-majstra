@@ -135,6 +135,7 @@ const loadFromDatabase = async () => {
     const masters = (data || []).map(master => ({
       id: master.id,
       userId: master.user_id,
+      slug: master.slug,
       name: master.name || 'Без имени',
       profession: master.profession || 'Majster',
       location: master.location || 'Не указано',
