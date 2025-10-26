@@ -558,13 +558,13 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                 (master as any).socialTiktok || (master as any).socialTelegram || (master as any).socialWhatsapp) && (
                 <div className="mt-6">
                   <h4 className="font-semibold text-gray-900 mb-3">Sledujte ma</h4>
-                  <div className="flex flex-wrap gap-3">
+                  <div className="flex flex-wrap gap-3 items-end">
                     {(master as any).socialFacebook && (
                       <a
                         href={(master as any).socialFacebook}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 hover:bg-blue-700 transition-colors"
+                        className="flex items-center justify-center w-11 h-11 rounded-full bg-blue-600 hover:bg-blue-700 transition-colors"
                         title="Facebook"
                       >
                         <Facebook size={20} className="text-white" />
@@ -575,7 +575,7 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                         href={(master as any).socialInstagram}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center justify-center w-10 h-10 rounded-full bg-pink-600 hover:bg-pink-700 transition-colors"
+                        className="flex items-center justify-center w-11 h-11 rounded-full bg-pink-600 hover:bg-pink-700 transition-colors"
                         title="Instagram"
                       >
                         <Instagram size={20} className="text-white" />
@@ -586,7 +586,7 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                         href={(master as any).socialYoutube}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center justify-center w-10 h-10 rounded-full bg-red-600 hover:bg-red-700 transition-colors"
+                        className="flex items-center justify-center w-11 h-11 rounded-full bg-red-600 hover:bg-red-700 transition-colors"
                         title="YouTube"
                       >
                         <Youtube size={20} className="text-white" />
@@ -597,7 +597,7 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                         href={(master as any).socialTiktok}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center justify-center w-10 h-10 rounded-full bg-black hover:bg-gray-800 transition-colors"
+                        className="flex items-center justify-center w-11 h-11 rounded-full bg-black hover:bg-gray-800 transition-colors"
                         title="TikTok"
                       >
                         <img src="/svg_social/tiktok-icon.svg" alt="TikTok" className="w-6 h-6" />
@@ -622,7 +622,7 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                         className="flex items-center justify-center hover:opacity-80 transition-opacity"
                         title="WhatsApp"
                       >
-                        <img src="/svg_social/whatsapp-icon.svg" alt="WhatsApp" className="w-9 h-9" />
+                        <img src="/svg_social/whatsapp-icon.svg" alt="WhatsApp" className="w-11 h-11" />
                       </a>
                     )}
                   </div>
