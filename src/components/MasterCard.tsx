@@ -1,5 +1,5 @@
 import React from 'react';
-import { Star, MapPin } from 'lucide-react';
+import { Star, MapPin, Globe } from 'lucide-react';
 import { Master } from '../types';
 import { ServiceIndicators, ServiceType } from './ServiceIndicators';
 
@@ -56,11 +56,17 @@ export const MasterCard: React.FC<MasterCardProps> = ({ master, featured = false
           }}
         />
         
-        {/* Availability indicator */}
+        {/* Availability indicator or Globe icon for work abroad */}
         <div className="absolute top-3 right-3">
-          <div className={`w-4 h-4 rounded-full border-2 border-white ${
-            master.available ? 'bg-green-500' : 'bg-red-500'
-          }`} />
+          {master.workAbroad ? (
+            <div className="w-8 h-8 bg-blue-600 rounded-full border-2 border-white flex items-center justify-center shadow-lg">
+              <Globe size={18} className="text-white" />
+            </div>
+          ) : (
+            <div className={`w-4 h-4 rounded-full border-2 border-white ${
+              master.available ? 'bg-green-500' : 'bg-red-500'
+            }`} />
+          )}
         </div>
 
         {/* Rating badge */}

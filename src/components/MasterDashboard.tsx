@@ -64,6 +64,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
     languages: string;
     hourlyRate: string;
     communicationStyle: string;
+    workAbroad: boolean;
     availability: {
       schedule: string;
       available: boolean;
@@ -105,6 +106,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
     languages: '',
     hourlyRate: '',
     communicationStyle: '',
+    workAbroad: false,
     availability: {
       schedule: '',
       available: true
@@ -148,6 +150,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
       location: profileData.location,
       description: profileData.description,
       communication_style: profileData.communicationStyle,
+      work_abroad: profileData.workAbroad,
       is_active: profileData.availability.available,
       is_available: profileData.availability.available,
       profile_completed: true,
@@ -280,6 +283,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
             location: data.location || prev.location,
             description: data.description || prev.description,
             communicationStyle: data.communication_style || '',
+            workAbroad: data.work_abroad || false,
             profileImageUrl: data.profile_image_url || undefined,
             contact: {
               ...prev.contact,
@@ -1158,6 +1162,32 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                         onClick={() => startEditing('communicationStyle')}
                       >
                         {profileData.communicationStyle || 'Nevyplnené - kliknite pre úpravu'}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Work Abroad */}
+                  <div>
+                    <label className="block text-sm font-semibold text-blue-600 mb-2">
+                      Pracujete aj v zahraničí?
+                    </label>
+                    {editingField === 'workAbroad' ? (
+                      <div className="space-y-2">
+                        <select
+                          value={profileData.workAbroad ? 'yes' : 'no'}
+                          onChange={(e) => handleFieldChange('workAbroad', e.target.value === 'yes')}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
+                        >
+                          <option value="no">Nie, nepracujem v zahraničí</option>
+                          <option value="yes">Áno, súhlasím pracovať v zahraničí</option>
+                        </select>
+                      </div>
+                    ) : (
+                      <p
+                        className="text-gray-700 cursor-pointer hover:bg-gray-50 p-2 rounded border-2 border-transparent hover:border-gray-200 transition-colors"
+                        onClick={() => startEditing('workAbroad')}
+                      >
+                        {profileData.workAbroad ? 'Áno, súhlasím pracovať v zahraničí' : 'Nie, nepracujem v zahraničí'}
                       </p>
                     )}
                   </div>

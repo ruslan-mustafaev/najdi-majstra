@@ -52,6 +52,7 @@ export interface Master {
   serviceRegular?: boolean;
   serviceUrgent?: boolean;
   serviceRealization?: boolean;
+  workAbroad?: boolean;
 }
 
 export interface Language {

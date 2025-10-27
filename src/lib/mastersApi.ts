@@ -191,7 +191,8 @@ const loadFromDatabase = async () => {
       socialYoutube: master.social_youtube || '',
       socialTiktok: master.social_tiktok || '',
       socialTelegram: master.social_telegram || '',
-      socialWhatsapp: master.social_whatsapp || ''
+      socialWhatsapp: master.social_whatsapp || '',
+      workAbroad: master.work_abroad || false
     }));
 
     // Сохраняем в кеш
