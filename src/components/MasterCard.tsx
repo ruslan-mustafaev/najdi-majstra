@@ -60,7 +60,7 @@ export const MasterCard: React.FC<MasterCardProps> = ({ master, featured = false
         <div className="absolute top-3 right-3">
           {master.workAbroad ? (
             <div className="relative group">
-              <Globe size={24} className="text-white drop-shadow-lg" />
+              <Globe size={18} className="text-white drop-shadow-lg" />
               <div className="absolute top-full right-0 mt-2 bg-black/90 text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
                 Ochotný pracovať v zahraničí
               </div>
