@@ -1830,68 +1830,68 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
               </div>
 
               <div className="overflow-x-auto">
-                <table className="w-full border-collapse">
+                <table className="w-full border-collapse text-sm">
                   <thead>
                     <tr className="border-b border-gray-300">
-                      <th className="text-left p-4 font-semibold text-gray-900 bg-gray-50" rowSpan={2}>
+                      <th className="text-left px-3 py-2 font-semibold text-gray-900 bg-gray-50 text-xs" rowSpan={2}>
                         Názov predajného profilu
                       </th>
-                      <th className="text-center p-3 bg-gray-50 border-l border-gray-300">
-                        <div className="text-sm font-semibold text-gray-700">Mini</div>
+                      <th className="text-center px-2 py-1.5 bg-gray-50 border-l border-gray-300">
+                        <div className="text-xs font-semibold text-gray-700">Mini</div>
                       </th>
-                      <th className="text-center p-3 bg-gray-50 border-l border-gray-300">
-                        <div className="text-sm font-semibold text-gray-700">Odborník</div>
+                      <th className="text-center px-2 py-1.5 bg-gray-50 border-l border-gray-300">
+                        <div className="text-xs font-semibold text-gray-700">Odborník</div>
                       </th>
-                      <th className="text-center p-3 bg-gray-50 border-l border-gray-300">
-                        <div className="text-sm font-semibold text-gray-700">Expert</div>
+                      <th className="text-center px-2 py-1.5 bg-gray-50 border-l border-gray-300">
+                        <div className="text-xs font-semibold text-gray-700">Expert</div>
                       </th>
-                      <th className="text-center p-3 bg-gray-50 border-l border-gray-300">
-                        <div className="text-sm font-semibold text-gray-700">Profik</div>
+                      <th className="text-center px-2 py-1.5 bg-gray-50 border-l border-gray-300">
+                        <div className="text-xs font-semibold text-gray-700">Profik</div>
                       </th>
-                      <th className="text-center p-3 bg-gray-50 border-l border-gray-300">
-                        <div className="text-sm font-semibold text-gray-700">Premier</div>
+                      <th className="text-center px-2 py-1.5 bg-gray-50 border-l border-gray-300">
+                        <div className="text-xs font-semibold text-gray-700">Premier</div>
                       </th>
                     </tr>
                     <tr className="border-b-2 border-gray-300 bg-red-50">
-                      <th className="text-center p-3 border-l border-gray-300">
-                        <div className="text-xs font-bold text-red-600 mb-1">Dožívtný profil</div>
-                        <div className="text-sm font-bold text-red-600 line-through">19.90€</div>
+                      <th className="text-center px-2 py-1.5 border-l border-gray-300">
+                        <div className="text-[10px] font-bold text-red-600 mb-0.5">Dožívtný profil</div>
+                        <div className="text-xs font-bold text-red-600 line-through">19.90€</div>
                       </th>
-                      <th className="text-center p-3 border-l border-gray-300">
-                        <div className="text-xs font-bold text-red-600 mb-1">Dožívtný profil</div>
-                        <div className="text-sm font-bold text-red-600 line-through">41.99€</div>
+                      <th className="text-center px-2 py-1.5 border-l border-gray-300">
+                        <div className="text-[10px] font-bold text-red-600 mb-0.5">Dožívtný profil</div>
+                        <div className="text-xs font-bold text-red-600 line-through">41.99€</div>
                       </th>
-                      <th className="text-center p-3 border-l border-gray-300">
-                        <div className="text-xs font-bold text-red-600 mb-1">Dožívtný profil</div>
-                        <div className="text-sm font-bold text-red-600 line-through">55.99€</div>
+                      <th className="text-center px-2 py-1.5 border-l border-gray-300">
+                        <div className="text-[10px] font-bold text-red-600 mb-0.5">Dožívtný profil</div>
+                        <div className="text-xs font-bold text-red-600 line-through">55.99€</div>
                       </th>
-                      <th className="text-center p-3 border-l border-gray-300">
-                        <div className="text-xs font-bold text-red-600 mb-1">Dožívtný profil</div>
-                        <div className="text-sm font-bold text-red-600 line-through">9 999€</div>
+                      <th className="text-center px-2 py-1.5 border-l border-gray-300">
+                        <div className="text-[10px] font-bold text-red-600 mb-0.5">Dožívtný profil</div>
+                        <div className="text-xs font-bold text-red-600 line-through">9 999€</div>
                       </th>
-                      <th className="text-center p-3 border-l border-gray-300">
-                        <div className="text-xs font-bold text-red-600 mb-1">Dožívtný profil</div>
-                        <div className="text-sm font-bold text-red-600 line-through">9 999€</div>
+                      <th className="text-center px-2 py-1.5 border-l border-gray-300">
+                        <div className="text-[10px] font-bold text-red-600 mb-0.5">Dožívtný profil</div>
+                        <div className="text-xs font-bold text-red-600 line-through">9 999€</div>
                       </th>
                     </tr>
                     <tr className="border-b-2 border-gray-300 bg-gray-100">
-                      <th className="text-left p-4 font-bold text-gray-900">
+                      <th className="text-left px-3 py-2 font-bold text-gray-900 text-xs">
                         Cena hodnota
                       </th>
-                      <th className="text-center p-3 border-l border-gray-300">
-                        <div className="text-xl font-bold text-blue-600">Zdarma</div>
+                      <th className="text-center px-2 py-1.5 border-l border-gray-300">
+                        <div className="text-base font-bold text-blue-600">Zdarma</div>
                       </th>
-                      <th className="text-center p-3 border-l border-gray-300">
-                        <div className="text-xl font-bold text-blue-600">9,90€</div>
+                      <th className="text-center px-2 py-1.5 border-l border-gray-300">
+                        <div className="text-base font-bold text-blue-600">9,90€</div>
                       </th>
-                      <th className="text-center p-3 border-l border-gray-300">
-                        <div className="text-xl font-bold text-blue-600">19,90€</div>
+                      <th className="text-center px-2 py-1.5 border-l border-gray-300">
+                        <div className="text-base font-bold text-blue-600">19,90€</div>
                       </th>
-                      <th className="text-center p-3 border-l border-gray-300 bg-orange-50">
-                        <div className="text-xl font-bold text-orange-600">25,50€</div>
+                      <th className="text-center px-2 py-1.5 border-l border-gray-300 bg-orange-50">
+                        <div className="text-base font-bold text-orange-600">25,50€</div>
                       </th>
-                      <th className="text-center p-3 border-l border-gray-300">
-                        <div className="text-xl font-bold text-blue-600">4 979€</div>
+                      <th className="text-center px-2 py-1.5 border-l border-gray-300">
+                        <div className="text-base font-bold text-blue-600">4 979€</div>
                       </th>
                     </tr>
                   </thead>
@@ -1919,7 +1919,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                           index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
                         }`}
                       >
-                        <td className="p-3 text-sm text-gray-800">
+                        <td className="px-3 py-2 text-xs text-gray-800">
                           <div className="flex items-start gap-2">
                             <span className="flex-1">{feature.name}</span>
                             <button
@@ -1927,135 +1927,135 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                               className="text-blue-500 hover:text-blue-700 flex-shrink-0 mt-0.5"
                               title="Čítať viac"
                             >
-                              <Info className="w-3.5 h-3.5" />
+                              <Info className="w-3 h-3" />
                             </button>
                           </div>
                         </td>
-                        <td className="text-center p-3 border-l border-gray-200">
+                        <td className="text-center px-2 py-2 border-l border-gray-200">
                           {feature.zdarma ? (
                             <div className="flex justify-center">
-                              <div className="bg-green-500 rounded-full p-1">
-                                <Check className="w-4 h-4 text-white" strokeWidth={3} />
+                              <div className="bg-green-500 rounded-full p-0.5">
+                                <Check className="w-3 h-3 text-white" strokeWidth={3} />
                               </div>
                             </div>
                           ) : (
-                            <span className="text-gray-400 text-xs">nie</span>
+                            <span className="text-gray-400 text-[10px]">nie</span>
                           )}
                         </td>
-                        <td className="text-center p-3 border-l border-gray-200">
+                        <td className="text-center px-2 py-2 border-l border-gray-200">
                           {feature.odbornik ? (
                             <div className="flex justify-center">
-                              <div className="bg-green-500 rounded-full p-1">
-                                <Check className="w-4 h-4 text-white" strokeWidth={3} />
+                              <div className="bg-green-500 rounded-full p-0.5">
+                                <Check className="w-3 h-3 text-white" strokeWidth={3} />
                               </div>
                             </div>
                           ) : (
-                            <span className="text-gray-400 text-xs">nie</span>
+                            <span className="text-gray-400 text-[10px]">nie</span>
                           )}
                         </td>
-                        <td className="text-center p-3 border-l border-gray-200">
+                        <td className="text-center px-2 py-2 border-l border-gray-200">
                           {feature.expert ? (
                             <div className="flex justify-center">
-                              <div className="bg-green-500 rounded-full p-1">
-                                <Check className="w-4 h-4 text-white" strokeWidth={3} />
+                              <div className="bg-green-500 rounded-full p-0.5">
+                                <Check className="w-3 h-3 text-white" strokeWidth={3} />
                               </div>
                             </div>
                           ) : (
-                            <span className="text-gray-400 text-xs">nie</span>
+                            <span className="text-gray-400 text-[10px]">nie</span>
                           )}
                         </td>
-                        <td className="text-center p-3 border-l border-gray-200 bg-orange-50/30">
+                        <td className="text-center px-2 py-2 border-l border-gray-200 bg-orange-50/30">
                           {feature.profik ? (
                             <div className="flex justify-center">
-                              <div className="bg-green-500 rounded-full p-1">
-                                <Check className="w-4 h-4 text-white" strokeWidth={3} />
+                              <div className="bg-green-500 rounded-full p-0.5">
+                                <Check className="w-3 h-3 text-white" strokeWidth={3} />
                               </div>
                             </div>
                           ) : (
-                            <span className="text-gray-400 text-xs">nie</span>
+                            <span className="text-gray-400 text-[10px]">nie</span>
                           )}
                         </td>
-                        <td className="text-center p-3 border-l border-gray-200">
+                        <td className="text-center px-2 py-2 border-l border-gray-200">
                           {feature.premier ? (
                             <div className="flex justify-center">
-                              <div className="bg-green-500 rounded-full p-1">
-                                <Check className="w-4 h-4 text-white" strokeWidth={3} />
+                              <div className="bg-green-500 rounded-full p-0.5">
+                                <Check className="w-3 h-3 text-white" strokeWidth={3} />
                               </div>
                             </div>
                           ) : (
-                            <span className="text-gray-400 text-xs">nie</span>
+                            <span className="text-gray-400 text-[10px]">nie</span>
                           )}
                         </td>
                       </tr>
                     ))}
                     <tr className="bg-gray-50 border-t-2 border-gray-300">
-                      <td className="p-3 text-sm font-semibold text-gray-800">
+                      <td className="px-3 py-2 text-xs font-semibold text-gray-800">
                         Namiesto ročného predplatného 12xhodnota
                       </td>
-                      <td className="text-center p-3 border-l border-gray-200 text-sm font-semibold text-gray-700">
+                      <td className="text-center px-2 py-2 border-l border-gray-200 text-xs font-semibold text-gray-700">
                         zdarma
                       </td>
-                      <td className="text-center p-3 border-l border-gray-200 text-sm font-bold text-red-600 line-through">
+                      <td className="text-center px-2 py-2 border-l border-gray-200 text-xs font-bold text-red-600 line-through">
                         118,80€
                       </td>
-                      <td className="text-center p-3 border-l border-gray-200 text-sm font-bold text-red-600 line-through">
+                      <td className="text-center px-2 py-2 border-l border-gray-200 text-xs font-bold text-red-600 line-through">
                         238,80€
                       </td>
-                      <td className="text-center p-3 border-l border-gray-200 bg-orange-50/30 text-sm font-bold text-red-600 line-through">
+                      <td className="text-center px-2 py-2 border-l border-gray-200 bg-orange-50/30 text-xs font-bold text-red-600 line-through">
                         306,00€
                       </td>
-                      <td className="text-center p-3 border-l border-gray-200 text-sm font-semibold text-gray-700">
+                      <td className="text-center px-2 py-2 border-l border-gray-200 text-xs font-semibold text-gray-700">
                         -
                       </td>
                     </tr>
                     <tr className="bg-white border-b-2 border-gray-300">
-                      <td className="p-3 text-sm font-bold text-gray-900">
+                      <td className="px-3 py-2 text-xs font-bold text-gray-900">
                         Máte teraz výhodné ročné predplatné v aktuálnej akcii za
                       </td>
-                      <td className="text-center p-3 border-l border-gray-200 text-lg font-bold text-green-600">
+                      <td className="text-center px-2 py-2 border-l border-gray-200 text-sm font-bold text-green-600">
                         0,00 €
                       </td>
-                      <td className="text-center p-3 border-l border-gray-200 text-lg font-bold text-green-600">
+                      <td className="text-center px-2 py-2 border-l border-gray-200 text-sm font-bold text-green-600">
                         99,00 €
                       </td>
-                      <td className="text-center p-3 border-l border-gray-200 text-lg font-bold text-green-600">
+                      <td className="text-center px-2 py-2 border-l border-gray-200 text-sm font-bold text-green-600">
                         195,00 €
                       </td>
-                      <td className="text-center p-3 border-l border-gray-200 bg-orange-50/30 text-lg font-bold text-orange-600">
+                      <td className="text-center px-2 py-2 border-l border-gray-200 bg-orange-50/30 text-sm font-bold text-orange-600">
                         225,00 €
                       </td>
-                      <td className="text-center p-3 border-l border-gray-200 text-lg font-bold text-green-600">
+                      <td className="text-center px-2 py-2 border-l border-gray-200 text-sm font-bold text-green-600">
                         -
                       </td>
                     </tr>
                   </tbody>
                   <tfoot>
                     <tr className="bg-gray-100">
-                      <td className="p-4 font-semibold text-gray-900">
+                      <td className="px-3 py-2 font-semibold text-gray-900 text-xs">
                         Vyberte váš plán
                       </td>
-                      <td className="p-3 border-l border-gray-300">
-                        <button className="w-full bg-gray-700 hover:bg-gray-800 text-white font-semibold py-2.5 px-4 rounded-lg transition-all transform hover:scale-105 text-sm">
+                      <td className="px-2 py-2 border-l border-gray-300">
+                        <button className="w-full bg-gray-700 hover:bg-gray-800 text-white font-semibold py-1.5 px-3 rounded-lg transition-all transform hover:scale-105 text-xs">
                           Vybrať
                         </button>
                       </td>
-                      <td className="p-3 border-l border-gray-300">
-                        <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg transition-all transform hover:scale-105 text-sm">
+                      <td className="px-2 py-2 border-l border-gray-300">
+                        <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 px-3 rounded-lg transition-all transform hover:scale-105 text-xs">
                           Vybrať
                         </button>
                       </td>
-                      <td className="p-3 border-l border-gray-300">
-                        <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg transition-all transform hover:scale-105 text-sm">
+                      <td className="px-2 py-2 border-l border-gray-300">
+                        <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 px-3 rounded-lg transition-all transform hover:scale-105 text-xs">
                           Vybrať
                         </button>
                       </td>
-                      <td className="p-3 border-l border-gray-300 bg-orange-50">
-                        <button className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold py-2.5 px-4 rounded-lg transition-all transform hover:scale-105 shadow-lg text-sm">
+                      <td className="px-2 py-2 border-l border-gray-300 bg-orange-50">
+                        <button className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold py-1.5 px-3 rounded-lg transition-all transform hover:scale-105 shadow-lg text-xs">
                           Vybrať
                         </button>
                       </td>
-                      <td className="p-3 border-l border-gray-300">
-                        <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg transition-all transform hover:scale-105 text-sm">
+                      <td className="px-2 py-2 border-l border-gray-300">
+                        <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 px-3 rounded-lg transition-all transform hover:scale-105 text-xs">
                           Vybrať
                         </button>
                       </td>
@@ -2064,7 +2064,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                 </table>
               </div>
 
-              <div className="p-6 bg-gray-50 text-center text-sm text-gray-600 border-t border-gray-200">
+              <div className="p-4 bg-gray-50 text-center text-xs text-gray-600 border-t border-gray-200">
                 Automatické mesačné predplatné. Systém vám automaticky vyšle faktúru.
               </div>
             </div>
