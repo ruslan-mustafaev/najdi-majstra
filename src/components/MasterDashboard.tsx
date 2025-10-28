@@ -9,6 +9,7 @@ import { ContactHoursSelector } from './ContactHoursSelector';
 import { supabase } from '../lib/supabase';
 import * as ProjectsAPI from '../lib/projectsApi';
 import { getUserActiveSubscription, type Subscription } from '../lib/subscriptionsApi';
+import { getPlanPriceId } from '../lib/stripeConfig';
 
 interface MasterDashboardProps {
   onBack: () => void;
@@ -52,6 +53,40 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
   const [contactHoursDisplay, setContactHoursDisplay] = useState<string>('');
   const [activeSubscription, setActiveSubscription] = useState<Subscription | null>(null);
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('yearly');
+
+  const handleSelectPlan = async (planKey: 'odbornik' | 'expert' | 'profik' | 'premier') => {
+    if (!user) {
+      alert('Musíte sa prihlásiť pre výber plánu');
+      return;
+    }
+
+    const priceId = getPlanPriceId(planKey, billingPeriod);
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/stripe-checkout`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({
+          priceId,
+          userId: user.id,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert('Chyba pri vytváraní platby');
+      }
+    } catch (error) {
+      console.error('Error creating checkout:', error);
+      alert('Chyba pri vytváraní platby');
+    }
+  };
 
   const [profileData, setProfileData] = useState<{
     name: string;
@@ -2105,22 +2140,34 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                         </button>
                       </td>
                       <td className="px-2 py-2 border-l border-gray-300">
-                        <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 px-3 rounded-lg transition-all transform hover:scale-105 text-xs">
+                        <button
+                          onClick={() => handleSelectPlan('odbornik')}
+                          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 px-3 rounded-lg transition-all transform hover:scale-105 text-xs"
+                        >
                           Vybrať
                         </button>
                       </td>
                       <td className="px-2 py-2 border-l border-gray-300">
-                        <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 px-3 rounded-lg transition-all transform hover:scale-105 text-xs">
+                        <button
+                          onClick={() => handleSelectPlan('expert')}
+                          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 px-3 rounded-lg transition-all transform hover:scale-105 text-xs"
+                        >
                           Vybrať
                         </button>
                       </td>
                       <td className="px-2 py-2 border-l border-gray-300 bg-orange-50">
-                        <button className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold py-1.5 px-3 rounded-lg transition-all transform hover:scale-105 shadow-lg text-xs">
+                        <button
+                          onClick={() => handleSelectPlan('profik')}
+                          className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold py-1.5 px-3 rounded-lg transition-all transform hover:scale-105 shadow-lg text-xs"
+                        >
                           Vybrať
                         </button>
                       </td>
                       <td className="px-2 py-2 border-l border-gray-300">
-                        <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 px-3 rounded-lg transition-all transform hover:scale-105 text-xs">
+                        <button
+                          onClick={() => handleSelectPlan('premier')}
+                          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 px-3 rounded-lg transition-all transform hover:scale-105 text-xs"
+                        >
                           Vybrať
                         </button>
                       </td>
@@ -2130,7 +2177,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
               </div>
 
               <div className="p-4 bg-gray-50 text-center text-xs text-gray-600 border-t border-gray-200">
-                Automatické mesačné predplatné. Systém vám automaticky vyšle faktúru.
+                Automatické {billingPeriod === 'monthly' ? 'mesačné' : 'ročné'} predplatné. Systém vám automaticky vyšle faktúru.
               </div>
             </div>
           </div>
