@@ -377,8 +377,8 @@ export const SubscriptionPlans: React.FC = () => {
                       Vyberte váš plán
                     </td>
                     <td className="p-3 border-l border-gray-300">
-                      <button className="w-full bg-gray-700 hover:bg-gray-800 text-white font-semibold py-2.5 px-4 rounded-lg transition-all transform hover:scale-105 text-sm">
-                        Vybrať
+                      <button disabled className="w-full bg-green-600 text-white font-semibold py-2.5 px-4 rounded-lg text-sm cursor-not-allowed opacity-90">
+                        Aktivný
                       </button>
                     </td>
                     <td className="p-3 border-l border-gray-300">
