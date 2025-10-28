@@ -2100,8 +2100,8 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                         Vyberte váš plán
                       </td>
                       <td className="px-2 py-2 border-l border-gray-300">
-                        <button className="w-full bg-gray-700 hover:bg-gray-800 text-white font-semibold py-1.5 px-3 rounded-lg transition-all transform hover:scale-105 text-xs">
-                          Vybrať
+                        <button disabled className="w-full bg-green-600 text-white font-semibold py-1.5 px-3 rounded-lg text-xs cursor-not-allowed opacity-90">
+                          Aktivný
                         </button>
                       </td>
                       <td className="px-2 py-2 border-l border-gray-300">
