@@ -61,17 +61,27 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
     }
 
     const priceId = getPlanPriceId(planKey, billingPeriod);
+    const currentUrl = window.location.origin;
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (!session) {
+        alert('Musíte sa prihlásiť pre výber plánu');
+        return;
+      }
+
       const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/stripe-checkout`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          'Authorization': `Bearer ${session.access_token}`,
         },
         body: JSON.stringify({
-          priceId,
-          userId: user.id,
+          price_id: priceId,
+          success_url: `${currentUrl}/dashboard?tab=payments&success=true`,
+          cancel_url: `${currentUrl}/dashboard?tab=payments&canceled=true`,
+          mode: 'subscription',
         }),
       });
 
@@ -80,7 +90,8 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
       if (data.url) {
         window.location.href = data.url;
       } else {
-        alert('Chyba pri vytváraní platby');
+        console.error('Checkout error:', data);
+        alert('Chyba pri vytváraní platby: ' + (data.error || 'Neznáma chyba'));
       }
     } catch (error) {
       console.error('Error creating checkout:', error);
