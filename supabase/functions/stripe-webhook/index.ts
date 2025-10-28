@@ -13,6 +13,21 @@ const stripe = new Stripe(stripeSecret, {
 
 const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
 
+// Map price IDs to plan names
+function getPlanNameFromPriceId(priceId: string): { name: string; period: string } {
+  const priceMap: Record<string, { name: string; period: string }> = {
+    [Deno.env.get('VITE_STRIPE_ODBORNIK_MONTHLY_PRICE_ID') || '']: { name: 'odbornik', period: 'monthly' },
+    [Deno.env.get('VITE_STRIPE_ODBORNIK_YEARLY_PRICE_ID') || '']: { name: 'odbornik', period: 'yearly' },
+    [Deno.env.get('VITE_STRIPE_EXPERT_MONTHLY_PRICE_ID') || '']: { name: 'expert', period: 'monthly' },
+    [Deno.env.get('VITE_STRIPE_EXPERT_YEARLY_PRICE_ID') || '']: { name: 'expert', period: 'yearly' },
+    [Deno.env.get('VITE_STRIPE_PROFIK_MONTHLY_PRICE_ID') || '']: { name: 'profik', period: 'monthly' },
+    [Deno.env.get('VITE_STRIPE_PROFIK_YEARLY_PRICE_ID') || '']: { name: 'profik', period: 'yearly' },
+    [Deno.env.get('VITE_STRIPE_PREMIER_PRICE_ID') || '']: { name: 'premier', period: 'yearly' },
+  };
+
+  return priceMap[priceId] || { name: 'unknown', period: 'monthly' };
+}
+
 Deno.serve(async (req) => {
   try {
     // Handle OPTIONS request for CORS preflight
@@ -156,13 +171,15 @@ async function syncCustomerFromStripe(customerId: string) {
 
     // assumes that a customer can only have a single subscription
     const subscription = subscriptions.data[0];
+    const priceId = subscription.items.data[0].price.id;
+    const planInfo = getPlanNameFromPriceId(priceId);
 
-    // store subscription state
+    // store subscription state in stripe_subscriptions table
     const { error: subError } = await supabase.from('stripe_subscriptions').upsert(
       {
         customer_id: customerId,
         subscription_id: subscription.id,
-        price_id: subscription.items.data[0].price.id,
+        price_id: priceId,
         current_period_start: subscription.current_period_start,
         current_period_end: subscription.current_period_end,
         cancel_at_period_end: subscription.cancel_at_period_end,
@@ -183,6 +200,48 @@ async function syncCustomerFromStripe(customerId: string) {
       console.error('Error syncing subscription:', subError);
       throw new Error('Failed to sync subscription in database');
     }
+
+    // Get user_id from stripe_customers table
+    const { data: customerData, error: customerError } = await supabase
+      .from('stripe_customers')
+      .select('user_id')
+      .eq('customer_id', customerId)
+      .maybeSingle();
+
+    if (customerError || !customerData) {
+      console.error('Error fetching user_id:', customerError);
+      return;
+    }
+
+    // Calculate amount paid
+    const amountPaid = subscription.items.data[0].price.unit_amount ? subscription.items.data[0].price.unit_amount / 100 : 0;
+    const currency = subscription.items.data[0].price.currency || 'eur';
+
+    // Store in subscriptions table for easy access
+    const { error: userSubError } = await supabase.from('subscriptions').upsert(
+      {
+        user_id: customerData.user_id,
+        plan_name: planInfo.name,
+        billing_period: planInfo.period,
+        status: subscription.status,
+        stripe_customer_id: customerId,
+        stripe_subscription_id: subscription.id,
+        current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
+        current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+        amount_paid: amountPaid,
+        currency: currency,
+      },
+      {
+        onConflict: 'user_id',
+      },
+    );
+
+    if (userSubError) {
+      console.error('Error updating user subscription:', userSubError);
+    } else {
+      console.info(`Successfully updated user subscription for user: ${customerData.user_id}`);
+    }
+
     console.info(`Successfully synced subscription for customer: ${customerId}`);
   } catch (error) {
     console.error(`Failed to sync subscription for customer ${customerId}:`, error);

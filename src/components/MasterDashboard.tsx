@@ -53,6 +53,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
   const [contactHoursDisplay, setContactHoursDisplay] = useState<string>('');
   const [activeSubscription, setActiveSubscription] = useState<Subscription | null>(null);
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('yearly');
+  const [showPaymentResult, setShowPaymentResult] = useState<{show: boolean, success: boolean, message: string}>({show: false, success: false, message: ''});
 
   const handleSelectPlan = async (planKey: 'odbornik' | 'expert' | 'profik' | 'premier') => {
     if (!user) {
@@ -307,6 +308,31 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
     setIsDeleting(false);
   }
 };
+
+  // Check for payment result in URL
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const success = params.get('success');
+    const canceled = params.get('canceled');
+
+    if (success === 'true') {
+      setShowPaymentResult({
+        show: true,
+        success: true,
+        message: 'Platba bola úspešne spracovaná! Váš plán je teraz aktívny.'
+      });
+      // Clean URL
+      window.history.replaceState({}, '', window.location.pathname);
+    } else if (canceled === 'true') {
+      setShowPaymentResult({
+        show: true,
+        success: false,
+        message: 'Platba bola zrušená. Môžete to skúsiť znovu.'
+      });
+      // Clean URL
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, []);
 
   // Load master ID and profile data on mount
   useEffect(() => {
@@ -2194,6 +2220,39 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
           </div>
         )}
       </div>
+
+      {/* Payment Result Modal */}
+      {showPaymentResult.show && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-8 w-full max-w-md mx-4 shadow-2xl">
+            <div className="text-center">
+              {showPaymentResult.success ? (
+                <>
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <CheckCircle className="w-10 h-10 text-green-600" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-800 mb-2">Úspech!</h3>
+                  <p className="text-gray-600 mb-6">{showPaymentResult.message}</p>
+                </>
+              ) : (
+                <>
+                  <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <AlertCircle className="w-10 h-10 text-red-600" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-800 mb-2">Platba zrušená</h3>
+                  <p className="text-gray-600 mb-6">{showPaymentResult.message}</p>
+                </>
+              )}
+              <button
+                onClick={() => setShowPaymentResult({show: false, success: false, message: ''})}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+              >
+                Zavrieť
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* New Project Modal */}
       {showNewProjectModal && (
