@@ -8,6 +8,7 @@ import { AvailabilityCalendar } from './AvailabilityCalendar';
 import { ContactHoursSelector } from './ContactHoursSelector';
 import { supabase } from '../lib/supabase';
 import * as ProjectsAPI from '../lib/projectsApi';
+import { getUserActiveSubscription, type Subscription } from '../lib/subscriptionsApi';
 
 interface MasterDashboardProps {
   onBack: () => void;
@@ -49,7 +50,9 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
   const [isLoadingProjects, setIsLoadingProjects] = useState(false);
   const [showContactHoursModal, setShowContactHoursModal] = useState(false);
   const [contactHoursDisplay, setContactHoursDisplay] = useState<string>('');
-  
+  const [activeSubscription, setActiveSubscription] = useState<Subscription | null>(null);
+  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('yearly');
+
   const [profileData, setProfileData] = useState<{
     name: string;
     profession: string;
@@ -319,6 +322,17 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
     };
 
     loadMasterData();
+  }, [user]);
+
+  useEffect(() => {
+    const loadSubscription = async () => {
+      const subscription = await getUserActiveSubscription();
+      setActiveSubscription(subscription);
+    };
+
+    if (user) {
+      loadSubscription();
+    }
   }, [user]);
 
   // Load contact hours display
@@ -1818,7 +1832,58 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
         {activeTab === 'payments' && (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold">Platby a predplatné</h2>
-            
+
+            {/* Current Active Plan */}
+            {activeSubscription && (
+              <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-500 rounded-xl p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-green-500 text-white rounded-full p-2">
+                      <CheckCircle className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-gray-900">Váš aktívny plán: {activeSubscription.plan_name}</h3>
+                      <p className="text-sm text-gray-600">
+                        {activeSubscription.billing_period === 'lifetime' ? 'Doživotný prístup' :
+                         activeSubscription.billing_period === 'yearly' ? 'Ročné predplatné' : 'Mesačné predplatné'}
+                        {activeSubscription.current_period_end &&
+                          ` • Platné do ${new Date(activeSubscription.current_period_end).toLocaleDateString('sk-SK')}`}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-2xl font-bold text-green-600">{activeSubscription.amount_paid}€</p>
+                    <p className="text-xs text-gray-500">Zaplatené</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Billing Period Toggle */}
+            <div className="flex items-center justify-center gap-4 bg-gray-100 p-3 rounded-xl">
+              <span className={`text-sm font-medium ${billingPeriod === 'monthly' ? 'text-gray-900' : 'text-gray-500'}`}>
+                Mesačne
+              </span>
+              <button
+                onClick={() => setBillingPeriod(billingPeriod === 'monthly' ? 'yearly' : 'monthly')}
+                className={`relative w-14 h-7 rounded-full transition-colors ${
+                  billingPeriod === 'yearly' ? 'bg-blue-600' : 'bg-gray-400'
+                }`}
+              >
+                <span
+                  className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full transition-transform ${
+                    billingPeriod === 'yearly' ? 'translate-x-7' : ''
+                  }`}
+                />
+              </button>
+              <span className={`text-sm font-medium ${billingPeriod === 'yearly' ? 'text-gray-900' : 'text-gray-500'}`}>
+                Ročne
+              </span>
+              <span className="ml-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                Ušetríte až 17%
+              </span>
+            </div>
+
             {/* Subscription Plans Table */}
             <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
               <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 text-center">
