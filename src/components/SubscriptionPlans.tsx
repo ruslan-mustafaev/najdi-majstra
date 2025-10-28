@@ -8,131 +8,163 @@ interface PlanFeature {
   name: string;
   infoText?: string;
   zdarma: 'áno' | 'nie';
-  basic: 'áno' | 'nie';
-  standard: 'áno' | 'nie';
+  odbornik: 'áno' | 'nie';
+  expert: 'áno' | 'nie';
+  profik: 'áno' | 'nie';
+  premier: 'áno' | 'nie';
 }
 
 export const SubscriptionPlans: React.FC = () => {
   const features: PlanFeature[] = [
     {
       id: 1,
-      name: 'Predajný profil',
+      name: 'Predajný dožívtný profil Zdarma',
       infoText: 'Vytvorte si profesionálny profil s vašimi službami',
       zdarma: 'áno',
-      basic: 'áno',
-      standard: 'áno'
+      odbornik: 'áno',
+      expert: 'áno',
+      profik: 'áno',
+      premier: 'áno'
     },
     {
       id: 2,
       name: 'Osobný AI predajca ktorý šetrí váš čas a aktívne predá vaše služby alebo produkty',
       infoText: 'AI asistent automaticky komunikuje s klientmi a uzatvára obchody',
       zdarma: 'nie',
-      basic: 'nie',
-      standard: 'áno'
+      odbornik: 'nie',
+      expert: 'nie',
+      profik: 'áno',
+      premier: 'áno'
     },
     {
       id: 3,
       name: 'Rozvoj podnikania profesionálne on-line kurzy a certifikácie (v príprave)',
       infoText: 'Prístup k vzdelávacím kurzom pre rozvoj vášho biznisu',
       zdarma: 'áno',
-      basic: 'áno',
-      standard: 'áno'
+      odbornik: 'áno',
+      expert: 'áno',
+      profik: 'áno',
+      premier: 'áno'
     },
     {
       id: 4,
       name: 'Benefit webu najdiMajstra.sk: Zvýšenie zisku',
       infoText: 'Špeciálne benefity pre zvýšenie vášho zisku',
       zdarma: 'áno',
-      basic: 'áno',
-      standard: 'áno'
+      odbornik: 'áno',
+      expert: 'áno',
+      profik: 'áno',
+      premier: 'áno'
     },
     {
       id: 5,
-      name: 'Osobný plánovač času',
+      name: '(moje stavby ) Osobný plánovač práce',
       infoText: 'Pokročilý nástroj na plánovanie vašich zákaziek',
       zdarma: 'nie',
-      basic: 'nie',
-      standard: 'áno'
+      odbornik: 'áno',
+      expert: 'áno',
+      profik: 'áno',
+      premier: 'áno'
     },
     {
       id: 6,
-      name: 'Vlastný plánovací kalendár',
+      name: 'Vlastný plánovací kalendár (môj kalendár)',
       infoText: 'Váš osobný kalendár pre správu termínov',
       zdarma: 'áno',
-      basic: 'áno',
-      standard: 'áno'
+      odbornik: 'áno',
+      expert: 'áno',
+      profik: 'áno',
+      premier: 'áno'
     },
     {
       id: 7,
-      name: 'On-line zmluvy (v príprave)',
+      name: 'On-line moje zmluvy (v príprave)',
       infoText: 'Digitálne zmluvy s elektronickým podpisom',
       zdarma: 'áno',
-      basic: 'áno',
-      standard: 'áno'
+      odbornik: 'áno',
+      expert: 'áno',
+      profik: 'áno',
+      premier: 'áno'
     },
     {
       id: 8,
-      name: 'Možnosť pridania svojích prác, ktoré ste predajú',
+      name: '(moja recenzia) Možnosť pridania svojích prác, ktoré vás predajú',
       infoText: 'Pridávajte hotové práce do svojho portfólia',
       zdarma: 'nie',
-      basic: 'nie',
-      standard: 'nie'
+      odbornik: 'nie',
+      expert: 'áno',
+      profik: 'áno',
+      premier: 'áno'
     },
     {
       id: 9,
       name: 'Hodnotenie od klientov',
       infoText: 'Zbierajte recenzie a hodnotenia od zákazníkov',
       zdarma: 'áno',
-      basic: 'áno',
-      standard: 'áno'
+      odbornik: 'áno',
+      expert: 'áno',
+      profik: 'áno',
+      premier: 'áno'
     },
     {
       id: 10,
       name: 'Zvýšenie vašej propagácie',
       infoText: 'Vyššia viditeľnosť vo vyhľadávaní',
       zdarma: 'áno',
-      basic: 'áno',
-      standard: 'áno'
+      odbornik: 'áno',
+      expert: 'áno',
+      profik: 'áno',
+      premier: 'áno'
     },
     {
       id: 11,
       name: 'Propagácia seba a zvýšenie zaujmu o vaše služby a výsledné produkty',
       infoText: 'Aktívna propagácia vášho profilu na platforme',
       zdarma: 'áno',
-      basic: 'áno',
-      standard: 'áno'
+      odbornik: 'áno',
+      expert: 'áno',
+      profik: 'áno',
+      premier: 'áno'
     },
     {
       id: 12,
       name: 'Predaj vlastných služieb',
       infoText: 'Predávajte svoje služby priamo cez platformu',
       zdarma: 'áno',
-      basic: 'áno',
-      standard: 'áno'
+      odbornik: 'áno',
+      expert: 'áno',
+      profik: 'áno',
+      premier: 'áno'
     },
     {
       id: 13,
       name: 'Vaš zisková aplikácia nM (najdiMajstra.sk) v mobile v príprave 2026',
       infoText: 'Mobilná aplikácia pre správu vášho podnikania',
       zdarma: 'áno',
-      basic: 'áno',
-      standard: 'áno'
+      odbornik: 'áno',
+      expert: 'áno',
+      profik: 'áno',
+      premier: 'áno'
     },
     {
       id: 14,
-      name: 'Vaša odbornosť: Kurzy a certifikáty',
+      name: 'Podpora podnikania: Kurzy a certifikáty',
       infoText: 'Zobrazujte svoje kurzy a certifikáty',
       zdarma: 'áno',
-      basic: 'áno',
-      standard: 'áno'
+      odbornik: 'áno',
+      expert: 'áno',
+      profik: 'áno',
+      premier: 'áno'
     },
     {
       id: 15,
       name: 'Vzdelávanie, Rozvoj, Mentoring, Osobnostný rozvoj, Psychológia predaja, Líderstvo',
       infoText: 'Prémové vzdelávacie programy a mentoring',
       zdarma: 'nie',
-      basic: 'nie',
-      standard: 'nie'
+      odbornik: 'nie',
+      expert: 'nie',
+      profik: 'nie',
+      premier: 'áno'
     }
   ];
 
@@ -140,7 +172,7 @@ export const SubscriptionPlans: React.FC = () => {
     <>
       <Header />
       <div className="min-h-screen bg-gray-50 pt-16">
-        <div className="max-w-6xl mx-auto py-8 px-4">
+        <div className="max-w-7xl mx-auto py-8 px-4">
           <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-t-2xl p-8 text-white text-center">
             <div className="flex items-center justify-center gap-2 mb-4">
               <Sparkles className="w-8 h-8" />
@@ -153,24 +185,66 @@ export const SubscriptionPlans: React.FC = () => {
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
                 <thead>
-                  <tr className="border-b-2 border-gray-200">
-                    <th className="text-left p-6 font-semibold text-gray-900 text-lg bg-gray-50">
-                      Profil a registrácia
+                  <tr className="border-b border-gray-300">
+                    <th className="text-left p-4 font-semibold text-gray-900 bg-gray-50" rowSpan={2}>
+                      Názov predajného profilu
                     </th>
-                    <th className="text-center p-6 bg-gray-50">
-                      <div className="font-semibold text-gray-600 mb-2">Zdarma</div>
-                      <div className="text-3xl font-bold text-blue-600">0€</div>
+                    <th className="text-center p-3 bg-gray-50 border-l border-gray-300">
+                      <div className="text-sm font-semibold text-gray-700">Mini</div>
                     </th>
-                    <th className="text-center p-6 bg-gray-50">
-                      <div className="font-semibold text-gray-600 mb-2">Basic</div>
-                      <div className="text-3xl font-bold text-blue-600">9.9€</div>
+                    <th className="text-center p-3 bg-gray-50 border-l border-gray-300">
+                      <div className="text-sm font-semibold text-gray-700">Odborník</div>
                     </th>
-                    <th className="text-center p-6 bg-gradient-to-br from-orange-50 to-red-50 relative">
-                      <div className="absolute top-2 right-2 bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-                        POPULÁRNE
-                      </div>
-                      <div className="font-semibold text-gray-600 mb-2">Standard</div>
-                      <div className="text-3xl font-bold text-red-600">19.9€</div>
+                    <th className="text-center p-3 bg-gray-50 border-l border-gray-300">
+                      <div className="text-sm font-semibold text-gray-700">Expert</div>
+                    </th>
+                    <th className="text-center p-3 bg-gray-50 border-l border-gray-300">
+                      <div className="text-sm font-semibold text-gray-700">Profik</div>
+                    </th>
+                    <th className="text-center p-3 bg-gray-50 border-l border-gray-300">
+                      <div className="text-sm font-semibold text-gray-700">Premier</div>
+                    </th>
+                  </tr>
+                  <tr className="border-b-2 border-gray-300 bg-red-50">
+                    <th className="text-center p-3 border-l border-gray-300">
+                      <div className="text-xs font-bold text-red-600 mb-1">Dožívtný profil</div>
+                      <div className="text-sm font-bold text-red-600 line-through">19.90€</div>
+                    </th>
+                    <th className="text-center p-3 border-l border-gray-300">
+                      <div className="text-xs font-bold text-red-600 mb-1">Dožívtný profil</div>
+                      <div className="text-sm font-bold text-red-600 line-through">41.99€</div>
+                    </th>
+                    <th className="text-center p-3 border-l border-gray-300">
+                      <div className="text-xs font-bold text-red-600 mb-1">Dožívtný profil</div>
+                      <div className="text-sm font-bold text-red-600 line-through">55.99€</div>
+                    </th>
+                    <th className="text-center p-3 border-l border-gray-300">
+                      <div className="text-xs font-bold text-red-600 mb-1">Dožívtný profil</div>
+                      <div className="text-sm font-bold text-red-600 line-through">9 999€</div>
+                    </th>
+                    <th className="text-center p-3 border-l border-gray-300">
+                      <div className="text-xs font-bold text-red-600 mb-1">Dožívtný profil</div>
+                      <div className="text-sm font-bold text-red-600 line-through">9 999€</div>
+                    </th>
+                  </tr>
+                  <tr className="border-b-2 border-gray-300 bg-gray-100">
+                    <th className="text-left p-4 font-bold text-gray-900">
+                      Cena hodnota
+                    </th>
+                    <th className="text-center p-3 border-l border-gray-300">
+                      <div className="text-xl font-bold text-blue-600">Zdarma</div>
+                    </th>
+                    <th className="text-center p-3 border-l border-gray-300">
+                      <div className="text-xl font-bold text-blue-600">9,90€</div>
+                    </th>
+                    <th className="text-center p-3 border-l border-gray-300">
+                      <div className="text-xl font-bold text-blue-600">19,90€</div>
+                    </th>
+                    <th className="text-center p-3 border-l border-gray-300 bg-orange-50">
+                      <div className="text-xl font-bold text-orange-600">25,50€</div>
+                    </th>
+                    <th className="text-center p-3 border-l border-gray-300">
+                      <div className="text-xl font-bold text-blue-600">4 979€</div>
                     </th>
                   </tr>
                 </thead>
@@ -178,19 +252,19 @@ export const SubscriptionPlans: React.FC = () => {
                   {features.map((feature, index) => (
                     <tr
                       key={feature.id}
-                      className={`border-b border-gray-100 transition-colors hover:bg-blue-50 ${
+                      className={`border-b border-gray-200 transition-colors hover:bg-blue-50 ${
                         index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
                       }`}
                     >
-                      <td className="p-4 text-gray-800">
+                      <td className="p-3 text-sm text-gray-800">
                         <div className="flex items-start gap-2">
                           <span className="flex-1">{feature.name}</span>
                           {feature.infoText && (
                             <button
-                              className="text-blue-500 hover:text-blue-700 flex-shrink-0 mt-1 group relative"
+                              className="text-blue-500 hover:text-blue-700 flex-shrink-0 mt-0.5 group relative"
                               title={feature.infoText}
                             >
-                              <Info className="w-4 h-4" />
+                              <Info className="w-3.5 h-3.5" />
                               <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block w-64 bg-gray-900 text-white text-xs p-3 rounded-lg shadow-xl z-10">
                                 {feature.infoText}
                                 <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
@@ -199,59 +273,131 @@ export const SubscriptionPlans: React.FC = () => {
                           )}
                         </div>
                       </td>
-                      <td className="text-center p-4">
+                      <td className="text-center p-3 border-l border-gray-200">
                         {feature.zdarma === 'áno' ? (
                           <div className="flex justify-center">
                             <div className="bg-green-500 rounded-full p-1">
-                              <Check className="w-5 h-5 text-white" strokeWidth={3} />
+                              <Check className="w-4 h-4 text-white" strokeWidth={3} />
                             </div>
                           </div>
                         ) : (
-                          <span className="text-gray-400 text-sm">nie</span>
+                          <span className="text-gray-400 text-xs">nie</span>
                         )}
                       </td>
-                      <td className="text-center p-4">
-                        {feature.basic === 'áno' ? (
+                      <td className="text-center p-3 border-l border-gray-200">
+                        {feature.odbornik === 'áno' ? (
                           <div className="flex justify-center">
                             <div className="bg-green-500 rounded-full p-1">
-                              <Check className="w-5 h-5 text-white" strokeWidth={3} />
+                              <Check className="w-4 h-4 text-white" strokeWidth={3} />
                             </div>
                           </div>
                         ) : (
-                          <span className="text-gray-400 text-sm">nie</span>
+                          <span className="text-gray-400 text-xs">nie</span>
                         )}
                       </td>
-                      <td className="text-center p-4 bg-gradient-to-br from-orange-50/30 to-red-50/30">
-                        {feature.standard === 'áno' ? (
+                      <td className="text-center p-3 border-l border-gray-200">
+                        {feature.expert === 'áno' ? (
                           <div className="flex justify-center">
                             <div className="bg-green-500 rounded-full p-1">
-                              <Check className="w-5 h-5 text-white" strokeWidth={3} />
+                              <Check className="w-4 h-4 text-white" strokeWidth={3} />
                             </div>
                           </div>
                         ) : (
-                          <span className="text-gray-400 text-sm">nie</span>
+                          <span className="text-gray-400 text-xs">nie</span>
+                        )}
+                      </td>
+                      <td className="text-center p-3 border-l border-gray-200 bg-orange-50/30">
+                        {feature.profik === 'áno' ? (
+                          <div className="flex justify-center">
+                            <div className="bg-green-500 rounded-full p-1">
+                              <Check className="w-4 h-4 text-white" strokeWidth={3} />
+                            </div>
+                          </div>
+                        ) : (
+                          <span className="text-gray-400 text-xs">nie</span>
+                        )}
+                      </td>
+                      <td className="text-center p-3 border-l border-gray-200">
+                        {feature.premier === 'áno' ? (
+                          <div className="flex justify-center">
+                            <div className="bg-green-500 rounded-full p-1">
+                              <Check className="w-4 h-4 text-white" strokeWidth={3} />
+                            </div>
+                          </div>
+                        ) : (
+                          <span className="text-gray-400 text-xs">nie</span>
                         )}
                       </td>
                     </tr>
                   ))}
+                  <tr className="bg-gray-50 border-t-2 border-gray-300">
+                    <td className="p-3 text-sm font-semibold text-gray-800">
+                      Namiesto ročného predplatného 12xhodnota
+                    </td>
+                    <td className="text-center p-3 border-l border-gray-200 text-sm font-semibold text-gray-700">
+                      zdarma
+                    </td>
+                    <td className="text-center p-3 border-l border-gray-200 text-sm font-bold text-red-600 line-through">
+                      118,80€
+                    </td>
+                    <td className="text-center p-3 border-l border-gray-200 text-sm font-bold text-red-600 line-through">
+                      238,80€
+                    </td>
+                    <td className="text-center p-3 border-l border-gray-200 bg-orange-50/30 text-sm font-bold text-red-600 line-through">
+                      306,00€
+                    </td>
+                    <td className="text-center p-3 border-l border-gray-200 text-sm font-semibold text-gray-700">
+                      -
+                    </td>
+                  </tr>
+                  <tr className="bg-white border-b-2 border-gray-300">
+                    <td className="p-3 text-sm font-bold text-gray-900">
+                      Máte teraz výhodné ročné predplatné v aktuálnej akcii za
+                    </td>
+                    <td className="text-center p-3 border-l border-gray-200 text-lg font-bold text-green-600">
+                      0,00 €
+                    </td>
+                    <td className="text-center p-3 border-l border-gray-200 text-lg font-bold text-green-600">
+                      99,00 €
+                    </td>
+                    <td className="text-center p-3 border-l border-gray-200 text-lg font-bold text-green-600">
+                      195,00 €
+                    </td>
+                    <td className="text-center p-3 border-l border-gray-200 bg-orange-50/30 text-lg font-bold text-orange-600">
+                      225,00 €
+                    </td>
+                    <td className="text-center p-3 border-l border-gray-200 text-lg font-bold text-green-600">
+                      -
+                    </td>
+                  </tr>
                 </tbody>
                 <tfoot>
-                  <tr className="border-t-2 border-gray-200 bg-gray-50">
-                    <td className="p-6 font-semibold text-gray-900">
+                  <tr className="bg-gray-100">
+                    <td className="p-4 font-semibold text-gray-900">
                       Vyberte váš plán
                     </td>
-                    <td className="p-6">
-                      <button className="w-full bg-gray-700 hover:bg-gray-800 text-white font-semibold py-3 px-6 rounded-lg transition-all transform hover:scale-105">
+                    <td className="p-3 border-l border-gray-300">
+                      <button className="w-full bg-gray-700 hover:bg-gray-800 text-white font-semibold py-2.5 px-4 rounded-lg transition-all transform hover:scale-105 text-sm">
                         Vybrať
                       </button>
                     </td>
-                    <td className="p-6">
-                      <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all transform hover:scale-105">
+                    <td className="p-3 border-l border-gray-300">
+                      <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg transition-all transform hover:scale-105 text-sm">
                         Vybrať
                       </button>
                     </td>
-                    <td className="p-6 bg-gradient-to-br from-orange-50 to-red-50">
-                      <button className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold py-3 px-6 rounded-lg transition-all transform hover:scale-105 shadow-lg">
+                    <td className="p-3 border-l border-gray-300">
+                      <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg transition-all transform hover:scale-105 text-sm">
+                        Vybrať
+                      </button>
+                    </td>
+                    <td className="p-3 border-l border-gray-300 bg-orange-50">
+                      <button className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold py-2.5 px-4 rounded-lg transition-all transform hover:scale-105 shadow-lg text-sm">
+                        Vybrať
+                      </button>
+                    </td>
+                    <td className="p-3 border-l border-gray-300">
+                      <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg transition-all transform hover:scale-105 text-sm">
                         Vybrať
                       </button>
                     </td>
