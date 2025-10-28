@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Check, Info, Sparkles } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Header } from './Header';
 import { Footer } from './Footer';
+import { useAuth } from '../hooks/useAuth';
+import { getPlanPriceId } from '../lib/stripeConfig';
 
 interface PlanFeature {
   id: number;
@@ -15,6 +18,44 @@ interface PlanFeature {
 }
 
 export const SubscriptionPlans: React.FC = () => {
+  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('yearly');
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const handleSelectPlan = async (planKey: 'odbornik' | 'expert' | 'profik' | 'premier') => {
+    if (!user) {
+      alert('Musíte sa prihlásiť pre výber plánu');
+      return;
+    }
+
+    const priceId = getPlanPriceId(planKey, billingPeriod);
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/stripe-checkout`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({
+          priceId,
+          userId: user.id,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert('Chyba pri vytváraní platby');
+      }
+    } catch (error) {
+      console.error('Error creating checkout:', error);
+      alert('Chyba pri vytváraní platby');
+    }
+  };
+
   const features: PlanFeature[] = [
     {
       id: 1,
@@ -179,6 +220,32 @@ export const SubscriptionPlans: React.FC = () => {
               <h1 className="text-2xl font-bold">Využite teraz garantovanú dotovanú cenu</h1>
             </div>
             <p className="text-lg opacity-90">Nestratíte pozornosť a zákaziek bude viac.</p>
+
+            <div className="mt-6 flex items-center justify-center gap-4">
+              <span className="text-sm font-medium">Fakturácia:</span>
+              <div className="bg-white/20 rounded-lg p-1 flex gap-1">
+                <button
+                  onClick={() => setBillingPeriod('monthly')}
+                  className={`px-6 py-2 rounded-md font-semibold transition-all ${
+                    billingPeriod === 'monthly'
+                      ? 'bg-white text-blue-600'
+                      : 'text-white hover:bg-white/10'
+                  }`}
+                >
+                  Mesačne
+                </button>
+                <button
+                  onClick={() => setBillingPeriod('yearly')}
+                  className={`px-6 py-2 rounded-md font-semibold transition-all ${
+                    billingPeriod === 'yearly'
+                      ? 'bg-white text-blue-600'
+                      : 'text-white hover:bg-white/10'
+                  }`}
+                >
+                  Ročne
+                </button>
+              </div>
+            </div>
           </div>
 
           <div className="bg-white rounded-b-2xl shadow-xl overflow-hidden">
@@ -382,22 +449,34 @@ export const SubscriptionPlans: React.FC = () => {
                       </button>
                     </td>
                     <td className="p-3 border-l border-gray-300">
-                      <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg transition-all transform hover:scale-105 text-sm">
+                      <button
+                        onClick={() => handleSelectPlan('odbornik')}
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg transition-all transform hover:scale-105 text-sm"
+                      >
                         Vybrať
                       </button>
                     </td>
                     <td className="p-3 border-l border-gray-300">
-                      <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg transition-all transform hover:scale-105 text-sm">
+                      <button
+                        onClick={() => handleSelectPlan('expert')}
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg transition-all transform hover:scale-105 text-sm"
+                      >
                         Vybrať
                       </button>
                     </td>
                     <td className="p-3 border-l border-gray-300 bg-orange-50">
-                      <button className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold py-2.5 px-4 rounded-lg transition-all transform hover:scale-105 shadow-lg text-sm">
+                      <button
+                        onClick={() => handleSelectPlan('profik')}
+                        className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold py-2.5 px-4 rounded-lg transition-all transform hover:scale-105 shadow-lg text-sm"
+                      >
                         Vybrať
                       </button>
                     </td>
                     <td className="p-3 border-l border-gray-300">
-                      <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg transition-all transform hover:scale-105 text-sm">
+                      <button
+                        onClick={() => handleSelectPlan('premier')}
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg transition-all transform hover:scale-105 text-sm"
+                      >
                         Vybrať
                       </button>
                     </td>
@@ -407,7 +486,7 @@ export const SubscriptionPlans: React.FC = () => {
             </div>
 
             <div className="p-6 bg-gray-50 text-center text-sm text-gray-600 border-t border-gray-200">
-              Automatické mesačné predplatné. Systém vám automaticky vyšle faktúru.
+              Automatické {billingPeriod === 'monthly' ? 'mesačné' : 'ročné'} predplatné. Systém vám automaticky vyšle faktúru.
             </div>
           </div>
         </div>
