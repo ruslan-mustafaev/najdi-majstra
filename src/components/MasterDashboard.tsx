@@ -323,10 +323,19 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
       });
       // Reload subscription data with delay to allow webhook to process
       const reloadSubscription = async () => {
-        // Wait 2 seconds for webhook to complete
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        const subscription = await getUserActiveSubscription();
+        // Wait 3 seconds for webhook to complete
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        let subscription = await getUserActiveSubscription();
+
+        // If no subscription found, try again after 2 more seconds
+        if (!subscription) {
+          console.log('Subscription not found, retrying...');
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          subscription = await getUserActiveSubscription();
+        }
+
         setActiveSubscription(subscription);
+        console.log('Loaded subscription:', subscription);
       };
       reloadSubscription();
       // Clean URL

@@ -103,6 +103,17 @@ async function handleEvent(event: Stripe.Event) {
 
     if (isSubscription) {
       console.info(`Starting subscription sync for customer: ${customerId}`);
+
+      // If this is a checkout.session.completed event, extract subscription info immediately
+      if (event.type === 'checkout.session.completed') {
+        const session = stripeData as Stripe.Checkout.Session;
+        if (session.subscription) {
+          console.info(`Checkout completed with subscription: ${session.subscription}`);
+          // Wait a bit for Stripe to finalize the subscription
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+      }
+
       await syncCustomerFromStripe(customerId);
     } else if (mode === 'payment' && payment_status === 'paid') {
       try {
