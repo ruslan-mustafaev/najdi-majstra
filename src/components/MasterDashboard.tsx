@@ -2038,6 +2038,10 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                     <tr className="border-b-2 border-gray-300 bg-red-50">
                       <th className="text-center px-2 py-1.5 border-l border-gray-300">
                         <div className="text-[10px] font-bold text-red-600 mb-0.5">Dožívtný profil</div>
+                        <div className="text-xs font-bold text-red-600">Zadarma</div>
+                      </th>
+                      <th className="text-center px-2 py-1.5 border-l border-gray-300">
+                        <div className="text-[10px] font-bold text-red-600 mb-0.5">Dožívtný profil</div>
                         <div className="text-xs font-bold text-red-600 line-through">19,99€</div>
                       </th>
                       <th className="text-center px-2 py-1.5 border-l border-gray-300">
@@ -2047,10 +2051,6 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                       <th className="text-center px-2 py-1.5 border-l border-gray-300">
                         <div className="text-[10px] font-bold text-red-600 mb-0.5">Dožívtný profil</div>
                         <div className="text-xs font-bold text-red-600 line-through">65,99€</div>
-                      </th>
-                      <th className="text-center px-2 py-1.5 border-l border-gray-300">
-                        <div className="text-[10px] font-bold text-red-600 mb-0.5">Dožívtný profil</div>
-                        <div className="text-xs font-bold text-red-600 line-through">9 999€</div>
                       </th>
                       <th className="text-center px-2 py-1.5 border-l border-gray-300">
                         <div className="text-[10px] font-bold text-red-600 mb-0.5">Dožívtný profil</div>
