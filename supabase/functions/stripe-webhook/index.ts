@@ -13,19 +13,21 @@ const stripe = new Stripe(stripeSecret, {
 
 const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
 
-// Map price IDs to plan names
+// Map price IDs to plan names - hardcoded because env vars are not available in edge functions
 function getPlanNameFromPriceId(priceId: string): { name: string; period: string } {
   const priceMap: Record<string, { name: string; period: string }> = {
-    [Deno.env.get('VITE_STRIPE_ODBORNIK_MONTHLY_PRICE_ID') || '']: { name: 'odbornik', period: 'monthly' },
-    [Deno.env.get('VITE_STRIPE_ODBORNIK_YEARLY_PRICE_ID') || '']: { name: 'odbornik', period: 'yearly' },
-    [Deno.env.get('VITE_STRIPE_EXPERT_MONTHLY_PRICE_ID') || '']: { name: 'expert', period: 'monthly' },
-    [Deno.env.get('VITE_STRIPE_EXPERT_YEARLY_PRICE_ID') || '']: { name: 'expert', period: 'yearly' },
-    [Deno.env.get('VITE_STRIPE_PROFIK_MONTHLY_PRICE_ID') || '']: { name: 'profik', period: 'monthly' },
-    [Deno.env.get('VITE_STRIPE_PROFIK_YEARLY_PRICE_ID') || '']: { name: 'profik', period: 'yearly' },
-    [Deno.env.get('VITE_STRIPE_PREMIER_PRICE_ID') || '']: { name: 'premier', period: 'yearly' },
+    'price_1SNKxAFUTMN3g7t4IS59w1Gc': { name: 'odbornik', period: 'monthly' },
+    'price_1SNKy0FUTMN3g7t4galvKNXt': { name: 'odbornik', period: 'yearly' },
+    'price_1SNKzGFUTMN3g7t4ObLLtlRB': { name: 'expert', period: 'monthly' },
+    'price_1SNKziFUTMN3g7t4iGisNalD': { name: 'expert', period: 'yearly' },
+    'price_1SNL0GFUTMN3g7t4rjg6nsBA': { name: 'profik', period: 'monthly' },
+    'price_1SNL0kFUTMN3g7t4s0OM3Zzq': { name: 'profik', period: 'yearly' },
+    'price_1SNL1QFUTMN3g7t4uk4b9Gry': { name: 'premier', period: 'yearly' },
   };
 
-  return priceMap[priceId] || { name: 'unknown', period: 'monthly' };
+  const result = priceMap[priceId] || { name: 'unknown', period: 'monthly' };
+  console.info(`Price ID ${priceId} mapped to: ${result.name} (${result.period})`);
+  return result;
 }
 
 Deno.serve(async (req) => {
