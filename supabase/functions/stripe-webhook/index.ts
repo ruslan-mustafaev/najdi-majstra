@@ -120,13 +120,14 @@ async function handleEvent(event: Stripe.Event) {
     } else if (mode === 'payment' && payment_status === 'paid') {
       try {
         // Extract the necessary information from the session
+        const session = stripeData as Stripe.Checkout.Session;
         const {
           id: checkout_session_id,
           payment_intent,
           amount_subtotal,
           amount_total,
           currency,
-        } = stripeData as Stripe.Checkout.Session;
+        } = session;
 
         // Insert the order into the stripe_orders table
         const { error: orderError } = await supabase.from('stripe_orders').insert({
@@ -145,6 +146,77 @@ async function handleEvent(event: Stripe.Event) {
           return;
         }
         console.info(`Successfully processed one-time payment for session: ${checkout_session_id}`);
+
+        // For Premier plan (one-time payment), create a lifetime subscription
+        // Get the price ID from line items
+        const lineItems = await stripe.checkout.sessions.listLineItems(checkout_session_id);
+        if (lineItems.data.length > 0) {
+          const priceId = lineItems.data[0].price?.id;
+          if (priceId) {
+            const planInfo = getPlanNameFromPriceId(priceId);
+            console.info(`One-time payment for plan: ${planInfo.name}`);
+
+            // Get user_id from stripe_customers table
+            const { data: customerData, error: customerError } = await supabase
+              .from('stripe_customers')
+              .select('user_id')
+              .eq('customer_id', customerId)
+              .maybeSingle();
+
+            if (customerError || !customerData) {
+              console.error('Error fetching user_id for customer', customerId, customerError);
+              return;
+            }
+
+            // Create/update subscription record for lifetime access
+            const { data: existingSub } = await supabase
+              .from('subscriptions')
+              .select('id')
+              .eq('user_id', customerData.user_id)
+              .maybeSingle();
+
+            const subscriptionData = {
+              plan_name: planInfo.name,
+              billing_period: 'lifetime',
+              status: 'active',
+              stripe_customer_id: customerId,
+              amount_paid: amount_total ? amount_total / 100 : 0,
+              currency: currency?.toUpperCase() || 'EUR',
+              current_period_start: new Date().toISOString(),
+            };
+
+            if (existingSub) {
+              // Update existing subscription
+              const { error } = await supabase
+                .from('subscriptions')
+                .update({
+                  ...subscriptionData,
+                  updated_at: new Date().toISOString(),
+                })
+                .eq('user_id', customerData.user_id);
+
+              if (error) {
+                console.error('Error updating lifetime subscription:', error);
+              } else {
+                console.info(`Updated lifetime subscription for user ${customerData.user_id}: plan=${planInfo.name}`);
+              }
+            } else {
+              // Insert new subscription
+              const { error } = await supabase
+                .from('subscriptions')
+                .insert({
+                  user_id: customerData.user_id,
+                  ...subscriptionData,
+                });
+
+              if (error) {
+                console.error('Error creating lifetime subscription:', error);
+              } else {
+                console.info(`Created lifetime subscription for user ${customerData.user_id}: plan=${planInfo.name}`);
+              }
+            }
+          }
+        }
       } catch (error) {
         console.error('Error processing one-time payment:', error);
       }
