@@ -321,6 +321,14 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
         success: true,
         message: 'Platba bola úspešne spracovaná! Váš plán je teraz aktívny.'
       });
+      // Reload subscription data with delay to allow webhook to process
+      const reloadSubscription = async () => {
+        // Wait 2 seconds for webhook to complete
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        const subscription = await getUserActiveSubscription();
+        setActiveSubscription(subscription);
+      };
+      reloadSubscription();
       // Clean URL
       window.history.replaceState({}, '', window.location.pathname);
     } else if (canceled === 'true') {
@@ -2177,36 +2185,60 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                         </button>
                       </td>
                       <td className="px-2 py-2 border-l border-gray-300">
-                        <button
-                          onClick={() => handleSelectPlan('odbornik')}
-                          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 px-3 rounded-lg transition-all transform hover:scale-105 text-xs"
-                        >
-                          Vybrať
-                        </button>
+                        {activeSubscription?.plan_name === 'odbornik' ? (
+                          <button disabled className="w-full bg-green-600 text-white font-semibold py-1.5 px-3 rounded-lg text-xs cursor-not-allowed opacity-90">
+                            Aktivný
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleSelectPlan('odbornik')}
+                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 px-3 rounded-lg transition-all transform hover:scale-105 text-xs"
+                          >
+                            Vybrať
+                          </button>
+                        )}
                       </td>
                       <td className="px-2 py-2 border-l border-gray-300">
-                        <button
-                          onClick={() => handleSelectPlan('expert')}
-                          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 px-3 rounded-lg transition-all transform hover:scale-105 text-xs"
-                        >
-                          Vybrať
-                        </button>
+                        {activeSubscription?.plan_name === 'expert' ? (
+                          <button disabled className="w-full bg-green-600 text-white font-semibold py-1.5 px-3 rounded-lg text-xs cursor-not-allowed opacity-90">
+                            Aktivný
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleSelectPlan('expert')}
+                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 px-3 rounded-lg transition-all transform hover:scale-105 text-xs"
+                          >
+                            Vybrať
+                          </button>
+                        )}
                       </td>
                       <td className="px-2 py-2 border-l border-gray-300 bg-orange-50">
-                        <button
-                          onClick={() => handleSelectPlan('profik')}
-                          className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold py-1.5 px-3 rounded-lg transition-all transform hover:scale-105 shadow-lg text-xs"
-                        >
-                          Vybrať
-                        </button>
+                        {activeSubscription?.plan_name === 'profik' ? (
+                          <button disabled className="w-full bg-green-600 text-white font-semibold py-1.5 px-3 rounded-lg text-xs cursor-not-allowed opacity-90">
+                            Aktivný
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleSelectPlan('profik')}
+                            className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold py-1.5 px-3 rounded-lg transition-all transform hover:scale-105 shadow-lg text-xs"
+                          >
+                            Vybrať
+                          </button>
+                        )}
                       </td>
                       <td className="px-2 py-2 border-l border-gray-300">
-                        <button
-                          onClick={() => handleSelectPlan('premier')}
-                          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 px-3 rounded-lg transition-all transform hover:scale-105 text-xs"
-                        >
-                          Vybrať
-                        </button>
+                        {activeSubscription?.plan_name === 'premier' ? (
+                          <button disabled className="w-full bg-green-600 text-white font-semibold py-1.5 px-3 rounded-lg text-xs cursor-not-allowed opacity-90">
+                            Aktivný
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleSelectPlan('premier')}
+                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 px-3 rounded-lg transition-all transform hover:scale-105 text-xs"
+                          >
+                            Vybrať
+                          </button>
+                        )}
                       </td>
                     </tr>
                   </tfoot>

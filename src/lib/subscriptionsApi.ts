@@ -3,7 +3,7 @@ import { supabase } from './supabase';
 export interface Subscription {
   id: string;
   user_id: string;
-  plan_name: 'Mini' | 'Odborník' | 'Expert' | 'Profik' | 'Premier';
+  plan_name: 'mini' | 'odbornik' | 'expert' | 'profik' | 'premier';
   billing_period: 'monthly' | 'yearly' | 'lifetime';
   status: 'active' | 'cancelled' | 'expired' | 'trial';
   stripe_subscription_id?: string;

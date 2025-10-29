@@ -124,7 +124,7 @@ async function handleEvent(event: Stripe.Event) {
           amount_total,
           currency,
           payment_status,
-          status: 'completed', // assuming we want to mark it as completed since payment is successful
+          status: 'completed',
         });
 
         if (orderError) {
@@ -167,12 +167,15 @@ async function syncCustomerFromStripe(customerId: string) {
         console.error('Error updating subscription status:', noSubError);
         throw new Error('Failed to update subscription status in database');
       }
+      return;
     }
 
     // assumes that a customer can only have a single subscription
     const subscription = subscriptions.data[0];
     const priceId = subscription.items.data[0].price.id;
     const planInfo = getPlanNameFromPriceId(priceId);
+
+    console.info(`Processing subscription for customer ${customerId}, plan: ${planInfo.name}, status: ${subscription.status}`);
 
     // store subscription state in stripe_subscriptions table
     const { error: subError } = await supabase.from('stripe_subscriptions').upsert(
@@ -197,7 +200,7 @@ async function syncCustomerFromStripe(customerId: string) {
     );
 
     if (subError) {
-      console.error('Error syncing subscription:', subError);
+      console.error('Error syncing subscription to stripe_subscriptions:', subError);
       throw new Error('Failed to sync subscription in database');
     }
 
@@ -209,7 +212,7 @@ async function syncCustomerFromStripe(customerId: string) {
       .maybeSingle();
 
     if (customerError || !customerData) {
-      console.error('Error fetching user_id:', customerError);
+      console.error('Error fetching user_id for customer', customerId, customerError);
       return;
     }
 
@@ -237,9 +240,9 @@ async function syncCustomerFromStripe(customerId: string) {
     );
 
     if (userSubError) {
-      console.error('Error updating user subscription:', userSubError);
+      console.error('Error updating user subscription in subscriptions table:', userSubError);
     } else {
-      console.info(`Successfully updated user subscription for user: ${customerData.user_id}`);
+      console.info(`Successfully updated subscription for user ${customerData.user_id}: plan=${planInfo.name}, status=${subscription.status}`);
     }
 
     console.info(`Successfully synced subscription for customer: ${customerId}`);
