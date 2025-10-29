@@ -361,14 +361,25 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
           console.log('Period end formatted:', new Date(subscription.current_period_end).toLocaleDateString('sk-SK'));
         }
 
-        // Show the success modal with plan info (either from subscription or URL param)
-        setShowPaymentResult({
-          show: true,
-          success: true,
-          message: 'Platba bola úspešne spracovaná! Váš plán je teraz aktívny.',
-          planName: subscription?.plan_name || planParam || 'unknown',
-          billingPeriod: subscription?.billing_period || 'monthly'
-        });
+        // Check if we successfully got a subscription
+        if (subscription) {
+          // Show success modal with plan info
+          setShowPaymentResult({
+            show: true,
+            success: true,
+            message: 'Platba bola úspešne spracovaná! Váš plán je teraz aktívny.',
+            planName: subscription.plan_name,
+            billingPeriod: subscription.billing_period
+          });
+        } else {
+          // Payment went through but subscription wasn't created - show error
+          console.error('Payment succeeded but subscription not found in database');
+          setShowPaymentResult({
+            show: true,
+            success: false,
+            message: 'Platba bola spracovaná, ale nepodarilo sa aktivovať predplatné. Prosím, kontaktujte podporu.'
+          });
+        }
       };
       reloadSubscription();
     } else if (canceled === 'true') {
