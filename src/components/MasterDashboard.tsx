@@ -314,13 +314,26 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
     const params = new URLSearchParams(window.location.search);
     const success = params.get('success');
     const canceled = params.get('canceled');
+    const tab = params.get('tab');
+
+    console.log('Payment result params:', { success, canceled, tab });
+
+    // Set the tab if provided
+    if (tab === 'payments') {
+      setActiveTab('payments');
+    }
 
     if (success === 'true') {
+      console.log('Payment successful! Showing success modal');
       setShowPaymentResult({
         show: true,
         success: true,
         message: 'Platba bola úspešne spracovaná! Váš plán je teraz aktívny.'
       });
+
+      // Clean URL immediately
+      window.history.replaceState({}, '', window.location.pathname);
+
       // Reload subscription data with delay to allow webhook to process
       const reloadSubscription = async () => {
         // Wait 3 seconds for webhook to complete
@@ -338,15 +351,15 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
         console.log('Loaded subscription:', subscription);
       };
       reloadSubscription();
-      // Clean URL
-      window.history.replaceState({}, '', window.location.pathname);
     } else if (canceled === 'true') {
+      console.log('Payment canceled! Showing cancel modal');
       setShowPaymentResult({
         show: true,
         success: false,
         message: 'Platba bola zrušená. Môžete to skúsiť znovu.'
       });
-      // Clean URL
+
+      // Clean URL immediately
       window.history.replaceState({}, '', window.location.pathname);
     }
   }, []);
@@ -2272,29 +2285,44 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
 
       {/* Payment Result Modal */}
       {showPaymentResult.show && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-8 w-full max-w-md mx-4 shadow-2xl">
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[9999] animate-fadeIn">
+          <div className="bg-white rounded-2xl p-10 w-full max-w-lg mx-4 shadow-2xl transform animate-scaleIn">
             <div className="text-center">
               {showPaymentResult.success ? (
                 <>
-                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <CheckCircle className="w-10 h-10 text-green-600" />
+                  <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
+                    <CheckCircle className="w-12 h-12 text-white" strokeWidth={3} />
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-800 mb-2">Úspech!</h3>
-                  <p className="text-gray-600 mb-6">{showPaymentResult.message}</p>
+                  <h3 className="text-3xl font-bold text-gray-900 mb-3">Úspech!</h3>
+                  <p className="text-lg text-gray-700 mb-8 leading-relaxed">{showPaymentResult.message}</p>
+                  <div className="bg-green-50 border-2 border-green-200 rounded-lg p-4 mb-6">
+                    <p className="text-sm text-green-800 font-medium">
+                      ✓ Vaša podpisca je teraz aktívna<br/>
+                      ✓ Môžete využívať všetky funkcie vášho plánu
+                    </p>
+                  </div>
                 </>
               ) : (
                 <>
-                  <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <AlertCircle className="w-10 h-10 text-red-600" />
+                  <div className="w-20 h-20 bg-gradient-to-br from-red-400 to-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <AlertCircle className="w-12 h-12 text-white" strokeWidth={3} />
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-800 mb-2">Platba zrušená</h3>
-                  <p className="text-gray-600 mb-6">{showPaymentResult.message}</p>
+                  <h3 className="text-3xl font-bold text-gray-900 mb-3">Platba zrušená</h3>
+                  <p className="text-lg text-gray-700 mb-8 leading-relaxed">{showPaymentResult.message}</p>
+                  <div className="bg-gray-50 border-2 border-gray-200 rounded-lg p-4 mb-6">
+                    <p className="text-sm text-gray-700">
+                      Nenastala žiadna platba. Môžete sa kedykoľvek vrátiť a vybrať si plán.
+                    </p>
+                  </div>
                 </>
               )}
               <button
                 onClick={() => setShowPaymentResult({show: false, success: false, message: ''})}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+                className={`w-full font-bold py-4 px-8 rounded-xl transition-all transform hover:scale-105 shadow-lg ${
+                  showPaymentResult.success
+                    ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white'
+                    : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white'
+                }`}
               >
                 Zavrieť
               </button>
