@@ -64,6 +64,9 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
     const priceId = getPlanPriceId(planKey, billingPeriod);
     const currentUrl = window.location.origin;
 
+    // Premier is a one-time payment (lifetime), not a subscription
+    const checkoutMode = planKey === 'premier' ? 'payment' : 'subscription';
+
     try {
       const { data: { session } } = await supabase.auth.getSession();
 
@@ -80,9 +83,9 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
         },
         body: JSON.stringify({
           price_id: priceId,
-          success_url: `${currentUrl}/dashboard?tab=payments&success=true`,
+          success_url: `${currentUrl}/dashboard?tab=payments&success=true&plan=${planKey}`,
           cancel_url: `${currentUrl}/dashboard?tab=payments&canceled=true`,
-          mode: 'subscription',
+          mode: checkoutMode,
         }),
       });
 
@@ -324,12 +327,14 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
     }
 
     if (success === 'true') {
-      console.log('Payment successful! Showing success modal');
-      // Don't show modal yet, wait for subscription to load
+      console.log('Payment successful! Showing loading state');
+      const planParam = params.get('plan');
+
+      // Show loading state immediately
       setShowPaymentResult({
-        show: false,
+        show: true,
         success: true,
-        message: 'Platba bola úspešne spracovaná! Váš plán je teraz aktívny.'
+        message: 'Spracovávam platbu...'
       });
 
       // Clean URL immediately
@@ -356,16 +361,14 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
           console.log('Period end formatted:', new Date(subscription.current_period_end).toLocaleDateString('sk-SK'));
         }
 
-        // Now show the success modal with plan info
-        if (subscription) {
-          setShowPaymentResult({
-            show: true,
-            success: true,
-            message: 'Platba bola úspešne spracovaná! Váš plán je teraz aktívny.',
-            planName: subscription.plan_name,
-            billingPeriod: subscription.billing_period
-          });
-        }
+        // Show the success modal with plan info (either from subscription or URL param)
+        setShowPaymentResult({
+          show: true,
+          success: true,
+          message: 'Platba bola úspešne spracovaná! Váš plán je teraz aktívny.',
+          planName: subscription?.plan_name || planParam || 'unknown',
+          billingPeriod: subscription?.billing_period || 'monthly'
+        });
       };
       reloadSubscription();
     } else if (canceled === 'true') {
@@ -2333,41 +2336,56 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
           <div className="bg-white rounded-2xl p-10 w-full max-w-lg mx-4 shadow-2xl transform animate-scaleIn">
             <div className="text-center">
               {showPaymentResult.success ? (
-                <>
-                  <div className="w-24 h-24 bg-gradient-to-br from-green-400 via-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl animate-bounce">
-                    <CheckCircle className="w-14 h-14 text-white" strokeWidth={3} />
-                  </div>
-                  <h3 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-green-700 bg-clip-text text-transparent mb-2">Blahoželáme!</h3>
-                  <p className="text-xl text-gray-900 font-semibold mb-6">
-                    Úspešne ste prešli na plán{' '}
-                    <span className="text-green-600 font-bold">
-                      {showPaymentResult.planName === 'odbornik' ? 'Odborník' :
-                       showPaymentResult.planName === 'expert' ? 'Expert' :
-                       showPaymentResult.planName === 'profik' ? 'Profik' :
-                       showPaymentResult.planName === 'premier' ? 'Premier' : showPaymentResult.planName}
-                    </span>
-                  </p>
-                  <div className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-300 rounded-xl p-6 mb-6 shadow-inner">
-                    <div className="flex items-center justify-center mb-3">
-                      <Sparkles className="w-5 h-5 text-green-600 mr-2" />
-                      <p className="text-lg font-bold text-green-800">
-                        {showPaymentResult.billingPeriod === 'monthly' ? 'Mesačné predplatné' :
-                         showPaymentResult.billingPeriod === 'yearly' ? 'Ročné predplatné' : 'Doživotný prístup'}
+                showPaymentResult.planName ? (
+                  <>
+                    <div className="w-24 h-24 bg-gradient-to-br from-green-400 via-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl animate-bounce">
+                      <CheckCircle className="w-14 h-14 text-white" strokeWidth={3} />
+                    </div>
+                    <h3 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-green-700 bg-clip-text text-transparent mb-2">Blahoželáme!</h3>
+                    <p className="text-xl text-gray-900 font-semibold mb-6">
+                      Úspešne ste prešli na plán{' '}
+                      <span className="text-green-600 font-bold">
+                        {showPaymentResult.planName === 'odbornik' ? 'Odborník' :
+                         showPaymentResult.planName === 'expert' ? 'Expert' :
+                         showPaymentResult.planName === 'profik' ? 'Profik' :
+                         showPaymentResult.planName === 'premier' ? 'Premier' : showPaymentResult.planName}
+                      </span>
+                    </p>
+                    <div className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-300 rounded-xl p-6 mb-6 shadow-inner">
+                      <div className="flex items-center justify-center mb-3">
+                        <Sparkles className="w-5 h-5 text-green-600 mr-2" />
+                        <p className="text-lg font-bold text-green-800">
+                          {showPaymentResult.billingPeriod === 'monthly' ? 'Mesačné predplatné' :
+                           showPaymentResult.billingPeriod === 'yearly' ? 'Ročné predplatné' : 'Doživotný prístup'}
+                        </p>
+                      </div>
+                      <div className="space-y-2 text-left">
+                        <p className="text-sm text-green-700 flex items-center">
+                          <CheckCircle className="w-4 h-4 mr-2" /> Vaša podpisca je teraz aktívna
+                        </p>
+                        <p className="text-sm text-green-700 flex items-center">
+                          <CheckCircle className="w-4 h-4 mr-2" /> Môžete využívať všetky funkcie vášho plánu
+                        </p>
+                        <p className="text-sm text-green-700 flex items-center">
+                          <CheckCircle className="w-4 h-4 mr-2" /> Prístup k prémiové obsahu je odomknutý
+                        </p>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="w-24 h-24 bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl">
+                      <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-white"></div>
+                    </div>
+                    <h3 className="text-3xl font-bold text-gray-900 mb-2">Spracovávam platbu...</h3>
+                    <p className="text-lg text-gray-600 mb-6">Prosím počkajte, zatiaľ čo overujeme vašu platbu</p>
+                    <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6">
+                      <p className="text-sm text-blue-700">
+                        Tento proces môže trvať niekoľko sekúnd. Neobnovujte stránku.
                       </p>
                     </div>
-                    <div className="space-y-2 text-left">
-                      <p className="text-sm text-green-700 flex items-center">
-                        <CheckCircle className="w-4 h-4 mr-2" /> Vaša podpisca je teraz aktívna
-                      </p>
-                      <p className="text-sm text-green-700 flex items-center">
-                        <CheckCircle className="w-4 h-4 mr-2" /> Môžete využívať všetky funkcie vášho plánu
-                      </p>
-                      <p className="text-sm text-green-700 flex items-center">
-                        <CheckCircle className="w-4 h-4 mr-2" /> Prístup k prémiové obsahu je odomknutý
-                      </p>
-                    </div>
-                  </div>
-                </>
+                  </>
+                )
               ) : (
                 <>
                   <div className="w-20 h-20 bg-gradient-to-br from-red-400 to-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -2382,16 +2400,18 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                   </div>
                 </>
               )}
-              <button
-                onClick={() => setShowPaymentResult({show: false, success: false, message: ''})}
-                className={`w-full font-bold py-4 px-8 rounded-xl transition-all transform hover:scale-105 shadow-lg text-lg ${
-                  showPaymentResult.success
-                    ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white'
-                    : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white'
-                }`}
-              >
-                {showPaymentResult.success ? 'Skvelé, ďakujem!' : 'Zavrieť'}
-              </button>
+              {(showPaymentResult.planName || !showPaymentResult.success) && (
+                <button
+                  onClick={() => setShowPaymentResult({show: false, success: false, message: ''})}
+                  className={`w-full font-bold py-4 px-8 rounded-xl transition-all transform hover:scale-105 shadow-lg text-lg ${
+                    showPaymentResult.success
+                      ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white'
+                      : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white'
+                  }`}
+                >
+                  {showPaymentResult.success ? 'Skvelé, ďakujem!' : 'Zavrieť'}
+                </button>
+              )}
             </div>
           </div>
         </div>
