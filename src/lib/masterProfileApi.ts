@@ -87,6 +87,30 @@ export const saveMasterProfile = async (profileData: MasterProfile): Promise<Mas
     }
 
     console.log('Profile saved to Supabase:', data);
+
+    // Check if user has a subscription, if not create a default "Mini" subscription
+    const { data: existingSubscription } = await supabase
+      .from('subscriptions')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('status', 'active')
+      .single();
+
+    if (!existingSubscription) {
+      console.log('Creating default Mini subscription for user');
+      await supabase
+        .from('subscriptions')
+        .insert({
+          user_id: user.id,
+          plan_name: 'mini',
+          billing_period: 'lifetime',
+          status: 'active',
+          amount_paid: 0,
+          currency: 'EUR',
+          current_period_start: new Date().toISOString()
+        });
+    }
+
     return data as MasterProfile;
 
   } catch (error) {
