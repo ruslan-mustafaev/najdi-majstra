@@ -760,7 +760,15 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                   : 'bg-transparent text-gray-600 hover:bg-gray-100'
               }`}
             >
-              Môj profil
+              Môj profil {activeSubscription && (
+                <span className="ml-1 text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full font-semibold">
+                  {activeSubscription.plan_name === 'mini' ? 'Mini' :
+                   activeSubscription.plan_name === 'odbornik' ? 'Odborník' :
+                   activeSubscription.plan_name === 'expert' ? 'Expert' :
+                   activeSubscription.plan_name === 'profik' ? 'Profik' :
+                   activeSubscription.plan_name === 'premier' ? 'Premier' : activeSubscription.plan_name}
+                </span>
+              )}
             </button>
             <button
               onClick={() => setActiveTab('calendar')}
