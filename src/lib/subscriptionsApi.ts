@@ -38,14 +38,14 @@ export async function getUserActiveSubscription(): Promise<Subscription | null> 
     .eq('user_id', user.id)
     .eq('status', 'active')
     .order('created_at', { ascending: false })
-    .maybeSingle();
+    .limit(1);
 
   if (error) {
     console.error('Error fetching active subscription:', error);
     return null;
   }
 
-  return data;
+  return data && data.length > 0 ? data[0] : null;
 }
 
 export async function getUserSubscriptions(): Promise<Subscription[]> {
