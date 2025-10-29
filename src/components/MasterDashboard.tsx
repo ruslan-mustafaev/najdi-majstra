@@ -53,7 +53,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
   const [contactHoursDisplay, setContactHoursDisplay] = useState<string>('');
   const [activeSubscription, setActiveSubscription] = useState<Subscription | null>(null);
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('yearly');
-  const [showPaymentResult, setShowPaymentResult] = useState<{show: boolean, success: boolean, message: string}>({show: false, success: false, message: ''});
+  const [showPaymentResult, setShowPaymentResult] = useState<{show: boolean, success: boolean, message: string, planName?: string, billingPeriod?: string}>({show: false, success: false, message: ''});
 
   const handleSelectPlan = async (planKey: 'odbornik' | 'expert' | 'profik' | 'premier') => {
     if (!user) {
@@ -325,8 +325,9 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
 
     if (success === 'true') {
       console.log('Payment successful! Showing success modal');
+      // Don't show modal yet, wait for subscription to load
       setShowPaymentResult({
-        show: true,
+        show: false,
         success: true,
         message: 'Platba bola úspešne spracovaná! Váš plán je teraz aktívny.'
       });
@@ -353,6 +354,17 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
           console.log('Period end raw:', subscription.current_period_end);
           console.log('Period end parsed:', new Date(subscription.current_period_end));
           console.log('Period end formatted:', new Date(subscription.current_period_end).toLocaleDateString('sk-SK'));
+        }
+
+        // Now show the success modal with plan info
+        if (subscription) {
+          setShowPaymentResult({
+            show: true,
+            success: true,
+            message: 'Platba bola úspešne spracovaná! Váš plán je teraz aktívny.',
+            planName: subscription.plan_name,
+            billingPeriod: subscription.billing_period
+          });
         }
       };
       reloadSubscription();
@@ -2322,16 +2334,38 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
             <div className="text-center">
               {showPaymentResult.success ? (
                 <>
-                  <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
-                    <CheckCircle className="w-12 h-12 text-white" strokeWidth={3} />
+                  <div className="w-24 h-24 bg-gradient-to-br from-green-400 via-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl animate-bounce">
+                    <CheckCircle className="w-14 h-14 text-white" strokeWidth={3} />
                   </div>
-                  <h3 className="text-3xl font-bold text-gray-900 mb-3">Úspech!</h3>
-                  <p className="text-lg text-gray-700 mb-8 leading-relaxed">{showPaymentResult.message}</p>
-                  <div className="bg-green-50 border-2 border-green-200 rounded-lg p-4 mb-6">
-                    <p className="text-sm text-green-800 font-medium">
-                      ✓ Vaša podpisca je teraz aktívna<br/>
-                      ✓ Môžete využívať všetky funkcie vášho plánu
-                    </p>
+                  <h3 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-green-700 bg-clip-text text-transparent mb-2">Blahoželáme!</h3>
+                  <p className="text-xl text-gray-900 font-semibold mb-6">
+                    Úspešne ste prešli na plán{' '}
+                    <span className="text-green-600 font-bold">
+                      {showPaymentResult.planName === 'odbornik' ? 'Odborník' :
+                       showPaymentResult.planName === 'expert' ? 'Expert' :
+                       showPaymentResult.planName === 'profik' ? 'Profik' :
+                       showPaymentResult.planName === 'premier' ? 'Premier' : showPaymentResult.planName}
+                    </span>
+                  </p>
+                  <div className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-300 rounded-xl p-6 mb-6 shadow-inner">
+                    <div className="flex items-center justify-center mb-3">
+                      <Sparkles className="w-5 h-5 text-green-600 mr-2" />
+                      <p className="text-lg font-bold text-green-800">
+                        {showPaymentResult.billingPeriod === 'monthly' ? 'Mesačné predplatné' :
+                         showPaymentResult.billingPeriod === 'yearly' ? 'Ročné predplatné' : 'Doživotný prístup'}
+                      </p>
+                    </div>
+                    <div className="space-y-2 text-left">
+                      <p className="text-sm text-green-700 flex items-center">
+                        <CheckCircle className="w-4 h-4 mr-2" /> Vaša podpisca je teraz aktívna
+                      </p>
+                      <p className="text-sm text-green-700 flex items-center">
+                        <CheckCircle className="w-4 h-4 mr-2" /> Môžete využívať všetky funkcie vášho plánu
+                      </p>
+                      <p className="text-sm text-green-700 flex items-center">
+                        <CheckCircle className="w-4 h-4 mr-2" /> Prístup k prémiové obsahu je odomknutý
+                      </p>
+                    </div>
                   </div>
                 </>
               ) : (
@@ -2350,13 +2384,13 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
               )}
               <button
                 onClick={() => setShowPaymentResult({show: false, success: false, message: ''})}
-                className={`w-full font-bold py-4 px-8 rounded-xl transition-all transform hover:scale-105 shadow-lg ${
+                className={`w-full font-bold py-4 px-8 rounded-xl transition-all transform hover:scale-105 shadow-lg text-lg ${
                   showPaymentResult.success
                     ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white'
                     : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white'
                 }`}
               >
-                Zavrieť
+                {showPaymentResult.success ? 'Skvelé, ďakujem!' : 'Zavrieť'}
               </button>
             </div>
           </div>
