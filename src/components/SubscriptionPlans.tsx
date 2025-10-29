@@ -286,23 +286,23 @@ export const SubscriptionPlans: React.FC = () => {
                   </tr>
                   <tr className="border-b-2 border-gray-300 bg-red-50">
                     <th className="text-center p-3 border-l border-gray-300">
-                      <div className="text-xs font-bold text-red-600 mb-1">Dožívtný profil</div>
+                      <div className="text-xs font-bold text-red-600 mb-1">Moje predplatné</div>
                       <div className="text-sm font-bold text-red-600 line-through">19.90€</div>
                     </th>
                     <th className="text-center p-3 border-l border-gray-300">
-                      <div className="text-xs font-bold text-red-600 mb-1">Dožívtný profil</div>
+                      <div className="text-xs font-bold text-red-600 mb-1">Moje predplatné</div>
                       <div className="text-sm font-bold text-red-600 line-through">41.99€</div>
                     </th>
                     <th className="text-center p-3 border-l border-gray-300">
-                      <div className="text-xs font-bold text-red-600 mb-1">Dožívtný profil</div>
+                      <div className="text-xs font-bold text-red-600 mb-1">Moje predplatné</div>
                       <div className="text-sm font-bold text-red-600 line-through">55.99€</div>
                     </th>
                     <th className="text-center p-3 border-l border-gray-300">
-                      <div className="text-xs font-bold text-red-600 mb-1">Dožívtný profil</div>
+                      <div className="text-xs font-bold text-red-600 mb-1">Moje predplatné</div>
                       <div className="text-sm font-bold text-red-600 line-through">9 999€</div>
                     </th>
                     <th className="text-center p-3 border-l border-gray-300">
-                      <div className="text-xs font-bold text-red-600 mb-1">Dožívtný profil</div>
+                      <div className="text-xs font-bold text-red-600 mb-1">Moje predplatné</div>
                       <div className="text-sm font-bold text-red-600 line-through">9 999€</div>
                     </th>
                   </tr>
