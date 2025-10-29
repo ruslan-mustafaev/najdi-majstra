@@ -232,23 +232,51 @@ async function syncCustomerFromStripe(customerId: string) {
     const currency = subscription.items.data[0].price.currency || 'eur';
 
     // Store in subscriptions table for easy access
-    const { error: userSubError } = await supabase.from('subscriptions').upsert(
-      {
-        user_id: customerData.user_id,
-        plan_name: planInfo.name,
-        billing_period: planInfo.period,
-        status: subscription.status,
-        stripe_customer_id: customerId,
-        stripe_subscription_id: subscription.id,
-        current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
-        current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
-        amount_paid: amountPaid,
-        currency: currency,
-      },
-      {
-        onConflict: 'user_id',
-      },
-    );
+    // First, check if subscription exists
+    const { data: existingSub } = await supabase
+      .from('subscriptions')
+      .select('id')
+      .eq('user_id', customerData.user_id)
+      .maybeSingle();
+
+    let userSubError;
+
+    if (existingSub) {
+      // Update existing subscription
+      const { error } = await supabase
+        .from('subscriptions')
+        .update({
+          plan_name: planInfo.name,
+          billing_period: planInfo.period,
+          status: subscription.status,
+          stripe_customer_id: customerId,
+          stripe_subscription_id: subscription.id,
+          current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
+          current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+          amount_paid: amountPaid,
+          currency: currency.toUpperCase(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq('user_id', customerData.user_id);
+      userSubError = error;
+    } else {
+      // Insert new subscription
+      const { error } = await supabase
+        .from('subscriptions')
+        .insert({
+          user_id: customerData.user_id,
+          plan_name: planInfo.name,
+          billing_period: planInfo.period,
+          status: subscription.status,
+          stripe_customer_id: customerId,
+          stripe_subscription_id: subscription.id,
+          current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
+          current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+          amount_paid: amountPaid,
+          currency: currency.toUpperCase(),
+        });
+      userSubError = error;
+    }
 
     if (userSubError) {
       console.error('Error updating user subscription in subscriptions table:', userSubError);
