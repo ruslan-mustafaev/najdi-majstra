@@ -349,6 +349,11 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
 
         setActiveSubscription(subscription);
         console.log('Loaded subscription:', subscription);
+        if (subscription?.current_period_end) {
+          console.log('Period end raw:', subscription.current_period_end);
+          console.log('Period end parsed:', new Date(subscription.current_period_end));
+          console.log('Period end formatted:', new Date(subscription.current_period_end).toLocaleDateString('sk-SK'));
+        }
       };
       reloadSubscription();
     } else if (canceled === 'true') {
@@ -429,6 +434,12 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
   useEffect(() => {
     const loadSubscription = async () => {
       const subscription = await getUserActiveSubscription();
+      console.log('Initial subscription load:', subscription);
+      if (subscription?.current_period_end) {
+        console.log('Initial period end raw:', subscription.current_period_end);
+        console.log('Initial period end parsed:', new Date(subscription.current_period_end));
+        console.log('Initial period end formatted:', new Date(subscription.current_period_end).toLocaleDateString('sk-SK'));
+      }
       setActiveSubscription(subscription);
     };
 
