@@ -125,18 +125,17 @@ export async function createSubscription(
     subscriptionData.stripe_subscription_id = stripeData.subscriptionId;
   }
 
-  const { data: oldSubscription } = await supabase
+  const { data: oldSubscriptions } = await supabase
     .from('subscriptions')
     .select('id')
     .eq('user_id', user.id)
-    .eq('status', 'active')
-    .maybeSingle();
+    .eq('status', 'active');
 
-  if (oldSubscription) {
+  if (oldSubscriptions && oldSubscriptions.length > 0) {
     await supabase
       .from('subscriptions')
       .update({ status: 'cancelled' })
-      .eq('id', oldSubscription.id);
+      .in('id', oldSubscriptions.map(s => s.id));
   }
 
   const { data, error } = await supabase
