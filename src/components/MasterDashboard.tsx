@@ -16,23 +16,6 @@ interface MasterDashboardProps {
   onProfileUpdate?: (profileData: any) => void;
 }
 
-const normalizePlanName = (planName: string): string => {
-  const normalized = planName.toLowerCase();
-  switch (normalized) {
-    case 'mini': return 'Mini';
-    case 'odbornik': case 'odborník': return 'Odborník';
-    case 'expert': return 'Expert';
-    case 'profik': return 'Profik';
-    case 'premier': return 'Premier';
-    default: return planName;
-  }
-};
-
-const isPlanActive = (activeSubscription: Subscription | null, planKey: string): boolean => {
-  if (!activeSubscription) return false;
-  return activeSubscription.plan_name.toLowerCase() === planKey.toLowerCase();
-};
-
 export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProfileUpdate }) => {
   const { user, signOut } = useAuth();
   const [activeTab, setActiveTab] = useState<'profile' | 'calendar' | 'portfolio' | 'projects' | 'payments'>('profile');
@@ -801,7 +784,11 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
             >
               Môj profil {activeSubscription && (
                 <span className="ml-1 text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full font-semibold">
-                  {normalizePlanName(activeSubscription.plan_name)}
+                  {activeSubscription.plan_name === 'mini' ? 'Mini' :
+                   activeSubscription.plan_name === 'odbornik' ? 'Odborník' :
+                   activeSubscription.plan_name === 'expert' ? 'Expert' :
+                   activeSubscription.plan_name === 'profik' ? 'Profik' :
+                   activeSubscription.plan_name === 'premier' ? 'Premier' : activeSubscription.plan_name}
                 </span>
               )}
             </button>
@@ -1965,7 +1952,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                       <CheckCircle className="w-5 h-5" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-bold text-gray-900">Váš aktívny plán: {normalizePlanName(activeSubscription.plan_name)}</h3>
+                      <h3 className="text-lg font-bold text-gray-900">Váš aktívny plán: {activeSubscription.plan_name}</h3>
                       <p className="text-sm text-gray-600">
                         {activeSubscription.billing_period === 'lifetime' ? 'Doživotný prístup' :
                          activeSubscription.billing_period === 'yearly' ? 'Ročné predplatné' : 'Mesačné predplatné'}
@@ -2228,7 +2215,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                         </button>
                       </td>
                       <td className="px-2 py-2 border-l border-gray-300">
-                        {isPlanActive(activeSubscription, 'odbornik') ? (
+                        {activeSubscription?.plan_name === 'odbornik' ? (
                           <button disabled className="w-full bg-green-600 text-white font-semibold py-1.5 px-3 rounded-lg text-xs cursor-not-allowed opacity-90">
                             Aktivný
                           </button>
@@ -2242,7 +2229,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                         )}
                       </td>
                       <td className="px-2 py-2 border-l border-gray-300">
-                        {isPlanActive(activeSubscription, 'expert') ? (
+                        {activeSubscription?.plan_name === 'expert' ? (
                           <button disabled className="w-full bg-green-600 text-white font-semibold py-1.5 px-3 rounded-lg text-xs cursor-not-allowed opacity-90">
                             Aktivný
                           </button>
@@ -2256,7 +2243,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                         )}
                       </td>
                       <td className="px-2 py-2 border-l border-gray-300 bg-orange-50">
-                        {isPlanActive(activeSubscription, 'profik') ? (
+                        {activeSubscription?.plan_name === 'profik' ? (
                           <button disabled className="w-full bg-green-600 text-white font-semibold py-1.5 px-3 rounded-lg text-xs cursor-not-allowed opacity-90">
                             Aktivný
                           </button>
@@ -2270,7 +2257,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                         )}
                       </td>
                       <td className="px-2 py-2 border-l border-gray-300">
-                        {isPlanActive(activeSubscription, 'premier') ? (
+                        {activeSubscription?.plan_name === 'premier' ? (
                           <button disabled className="w-full bg-green-600 text-white font-semibold py-1.5 px-3 rounded-lg text-xs cursor-not-allowed opacity-90">
                             Aktivný
                           </button>
