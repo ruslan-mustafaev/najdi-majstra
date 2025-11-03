@@ -319,7 +319,9 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
     const canceled = params.get('canceled');
     const tab = params.get('tab');
 
-    console.log('Payment result params:', { success, canceled, tab });
+    console.log('🔍 MasterDashboard mounted');
+    console.log('🔍 URL:', window.location.href);
+    console.log('🔍 Payment result params:', { success, canceled, tab });
 
     // Set the tab if provided
     if (tab === 'payments') {

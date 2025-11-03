@@ -460,13 +460,22 @@ const ProfilePage: React.FC = () => {
 const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
+  const [searchParams] = useState(new URLSearchParams(window.location.search));
+  const isPaymentReturn = searchParams.get('success') === 'true' || searchParams.get('canceled') === 'true';
 
   // Проверяем, является ли пользователь мастером
   useEffect(() => {
+    // Skip redirect check if this is a payment return
+    if (isPaymentReturn) {
+      console.log('Payment return detected, skipping auth redirect check');
+      return;
+    }
+
     if (!loading && (!user || user.user_metadata?.user_type !== 'master')) {
+      console.log('User not authorized for dashboard, redirecting to home');
       navigate('/');
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, navigate, isPaymentReturn]);
 
   const handleProfileUpdate = async (profileData: any) => {
     // Сохраняем профиль и перезагружаем данные
