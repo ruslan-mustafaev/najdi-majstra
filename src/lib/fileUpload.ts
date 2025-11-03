@@ -431,38 +431,8 @@ export const getUserFiles = async (
     }
 
     if (!master) {
-      console.log('No master profile found, creating basic profile for user:', userId);
-      
-      // Если профиль мастера не существует, создаем базовую запись
-      const { data: user } = await supabase.auth.getUser();
-      if (!user.user) {
-        console.error('User not authenticated');
-        return [];
-      }
-
-      const { data: newMaster, error: createError } = await supabase
-        .from('masters')
-        .insert({
-          user_id: userId,
-          name: user.user.user_metadata?.full_name || `Majster ${userId.substring(0, 8)}`,
-          profession: 'Majster',
-          email: user.user.email || '',
-          phone: user.user.user_metadata?.phone || '',
-          location: user.user.user_metadata?.location || '',
-          description: 'Profesionálny majster',
-          is_active: true,
-          profile_completed: false
-        })
-        .select('profile_image_url, work_images_urls, work_video_url')
-        .single();
-
-      if (createError) {
-        console.error('Error creating master profile:', createError);
-        return [];
-      }
-
-      console.log('Created new master profile');
-      return getFilesFromMaster(newMaster, fileType);
+      console.log('No master profile found for user:', userId);
+      return [];
     }
 
     return getFilesFromMaster(master, fileType);
