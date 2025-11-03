@@ -13,6 +13,7 @@ interface OfferFormProps {
 export const OfferForm: React.FC<OfferFormProps> = ({ masterId, masterName, onClose, onSuccess }) => {
   const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<{[key: string]: string}>({});
   const [formData, setFormData] = useState({
     clientName: '',
     clientEmail: user?.email || '',
@@ -22,12 +23,49 @@ export const OfferForm: React.FC<OfferFormProps> = ({ masterId, masterName, onCl
     description: '',
   });
 
+  const validateForm = () => {
+    const newErrors: {[key: string]: string} = {};
+
+    if (!formData.clientName.trim()) {
+      newErrors.clientName = 'Meno je povinné';
+    } else if (formData.clientName.trim().length < 2) {
+      newErrors.clientName = 'Meno musí mať aspoň 2 znaky';
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.clientEmail.trim()) {
+      newErrors.clientEmail = 'Email je povinný';
+    } else if (!emailRegex.test(formData.clientEmail)) {
+      newErrors.clientEmail = 'Neplatný formát emailu';
+    }
+
+    const phoneRegex = /^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,9}$/;
+    if (!formData.clientPhone.trim()) {
+      newErrors.clientPhone = 'Telefón je povinný';
+    } else if (!phoneRegex.test(formData.clientPhone.replace(/\s/g, ''))) {
+      newErrors.clientPhone = 'Neplatný formát telefónu (napr. +421 XXX XXX XXX)';
+    }
+
+    if (!formData.location.trim()) {
+      newErrors.location = 'Lokalita je povinná';
+    } else if (formData.location.trim().length < 3) {
+      newErrors.location = 'Lokalita musí mať aspoň 3 znaky';
+    }
+
+    if (!formData.description.trim()) {
+      newErrors.description = 'Popis práce je povinný';
+    } else if (formData.description.trim().length < 10) {
+      newErrors.description = 'Popis práce musí mať aspoň 10 znakov';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.clientName || !formData.clientEmail || !formData.clientPhone ||
-        !formData.location || !formData.description) {
-      alert('Prosím vyplňte všetky povinné polia');
+    if (!validateForm()) {
       return;
     }
 
@@ -85,10 +123,18 @@ export const OfferForm: React.FC<OfferFormProps> = ({ masterId, masterName, onCl
               type="text"
               required
               value={formData.clientName}
-              onChange={(e) => setFormData({ ...formData, clientName: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
+              onChange={(e) => {
+                setFormData({ ...formData, clientName: e.target.value });
+                if (errors.clientName) setErrors({ ...errors, clientName: '' });
+              }}
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent ${
+                errors.clientName ? 'border-red-500' : 'border-gray-300'
+              }`}
               placeholder="Vaše meno a priezvisko"
             />
+            {errors.clientName && (
+              <p className="mt-1 text-sm text-red-600">{errors.clientName}</p>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -100,10 +146,18 @@ export const OfferForm: React.FC<OfferFormProps> = ({ masterId, masterName, onCl
                 type="email"
                 required
                 value={formData.clientEmail}
-                onChange={(e) => setFormData({ ...formData, clientEmail: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
+                onChange={(e) => {
+                  setFormData({ ...formData, clientEmail: e.target.value });
+                  if (errors.clientEmail) setErrors({ ...errors, clientEmail: '' });
+                }}
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent ${
+                  errors.clientEmail ? 'border-red-500' : 'border-gray-300'
+                }`}
                 placeholder="vas@email.com"
               />
+              {errors.clientEmail && (
+                <p className="mt-1 text-sm text-red-600">{errors.clientEmail}</p>
+              )}
             </div>
 
             <div>
@@ -114,10 +168,21 @@ export const OfferForm: React.FC<OfferFormProps> = ({ masterId, masterName, onCl
                 type="tel"
                 required
                 value={formData.clientPhone}
-                onChange={(e) => setFormData({ ...formData, clientPhone: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === '' || /^[+]?[0-9\s-()]*$/.test(value)) {
+                    setFormData({ ...formData, clientPhone: value });
+                    if (errors.clientPhone) setErrors({ ...errors, clientPhone: '' });
+                  }
+                }}
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent ${
+                  errors.clientPhone ? 'border-red-500' : 'border-gray-300'
+                }`}
                 placeholder="+421 XXX XXX XXX"
               />
+              {errors.clientPhone && (
+                <p className="mt-1 text-sm text-red-600">{errors.clientPhone}</p>
+              )}
             </div>
           </div>
 
@@ -130,10 +195,18 @@ export const OfferForm: React.FC<OfferFormProps> = ({ masterId, masterName, onCl
                 type="text"
                 required
                 value={formData.location}
-                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
+                onChange={(e) => {
+                  setFormData({ ...formData, location: e.target.value });
+                  if (errors.location) setErrors({ ...errors, location: '' });
+                }}
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent ${
+                  errors.location ? 'border-red-500' : 'border-gray-300'
+                }`}
                 placeholder="Mesto, adresa"
               />
+              {errors.location && (
+                <p className="mt-1 text-sm text-red-600">{errors.location}</p>
+              )}
             </div>
 
             <div>
@@ -157,11 +230,19 @@ export const OfferForm: React.FC<OfferFormProps> = ({ masterId, masterName, onCl
             <textarea
               required
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(e) => {
+                setFormData({ ...formData, description: e.target.value });
+                if (errors.description) setErrors({ ...errors, description: '' });
+              }}
               rows={6}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent resize-none"
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent resize-none ${
+                errors.description ? 'border-red-500' : 'border-gray-300'
+              }`}
               placeholder="Popíšte čo potrebujete, detaily projektu, požiadavky atď."
             />
+            {errors.description && (
+              <p className="mt-1 text-sm text-red-600">{errors.description}</p>
+            )}
           </div>
 
           <div className="flex gap-3 pt-4">
