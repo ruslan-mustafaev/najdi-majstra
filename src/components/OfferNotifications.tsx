@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Coins, Bell, X, Calendar, MapPin, User, Mail, Phone, CheckCircle, XCircle, Download, Printer } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
@@ -306,8 +307,8 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
         )}
       </div>
 
-      {/* Offer Detail Modal */}
-      {selectedOffer && (
+      {/* Offer Detail Modal - Using Portal to render outside of Header */}
+      {selectedOffer && createPortal(
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4 overflow-y-auto">
           <div className="bg-white rounded-lg max-w-3xl w-full my-8 shadow-2xl relative">
             <div className="bg-white border-b px-6 py-4 flex items-center justify-between print:hidden rounded-t-lg">
@@ -408,7 +409,8 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
               )}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
