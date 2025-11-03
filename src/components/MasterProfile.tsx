@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Star, MapPin, Clock, Phone, Mail, Globe, Award, Users, Calendar, Euro, Play, Facebook, Instagram, Linkedin, Youtube, Twitter, MessageCircle, Edit2, Trash2, X, Check } from 'lucide-react';
+import { ArrowLeft, Star, MapPin, Clock, Phone, Mail, Globe, Award, Users, Calendar, Euro, Play, Facebook, Instagram, Linkedin, Youtube, Twitter, MessageCircle, Edit2, Trash2, X, Check, Send } from 'lucide-react';
 import { Master } from '../types';
 import { WorkPlanningCalendar } from './WorkPlanningCalendar';
 import { MasterPortfolio } from './MasterPortfolio';
 import { ReviewForm } from './ReviewForm';
+import { OfferForm } from './OfferForm';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
 
@@ -49,6 +50,7 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
   const [reviews, setReviews] = useState<any[]>([]);
   const [averageRating, setAverageRating] = useState<number>(0);
   const [showReviewForm, setShowReviewForm] = useState(false);
+  const [showOfferForm, setShowOfferForm] = useState(false);
   const [isUserMaster, setIsUserMaster] = useState(false);
   const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
   const [editedComment, setEditedComment] = useState('');
@@ -549,10 +551,19 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                     <span>Upraviť profil</span>
                   </button>
                 ) : (
-                  <a href={`tel:${master.phone}`} className="w-full bg-green-500 text-white py-3 rounded-lg font-medium hover:bg-green-600 transition-colors flex items-center justify-center space-x-2">
-                    <Phone size={20} />
-                    <span>Zavolať</span>
-                  </a>
+                  <>
+                    <button
+                      onClick={() => setShowOfferForm(true)}
+                      className="w-full bg-[#4169e1] text-white py-3 rounded-lg font-medium hover:bg-[#3557c5] transition-colors flex items-center justify-center space-x-2"
+                    >
+                      <Send size={20} />
+                      <span>Poslať ponuku</span>
+                    </button>
+                    <a href={`tel:${master.phone}`} className="w-full bg-green-500 text-white py-3 rounded-lg font-medium hover:bg-green-600 transition-colors flex items-center justify-center space-x-2">
+                      <Phone size={20} />
+                      <span>Zavolať</span>
+                    </a>
+                  </>
                 )}
                 {isOwnProfile ? (
                   <button className="w-full bg-blue-500 text-white py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors flex items-center justify-center space-x-2">
@@ -729,6 +740,18 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
           onReviewSubmitted={() => {
             loadReviews();
             setShowReviewForm(false);
+          }}
+        />
+      )}
+
+      {/* Offer Form Modal */}
+      {showOfferForm && master.id && (
+        <OfferForm
+          masterId={master.id}
+          masterName={master.name}
+          onClose={() => setShowOfferForm(false)}
+          onSuccess={() => {
+            setShowOfferForm(false);
           }}
         />
       )}

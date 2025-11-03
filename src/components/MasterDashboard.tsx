@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, User, Mail, Phone, MapPin, FileText, Camera, Video, Settings, Save, Eye, EyeOff, Clock, Euro, Users, Award, Globe, Facebook, Instagram, Linkedin, Youtube, Twitter, MessageCircle, CheckCircle, AlertCircle, Upload, X, Image, Play, AlertTriangle, Plus, Check, Calendar, Star, Trash2, Info, Sparkles } from 'lucide-react';
+import { ArrowLeft, User, Mail, Phone, MapPin, FileText, Camera, Video, Settings, Save, Eye, EyeOff, Clock, Euro, Users, Award, Globe, Facebook, Instagram, Linkedin, Youtube, Twitter, MessageCircle, CheckCircle, AlertCircle, Upload, X, Image, Play, AlertTriangle, Plus, Check, Calendar, Star, Trash2, Info, Sparkles, Coins } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { saveMasterProfile, type MasterProfile } from '../lib/masterProfileApi';
 import { MasterPortfolio } from './MasterPortfolio';
 import { FileUploadManager } from './FileUpload/FileUploadManager';
 import { AvailabilityCalendar } from './AvailabilityCalendar';
 import { ContactHoursSelector } from './ContactHoursSelector';
+import { OffersList } from './OffersList';
 import { supabase } from '../lib/supabase';
 import * as ProjectsAPI from '../lib/projectsApi';
 import { getUserActiveSubscription, type Subscription } from '../lib/subscriptionsApi';
@@ -18,7 +19,7 @@ interface MasterDashboardProps {
 
 export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProfileUpdate }) => {
   const { user, signOut } = useAuth();
-  const [activeTab, setActiveTab] = useState<'profile' | 'calendar' | 'portfolio' | 'projects' | 'payments'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'calendar' | 'portfolio' | 'projects' | 'payments' | 'offers'>('profile');
   const [editingField, setEditingField] = useState<string | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
   const [isProfileSaved, setIsProfileSaved] = useState(false);
@@ -368,6 +369,8 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
     // Set the tab if provided
     if (tab === 'payments') {
       setActiveTab('payments');
+    } else if (tab === 'offers') {
+      setActiveTab('offers');
     }
 
     if (success === 'true') {
@@ -985,6 +988,19 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
               }`}
             >
               Moje stavby
+            </button>
+            <button
+              onClick={() => setActiveTab('offers')}
+              className={`py-3 px-4 rounded-lg font-medium text-sm whitespace-nowrap flex-shrink-0 transition-colors ${
+                activeTab === 'offers'
+                  ? 'bg-gray-200 text-gray-900'
+                  : 'bg-transparent text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <Coins size={18} />
+                Ponuky
+              </div>
             </button>
             <button
               onClick={() => setActiveTab('payments')}
@@ -2099,6 +2115,10 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
               )}
             </div>
           </div>
+        )}
+
+        {activeTab === 'offers' && masterId && (
+          <OffersList masterId={masterId} />
         )}
 
         {activeTab === 'payments' && (

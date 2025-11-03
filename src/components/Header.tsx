@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Menu, UserPlus } from 'lucide-react';
 import { AuthModal } from './AuthModal';
 import { UserMenu } from './UserMenu';
+import { OfferNotifications } from './OfferNotifications';
 import { useAuth } from '../hooks/useAuth';
 import { useLanguage } from '../hooks/useLanguage';
 import { translations } from '../data/translations';
+import { supabase } from '../lib/supabase';
 
 export const Header: React.FC = () => {
   const { language } = useLanguage();
@@ -15,11 +17,12 @@ export const Header: React.FC = () => {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
   const [authUserType, setAuthUserType] = useState<'client' | 'master'>('client');
+  const [isMaster, setIsMaster] = useState(false);
 
   useEffect(() => {
     const controlHeader = () => {
       const currentScrollY = window.scrollY;
-      
+
       if (currentScrollY > lastScrollY && currentScrollY > 100) {
         // Scrolling down & past 100px
         setIsVisible(false);
@@ -27,13 +30,37 @@ export const Header: React.FC = () => {
         // Scrolling up
         setIsVisible(true);
       }
-      
+
       setLastScrollY(currentScrollY);
     };
 
     window.addEventListener('scroll', controlHeader);
     return () => window.removeEventListener('scroll', controlHeader);
   }, [lastScrollY]);
+
+  useEffect(() => {
+    const checkIfUserIsMaster = async () => {
+      if (!user) {
+        setIsMaster(false);
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('masters')
+          .select('id')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        setIsMaster(!!data && !error);
+      } catch (error) {
+        console.error('Error checking if user is master:', error);
+        setIsMaster(false);
+      }
+    };
+
+    checkIfUserIsMaster();
+  }, [user]);
 
   const handleLoginClick = () => {
     setAuthMode('login');
@@ -68,6 +95,9 @@ export const Header: React.FC = () => {
 
             {/* Right Section */}
             <div className="flex items-center space-x-4">
+              {/* Notifications */}
+              {user && <OfferNotifications isMaster={isMaster} />}
+
               {/* Auth Section */}
               {user ? (
                 <UserMenu />
