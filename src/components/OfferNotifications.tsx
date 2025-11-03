@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Coins, Bell, X } from 'lucide-react';
+import { Coins, Bell, X, Calendar, MapPin, User, Mail, Phone, CheckCircle, XCircle, Download, Printer } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
 
@@ -10,10 +10,15 @@ interface Notification {
   is_read: boolean;
   created_at: string;
   offer: {
+    id: string;
     client_name: string;
+    client_email: string;
+    client_phone: string;
     description: string;
     location: string;
+    preferred_date: string | null;
     status: string;
+    created_at: string;
   };
 }
 
@@ -26,6 +31,7 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
+  const [selectedOffer, setSelectedOffer] = useState<Notification['offer'] | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -62,10 +68,15 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
         .select(`
           *,
           offer:client_offers (
+            id,
             client_name,
+            client_email,
+            client_phone,
             description,
             location,
-            status
+            preferred_date,
+            status,
+            created_at
           )
         `)
         .eq('user_id', user.id)
@@ -114,6 +125,45 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
     }
   };
 
+  const handleUpdateStatus = async (offerId: string, status: 'accepted' | 'rejected') => {
+    try {
+      const { error } = await supabase
+        .from('client_offers')
+        .update({ status })
+        .eq('id', offerId);
+
+      if (error) throw error;
+
+      alert(status === 'accepted' ? 'Ponuka bola prijatá!' : 'Ponuka bola zamietnutá');
+      setSelectedOffer(null);
+      loadNotifications();
+    } catch (error) {
+      console.error('Error updating offer status:', error);
+      alert('Chyba pri aktualizácii stavu ponuky');
+    }
+  };
+
+  const handlePrint = () => {
+    if (!selectedOffer) return;
+    window.print();
+  };
+
+  const handleDownloadPDF = () => {
+    if (!selectedOffer) return;
+    alert('Funkcia sťahovania PDF bude dostupná v nasledujúcej verzii');
+  };
+
+  const handleNotificationClick = (notification: Notification) => {
+    if (!notification.is_read) {
+      markAsRead(notification.id);
+    }
+
+    if (isMaster && notification.type === 'new_offer' && notification.offer) {
+      setSelectedOffer(notification.offer);
+      setIsOpen(false);
+    }
+  };
+
   const getNotificationText = (notification: Notification) => {
     switch (notification.type) {
       case 'new_offer':
@@ -127,131 +177,234 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
     }
   };
 
-  const getNotificationColor = (notification: Notification) => {
-    switch (notification.type) {
-      case 'new_offer':
-        return 'bg-blue-50 border-blue-200';
-      case 'offer_accepted':
-        return 'bg-green-50 border-green-200';
-      case 'offer_rejected':
-        return 'bg-red-50 border-red-200';
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'pending':
+        return <span className="px-3 py-1 bg-yellow-100 text-yellow-800 text-sm font-medium rounded-full">Čaká na odpoveď</span>;
+      case 'accepted':
+        return <span className="px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-full">Prijatá</span>;
+      case 'rejected':
+        return <span className="px-3 py-1 bg-red-100 text-red-800 text-sm font-medium rounded-full">Zamietnutá</span>;
       default:
-        return 'bg-gray-50 border-gray-200';
+        return null;
     }
   };
 
   if (!user) return null;
 
   return (
-    <div className="relative">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 text-gray-700 hover:text-[#4169e1] transition-colors"
-      >
-        {isMaster ? <Coins size={24} /> : <Bell size={24} />}
-        {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-            {unreadCount > 9 ? '9+' : unreadCount}
-          </span>
-        )}
-      </button>
+    <>
+      <div className="relative">
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="relative p-2 text-gray-700 hover:text-[#4169e1] transition-colors"
+        >
+          {isMaster ? <Coins size={24} /> : <Bell size={24} />}
+          {unreadCount > 0 && (
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+              {unreadCount > 9 ? '9+' : unreadCount}
+            </span>
+          )}
+        </button>
 
-      {isOpen && (
-        <>
-          <div
-            className="fixed inset-0 z-40"
-            onClick={() => setIsOpen(false)}
-          />
-          <div className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-2xl border border-gray-200 z-50 max-h-[600px] overflow-hidden flex flex-col">
-            <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between bg-gray-50">
-              <h3 className="font-semibold text-gray-900">
-                {isMaster ? 'Ponuky od klientov' : 'Upozornenia'}
-              </h3>
-              <div className="flex items-center gap-2">
-                {unreadCount > 0 && (
+        {isOpen && (
+          <>
+            <div
+              className="fixed inset-0 z-40"
+              onClick={() => setIsOpen(false)}
+            />
+            <div className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-2xl border border-gray-200 z-50 max-h-[600px] overflow-hidden flex flex-col">
+              <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between bg-gray-50">
+                <h3 className="font-semibold text-gray-900">
+                  {isMaster ? 'Ponuky od klientov' : 'Upozornenia'}
+                </h3>
+                <div className="flex items-center gap-2">
+                  {unreadCount > 0 && (
+                    <button
+                      onClick={markAllAsRead}
+                      className="text-xs text-[#4169e1] hover:underline"
+                    >
+                      Označiť všetko
+                    </button>
+                  )}
                   <button
-                    onClick={markAllAsRead}
-                    className="text-xs text-[#4169e1] hover:underline"
+                    onClick={() => setIsOpen(false)}
+                    className="text-gray-500 hover:text-gray-700"
                   >
-                    Označiť všetko
+                    <X size={18} />
                   </button>
+                </div>
+              </div>
+
+              <div className="overflow-y-auto flex-1">
+                {notifications.length === 0 ? (
+                  <div className="p-8 text-center text-gray-500">
+                    <div className="mb-2">
+                      {isMaster ? <Coins size={48} className="mx-auto text-gray-300" /> : <Bell size={48} className="mx-auto text-gray-300" />}
+                    </div>
+                    <p>Žiadne upozornenia</p>
+                  </div>
+                ) : (
+                  <div className="divide-y divide-gray-100">
+                    {notifications.map((notification) => (
+                      <div
+                        key={notification.id}
+                        onClick={() => handleNotificationClick(notification)}
+                        className={`p-4 cursor-pointer hover:bg-gray-50 transition-colors ${
+                          !notification.is_read ? 'bg-blue-50' : ''
+                        }`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className={`p-2 rounded-full ${
+                            notification.type === 'new_offer' ? 'bg-blue-100 text-blue-600' :
+                            notification.type === 'offer_accepted' ? 'bg-green-100 text-green-600' :
+                            'bg-red-100 text-red-600'
+                          }`}>
+                            {isMaster ? <Coins size={16} /> : <Bell size={16} />}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className={`text-sm ${!notification.is_read ? 'font-semibold' : 'font-medium'} text-gray-900`}>
+                              {getNotificationText(notification)}
+                            </p>
+                            {notification.offer && (
+                              <p className="text-xs text-gray-600 mt-1 line-clamp-2">
+                                {notification.offer.description}
+                              </p>
+                            )}
+                            <p className="text-xs text-gray-400 mt-1">
+                              {new Date(notification.created_at).toLocaleString('sk-SK')}
+                            </p>
+                          </div>
+                          {!notification.is_read && (
+                            <div className="w-2 h-2 bg-[#4169e1] rounded-full flex-shrink-0 mt-1"></div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 )}
+              </div>
+
+              {isMaster && notifications.length > 0 && (
+                <div className="px-4 py-3 border-t border-gray-200 bg-gray-50">
+                  <a
+                    href="/dashboard?tab=offers"
+                    className="text-sm text-[#4169e1] hover:underline font-medium block text-center"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Zobraziť všetky ponuky
+                  </a>
+                </div>
+              )}
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Offer Detail Modal */}
+      {selectedOffer && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between print:hidden">
+              <h2 className="text-2xl font-bold text-gray-900">Detail ponuky</h2>
+              <div className="flex gap-2">
                 <button
-                  onClick={() => setIsOpen(false)}
-                  className="text-gray-500 hover:text-gray-700"
+                  onClick={handlePrint}
+                  className="p-2 text-gray-600 hover:text-[#4169e1] transition-colors"
+                  title="Vytlačiť"
                 >
-                  <X size={18} />
+                  <Printer size={20} />
+                </button>
+                <button
+                  onClick={handleDownloadPDF}
+                  className="p-2 text-gray-600 hover:text-[#4169e1] transition-colors"
+                  title="Stiahnuť PDF"
+                >
+                  <Download size={20} />
+                </button>
+                <button
+                  onClick={() => setSelectedOffer(null)}
+                  className="p-2 text-gray-600 hover:text-gray-900 transition-colors"
+                >
+                  <X size={20} />
                 </button>
               </div>
             </div>
 
-            <div className="overflow-y-auto flex-1">
-              {notifications.length === 0 ? (
-                <div className="p-8 text-center text-gray-500">
-                  <div className="mb-2">
-                    {isMaster ? <Coins size={48} className="mx-auto text-gray-300" /> : <Bell size={48} className="mx-auto text-gray-300" />}
-                  </div>
-                  <p>Žiadne upozornenia</p>
+            <div className="p-6 print:p-8">
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xl font-bold text-gray-900">Informácie o klientovi</h3>
+                  {getStatusBadge(selectedOffer.status)}
                 </div>
-              ) : (
-                <div className="divide-y divide-gray-100">
-                  {notifications.map((notification) => (
-                    <div
-                      key={notification.id}
-                      onClick={() => {
-                        if (!notification.is_read) {
-                          markAsRead(notification.id);
-                        }
-                      }}
-                      className={`p-4 cursor-pointer hover:bg-gray-50 transition-colors ${
-                        !notification.is_read ? 'bg-blue-50' : ''
-                      }`}
-                    >
-                      <div className="flex items-start gap-3">
-                        <div className={`p-2 rounded-full ${
-                          notification.type === 'new_offer' ? 'bg-blue-100 text-blue-600' :
-                          notification.type === 'offer_accepted' ? 'bg-green-100 text-green-600' :
-                          'bg-red-100 text-red-600'
-                        }`}>
-                          {isMaster ? <Coins size={16} /> : <Bell size={16} />}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className={`text-sm ${!notification.is_read ? 'font-semibold' : 'font-medium'} text-gray-900`}>
-                            {getNotificationText(notification)}
-                          </p>
-                          {notification.offer && (
-                            <p className="text-xs text-gray-600 mt-1 line-clamp-2">
-                              {notification.offer.description}
-                            </p>
-                          )}
-                          <p className="text-xs text-gray-400 mt-1">
-                            {new Date(notification.created_at).toLocaleString('sk-SK')}
-                          </p>
-                        </div>
-                        {!notification.is_read && (
-                          <div className="w-2 h-2 bg-[#4169e1] rounded-full flex-shrink-0 mt-1"></div>
-                        )}
-                      </div>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <User size={20} className="text-gray-400" />
+                    <span className="text-gray-900">{selectedOffer.client_name}</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Mail size={20} className="text-gray-400" />
+                    <a href={`mailto:${selectedOffer.client_email}`} className="text-[#4169e1] hover:underline">
+                      {selectedOffer.client_email}
+                    </a>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Phone size={20} className="text-gray-400" />
+                    <a href={`tel:${selectedOffer.client_phone}`} className="text-[#4169e1] hover:underline">
+                      {selectedOffer.client_phone}
+                    </a>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <MapPin size={20} className="text-gray-400" />
+                    <span className="text-gray-900">{selectedOffer.location}</span>
+                  </div>
+                  {selectedOffer.preferred_date && (
+                    <div className="flex items-center gap-3">
+                      <Calendar size={20} className="text-gray-400" />
+                      <span className="text-gray-900">
+                        {new Date(selectedOffer.preferred_date).toLocaleDateString('sk-SK', {
+                          weekday: 'long',
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        })}
+                      </span>
                     </div>
-                  ))}
+                  )}
+                </div>
+              </div>
+
+              <div className="mb-6">
+                <h3 className="text-xl font-bold text-gray-900 mb-3">Popis práce</h3>
+                <p className="text-gray-700 whitespace-pre-wrap">{selectedOffer.description}</p>
+              </div>
+
+              <div className="pt-4 border-t text-sm text-gray-500">
+                <p>Ponuka odoslaná: {new Date(selectedOffer.created_at).toLocaleString('sk-SK')}</p>
+              </div>
+
+              {selectedOffer.status === 'pending' && (
+                <div className="flex gap-4 mt-6 print:hidden">
+                  <button
+                    onClick={() => handleUpdateStatus(selectedOffer.id, 'rejected')}
+                    className="flex-1 px-6 py-3 border-2 border-red-500 text-red-500 rounded-lg font-medium hover:bg-red-50 transition-colors flex items-center justify-center gap-2"
+                  >
+                    <XCircle size={20} />
+                    Odmietnuť
+                  </button>
+                  <button
+                    onClick={() => handleUpdateStatus(selectedOffer.id, 'accepted')}
+                    className="flex-1 px-6 py-3 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 transition-colors flex items-center justify-center gap-2"
+                  >
+                    <CheckCircle size={20} />
+                    Prijať ponuku
+                  </button>
                 </div>
               )}
             </div>
-
-            {isMaster && notifications.length > 0 && (
-              <div className="px-4 py-3 border-t border-gray-200 bg-gray-50">
-                <a
-                  href="/dashboard?tab=offers"
-                  className="text-sm text-[#4169e1] hover:underline font-medium block text-center"
-                  onClick={() => setIsOpen(false)}
-                >
-                  Zobraziť všetky ponuky
-                </a>
-              </div>
-            )}
           </div>
-        </>
+        </div>
       )}
-    </div>
+    </>
   );
 };
