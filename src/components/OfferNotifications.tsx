@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { DollarSign, Bell, X, Calendar, MapPin, User, Mail, Phone, CheckCircle, XCircle, Download, Printer } from 'lucide-react';
+import { CircleDollarSign, Bell, X, Calendar, MapPin, User, Mail, Phone, CheckCircle, XCircle, Download, Printer } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
 
@@ -205,7 +205,7 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
           onClick={() => setIsOpen(!isOpen)}
           className="relative p-2 text-gray-700 hover:text-[#4169e1] transition-colors"
         >
-          {isMaster ? <DollarSign size={24} /> : <Bell size={24} />}
+          {isMaster ? <CircleDollarSign size={24} /> : <Bell size={24} />}
           {unreadCount > 0 && (
             <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
               {unreadCount > 9 ? '9+' : unreadCount}
@@ -246,7 +246,7 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
                 {notifications.length === 0 ? (
                   <div className="p-8 text-center text-gray-500">
                     <div className="mb-2">
-                      {isMaster ? <DollarSign size={48} className="mx-auto text-gray-300" /> : <Bell size={48} className="mx-auto text-gray-300" />}
+                      {isMaster ? <CircleDollarSign size={48} className="mx-auto text-gray-300" /> : <Bell size={48} className="mx-auto text-gray-300" />}
                     </div>
                     <p>Žiadne upozornenia</p>
                   </div>
@@ -266,7 +266,7 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
                             notification.type === 'offer_accepted' ? 'bg-green-100 text-green-600' :
                             'bg-red-100 text-red-600'
                           }`}>
-                            {isMaster ? <DollarSign size={16} /> : <Bell size={16} />}
+                            {isMaster ? <CircleDollarSign size={16} /> : <Bell size={16} />}
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className={`text-sm ${!notification.is_read ? 'font-semibold' : 'font-medium'} text-gray-900`}>

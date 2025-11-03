@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, User, Mail, Phone, MapPin, FileText, Camera, Video, Settings, Save, Eye, EyeOff, Clock, Euro, Users, Award, Globe, Facebook, Instagram, Linkedin, Youtube, Twitter, MessageCircle, CheckCircle, AlertCircle, Upload, X, Image, Play, AlertTriangle, Plus, Check, Calendar, Star, Trash2, Info, Sparkles, DollarSign } from 'lucide-react';
+import { ArrowLeft, User, Mail, Phone, MapPin, FileText, Camera, Video, Settings, Save, Eye, EyeOff, Clock, Euro, Users, Award, Globe, Facebook, Instagram, Linkedin, Youtube, Twitter, MessageCircle, CheckCircle, AlertCircle, Upload, X, Image, Play, AlertTriangle, Plus, Check, Calendar, Star, Trash2, Info, Sparkles, CircleDollarSign } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { saveMasterProfile, type MasterProfile } from '../lib/masterProfileApi';
 import { MasterPortfolio } from './MasterPortfolio';
@@ -998,7 +998,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
               }`}
             >
               <div className="flex items-center gap-2">
-                <DollarSign size={18} />
+                <CircleDollarSign size={18} />
                 Ponuky
               </div>
             </button>
