@@ -53,7 +53,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
   const [contactHoursDisplay, setContactHoursDisplay] = useState<string>('');
   const [activeSubscription, setActiveSubscription] = useState<Subscription | null>(null);
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('yearly');
-  const [showPaymentResult, setShowPaymentResult] = useState<{show: boolean, success: boolean, message: string, planName?: string, billingPeriod?: string}>({show: false, success: false, message: ''});
+  const [showPaymentResult, setShowPaymentResult] = useState<{show: boolean, success: boolean, message: string, planName?: string, billingPeriod?: string, isLoading?: boolean}>({show: false, success: false, message: ''});
 
   const handleSelectPlan = async (planKey: 'odbornik' | 'expert' | 'profik' | 'premier') => {
     if (!user) {
@@ -334,11 +334,9 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
       setShowPaymentResult({
         show: true,
         success: true,
-        message: 'Spracovávam platbu...'
+        message: 'Spracovávam platbu...',
+        isLoading: true
       });
-
-      // Clean URL immediately
-      window.history.replaceState({}, '', window.location.pathname);
 
       // Reload subscription data with delay to allow webhook to process
       const reloadSubscription = async () => {
@@ -361,6 +359,9 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
           console.log('Period end formatted:', new Date(subscription.current_period_end).toLocaleDateString('sk-SK'));
         }
 
+        // Clean URL now that we have the data
+        window.history.replaceState({}, '', window.location.pathname);
+
         // Check if we successfully got a subscription
         if (subscription) {
           // Show success modal with plan info
@@ -369,7 +370,8 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
             success: true,
             message: 'Platba bola úspešne spracovaná! Váš plán je teraz aktívny.',
             planName: subscription.plan_name,
-            billingPeriod: subscription.billing_period
+            billingPeriod: subscription.billing_period,
+            isLoading: false
           });
         } else {
           // Payment went through but subscription wasn't created - show error
@@ -377,7 +379,8 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
           setShowPaymentResult({
             show: true,
             success: false,
-            message: 'Platba bola spracovaná, ale nepodarilo sa aktivovať predplatné. Prosím, kontaktujte podporu.'
+            message: 'Platba bola spracovaná, ale nepodarilo sa aktivovať predplatné. Prosím, kontaktujte podporu.',
+            isLoading: false
           });
         }
       };
@@ -2347,7 +2350,20 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
           <div className="bg-white rounded-2xl p-10 w-full max-w-lg mx-4 shadow-2xl transform animate-scaleIn">
             <div className="text-center">
               {showPaymentResult.success ? (
-                showPaymentResult.planName ? (
+                showPaymentResult.isLoading ? (
+                  <>
+                    <div className="w-24 h-24 bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl">
+                      <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-white"></div>
+                    </div>
+                    <h3 className="text-3xl font-bold text-gray-900 mb-2">Spracovávam platbu...</h3>
+                    <p className="text-lg text-gray-600 mb-6">Prosím počkajte, zatiaľ čo overujeme vašu platbu</p>
+                    <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6">
+                      <p className="text-sm text-blue-700">
+                        Tento proces môže trvať niekoľko sekúnd. Neobnovujte stránku.
+                      </p>
+                    </div>
+                  </>
+                ) : showPaymentResult.planName ? (
                   <>
                     <div className="w-24 h-24 bg-gradient-to-br from-green-400 via-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl animate-bounce">
                       <CheckCircle className="w-14 h-14 text-white" strokeWidth={3} />
@@ -2383,20 +2399,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                       </div>
                     </div>
                   </>
-                ) : (
-                  <>
-                    <div className="w-24 h-24 bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl">
-                      <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-white"></div>
-                    </div>
-                    <h3 className="text-3xl font-bold text-gray-900 mb-2">Spracovávam platbu...</h3>
-                    <p className="text-lg text-gray-600 mb-6">Prosím počkajte, zatiaľ čo overujeme vašu platbu</p>
-                    <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6">
-                      <p className="text-sm text-blue-700">
-                        Tento proces môže trvať niekoľko sekúnd. Neobnovujte stránku.
-                      </p>
-                    </div>
-                  </>
-                )
+                ) : null
               ) : (
                 <>
                   <div className="w-20 h-20 bg-gradient-to-br from-red-400 to-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -2411,7 +2414,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                   </div>
                 </>
               )}
-              {(showPaymentResult.planName || !showPaymentResult.success) && (
+              {!showPaymentResult.isLoading && (
                 <button
                   onClick={() => setShowPaymentResult({show: false, success: false, message: ''})}
                   className={`w-full font-bold py-4 px-8 rounded-xl transition-all transform hover:scale-105 shadow-lg text-lg ${
