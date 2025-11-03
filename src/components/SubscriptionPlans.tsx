@@ -30,6 +30,13 @@ export const SubscriptionPlans: React.FC = () => {
     }
 
     const priceId = getPlanPriceId(planKey, billingPeriod);
+    console.log('Selected plan:', planKey, 'Period:', billingPeriod, 'Price ID:', priceId);
+
+    if (!priceId) {
+      alert('Chyba: Price ID nie je nakonfigurovaný pre tento plán. Skontaktujte podporu.');
+      return;
+    }
+
     const currentUrl = window.location.origin;
 
     try {
