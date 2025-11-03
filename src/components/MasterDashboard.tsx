@@ -194,6 +194,41 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
   setIsSaving(true);
 
   try {
+    // Проверяем заполненность обязательных полей для profile_completed
+    const hasProfileImage = profileData.profileImageUrl && profileData.profileImageUrl !== '/placeholder-avatar.svg';
+
+    // Получаем фото работ из БД
+    let workImagesCount = 0;
+    if (user) {
+      const { data: masterData } = await supabase
+        .from('masters')
+        .select('work_images_urls')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      workImagesCount = masterData?.work_images_urls?.length || 0;
+    }
+
+    const isProfileComplete =
+      profileData.name.trim().length > 0 &&
+      profileData.profession.trim().length > 0 &&
+      profileData.location.trim().length > 0 &&
+      profileData.description.trim().length >= 20 &&
+      hasProfileImage &&
+      workImagesCount > 0;
+
+    if (!isProfileComplete) {
+      const missingFields: string[] = [];
+      if (!profileData.name.trim()) missingFields.push('Meno');
+      if (!profileData.profession.trim()) missingFields.push('Profesia');
+      if (!profileData.location.trim()) missingFields.push('Lokácia');
+      if (profileData.description.trim().length < 20) missingFields.push('Popis (minimálne 20 znakov)');
+      if (!hasProfileImage) missingFields.push('Profilová fotka');
+      if (workImagesCount === 0) missingFields.push('Aspoň 1 fotka práce');
+
+      alert(`Pre zobrazenie vo vyhľadávaní musíte vyplniť:\n\n${missingFields.join('\n')}\n\nProfil bude uložený, ale nebude viditeľný vo vyhľadávaní.`);
+    }
+
     // Подготавливаем данные только с полями из таблицы masters
     const profileForDB: MasterProfile = {
       name: profileData.name,
@@ -206,7 +241,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
       work_abroad: profileData.workAbroad,
       is_active: profileData.availability.available,
       is_available: profileData.availability.available,
-      profile_completed: true,
+      profile_completed: isProfileComplete,
       service_regular: profileData.serviceRegular,
       service_urgent: profileData.serviceUrgent,
       service_realization: profileData.serviceRealization,
