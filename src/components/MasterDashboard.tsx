@@ -2624,9 +2624,9 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
       )}
 
       {/* Contact Hours Modal */}
-      {showContactHoursModal && user && (
+      {showContactHoursModal && user && masterId && (
         <ContactHoursSelector
-          masterId={user.id}
+          masterId={masterId}
           onClose={() => setShowContactHoursModal(false)}
           onSave={() => {
             const loadContactHours = async () => {
@@ -2634,7 +2634,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                 const { data, error } = await supabase
                   .from('master_contact_hours')
                   .select('*')
-                  .eq('master_id', user.id)
+                  .eq('master_id', masterId)
                   .maybeSingle();
 
                 if (error) throw error;
