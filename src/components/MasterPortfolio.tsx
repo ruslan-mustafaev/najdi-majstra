@@ -71,7 +71,7 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
           .from('masters')
           .select('id')
           .eq('id', masterId)
-          .single();
+          .maybeSingle();
         
         if (master) {
           query = query.eq('master_id', master.id);
@@ -82,7 +82,7 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
           .from('masters')
           .select('id')
           .eq('user_id', user.id)
-          .single();
+          .maybeSingle();
         
         if (master) {
           query = query.eq('master_id', master.id);
@@ -109,7 +109,7 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
         .from('masters')
         .select('id')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
       if (!master) throw new Error('Master profile not found');
 

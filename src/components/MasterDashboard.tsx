@@ -466,9 +466,60 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
               profile_completed: false
             })
             .select()
-            .single();
+            .maybeSingle();
 
           if (createError) {
+            // Если ошибка duplicate key - профиль уже существует, загружаем его
+            if (createError.code === '23505') {
+              console.log('Profile already exists, reloading...');
+              const { data: existingProfile } = await supabase
+                .from('masters')
+                .select('*')
+                .eq('user_id', user.id)
+                .maybeSingle();
+
+              if (existingProfile) {
+                setMasterId(existingProfile.id);
+                // Update profile data with loaded values
+                setProfileData(prev => ({
+                  ...prev,
+                  name: existingProfile.name || prev.name,
+                  profession: existingProfile.profession || prev.profession,
+                  location: existingProfile.location || prev.location,
+                  description: existingProfile.description || prev.description,
+                  communicationStyle: existingProfile.communication_style || '',
+                  workAbroad: existingProfile.work_abroad || false,
+                  profileImageUrl: existingProfile.profile_image_url || undefined,
+                  contact: {
+                    ...prev.contact,
+                    phone: existingProfile.phone || prev.contact.phone,
+                    email: existingProfile.email || prev.contact.email,
+                    socialMedia: {
+                      facebook: existingProfile.social_facebook || '',
+                      instagram: existingProfile.social_instagram || '',
+                      youtube: existingProfile.social_youtube || '',
+                      tiktok: existingProfile.social_tiktok || '',
+                      telegram: existingProfile.social_telegram || '',
+                      whatsapp: existingProfile.social_whatsapp || ''
+                    }
+                  },
+                  availability: {
+                    ...prev.availability,
+                    available: existingProfile.is_available ?? prev.availability.available,
+                  },
+                  serviceRegular: existingProfile.service_regular || false,
+                  serviceUrgent: existingProfile.service_urgent || false,
+                  serviceRealization: existingProfile.service_realization || false,
+                  experienceYears: existingProfile.experience_years || 0,
+                  teamType: existingProfile.team_type || 'individuálne',
+                  serviceArea: existingProfile.service_area || 'lokálne',
+                  hourlyRateMin: existingProfile.hourly_rate_min?.toString() || '',
+                  hourlyRateMax: existingProfile.hourly_rate_max?.toString() || '',
+                  certificatesText: existingProfile.certificates || '',
+                }));
+              }
+              return;
+            }
             console.error('Error creating master profile:', createError);
             return;
           }
