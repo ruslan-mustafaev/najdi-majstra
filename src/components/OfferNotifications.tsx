@@ -308,8 +308,8 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
 
       {/* Offer Detail Modal */}
       {selectedOffer && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60] p-4 overflow-y-auto">
-          <div className="bg-white rounded-lg max-w-3xl w-full my-8 shadow-2xl">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4 overflow-y-auto">
+          <div className="bg-white rounded-lg max-w-3xl w-full my-8 shadow-2xl relative">
             <div className="bg-white border-b px-6 py-4 flex items-center justify-between print:hidden rounded-t-lg">
               <h2 className="text-2xl font-bold text-gray-900">Detail ponuky</h2>
               <div className="flex gap-2">
