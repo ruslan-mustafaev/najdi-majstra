@@ -9,6 +9,7 @@ interface Notification {
   type: 'new_offer' | 'offer_accepted' | 'offer_rejected';
   is_read: boolean;
   created_at: string;
+  master_name?: string;
   offer: {
     id: string;
     client_name: string;
@@ -169,9 +170,13 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
       case 'new_offer':
         return `Nová ponuka od ${notification.offer.client_name}`;
       case 'offer_accepted':
-        return 'Vaša ponuka bola prijatá!';
+        return notification.master_name
+          ? `Majster ${notification.master_name} prijal vašu ponuku!`
+          : 'Vaša ponuka bola prijatá!';
       case 'offer_rejected':
-        return 'Vaša ponuka bola zamietnutá';
+        return notification.master_name
+          ? `Majster ${notification.master_name} zamietol vašu ponuku`
+          : 'Vaša ponuka bola zamietnutá';
       default:
         return 'Nové upozornenie';
     }
