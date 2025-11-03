@@ -444,7 +444,7 @@ export const getUserFiles = async (
         .from('masters')
         .insert({
           user_id: userId,
-          name: user.user.user_metadata?.full_name || 'Nový majster',
+          name: user.user.user_metadata?.full_name || `Majster ${userId.substring(0, 8)}`,
           profession: 'Majster',
           email: user.user.email || '',
           phone: user.user.user_metadata?.phone || '',
