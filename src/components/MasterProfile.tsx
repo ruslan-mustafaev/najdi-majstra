@@ -552,13 +552,15 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                   </button>
                 ) : (
                   <>
-                    <button
-                      onClick={() => setShowOfferForm(true)}
-                      className="w-full bg-[#4169e1] text-white py-3 rounded-lg font-medium hover:bg-[#3557c5] transition-colors flex items-center justify-center space-x-2"
-                    >
-                      <Send size={20} />
-                      <span>Poslať ponuku</span>
-                    </button>
+                    {!isUserMaster && (
+                      <button
+                        onClick={() => setShowOfferForm(true)}
+                        className="w-full bg-[#4169e1] text-white py-3 rounded-lg font-medium hover:bg-[#3557c5] transition-colors flex items-center justify-center space-x-2"
+                      >
+                        <Send size={20} />
+                        <span>Poslať ponuku</span>
+                      </button>
+                    )}
                     <a href={`tel:${master.phone}`} className="w-full bg-green-500 text-white py-3 rounded-lg font-medium hover:bg-green-600 transition-colors flex items-center justify-center space-x-2">
                       <Phone size={20} />
                       <span>Zavolať</span>
