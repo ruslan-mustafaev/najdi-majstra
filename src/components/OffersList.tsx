@@ -233,9 +233,9 @@ export const OffersList: React.FC<OffersListProps> = ({ masterId }) => {
       )}
 
       {selectedOffer && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between print:hidden">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div className="bg-white rounded-lg max-w-3xl w-full my-8 shadow-2xl">
+            <div className="bg-white border-b px-6 py-4 flex items-center justify-between print:hidden rounded-t-lg">
               <h2 className="text-2xl font-bold text-gray-900">Detail ponuky</h2>
               <div className="flex gap-2">
                 <button
@@ -261,7 +261,7 @@ export const OffersList: React.FC<OffersListProps> = ({ masterId }) => {
               </div>
             </div>
 
-            <div className="p-6 print:p-8">
+            <div className="p-6 print:p-8 max-h-[calc(90vh-8rem)] overflow-y-auto">
               <div className="mb-6">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-xl font-bold text-gray-900">Informácie o klientovi</h3>
