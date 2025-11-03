@@ -2087,23 +2087,23 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                     </tr>
                     <tr className="border-b-2 border-gray-300 bg-red-50">
                       <th className="text-center px-2 py-1.5 border-l border-gray-300">
-                        <div className="text-[10px] font-bold text-red-600 mb-0.5">Dožívtný profil</div>
+                        <div className="text-[10px] font-bold text-red-600 mb-0.5">Doživotný profil</div>
                         <div className="text-xs font-bold text-red-600">Zadarma</div>
                       </th>
                       <th className="text-center px-2 py-1.5 border-l border-gray-300">
-                        <div className="text-[10px] font-bold text-red-600 mb-0.5">Dožívtný profil</div>
+                        <div className="text-[10px] font-bold text-red-600 mb-0.5">Doživotný profil</div>
                         <div className="text-xs font-bold text-red-600 line-through">19,99€</div>
                       </th>
                       <th className="text-center px-2 py-1.5 border-l border-gray-300">
-                        <div className="text-[10px] font-bold text-red-600 mb-0.5">Dožívtný profil</div>
+                        <div className="text-[10px] font-bold text-red-600 mb-0.5">Doživotný profil</div>
                         <div className="text-xs font-bold text-red-600 line-through">41,99€</div>
                       </th>
                       <th className="text-center px-2 py-1.5 border-l border-gray-300">
-                        <div className="text-[10px] font-bold text-red-600 mb-0.5">Dožívtný profil</div>
+                        <div className="text-[10px] font-bold text-red-600 mb-0.5">Doživotný profil</div>
                         <div className="text-xs font-bold text-red-600 line-through">65,99€</div>
                       </th>
                       <th className="text-center px-2 py-1.5 border-l border-gray-300">
-                        <div className="text-[10px] font-bold text-red-600 mb-0.5">Dožívtný profil</div>
+                        <div className="text-[10px] font-bold text-red-600 mb-0.5">Doživotný profil</div>
                         <div className="text-xs font-bold text-red-600 line-through">9 999€</div>
                       </th>
                     </tr>
@@ -2130,7 +2130,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                   </thead>
                   <tbody>
                     {[
-                      { id: 1, name: 'Predajný dožívtný profil Zdarma', zdarma: true, odbornik: true, expert: true, profik: true, premier: true },
+                      { id: 1, name: 'Predajný doživotný profil Zdarma', zdarma: true, odbornik: true, expert: true, profik: true, premier: true },
                       { id: 2, name: 'Osobný AI predajca ktorý šetrí váš čas a aktívne predá vaše služby alebo produkty', zdarma: false, odbornik: false, expert: false, profik: true, premier: true },
                       { id: 3, name: 'Rozvoj podnikania profesionálne on-line kurzy a certifikácie (v príprave)', zdarma: true, odbornik: true, expert: true, profik: true, premier: true },
                       { id: 4, name: 'Benefit webu najdiMajstra.sk: Zvýšenie zisku', zdarma: true, odbornik: true, expert: true, profik: true, premier: true },
