@@ -88,13 +88,13 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
 
   useEffect(() => {
     const loadContactHours = async () => {
-      if (!master.userId) return;
+      if (!master.id) return;
 
       try {
         const { data, error } = await supabase
           .from('master_contact_hours')
           .select('*')
-          .eq('master_id', master.userId)
+          .eq('master_id', master.id)
           .maybeSingle();
 
         if (error) throw error;
@@ -128,16 +128,16 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
     };
 
     loadContactHours();
-  }, [master.userId]);
+  }, [master.id]);
 
   const loadReviews = async () => {
-    if (!master.userId) return;
+    if (!master.id) return;
 
     try {
       const { data, error } = await supabase
         .from('master_reviews')
         .select('*')
-        .eq('master_id', master.userId)
+        .eq('master_id', master.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
