@@ -349,6 +349,7 @@ const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
   const [master, setMaster] = useState<Master | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   console.log('ProfilePage rendered with ID/Slug:', id);
 
@@ -446,10 +447,17 @@ const ProfilePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      <MasterProfile 
-        master={master} 
+      <MasterProfile
+        master={master}
         onBack={() => navigate('/')}
         isOwnProfile={false}
+        onAuthRequired={() => setShowAuthModal(true)}
+      />
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        mode="register"
+        userType="client"
       />
       <Footer />
     </div>

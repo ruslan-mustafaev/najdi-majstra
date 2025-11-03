@@ -21,6 +21,7 @@ interface MasterProfileProps {
   master: Master;
   onBack: () => void;
   isOwnProfile?: boolean;
+  onAuthRequired?: () => void;
 }
 
 const getSocialIcon = (platform: string) => {
@@ -44,7 +45,7 @@ const getSocialIcon = (platform: string) => {
   }
 };
 
-export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, isOwnProfile = false }) => {
+export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, isOwnProfile = false, onAuthRequired }) => {
   const { user } = useAuth();
   const [contactHours, setContactHours] = useState<string>('');
   const [reviews, setReviews] = useState<any[]>([]);
@@ -554,7 +555,13 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                   <>
                     {!isUserMaster && (
                       <button
-                        onClick={() => setShowOfferForm(true)}
+                        onClick={() => {
+                          if (!user) {
+                            onAuthRequired?.();
+                          } else {
+                            setShowOfferForm(true);
+                          }
+                        }}
                         className="w-full bg-[#4169e1] text-white py-3 rounded-lg font-medium hover:bg-[#3557c5] transition-colors flex items-center justify-center space-x-2"
                       >
                         <Send size={20} />
