@@ -410,50 +410,79 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
           .from('masters')
           .select('*')
           .eq('user_id', user.id)
-          .single();
+          .maybeSingle();
 
         if (error) throw error;
-        if (data) {
-          setMasterId(data.id);
 
-          // Update profile data with loaded values
-          setProfileData(prev => ({
-            ...prev,
-            name: data.name || prev.name,
-            profession: data.profession || prev.profession,
-            location: data.location || prev.location,
-            description: data.description || prev.description,
-            communicationStyle: data.communication_style || '',
-            workAbroad: data.work_abroad || false,
-            profileImageUrl: data.profile_image_url || undefined,
-            contact: {
-              ...prev.contact,
-              phone: data.phone || prev.contact.phone,
-              email: data.email || prev.contact.email,
-              socialMedia: {
-                facebook: data.social_facebook || '',
-                instagram: data.social_instagram || '',
-                youtube: data.social_youtube || '',
-                tiktok: data.social_tiktok || '',
-                telegram: data.social_telegram || '',
-                whatsapp: data.social_whatsapp || ''
-              }
-            },
-            availability: {
-              ...prev.availability,
-              available: data.is_available ?? prev.availability.available,
-            },
-            serviceRegular: data.service_regular || false,
-            serviceUrgent: data.service_urgent || false,
-            serviceRealization: data.service_realization || false,
-            experienceYears: data.experience_years || 0,
-            teamType: data.team_type || 'individuálne',
-            serviceArea: data.service_area || 'lokálne',
-            hourlyRateMin: data.hourly_rate_min?.toString() || '',
-            hourlyRateMax: data.hourly_rate_max?.toString() || '',
-            certificatesText: data.certificates || '',
-          }));
+        if (!data) {
+          // Профиль не найден - создаем новый
+          console.log('Creating master profile for existing user:', user.id);
+          const { data: newProfile, error: createError } = await supabase
+            .from('masters')
+            .insert({
+              user_id: user.id,
+              name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Nový majster',
+              profession: 'Majster',
+              email: user.email || '',
+              phone: user.user_metadata?.phone || '',
+              location: user.user_metadata?.location || '',
+              description: 'Profesionálny majster',
+              is_active: true,
+              profile_completed: false
+            })
+            .select()
+            .single();
+
+          if (createError) {
+            console.error('Error creating master profile:', createError);
+            return;
+          }
+
+          if (newProfile) {
+            setMasterId(newProfile.id);
+          }
+          return;
         }
+
+        setMasterId(data.id);
+
+        // Update profile data with loaded values
+        setProfileData(prev => ({
+          ...prev,
+          name: data.name || prev.name,
+          profession: data.profession || prev.profession,
+          location: data.location || prev.location,
+          description: data.description || prev.description,
+          communicationStyle: data.communication_style || '',
+          workAbroad: data.work_abroad || false,
+          profileImageUrl: data.profile_image_url || undefined,
+          contact: {
+            ...prev.contact,
+            phone: data.phone || prev.contact.phone,
+            email: data.email || prev.contact.email,
+            socialMedia: {
+              facebook: data.social_facebook || '',
+              instagram: data.social_instagram || '',
+              youtube: data.social_youtube || '',
+              tiktok: data.social_tiktok || '',
+              telegram: data.social_telegram || '',
+              whatsapp: data.social_whatsapp || ''
+            }
+          },
+          availability: {
+            ...prev.availability,
+            available: data.is_available ?? prev.availability.available,
+          },
+          serviceRegular: data.service_regular || false,
+          serviceUrgent: data.service_urgent || false,
+          serviceRealization: data.service_realization || false,
+          experienceYears: data.experience_years || 0,
+          teamType: data.team_type || 'individuálne',
+          serviceArea: data.service_area || 'lokálne',
+          hourlyRateMin: data.hourly_rate_min?.toString() || '',
+          hourlyRateMax: data.hourly_rate_max?.toString() || '',
+          certificatesText: data.certificates || '',
+        }));
       } catch (error) {
         console.error('Error loading master data:', error);
       }
