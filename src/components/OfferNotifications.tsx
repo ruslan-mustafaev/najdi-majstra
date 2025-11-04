@@ -12,6 +12,7 @@ const CircleEuroIcon = ({ size = 28, className = '' }: { size?: number; classNam
     width={size}
     height={size}
     className={className}
+    style={{ filter: 'brightness(0) invert(1)' }}
   />
 );
 
