@@ -299,7 +299,7 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
               {isMaster && notifications.length > 0 && (
                 <div className="px-6 py-4 border-t border-gray-200 bg-white">
                   <a
-                    href="/dashboard?tab=offers"
+                    href="/dashboard?tab=ponuky"
                     className="block w-full text-center px-6 py-3 bg-[#4169e1] hover:bg-[#3557c5] text-white rounded-lg font-medium transition-colors"
                     onClick={() => setIsOpen(false)}
                   >
