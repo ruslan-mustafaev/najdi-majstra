@@ -369,7 +369,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
     // Set the tab if provided
     if (tab === 'payments') {
       setActiveTab('payments');
-    } else if (tab === 'offers') {
+    } else if (tab === 'offers' || tab === 'ponuky') {
       setActiveTab('offers');
     }
 
