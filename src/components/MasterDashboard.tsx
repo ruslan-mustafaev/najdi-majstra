@@ -72,6 +72,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
   const [showContactHoursModal, setShowContactHoursModal] = useState(false);
   const [contactHoursDisplay, setContactHoursDisplay] = useState<string>('');
   const [activeSubscription, setActiveSubscription] = useState<Subscription | null>(null);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('yearly');
   const [showPaymentResult, setShowPaymentResult] = useState<{show: boolean, success: boolean, message: string, planName?: string, billingPeriod?: string, isLoading?: boolean}>({show: false, success: false, message: ''});
 
@@ -467,8 +468,12 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
   // Load master ID and profile data on mount
   useEffect(() => {
     const loadMasterData = async () => {
-      if (!user) return;
+      if (!user) {
+        setIsLoadingProfile(false);
+        return;
+      }
 
+      setIsLoadingProfile(true);
       try {
         const { data, error } = await supabase
           .from('masters')
@@ -490,7 +495,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
               email: user.email || '',
               phone: user.user_metadata?.phone || '',
               location: user.user_metadata?.location || '',
-              description: 'Profesionálny majster',
+              description: '',
               is_active: true,
               profile_completed: false
             })
@@ -600,6 +605,8 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
         }));
       } catch (error) {
         console.error('Error loading master data:', error);
+      } finally {
+        setIsLoadingProfile(false);
       }
     };
 
@@ -1037,10 +1044,36 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
 
       <div className="container mx-auto px-4 py-8">
         {activeTab === 'profile' && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Column 1: Photos */}
-            <div className="space-y-6">
-              <div className="bg-white rounded-xl shadow-lg p-6">
+          <>
+            {isLoadingProfile ? (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Loading skeleton */}
+                {[1, 2, 3].map((col) => (
+                  <div key={col} className="space-y-6">
+                    <div className="bg-white rounded-xl shadow-lg p-6">
+                      <div className="h-8 bg-gray-200 rounded w-3/4 mb-6 animate-pulse"></div>
+                      <div className="space-y-4">
+                        <div className="h-32 bg-gray-200 rounded-xl animate-pulse"></div>
+                        <div className="h-20 bg-gray-200 rounded animate-pulse"></div>
+                        <div className="h-16 bg-gray-200 rounded animate-pulse"></div>
+                      </div>
+                    </div>
+                    <div className="bg-white rounded-xl shadow-lg p-6">
+                      <div className="h-8 bg-gray-200 rounded w-2/3 mb-4 animate-pulse"></div>
+                      <div className="space-y-3">
+                        <div className="h-12 bg-gray-200 rounded animate-pulse"></div>
+                        <div className="h-12 bg-gray-200 rounded animate-pulse"></div>
+                        <div className="h-12 bg-gray-200 rounded animate-pulse"></div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Column 1: Photos */}
+                <div className="space-y-6">
+                  <div className="bg-white rounded-xl shadow-lg p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2">Vaše fotky</h3>
                   {hasChanges && (
@@ -1931,6 +1964,8 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
               </div>
             </div>
           </div>
+            )}
+          </>
         )}
 
         {activeTab === 'calendar' && masterId && (
