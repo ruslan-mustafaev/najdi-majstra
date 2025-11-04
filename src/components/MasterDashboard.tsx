@@ -1046,7 +1046,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
               }`}
             >
               <div className="flex items-center gap-2">
-                <CircleEuroIcon size={18} />
+                <CircleEuroIcon size={22} />
                 Moje ponuky
               </div>
             </button>

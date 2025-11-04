@@ -229,7 +229,7 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
           onClick={() => setIsOpen(!isOpen)}
           className="relative p-2 text-white hover:text-white/80 transition-colors"
         >
-          {isMaster ? <CircleEuroIcon size={28} /> : <Bell size={28} />}
+          {isMaster ? <CircleEuroIcon size={32} /> : <Bell size={28} />}
           {unreadCount > 0 && (
             <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
               {unreadCount > 9 ? '9+' : unreadCount}
@@ -275,7 +275,7 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
                 {notifications.length === 0 ? (
                   <div className="p-12 text-center text-gray-500">
                     <div className="mb-4">
-                      {isMaster ? <CircleEuroIcon size={72} className="mx-auto text-gray-300" /> : <Bell size={72} className="mx-auto text-gray-300" />}
+                      {isMaster ? <CircleEuroIcon size={80} className="mx-auto text-gray-300" /> : <Bell size={72} className="mx-auto text-gray-300" />}
                     </div>
                     <p className="text-lg font-medium">Žiadne upozornenia</p>
                   </div>
@@ -295,7 +295,7 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
                             notification.type === 'offer_accepted' ? 'bg-green-100 text-green-600' :
                             'bg-red-100 text-red-600'
                           }`}>
-                            {isMaster ? <CircleEuroIcon size={20} /> : <Bell size={20} />}
+                            {isMaster ? <CircleEuroIcon size={24} /> : <Bell size={20} />}
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className={`text-sm ${!notification.is_read ? 'font-semibold' : 'font-medium'} text-gray-900`}>
