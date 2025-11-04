@@ -12,6 +12,7 @@ interface Notification {
   is_read: boolean;
   created_at: string;
   master_name?: string;
+  master_id?: string;
   offer: {
     id: string;
     client_name: string;
@@ -173,16 +174,18 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
       case 'new_offer':
         return `Nová ponuka od ${notification.offer.client_name}`;
       case 'offer_accepted':
-        return notification.master_name
-          ? `Majster ${notification.master_name} prijal vašu ponuku!`
-          : 'Vaša ponuka bola prijatá!';
+        return 'prijal vašu ponuku!';
       case 'offer_rejected':
-        return notification.master_name
-          ? `Majster ${notification.master_name} zamietol vašu ponuku`
-          : 'Vaša ponuka bola zamietnutá';
+        return 'zamietol vašu ponuku';
       default:
         return 'Nové upozornenie';
     }
+  };
+
+  const handleMasterNameClick = (masterId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/profile/${masterId}`);
+    setIsOpen(false);
   };
 
   const getStatusBadge = (status: string) => {
@@ -277,7 +280,20 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className={`text-sm ${!notification.is_read ? 'font-semibold' : 'font-medium'} text-gray-900`}>
-                              {getNotificationText(notification)}
+                              {!isMaster && notification.master_name && notification.master_id ? (
+                                <>
+                                  Majster{' '}
+                                  <button
+                                    onClick={(e) => handleMasterNameClick(notification.master_id!, e)}
+                                    className="text-[#4169e1] hover:text-[#3557c5] hover:underline font-semibold"
+                                  >
+                                    {notification.master_name}
+                                  </button>
+                                  {' '}{getNotificationText(notification)}
+                                </>
+                              ) : (
+                                getNotificationText(notification)
+                              )}
                             </p>
                             {notification.offer && (
                               <p className="text-xs text-gray-600 mt-1 line-clamp-2">
