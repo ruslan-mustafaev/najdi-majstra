@@ -203,7 +203,7 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
       <div className="relative">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="relative p-2 text-gray-700 hover:text-[#4169e1] transition-colors"
+          className="relative p-2 text-white hover:text-white/80 transition-colors"
         >
           {isMaster ? <CircleDollarSign size={24} /> : <Bell size={24} />}
           {unreadCount > 0 && (
@@ -212,14 +212,16 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
             </span>
           )}
         </button>
+      </div>
 
-        {isOpen && (
-          <>
-            <div
-              className="fixed inset-0 z-40"
-              onClick={() => setIsOpen(false)}
-            />
-            <div className="absolute right-0 mt-2 w-96 max-md:fixed max-md:inset-0 max-md:w-full max-md:mt-0 max-md:rounded-none bg-white rounded-lg shadow-2xl border border-gray-200 z-50 max-h-[600px] max-md:max-h-full overflow-hidden flex flex-col">
+      {/* Notifications Panel - Using Portal to render outside of Header */}
+      {isOpen && createPortal(
+        <>
+          <div
+            className="fixed inset-0 z-40 bg-black/20 max-md:bg-black/50"
+            onClick={() => setIsOpen(false)}
+          />
+          <div className="fixed right-4 top-20 w-96 max-md:inset-0 max-md:w-full max-md:top-0 max-md:right-0 max-md:rounded-none bg-white rounded-lg shadow-2xl border border-gray-200 z-50 max-h-[600px] max-md:max-h-full overflow-hidden flex flex-col">
               <div className="px-4 py-3 max-md:py-4 border-b border-gray-200 flex items-center justify-between bg-gray-50">
                 <h3 className="font-semibold text-gray-900 max-md:text-lg">
                   {isMaster ? 'Ponuky od klientov' : 'Upozornenia'}
@@ -303,9 +305,9 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
                 </div>
               )}
             </div>
-          </>
-        )}
-      </div>
+        </>,
+        document.body
+      )}
 
       {/* Offer Detail Modal - Using Portal to render outside of Header */}
       {selectedOffer && createPortal(
