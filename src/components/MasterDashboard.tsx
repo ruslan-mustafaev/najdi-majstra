@@ -938,10 +938,32 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
     'Júl', 'August', 'September', 'Október', 'November', 'December'
   ];
 
+  // All available professions from filter (grouped by category)
   const professions = [
-    'Elektrikár', 'Vodoinštalatér', 'Maliar', 'Stolár', 'Murár', 'Plynár',
-    'Interiérový dizajnér', 'Bezpečnostné systémy', 'Podlahár', 
-    'Čistenie a upratovanie', 'Automechanik', 'Kaderníčka', 'Záhradník'
+    // Projektové profesie
+    'Architekt', 'Interiérový dizajnér', 'Krajinný architekt', 'Statik', 'Projektant',
+    'Energetický audítor', 'Geodet', 'Požiarny technik', 'BOZP koordinátor',
+    'Rozpočtár', 'Technický dozor', 'Autorský dozor',
+
+    // Stavebné profesie
+    'Stavbyvedúci', 'Murár', 'Betónár', 'Tesár', 'Pokrývač', 'Izolatér',
+    'Železobetónár', 'Stavebný robotník', 'Demolačník', 'Výkopové práce',
+
+    // Interiérové práce
+    'Maliar', 'Podlahár', 'Obkladač', 'Sadrokartónár', 'Tapetár', 'Parkettár',
+    'Kuchynský dizajnér', 'Nábytok na mieru', 'Dekoratér', 'Čalúnnik',
+
+    // Technické profesie
+    'Elektrikár', 'Vodoinštalatér', 'Plynár', 'Kúrenár', 'Klimatizácie',
+    'Solárne systémy', 'Tepelné čerpadlá', 'Bezpečnostné systémy',
+    'Smart home', 'Výťahy', 'Bazény', 'Studne',
+
+    // Exteriérové práce
+    'Fasáda', 'Záhradník', 'Oplotenie', 'Terasy', 'Dlažby', 'Strešné okná',
+    'Žľaby', 'Komíny', 'Pergoly', 'Zimné záhrady', 'Altánky', 'Osvetlenie exteriéru',
+
+    // Špecializované služby
+    'Čistenie a upratovanie', 'Sťahovanie', 'Automechanik', 'Fotografovanie'
   ];
 
   const experienceLevels = [

@@ -209,13 +209,7 @@ export const getProfessionOptions = (language: 'sk' | 'en' = 'sk'): FilterOption
     { value: 'Čistenie a upratovanie', label: language === 'sk' ? 'Čistenie a upratovanie' : 'Cleaning Services' },
     { value: 'Sťahovanie', label: language === 'sk' ? 'Sťahovanie' : 'Moving Services' },
     { value: 'Automechanik', label: language === 'sk' ? 'Automechanik' : 'Auto Mechanic' },
-    { value: 'Kaderníčka', label: language === 'sk' ? 'Kaderníčka' : 'Hairdresser' },
-    { value: 'Masér', label: language === 'sk' ? 'Masér' : 'Massage Therapist' },
-    { value: 'Osobný tréner', label: language === 'sk' ? 'Osobný tréner' : 'Personal Trainer' },
-    { value: 'Fotografovanie', label: language === 'sk' ? 'Fotografovanie' : 'Photography' },
-    { value: 'Catering', label: language === 'sk' ? 'Catering' : 'Catering' },
-    { value: 'Hudobník', label: language === 'sk' ? 'Hudobník' : 'Musician' },
-    { value: 'Moderátor', label: language === 'sk' ? 'Moderátor' : 'Host/MC' }
+    { value: 'Fotografovanie', label: language === 'sk' ? 'Fotografovanie' : 'Photography' }
   ];
 
   return professions;
