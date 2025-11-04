@@ -219,16 +219,16 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
               className="fixed inset-0 z-40"
               onClick={() => setIsOpen(false)}
             />
-            <div className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-2xl border border-gray-200 z-50 max-h-[600px] overflow-hidden flex flex-col">
-              <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between bg-gray-50">
-                <h3 className="font-semibold text-gray-900">
+            <div className="absolute right-0 mt-2 w-96 max-md:fixed max-md:inset-0 max-md:w-full max-md:mt-0 max-md:rounded-none bg-white rounded-lg shadow-2xl border border-gray-200 z-50 max-h-[600px] max-md:max-h-full overflow-hidden flex flex-col">
+              <div className="px-4 py-3 max-md:py-4 border-b border-gray-200 flex items-center justify-between bg-gray-50">
+                <h3 className="font-semibold text-gray-900 max-md:text-lg">
                   {isMaster ? 'Ponuky od klientov' : 'Upozornenia'}
                 </h3>
                 <div className="flex items-center gap-2">
                   {unreadCount > 0 && (
                     <button
                       onClick={markAllAsRead}
-                      className="text-xs text-[#4169e1] hover:underline"
+                      className="text-xs max-md:text-sm text-[#4169e1] hover:underline"
                     >
                       Označiť všetko
                     </button>
@@ -237,7 +237,7 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
                     onClick={() => setIsOpen(false)}
                     className="text-gray-500 hover:text-gray-700"
                   >
-                    <X size={18} />
+                    <X size={18} className="max-md:w-6 max-md:h-6" />
                   </button>
                 </div>
               </div>
@@ -309,65 +309,65 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
 
       {/* Offer Detail Modal - Using Portal to render outside of Header */}
       {selectedOffer && createPortal(
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4 overflow-y-auto">
-          <div className="bg-white rounded-lg max-w-3xl w-full my-8 shadow-2xl relative">
-            <div className="bg-white border-b px-6 py-4 flex items-center justify-between print:hidden rounded-t-lg">
-              <h2 className="text-2xl font-bold text-gray-900">Detail ponuky</h2>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4 max-md:p-0 overflow-y-auto">
+          <div className="bg-white rounded-lg max-md:rounded-none max-w-3xl w-full my-8 max-md:my-0 max-md:min-h-screen shadow-2xl relative">
+            <div className="bg-white border-b px-6 py-4 max-md:px-4 max-md:py-5 flex items-center justify-between print:hidden rounded-t-lg max-md:rounded-none">
+              <h2 className="text-2xl max-md:text-xl font-bold text-gray-900">Detail ponuky</h2>
               <div className="flex gap-2">
                 <button
                   onClick={handlePrint}
-                  className="p-2 text-gray-600 hover:text-[#4169e1] transition-colors"
+                  className="p-2 max-md:p-1.5 text-gray-600 hover:text-[#4169e1] transition-colors"
                   title="Vytlačiť"
                 >
-                  <Printer size={20} />
+                  <Printer size={20} className="max-md:w-5 max-md:h-5" />
                 </button>
                 <button
                   onClick={handleDownloadPDF}
-                  className="p-2 text-gray-600 hover:text-[#4169e1] transition-colors"
+                  className="p-2 max-md:p-1.5 text-gray-600 hover:text-[#4169e1] transition-colors"
                   title="Stiahnuť PDF"
                 >
-                  <Download size={20} />
+                  <Download size={20} className="max-md:w-5 max-md:h-5" />
                 </button>
                 <button
                   onClick={() => setSelectedOffer(null)}
-                  className="p-2 text-gray-600 hover:text-gray-900 transition-colors"
+                  className="p-2 max-md:p-1.5 text-gray-600 hover:text-gray-900 transition-colors"
                 >
-                  <X size={20} />
+                  <X size={20} className="max-md:w-5 max-md:h-5" />
                 </button>
               </div>
             </div>
 
-            <div className="p-6 print:p-8 max-h-[calc(90vh-8rem)] overflow-y-auto">
+            <div className="p-6 max-md:p-4 print:p-8 max-h-[calc(90vh-8rem)] max-md:max-h-none overflow-y-auto">
               <div className="mb-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-bold text-gray-900">Informácie o klientovi</h3>
+                <div className="flex flex-col max-md:gap-2 md:flex-row md:items-center md:justify-between mb-4">
+                  <h3 className="text-xl max-md:text-lg font-bold text-gray-900">Informácie o klientovi</h3>
                   {getStatusBadge(selectedOffer.status)}
                 </div>
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
-                    <User size={20} className="text-gray-400" />
-                    <span className="text-gray-900">{selectedOffer.client_name}</span>
+                    <User size={20} className="text-gray-400 flex-shrink-0" />
+                    <span className="text-gray-900 break-words">{selectedOffer.client_name}</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Mail size={20} className="text-gray-400" />
-                    <a href={`mailto:${selectedOffer.client_email}`} className="text-[#4169e1] hover:underline">
+                    <Mail size={20} className="text-gray-400 flex-shrink-0" />
+                    <a href={`mailto:${selectedOffer.client_email}`} className="text-[#4169e1] hover:underline break-all">
                       {selectedOffer.client_email}
                     </a>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Phone size={20} className="text-gray-400" />
+                    <Phone size={20} className="text-gray-400 flex-shrink-0" />
                     <a href={`tel:${selectedOffer.client_phone}`} className="text-[#4169e1] hover:underline">
                       {selectedOffer.client_phone}
                     </a>
                   </div>
                   <div className="flex items-center gap-3">
-                    <MapPin size={20} className="text-gray-400" />
-                    <span className="text-gray-900">{selectedOffer.location}</span>
+                    <MapPin size={20} className="text-gray-400 flex-shrink-0" />
+                    <span className="text-gray-900 break-words">{selectedOffer.location}</span>
                   </div>
                   {selectedOffer.preferred_date && (
                     <div className="flex items-center gap-3">
-                      <Calendar size={20} className="text-gray-400" />
-                      <span className="text-gray-900">
+                      <Calendar size={20} className="text-gray-400 flex-shrink-0" />
+                      <span className="text-gray-900 break-words">
                         {new Date(selectedOffer.preferred_date).toLocaleDateString('sk-SK', {
                           weekday: 'long',
                           year: 'numeric',
@@ -381,8 +381,8 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
               </div>
 
               <div className="mb-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-3">Popis práce</h3>
-                <p className="text-gray-700 whitespace-pre-wrap">{selectedOffer.description}</p>
+                <h3 className="text-xl max-md:text-lg font-bold text-gray-900 mb-3">Popis práce</h3>
+                <p className="text-gray-700 whitespace-pre-wrap break-words">{selectedOffer.description}</p>
               </div>
 
               <div className="pt-4 border-t text-sm text-gray-500">
@@ -390,17 +390,17 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
               </div>
 
               {selectedOffer.status === 'pending' && (
-                <div className="flex gap-4 mt-6 print:hidden">
+                <div className="flex flex-col max-md:gap-3 md:flex-row md:gap-4 mt-6 print:hidden">
                   <button
                     onClick={() => handleUpdateStatus(selectedOffer.id, 'rejected')}
-                    className="flex-1 px-6 py-3 border-2 border-red-500 text-red-500 rounded-lg font-medium hover:bg-red-50 transition-colors flex items-center justify-center gap-2"
+                    className="flex-1 px-6 py-3 max-md:py-4 border-2 border-red-500 text-red-500 rounded-lg font-medium hover:bg-red-50 transition-colors flex items-center justify-center gap-2"
                   >
                     <XCircle size={20} />
                     Odmietnuť
                   </button>
                   <button
                     onClick={() => handleUpdateStatus(selectedOffer.id, 'accepted')}
-                    className="flex-1 px-6 py-3 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 transition-colors flex items-center justify-center gap-2"
+                    className="flex-1 px-6 py-3 max-md:py-4 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 transition-colors flex items-center justify-center gap-2"
                   >
                     <CheckCircle size={20} />
                     Prijať ponuku

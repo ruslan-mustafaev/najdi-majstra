@@ -999,7 +999,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
             >
               <div className="flex items-center gap-2">
                 <CircleDollarSign size={18} />
-                Ponuky
+                Moje ponuky
               </div>
             </button>
             <button
