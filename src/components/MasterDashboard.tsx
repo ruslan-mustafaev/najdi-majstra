@@ -10,15 +10,13 @@ import { OffersList } from './OffersList';
 import { supabase } from '../lib/supabase';
 
 const CircleEuroIcon = ({ size = 28, className = '' }: { size?: number; className?: string }) => (
-  <svg
+  <img
+    src="/icon_notification_master/money.svg"
+    alt="Money"
     width={size}
     height={size}
-    viewBox="0 0 24 24"
-    fill="currentColor"
     className={className}
-  >
-    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1.5 16.5v-1.03c-1.26-.29-2.29-1.08-2.92-2.17l1.42-.82c.39.72 1.05 1.2 1.82 1.37v-3.1c-1.56-.43-2.5-1.28-2.5-2.65 0-1.51 1.14-2.61 2.68-2.82V6h1.5v1.28c1.11.18 1.99.87 2.54 1.8l-1.42.82c-.34-.58-.85-.98-1.44-1.12v2.97c1.56.43 2.5 1.28 2.5 2.65 0 1.51-1.14 2.61-2.68 2.82v1.28H10.5zm1.5-5.45v2.82c.73-.13 1.18-.58 1.18-1.4 0-.69-.35-1.12-1.18-1.42zm-1.5-3.82c-.73.13-1.18.58-1.18 1.4 0 .69.35 1.12 1.18 1.42V9.23z"/>
-  </svg>
+  />
 );
 import * as ProjectsAPI from '../lib/projectsApi';
 import { getUserActiveSubscription, type Subscription } from '../lib/subscriptionsApi';
