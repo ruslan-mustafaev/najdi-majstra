@@ -1151,24 +1151,44 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                         <select
                           value={profileData.profession}
                           onChange={(e) => handleFieldChange('profession', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
+                          className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent ${
+                            !profileData.profession ? 'border-red-500 border-2' : 'border-gray-300'
+                          }`}
                         >
                           <option value="">Vyberte profesiu</option>
                           {professions.map(prof => (
                             <option key={prof} value={prof}>{prof}</option>
                           ))}
                         </select>
+                        {!profileData.profession && (
+                          <p className="text-red-600 text-sm font-medium flex items-center gap-1">
+                            <AlertTriangle size={16} />
+                            Povinné pole! Bez neho nebude váš profil viditeľný vo vyhľadávaní.
+                          </p>
+                        )}
                       </div>
                     ) : (
-                      <p 
-                        className="text-gray-900 cursor-pointer hover:bg-gray-50 p-2 rounded border-2 border-transparent hover:border-gray-200 transition-colors"
-                        onClick={() => startEditing('name-profession')}
-                      >
-                        {profileData.profession && profileData.name 
-                          ? `${profileData.profession} - ${profileData.name}`
-                          : 'Nevyplnené - kliknite pre úpravu'
-                        }
-                      </p>
+                      <div>
+                        <p
+                          className={`cursor-pointer hover:bg-gray-50 p-2 rounded border-2 transition-colors ${
+                            !profileData.profession
+                              ? 'border-red-500 text-gray-900'
+                              : 'border-transparent hover:border-gray-200 text-gray-900'
+                          }`}
+                          onClick={() => startEditing('name-profession')}
+                        >
+                          {profileData.profession && profileData.name
+                            ? `${profileData.profession} - ${profileData.name}`
+                            : 'Nevyplnené - kliknite pre úpravu'
+                          }
+                        </p>
+                        {!profileData.profession && (
+                          <p className="text-red-600 text-sm font-medium flex items-center gap-1 mt-1">
+                            <AlertTriangle size={16} />
+                            Povinné pole! Bez neho nebude váš profil viditeľný vo vyhľadávaní.
+                          </p>
+                        )}
+                      </div>
                     )}
                   </div>
 
@@ -1184,8 +1204,16 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                           placeholder="Mesto/región"
                           value={profileData.location}
                           onChange={(e) => handleFieldChange('location', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
+                          className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent ${
+                            !profileData.location ? 'border-red-500 border-2' : 'border-gray-300'
+                          }`}
                         />
+                        {!profileData.location && (
+                          <p className="text-red-600 text-sm font-medium flex items-center gap-1">
+                            <AlertTriangle size={16} />
+                            Povinné pole! Bez neho nebude váš profil viditeľný vo vyhľadávaní.
+                          </p>
+                        )}
                         <div className="space-y-2">
                           <div className="flex items-center space-x-3">
                             <input
@@ -1203,15 +1231,27 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                         </div>
                       </div>
                     ) : (
-                      <div
-                        className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded border-2 border-transparent hover:border-gray-200 transition-colors"
-                        onClick={() => startEditing('location')}
-                      >
-                        <MapPin size={16} className="text-gray-500" />
-                        <span>{profileData.location || 'Nevyplnené - kliknite pre úpravu'}</span>
-                        <div className={`w-3 h-3 rounded-full ${
-                          profileData.availability.available ? 'bg-green-500' : 'bg-red-500'
-                        }`} />
+                      <div>
+                        <div
+                          className={`flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded border-2 transition-colors ${
+                            !profileData.location
+                              ? 'border-red-500'
+                              : 'border-transparent hover:border-gray-200'
+                          }`}
+                          onClick={() => startEditing('location')}
+                        >
+                          <MapPin size={16} className="text-gray-500" />
+                          <span>{profileData.location || 'Nevyplnené - kliknite pre úpravu'}</span>
+                          <div className={`w-3 h-3 rounded-full ${
+                            profileData.availability.available ? 'bg-green-500' : 'bg-red-500'
+                          }`} />
+                        </div>
+                        {!profileData.location && (
+                          <p className="text-red-600 text-sm font-medium flex items-center gap-1 mt-1">
+                            <AlertTriangle size={16} />
+                            Povinné pole! Bez neho nebude váš profil viditeľný vo vyhľadávaní.
+                          </p>
+                        )}
                       </div>
                     )}
                   </div>
@@ -1318,21 +1358,43 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                       by vás vedel váš zákazník vyhľadať
                     </p>
                     {editingField === 'description' ? (
-                      <textarea
-                        placeholder="Opíšte svoju prácu a služby..."
-                        value={profileData.description}
-                        onChange={(e) => handleFieldChange('description', e.target.value)}
-                        maxLength={1000}
-                        rows={4}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
-                      />
+                      <div className="space-y-2">
+                        <textarea
+                          placeholder="Opíšte svoju prácu a služby..."
+                          value={profileData.description}
+                          onChange={(e) => handleFieldChange('description', e.target.value)}
+                          maxLength={1000}
+                          rows={4}
+                          className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent ${
+                            profileData.description.trim().length < 20 ? 'border-red-500 border-2' : 'border-gray-300'
+                          }`}
+                        />
+                        {profileData.description.trim().length < 20 && (
+                          <p className="text-red-600 text-sm font-medium flex items-center gap-1">
+                            <AlertTriangle size={16} />
+                            Povinné pole! Minimum 20 znakov. Bez neho nebude váš profil viditeľný vo vyhľadávaní.
+                          </p>
+                        )}
+                      </div>
                     ) : (
-                      <p 
-                        className="text-gray-700 cursor-pointer hover:bg-gray-50 p-2 rounded border-2 border-transparent hover:border-gray-200 transition-colors min-h-[2.5rem]"
-                        onClick={() => startEditing('description')}
-                      >
-                        {profileData.description || 'Nevyplnené - kliknite pre úpravu'}
-                      </p>
+                      <div>
+                        <p
+                          className={`text-gray-700 cursor-pointer hover:bg-gray-50 p-2 rounded border-2 transition-colors min-h-[2.5rem] ${
+                            profileData.description.trim().length < 20
+                              ? 'border-red-500'
+                              : 'border-transparent hover:border-gray-200'
+                          }`}
+                          onClick={() => startEditing('description')}
+                        >
+                          {profileData.description || 'Nevyplnené - kliknite pre úpravu'}
+                        </p>
+                        {profileData.description.trim().length < 20 && (
+                          <p className="text-red-600 text-sm font-medium flex items-center gap-1 mt-1">
+                            <AlertTriangle size={16} />
+                            Povinné pole! Minimum 20 znakov. Bez neho nebude váš profil viditeľný vo vyhľadávaní.
+                          </p>
+                        )}
+                      </div>
                     )}
                   </div>
 
