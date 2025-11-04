@@ -218,48 +218,51 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
       {isOpen && createPortal(
         <>
           <div
-            className="fixed inset-0 z-40 bg-black/20 max-md:bg-black/50"
+            className="fixed inset-0 z-40 bg-black/50 flex items-start justify-center md:pt-20 max-md:pt-0"
             onClick={() => setIsOpen(false)}
           />
-          <div className="fixed right-4 top-20 w-96 max-md:inset-0 max-md:w-full max-md:top-0 max-md:right-0 max-md:rounded-none bg-white rounded-lg shadow-2xl border border-gray-200 z-50 max-h-[600px] max-md:max-h-full overflow-hidden flex flex-col">
-              <div className="px-4 py-3 max-md:py-4 border-b border-gray-200 flex items-center justify-between bg-gray-50">
-                <h3 className="font-semibold text-gray-900 max-md:text-lg">
+          <div
+            className="fixed left-1/2 -translate-x-1/2 top-20 w-[600px] max-md:inset-0 max-md:w-full max-md:top-0 max-md:left-0 max-md:translate-x-0 bg-white rounded-xl max-md:rounded-none shadow-2xl border border-gray-200 z-50 max-h-[80vh] max-md:max-h-full overflow-hidden flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+              <div className="px-6 py-4 max-md:px-4 max-md:py-4 border-b border-gray-200 flex items-center justify-between bg-gradient-to-r from-[#4169e1] to-[#5a7bff]">
+                <h3 className="font-bold text-white text-xl max-md:text-lg">
                   {isMaster ? 'Ponuky od klientov' : 'Upozornenia'}
                 </h3>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                   {unreadCount > 0 && (
                     <button
                       onClick={markAllAsRead}
-                      className="text-xs max-md:text-sm text-[#4169e1] hover:underline"
+                      className="text-sm max-md:text-sm text-white/90 hover:text-white hover:underline font-medium"
                     >
                       Označiť všetko
                     </button>
                   )}
                   <button
                     onClick={() => setIsOpen(false)}
-                    className="text-gray-500 hover:text-gray-700"
+                    className="text-white/90 hover:text-white transition-colors"
                   >
-                    <X size={18} className="max-md:w-6 max-md:h-6" />
+                    <X size={22} className="max-md:w-6 max-md:h-6" />
                   </button>
                 </div>
               </div>
 
-              <div className="overflow-y-auto flex-1">
+              <div className="overflow-y-auto flex-1 bg-gray-50">
                 {notifications.length === 0 ? (
-                  <div className="p-8 text-center text-gray-500">
-                    <div className="mb-2">
-                      {isMaster ? <CircleDollarSign size={48} className="mx-auto text-gray-300" /> : <Bell size={48} className="mx-auto text-gray-300" />}
+                  <div className="p-12 text-center text-gray-500">
+                    <div className="mb-4">
+                      {isMaster ? <CircleDollarSign size={64} className="mx-auto text-gray-300" /> : <Bell size={64} className="mx-auto text-gray-300" />}
                     </div>
-                    <p>Žiadne upozornenia</p>
+                    <p className="text-lg font-medium">Žiadne upozornenia</p>
                   </div>
                 ) : (
-                  <div className="divide-y divide-gray-100">
+                  <div className="p-4 space-y-3">
                     {notifications.map((notification) => (
                       <div
                         key={notification.id}
                         onClick={() => handleNotificationClick(notification)}
-                        className={`p-4 cursor-pointer hover:bg-gray-50 transition-colors ${
-                          !notification.is_read ? 'bg-blue-50' : ''
+                        className={`p-4 rounded-lg cursor-pointer hover:shadow-md transition-all bg-white border ${
+                          !notification.is_read ? 'border-[#4169e1] shadow-sm' : 'border-gray-200'
                         }`}
                       >
                         <div className="flex items-start gap-3">
@@ -294,10 +297,10 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
               </div>
 
               {isMaster && notifications.length > 0 && (
-                <div className="px-4 py-3 border-t border-gray-200 bg-gray-50">
+                <div className="px-6 py-4 border-t border-gray-200 bg-white">
                   <a
                     href="/dashboard?tab=offers"
-                    className="text-sm text-[#4169e1] hover:underline font-medium block text-center"
+                    className="block w-full text-center px-6 py-3 bg-[#4169e1] hover:bg-[#3557c5] text-white rounded-lg font-medium transition-colors"
                     onClick={() => setIsOpen(false)}
                   >
                     Zobraziť všetky ponuky
