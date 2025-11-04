@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { useNavigate } from 'react-router-dom';
 import { CircleDollarSign, Bell, X, Calendar, MapPin, User, Mail, Phone, CheckCircle, XCircle, Download, Printer } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
@@ -30,6 +31,7 @@ interface OfferNotificationsProps {
 
 export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster }) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
@@ -298,13 +300,15 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
 
               {isMaster && notifications.length > 0 && (
                 <div className="px-6 py-4 border-t border-gray-200 bg-white">
-                  <a
-                    href="/dashboard?tab=ponuky"
+                  <button
+                    onClick={() => {
+                      setIsOpen(false);
+                      navigate('/dashboard?tab=ponuky');
+                    }}
                     className="block w-full text-center px-6 py-3 bg-[#4169e1] hover:bg-[#3557c5] text-white rounded-lg font-medium transition-colors"
-                    onClick={() => setIsOpen(false)}
                   >
                     Zobraziť všetky ponuky
-                  </a>
+                  </button>
                 </div>
               )}
             </div>
