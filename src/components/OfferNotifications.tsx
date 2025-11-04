@@ -1,9 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import { CircleDollarSign, Bell, X, Calendar, MapPin, User, Mail, Phone, CheckCircle, XCircle, Download, Printer } from 'lucide-react';
+import { Bell, X, Calendar, MapPin, User, Mail, Phone, CheckCircle, XCircle, Download, Printer } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
+
+const CircleEuroIcon = ({ size = 24, className = '' }: { size?: number; className?: string }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <circle cx="12" cy="12" r="10" />
+    <path d="M15 9.5a4 4 0 0 0-4-2.5c-2.5 0-4 2-4 4.5s1.5 4.5 4 4.5a4 4 0 0 0 4-2.5" />
+    <path d="M7 11h6" />
+    <path d="M7 13h6" />
+  </svg>
+);
 
 interface Notification {
   id: string;
@@ -210,7 +229,7 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
           onClick={() => setIsOpen(!isOpen)}
           className="relative p-2 text-white hover:text-white/80 transition-colors"
         >
-          {isMaster ? <CircleDollarSign size={24} /> : <Bell size={24} />}
+          {isMaster ? <CircleEuroIcon size={24} /> : <Bell size={24} />}
           {unreadCount > 0 && (
             <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
               {unreadCount > 9 ? '9+' : unreadCount}
@@ -256,7 +275,7 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
                 {notifications.length === 0 ? (
                   <div className="p-12 text-center text-gray-500">
                     <div className="mb-4">
-                      {isMaster ? <CircleDollarSign size={64} className="mx-auto text-gray-300" /> : <Bell size={64} className="mx-auto text-gray-300" />}
+                      {isMaster ? <CircleEuroIcon size={64} className="mx-auto text-gray-300" /> : <Bell size={64} className="mx-auto text-gray-300" />}
                     </div>
                     <p className="text-lg font-medium">Žiadne upozornenia</p>
                   </div>
@@ -276,7 +295,7 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
                             notification.type === 'offer_accepted' ? 'bg-green-100 text-green-600' :
                             'bg-red-100 text-red-600'
                           }`}>
-                            {isMaster ? <CircleDollarSign size={16} /> : <Bell size={16} />}
+                            {isMaster ? <CircleEuroIcon size={16} /> : <Bell size={16} />}
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className={`text-sm ${!notification.is_read ? 'font-semibold' : 'font-medium'} text-gray-900`}>
