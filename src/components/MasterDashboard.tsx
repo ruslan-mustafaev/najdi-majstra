@@ -16,15 +16,14 @@ const CircleEuroIcon = ({ size = 28, className = '' }: { size?: number; classNam
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2"
+    strokeWidth="2.5"
     strokeLinecap="round"
     strokeLinejoin="round"
     className={className}
   >
-    <circle cx="12" cy="12" r="10" />
-    <path d="M15 9.5a4 4 0 0 0-4-2.5c-2.5 0-4 2-4 4.5s1.5 4.5 4 4.5a4 4 0 0 0 4-2.5" />
-    <path d="M7 11h6" />
-    <path d="M7 13h6" />
+    <path d="M17 8.5a5 5 0 0 0-5-3c-3 0-5 2.5-5 5.5s2 5.5 5 5.5a5 5 0 0 0 5-3" />
+    <path d="M6 10h8" />
+    <path d="M6 14h8" />
   </svg>
 );
 import * as ProjectsAPI from '../lib/projectsApi';
