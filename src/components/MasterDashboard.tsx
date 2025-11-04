@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, User, Mail, Phone, MapPin, FileText, Camera, Video, Settings, Save, Eye, EyeOff, Clock, Euro, Users, Award, Globe, Facebook, Instagram, Linkedin, Youtube, Twitter, MessageCircle, CheckCircle, AlertCircle, Upload, X, Image, Play, AlertTriangle, Plus, Check, Calendar, Star, Trash2, Info, Sparkles, CircleDollarSign } from 'lucide-react';
+import { ArrowLeft, User, Mail, Phone, MapPin, FileText, Camera, Video, Settings, Save, Eye, EyeOff, Clock, Euro, Users, Award, Globe, Facebook, Instagram, Linkedin, Youtube, Twitter, MessageCircle, CheckCircle, AlertCircle, Upload, X, Image, Play, AlertTriangle, Plus, Check, Calendar, Star, Trash2, Info, Sparkles } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { saveMasterProfile, type MasterProfile } from '../lib/masterProfileApi';
 import { MasterPortfolio } from './MasterPortfolio';
@@ -8,6 +8,25 @@ import { AvailabilityCalendar } from './AvailabilityCalendar';
 import { ContactHoursSelector } from './ContactHoursSelector';
 import { OffersList } from './OffersList';
 import { supabase } from '../lib/supabase';
+
+const CircleEuroIcon = ({ size = 28, className = '' }: { size?: number; className?: string }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <circle cx="12" cy="12" r="10" />
+    <path d="M15 9.5a4 4 0 0 0-4-2.5c-2.5 0-4 2-4 4.5s1.5 4.5 4 4.5a4 4 0 0 0 4-2.5" />
+    <path d="M7 11h6" />
+    <path d="M7 13h6" />
+  </svg>
+);
 import * as ProjectsAPI from '../lib/projectsApi';
 import { getUserActiveSubscription, type Subscription } from '../lib/subscriptionsApi';
 import { getPlanPriceId } from '../lib/stripeConfig';
@@ -998,7 +1017,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
               }`}
             >
               <div className="flex items-center gap-2">
-                <CircleDollarSign size={18} />
+                <CircleEuroIcon size={18} />
                 Moje ponuky
               </div>
             </button>
