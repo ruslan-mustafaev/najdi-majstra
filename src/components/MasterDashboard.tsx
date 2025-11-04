@@ -9,14 +9,14 @@ import { ContactHoursSelector } from './ContactHoursSelector';
 import { OffersList } from './OffersList';
 import { supabase } from '../lib/supabase';
 
-const CircleEuroIcon = ({ size = 28, className = '' }: { size?: number; className?: string }) => (
+const CircleEuroIcon = ({ size = 28, className = '', color = 'white' }: { size?: number; className?: string; color?: 'white' | 'black' }) => (
   <img
     src="/icon_notification_master/money.svg"
     alt="Money"
     width={size}
     height={size}
     className={className}
-    style={{ filter: 'brightness(0) invert(1)' }}
+    style={{ filter: color === 'white' ? 'brightness(0) invert(1)' : 'brightness(0)' }}
   />
 );
 import * as ProjectsAPI from '../lib/projectsApi';
@@ -1038,7 +1038,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
               }`}
             >
               <div className="flex items-center gap-2">
-                <CircleEuroIcon size={22} />
+                <CircleEuroIcon size={22} color="black" />
                 Moje ponuky
               </div>
             </button>
