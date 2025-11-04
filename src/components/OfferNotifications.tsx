@@ -277,12 +277,13 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
                       <div
                         key={notification.id}
                         onClick={() => handleNotificationClick(notification)}
-                        className={`p-4 rounded-lg cursor-pointer hover:shadow-md transition-all bg-white border ${
-                          !notification.is_read ? 'border-[#4169e1] shadow-sm' : 'border-gray-200'
+                        className={`p-4 rounded-lg cursor-pointer hover:shadow-md transition-all border ${
+                          !notification.is_read ? 'bg-[#4169e1] border-[#4169e1] shadow-sm' : 'bg-white border-gray-200'
                         }`}
                       >
                         <div className="flex items-start gap-3">
                           <div className={`p-2 rounded-full ${
+                            !notification.is_read ? 'bg-white/20 text-white' :
                             notification.type === 'new_offer' ? 'bg-blue-100 text-blue-600' :
                             notification.type === 'offer_accepted' ? 'bg-green-100 text-green-600' :
                             'bg-red-100 text-red-600'
@@ -290,13 +291,13 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
                             {isMaster ? <CircleEuroIcon size={24} /> : <Bell size={20} />}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className={`text-sm ${!notification.is_read ? 'font-semibold' : 'font-medium'} text-gray-900`}>
+                            <p className={`text-sm ${!notification.is_read ? 'font-semibold text-white' : 'font-medium text-gray-900'}`}>
                               {!isMaster && notification.master_name && notification.master_id ? (
                                 <>
                                   Majster{' '}
                                   <button
                                     onClick={(e) => handleMasterNameClick(notification.master_id!, e)}
-                                    className="text-[#4169e1] hover:text-[#3557c5] hover:underline font-semibold"
+                                    className={`hover:underline font-semibold ${!notification.is_read ? 'text-white hover:text-blue-100' : 'text-[#4169e1] hover:text-[#3557c5]'}`}
                                   >
                                     {notification.master_name}
                                   </button>
@@ -307,16 +308,16 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
                               )}
                             </p>
                             {notification.offer && (
-                              <p className="text-xs text-gray-600 mt-1 line-clamp-2">
+                              <p className={`text-xs mt-1 line-clamp-2 ${!notification.is_read ? 'text-blue-100' : 'text-gray-600'}`}>
                                 {notification.offer.description}
                               </p>
                             )}
-                            <p className="text-xs text-gray-400 mt-1">
+                            <p className={`text-xs mt-1 ${!notification.is_read ? 'text-blue-200' : 'text-gray-400'}`}>
                               {new Date(notification.created_at).toLocaleString('sk-SK')}
                             </p>
                           </div>
                           {!notification.is_read && (
-                            <div className="w-2 h-2 bg-[#4169e1] rounded-full flex-shrink-0 mt-1"></div>
+                            <div className="w-2 h-2 bg-white rounded-full flex-shrink-0 mt-1"></div>
                           )}
                         </div>
                       </div>
