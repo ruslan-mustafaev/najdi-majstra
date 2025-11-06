@@ -282,7 +282,10 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
                 <div
                   key={master.id}
                   className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-lg transition-shadow cursor-pointer"
-                  onClick={() => window.location.href = `/master/${master.slug}`}
+                  onClick={() => {
+                    console.log('Card clicked, navigating to:', `/profile/${master.slug}`);
+                    window.location.href = `/profile/${master.slug}`;
+                  }}
                 >
                   <div className="flex items-start space-x-4">
                     <img
@@ -327,7 +330,9 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
                         className="w-full bg-[#4169e1] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#3558d4] transition-colors"
                         onClick={(e) => {
                           e.stopPropagation();
-                          window.location.href = `/master/${master.slug}`;
+                          console.log('Button clicked, navigating to:', `/profile/${master.slug}`);
+                          console.log('Master data:', master);
+                          window.location.href = `/profile/${master.slug}`;
                         }}
                       >
                         {language === 'sk' ? 'Zobraziť profil' : 'View Profile'}

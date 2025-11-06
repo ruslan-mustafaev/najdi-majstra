@@ -629,7 +629,8 @@ const AppContent: React.FC = () => {
       
       {/* Профиль мастера */}
       <Route path="/profile/:id" element={<ProfilePage />} />
-      
+      <Route path="/master/:id" element={<ProfilePage />} />
+
       {/* Дашборд мастера (только для авторизованных мастеров) */}
       <Route path="/dashboard" element={<DashboardPage />} />
 
