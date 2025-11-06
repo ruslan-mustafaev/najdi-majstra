@@ -193,9 +193,28 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
     }
   };
 
-  const handleMasterNameClick = (masterId: string, e: React.MouseEvent) => {
+  const handleMasterNameClick = async (masterId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    navigate(`/profile/${masterId}`);
+
+    try {
+      const { data, error } = await supabase
+        .from('masters')
+        .select('slug')
+        .eq('user_id', masterId)
+        .maybeSingle();
+
+      if (error) throw error;
+
+      if (data?.slug) {
+        navigate(`/profile/${data.slug}`);
+      } else {
+        navigate(`/profile/${masterId}`);
+      }
+    } catch (error) {
+      console.error('Error fetching master slug:', error);
+      navigate(`/profile/${masterId}`);
+    }
+
     setIsOpen(false);
   };
 
