@@ -79,7 +79,15 @@ What do you need to service (e.g., boiler, air conditioning, electrical) and in 
         .map(msg => msg.content)
         .join(' ') + ' ' + userMessage;
 
+      console.log(`🔍 [REGULAR] ALL USER MESSAGES:`, allUserMessages);
       this.extractInformation(allUserMessages);
+
+      console.log(`📊 [REGULAR] Conversation state:`, {
+        hasLocation: this.conversationState.hasLocation,
+        location: this.conversationState.location,
+        hasServiceDescription: this.conversationState.hasServiceDescription,
+        serviceType: this.conversationState.serviceType
+      });
 
       const messages: OpenRouterMessage[] = [
         {
@@ -103,10 +111,16 @@ What do you need to service (e.g., boiler, air conditioning, electrical) and in 
       let recommendedMasters: string[] | undefined;
 
       if (this.conversationState.hasLocation && this.conversationState.hasServiceDescription) {
+        console.log(`🎯 [REGULAR] Both location and service found! Searching for masters...`);
         const masters = await this.findServiceMasters();
         if (masters.length > 0) {
           recommendedMasters = masters;
+          console.log(`✅ [REGULAR] Returning ${masters.length} recommended masters`);
+        } else {
+          console.log(`⚠️ [REGULAR] No masters found with these criteria`);
         }
+      } else {
+        console.log(`⏳ [REGULAR] Waiting for more info. Location: ${this.conversationState.hasLocation}, Service: ${this.conversationState.hasServiceDescription}`);
       }
 
       return {
@@ -128,21 +142,77 @@ What do you need to service (e.g., boiler, air conditioning, electrical) and in 
   private extractInformation(userMessage: string): void {
     const lowerMessage = userMessage.toLowerCase();
 
+    // Cities with declensions (nominative and locative forms)
+    const cityDeclensions: { [key: string]: string } = {
+      'bratislava': 'bratislava',
+      'bratislave': 'bratislava',
+      'košice': 'košice',
+      'košiciach': 'košice',
+      'prešov': 'prešov',
+      'prešove': 'prešov',
+      'žilina': 'žilina',
+      'žiline': 'žilina',
+      'zilina': 'žilina',
+      'ziline': 'žilina',
+      'banská bystrica': 'banská bystrica',
+      'banskej bystrici': 'banská bystrica',
+      'banska bystrica': 'banská bystrica',
+      'nitra': 'nitra',
+      'nitre': 'nitra',
+      'trnava': 'trnava',
+      'trnave': 'trnava',
+      'trenčín': 'trenčín',
+      'trenčíne': 'trenčín',
+      'trencin': 'trenčín',
+      'trencine': 'trenčín',
+      'martin': 'martin',
+      'martine': 'martin',
+      'poprad': 'poprad',
+      'poprade': 'poprad',
+      'prievidza': 'prievidza',
+      'prievidzi': 'prievidza',
+      'zvolen': 'zvolen',
+      'zvolene': 'zvolen',
+      'považská bystrica': 'považská bystrica',
+      'povazska bystrica': 'považská bystrica',
+      'považskej bystrici': 'považská bystrica',
+      'nové zámky': 'nové zámky',
+      'nove zamky': 'nové zámky',
+      'nových zámkoch': 'nové zámky',
+      'michalovce': 'michalovce',
+      'michalovciach': 'michalovce'
+    };
+
     const locationKeywords = [
       'bratislava', 'košice', 'prešov', 'žilina', 'banská bystrica', 'nitra', 'trnava', 'trenčín',
       'martin', 'poprad', 'prievidza', 'zvolen', 'považská bystrica', 'nové zámky', 'michalovce'
     ];
 
-    locationKeywords.forEach(city => {
-      if (lowerMessage.includes(city)) {
-        this.conversationState.location = city;
+    // Check for city declensions first (including "v Nitre", "v Bratislave", etc.)
+    let foundLocation = false;
+    Object.keys(cityDeclensions).forEach(declension => {
+      if (lowerMessage.includes(declension)) {
+        this.conversationState.location = cityDeclensions[declension];
         this.conversationState.hasLocation = true;
+        foundLocation = true;
+        console.log(`🗺️ [REGULAR] Found city declension "${declension}" → city "${cityDeclensions[declension]}"`);
       }
     });
 
+    // Fallback to basic city names
+    if (!foundLocation) {
+      locationKeywords.forEach(city => {
+        if (lowerMessage.includes(city)) {
+          this.conversationState.location = city;
+          this.conversationState.hasLocation = true;
+          console.log(`🗺️ [REGULAR] Found city "${city}"`);
+        }
+      });
+    }
+
     const serviceKeywords = [
       { keywords: ['kotol', 'kúrenie', 'radiátor', 'vykurovani'], type: 'Plynár' },
-      { keywords: ['elektr', 'električ', 'prúd', 'svetl'], type: 'Elektrikár' },
+      { keywords: ['elektr', 'električ', 'prúd', 'svetl', 'oprava'], type: 'Elektrikár' },
       { keywords: ['vod', 'potrubie', 'kohútik', 'kanalizác'], type: 'Inštalatér' },
       { keywords: ['klimatizáci', 'vetranie'], type: 'Klimatizácie' }
     ];
@@ -151,12 +221,19 @@ What do you need to service (e.g., boiler, air conditioning, electrical) and in 
       if (service.keywords.some(kw => lowerMessage.includes(kw))) {
         this.conversationState.serviceType = service.type;
         this.conversationState.hasServiceDescription = true;
+        console.log(`🔧 [REGULAR] Found service type: "${service.type}"`);
       }
     });
   }
 
   private async findServiceMasters(): Promise<string[]> {
     try {
+      console.log(`🔍 [REGULAR] Searching masters with params:`, {
+        location: this.conversationState.location,
+        profession: this.conversationState.serviceType,
+        serviceType: 'regular'
+      });
+
       const masters = await searchMastersByLocation({
         location: this.conversationState.location,
         profession: this.conversationState.serviceType,
@@ -164,9 +241,10 @@ What do you need to service (e.g., boiler, air conditioning, electrical) and in 
         limit: 5
       });
 
+      console.log(`📋 [REGULAR] Found ${masters.length} masters`);
       return masters.map(m => m.id);
     } catch (error) {
-      console.error('Error finding service masters:', error);
+      console.error('[REGULAR] Error finding service masters:', error);
       return [];
     }
   }

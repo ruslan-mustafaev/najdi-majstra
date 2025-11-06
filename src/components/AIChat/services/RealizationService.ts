@@ -79,7 +79,15 @@ Povedz mi prosím: aký typ prác plánuješ (stavba, rekonštrukcia, dokončova
         .map(msg => msg.content)
         .join(' ') + ' ' + userMessage;
 
+      console.log(`🔍 [REALIZATION] ALL USER MESSAGES:`, allUserMessages);
       this.extractInformation(allUserMessages);
+
+      console.log(`📊 [REALIZATION] Conversation state:`, {
+        hasLocation: this.conversationState.hasLocation,
+        location: this.conversationState.location,
+        hasProjectDescription: this.conversationState.hasProjectDescription,
+        projectType: this.conversationState.projectType
+      });
 
       const messages: OpenRouterMessage[] = [
         {
@@ -103,10 +111,16 @@ Povedz mi prosím: aký typ prác plánuješ (stavba, rekonštrukcia, dokončova
       let recommendedMasters: string[] | undefined;
 
       if (this.conversationState.hasLocation && this.conversationState.hasProjectDescription) {
+        console.log(`🎯 [REALIZATION] Both location and project found! Searching for masters...`);
         const masters = await this.findProjectMasters();
         if (masters.length > 0) {
           recommendedMasters = masters;
+          console.log(`✅ [REALIZATION] Returning ${masters.length} recommended masters`);
+        } else {
+          console.log(`⚠️ [REALIZATION] No masters found with these criteria`);
         }
+      } else {
+        console.log(`⏳ [REALIZATION] Waiting for more info. Location: ${this.conversationState.hasLocation}, Project: ${this.conversationState.hasProjectDescription}`);
       }
 
       return {
