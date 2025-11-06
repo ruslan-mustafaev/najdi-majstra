@@ -134,13 +134,13 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
   }, [master.id]);
 
   const loadReviews = async () => {
-    if (!master.id) return;
+    if (!master.userId) return;
 
     try {
       const { data, error } = await supabase
         .from('master_reviews')
         .select('*')
-        .eq('master_id', master.id)
+        .eq('master_id', master.userId)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
