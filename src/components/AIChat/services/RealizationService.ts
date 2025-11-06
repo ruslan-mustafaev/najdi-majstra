@@ -30,11 +30,15 @@ COMMUNICATION STYLE:
 EXAMPLE OF CORRECT RESPONSE:
 "Interesting project! To help you, I need to know what type of work it is (renovation, construction, finishing) and where the property is located?"
 
+WHEN YOU HAVE ENOUGH INFORMATION:
+Say: "I found suitable masters for your project in your area. Check recommendations below, and feel free to ask if you need masters for another project!"
+
 IMPORTANT:
 - Extract city/region from response
 - Extract project type (construction/renovation/finishing)
 - Respond naturally
-- NO markdown formatting`;
+- NO markdown formatting
+- User can continue conversation after seeing masters`;
     }
 
     return `Si AI asistent pre realizáciu projektov na platforme najdiMajstra.sk.
@@ -52,11 +56,15 @@ Pomôcť nájsť vhodných majstrov pre stavebné a rekonštrukčné projekty. B
 PRÍKLAD SPRÁVNEJ ODPOVEDE:
 "Zaujímavý projekt! Aby som ti vedel pomôcť, potrebujem vedieť o aký typ prác ide (rekonštrukcia, stavba, dokončovanie) a kde sa nachádza nehnuteľnosť?"
 
+KEĎ MÁŠ DOSTATOK INFORMÁCIÍ:
+Povedz: "Našiel som vhodných majstrov pre váš projekt vo vašej lokalite. Pozrite si odporúčania nižšie a pokojne sa opýtajte, ak potrebujete majstrov na iný projekt!"
+
 DÔLEŽITÉ:
 - Extrahuj mesto/región z odpovede
 - Extrahuj typ projektu (stavba/rekonštrukcia/dokončovanie)
 - Odpovedaj v slovenčine prirodzene
-- ŽIADNE markdown formátovanie`;
+- ŽIADNE markdown formátovanie
+- Používateľ môže pokračovať v konverzácii po zobrazení majstrov`;
   }
 
   getInitialMessage(language: 'sk' | 'en' = 'sk'): string {

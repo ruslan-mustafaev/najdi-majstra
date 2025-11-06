@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Send, Bot, User, Loader2, Star, MapPin, Phone } from 'lucide-react';
+import { X, Send, Bot, User, Loader2, Star, MapPin } from 'lucide-react';
 import { ChatMessage } from './types';
 import { AIService } from './AIService';
 import { useLanguage } from '../../hooks/useLanguage';
@@ -282,7 +282,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
                 <div
                   key={master.id}
                   className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-lg transition-shadow cursor-pointer"
-                  onClick={() => window.open(`/master/${master.slug}`, '_blank')}
+                  onClick={() => window.location.href = `/master/${master.slug}`}
                 >
                   <div className="flex items-start space-x-4">
                     <img
@@ -324,14 +324,13 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
                         </p>
                       )}
                       <button
-                        className="w-full bg-[#4169e1] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#3558d4] transition-colors flex items-center justify-center space-x-2"
+                        className="w-full bg-[#4169e1] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#3558d4] transition-colors"
                         onClick={(e) => {
                           e.stopPropagation();
-                          window.open(`/master/${master.slug}`, '_blank');
+                          window.location.href = `/master/${master.slug}`;
                         }}
                       >
-                        <Phone size={14} />
-                        <span>{language === 'sk' ? 'Zobraziť profil' : 'View Profile'}</span>
+                        {language === 'sk' ? 'Zobraziť profil' : 'View Profile'}
                       </button>
                     </div>
                   </div>

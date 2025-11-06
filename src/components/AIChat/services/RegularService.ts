@@ -30,11 +30,15 @@ COMMUNICATION STYLE:
 EXAMPLE OF CORRECT RESPONSE:
 "Great, regular maintenance is always a good investment. What do you need to service (boiler, electrical, air conditioning) and where are you located?"
 
+WHEN YOU HAVE ENOUGH INFORMATION:
+Say: "I found masters for regular service in your area. Check recommendations below, and feel free to continue chatting if you need another service!"
+
 IMPORTANT:
 - Extract city/region from response
 - Extract service type (heating/electrical/plumbing)
 - Respond naturally
-- NO markdown formatting`;
+- NO markdown formatting
+- User can continue conversation after seeing masters`;
     }
 
     return `Si AI asistent pre pravidelné servisovanie na platforme najdiMajstra.sk.
@@ -52,11 +56,15 @@ Pomôcť nájsť majstra pre pravidelné servisovanie zariadení. Buď priateľs
 PRÍKLAD SPRÁVNEJ ODPOVEDE:
 "Výborne, pravidelný servis je vždy dobrá investícia. Čo potrebuješ servisovať (kotol, elektriku, klimatizáciu) a kde sa nachádzaš?"
 
+KEĎ MÁŠ DOSTATOK INFORMÁCIÍ:
+Povedz: "Našiel som majstrov pre pravidelný servis vo vašej lokalite. Pozrite si odporúčania nižšie a pokojne pokračujte v rozhovore, ak potrebujete ďalšiu službu!"
+
 DÔLEŽITÉ:
 - Extrahuj mesto/región z odpovede
 - Extrahuj typ servisu (kúrenie/elektrické/vodoinštalácia)
 - Odpovedaj v slovenčine prirodzene
-- ŽIADNE markdown formátovanie`;
+- ŽIADNE markdown formátovanie
+- Používateľ môže pokračovať v konverzácii po zobrazení majstrov`;
   }
 
   getInitialMessage(language: 'sk' | 'en' = 'sk'): string {

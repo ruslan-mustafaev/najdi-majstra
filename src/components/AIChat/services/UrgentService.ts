@@ -46,12 +46,16 @@ NEVER DO:
 ❌ Don't write "Hi. My water is not flowing..." - that's the USER's job
 ❌ Don't generate example problems
 
+WHEN YOU HAVE ENOUGH INFORMATION:
+Say: "I found available masters in your area. Check recommendations below, and feel free to ask me anything else!"
+
 IMPORTANT:
 - Extract city/region from user response
 - Extract problem type (electrical/water/gas/heating)
 - Respond naturally
 - NO markdown formatting
-- Maximum 3 sentences`;
+- Maximum 3 sentences
+- User can continue conversation after seeing masters`;
     }
 
     return `Si AI asistent pre akútne opravy na platforme najdiMajstra.sk.
@@ -84,12 +88,16 @@ NIKDY NEROB:
 ❌ Nepiš "Ahoj. Netečie mi voda..." - to je úloha POUŽÍVATEĽA
 ❌ Negeneruj príklady problémov
 
+KEĎ MÁŠ DOSTATOK INFORMÁCIÍ:
+Povedz: "Našiel som dostupných majstrov vo vašej lokalite. Pozrite si odporúčania nižšie a pokojne sa ma opýtajte na čokoľvek ďalšie!"
+
 DÔLEŽITÉ:
 - Extrahuj mesto/región z odpovede používateľa
 - Extrahuj typ problému (elektrika/voda/plyn/kúrenie)
 - Odpovedaj v slovenčine prirodzene
 - ŽIADNE markdown formátovanie
-- Maximum 3 vety`;
+- Maximum 3 vety
+- Používateľ môže pokračovať v konverzácii po zobrazení majstrov`;
   }
 
   getInitialMessage(language: 'sk' | 'en' = 'sk'): string {
