@@ -1,9 +1,55 @@
 import { ChatMessage, AIResponse } from '../types';
-import { getTopRatedMasters } from '../../../lib/mastersApi';
+import { callOpenRouter, OpenRouterMessage } from '../../../lib/openRouterApi';
+import { searchMastersByLocation } from '../../../lib/masterSearchApi';
 
 export class RegularService {
-  private systemPrompt = `
-Si špecializovaný AI asistent pre PRAVIDELNÉ SERVISOVANIE na platforme najdiMajstra.sk.
+  private conversationState: {
+    serviceType?: string;
+    location?: string;
+    hasLocation: boolean;
+    hasServiceDescription: boolean;
+  } = {
+    hasLocation: false,
+    hasServiceDescription: false
+  };
+
+  private getSystemPrompt(language: 'sk' | 'en'): string {
+    if (language === 'en') {
+      return `You are a specialized AI assistant for REGULAR MAINTENANCE on the najdiMajstra.sk platform.
+
+CONTEXT: Users plan regular technical maintenance, prevention, and scheduled work.
+
+YOUR TASK:
+- Help compile a regular maintenance plan
+- Select masters for permanent cooperation
+- Give recommendations on service frequency
+- Explain the importance of prevention
+
+COMMUNICATION STYLE:
+- Thorough and professional
+- Emphasis on long-term perspective
+- Educational approach
+- Planning and system
+
+PRIORITIES:
+1. Master quality and reliability
+2. Experience with regular service
+3. Reasonable service price
+4. Suitable working time
+
+KEY QUESTIONS:
+- What equipment needs servicing?
+- How often was service performed before?
+- What budget is planned?
+- Any time preferences?
+
+IMPORTANT:
+- Extract location (city/region) from user messages
+- Extract service type (heating/electrical/plumbing/etc)
+- Respond in Slovak naturally`;
+    }
+
+    return `Si špecializovaný AI asistent pre PRAVIDELNÉ SERVISOVANIE na platforme najdiMajstra.sk.
 
 KONTEXT: Používatelia plánujú pravidelné technické servisovanie, prevenciu a plánované práce.
 
@@ -30,7 +76,12 @@ KĽÚČOVÉ OTÁZKY:
 - Ako často sa servisovanie vykonávalo predtým?
 - Aký rozpočet je plánovaný?
 - Sú nejaké preferencie času?
-`;
+
+DÔLEŽITÉ:
+- Extrahuj lokalitu (mesto/región) z používateľských správ
+- Extrahuj typ servisu (kúrenie/elektrické/vodoinštalácia/etc)
+- Odpovedaj v slovenčine prirodzene`;
+  }
 
   getInitialMessage(language: 'sk' | 'en' = 'sk'): string {
     if (language === 'en') {
@@ -79,236 +130,103 @@ Na základe vašich odpovedí vyberiem spoľahlivých majstrov pre stálu spolup
   }
 
   async processMessage(userMessage: string, conversationHistory: ChatMessage[], language: 'sk' | 'en' = 'sk'): Promise<AIResponse> {
-    // Simulácia spracovania AI
-    await new Promise(resolve => setTimeout(resolve, 1800));
+    try {
+      this.extractInformation(userMessage);
 
-    const lowerMessage = userMessage.toLowerCase();
-    
-    // Hľadanie vhodných majstrov pre pravidelné servisovanie
-    const serviceMasters = this.findServiceMasters(userMessage);
+      const messages: OpenRouterMessage[] = [
+        {
+          role: 'system',
+          content: this.getSystemPrompt(language)
+        }
+      ];
 
-    let response = '';
+      conversationHistory.forEach(msg => {
+        if (msg.sender === 'user') {
+          messages.push({ role: 'user', content: msg.content });
+        } else if (msg.sender === 'ai') {
+          messages.push({ role: 'assistant', content: msg.content });
+        }
+      });
 
-    // Analýza typu zariadenia
-    if (lowerMessage.includes('котел') || lowerMessage.includes('отопление')) {
-      if (language === 'en') {
-        response += `🔥 **HEATING MAINTENANCE**
+      messages.push({ role: 'user', content: userMessage });
 
-**Recommended frequency:**
-• Gas boilers: once a year (before heating season)
-• Electric boilers: once every 2 years
-• Radiators: flushing every 3-5 years
+      const aiResponse = await callOpenRouter(messages);
 
-**Service includes:**
-✅ Heat exchanger cleaning
-✅ Automation check
-✅ Parameter adjustment
-✅ Filter replacement
-✅ Chimney inspection
+      let recommendedMasters: string[] | undefined;
 
-`;
-      } else {
-        response += `🔥 **SERVISOVANIE VYKUROVANIA**
-
-**Odporúčaná frekvencia:**
-• Plynové kotly: 1x ročne (pred vykurovacou sezónou)
-• Elektrické kotly: 1x za 2 roky
-• Radiátory: preplach každé 3-5 rokov
-
-**Servis zahŕňa:**
-✅ Čistenie výmenníka tepla
-✅ Kontrola automatiky
-✅ Nastavenie parametrov
-✅ Výmena filtrov
-✅ Kontrola komína
-
-`;
+      if (this.conversationState.hasLocation && this.conversationState.hasServiceDescription) {
+        const masters = await this.findServiceMasters();
+        if (masters.length > 0) {
+          recommendedMasters = masters;
+        }
       }
-    } else if (lowerMessage.includes('электр') || lowerMessage.includes('щиток')) {
-      if (language === 'en') {
-        response += `⚡ **ELECTRICAL MAINTENANCE**
 
-**Recommended frequency:**
-• Home panels: check once a year
-• Industrial: every 6 months
-• RCD and circuit breakers: testing once a year
+      return {
+        message: aiResponse,
+        recommendedMasters
+      };
+    } catch (error) {
+      console.error('Error processing message with AI:', error);
 
-**Service includes:**
-✅ Contact inspection
-✅ Insulation resistance measurement
-✅ RCD testing
-✅ Connection tightening
-✅ Worn element replacement
-
-`;
-      } else {
-        response += `⚡ **ELEKTRICKÉ SERVISOVANIE**
-
-**Odporúčaná frekvencia:**
-• Domáce rozvádzače: kontrola 1x ročne
-• Priemyselné: každých 6 mesiacov
-• Prúdové chrániče a ističe: testovanie 1x ročne
-
-**Servis zahŕňa:**
-✅ Kontrola kontaktov
-✅ Meranie odporu izolácie
-✅ Testovanie prúdových chráničov
-✅ Dotiahnutie spojov
-✅ Výmena opotrebovaných prvkov
-
-`;
-      }
-    } else if (lowerMessage.includes('сантехник') || lowerMessage.includes('вода')) {
-      response += `💧 **САНТЕХНИЧЕСКОЕ ОБСЛУЖИВАНИЕ**
-
-**Рекомендуемая частота:**
-• Смесители: проверка раз в год
-• Трубы: осмотр каждые 6 месяцев
-• Фильтры: замена по графику
-
-**Что включает сервис:**
-✅ Проверка на протечки
-✅ Чистка аэраторов
-✅ Замена прокладок
-✅ Промывка труб
-✅ Проверка давления
-
-`;
-    } else if (lowerMessage.includes('кондиционер') || lowerMessage.includes('вентиляция')) {
-      response += `❄️ **ОБСЛУЖИВАНИЕ КЛИМАТА**
-
-**Рекомендуемая частота:**
-• Кондиционеры: 2 раза в год (весна/осень)
-• Вентиляция: раз в 6 месяцев
-• Фильтры: замена каждые 3 месяца
-
-**Что включает сервис:**
-✅ Чистка фильтров
-✅ Дозаправка фреоном
-✅ Проверка дренажа
-✅ Чистка теплообменников
-✅ Проверка автоматики
-
-`;
+      return {
+        message: language === 'sk'
+          ? 'Prepáčte, nastala chyba pri spracovaní vašej správy. Prosím, skúste to znovu alebo kontaktujte podporu.'
+          : 'Sorry, an error occurred while processing your message. Please try again or contact support.',
+        recommendedMasters: undefined
+      };
     }
-
-    // Všeobecné odporúčania
-    if (language === 'en') {
-      response += `💡 **BENEFITS OF REGULAR SERVICE:**
-
-🔹 Save up to 30% on repairs
-🔹 Increase equipment lifespan
-🔹 Stable system operation
-🔹 Prevent emergency situations
-🔹 Maintain warranty
-
-`;
-    } else {
-      response += `💡 **VÝHODY PRAVIDELNÉHO SERVISU:**
-
-🔹 Úspora až 30% na opravách
-🔹 Predĺženie životnosti zariadení
-🔹 Stabilný chod systémov
-🔹 Predchádzanie havárijným situáciám
-🔹 Zachovanie záruky
-
-`;
-    }
-
-    // Informácie o majstroch
-    if (serviceMasters.length > 0) {
-      if (language === 'en') {
-        response += `✅ Selected ${serviceMasters.length} experienced masters!
-
-**All specialists:**
-• Have experience with regular maintenance
-• Provide warranty on work
-• Work under contracts
-• Keep service logs
-• Remind about scheduled work`;
-      } else {
-        response += `✅ Vybral som ${serviceMasters.length} skúsených majstrov!
-
-**Všetci špecialisti:**
-• Majú skúsenosti s pravidelným servisovaním
-• Poskytujú záruku na práce
-• Pracujú na základe zmlúv
-• Vedú servisné záznamy
-• Pripomínajú plánované práce`;
-      }
-    } else {
-      if (language === 'en') {
-        response += `🔍 For precise master selection, please specify:
-
-• Type of equipment for maintenance
-• Your location
-• Preferred working hours
-• Planned budget`;
-      } else {
-        response += `🔍 Pre presný výber majstrov upresnite:
-
-• Typ zariadenia na servisovanie
-• Vaše umiestnenie
-• Preferovaný čas prác
-• Plánovaný rozpočet`;
-      }
-    }
-
-    return {
-      message: response,
-      recommendedMasters: serviceMasters.length > 0 ? serviceMasters : undefined
-    };
   }
 
-  private async findServiceMasters(userMessage: string): Promise<string[]> {
+  private extractInformation(userMessage: string): void {
     const lowerMessage = userMessage.toLowerCase();
-    const serviceMasters: string[] = [];
 
-    const masters = await getTopRatedMasters();
-    masters.forEach(master => {
-      // Проверяем наличие сервисных услуг
-      const hasServiceExperience = master.services.some(service => 
-        service.toLowerCase().includes('сервис') || 
-        service.toLowerCase().includes('обслуживание') ||
-        service.toLowerCase().includes('профилактика') ||
-        service.toLowerCase().includes('техобслуживание') ||
-        service.toLowerCase().includes('регулярн')
-      );
+    const locationKeywords = [
+      'bratislava', 'košice', 'prešov', 'žilina', 'banská bystrica', 'nitra', 'trnava', 'trenčín',
+      'martin', 'poprad', 'prievidza', 'zvolen', 'považská bystrica', 'nové zámky', 'michalovce'
+    ];
 
-      // Проверяем опыт работы (предпочтение опытным мастерам)
-      const hasGoodExperience = master.experience.includes('вiac ako') || 
-                               master.experience.includes('5') ||
-                               master.experience.includes('10');
-
-      // Проверяем соответствие профессии
-      let isProfessionMatch = false;
-      
-      if (lowerMessage.includes('котел') || lowerMessage.includes('отопление') || lowerMessage.includes('газ')) {
-        isProfessionMatch = master.profession.toLowerCase().includes('газ') || 
-                           master.profession.toLowerCase().includes('плын');
-      } else if (lowerMessage.includes('электр')) {
-        isProfessionMatch = master.profession.toLowerCase().includes('электр');
-      } else if (lowerMessage.includes('сантехник') || lowerMessage.includes('вода')) {
-        isProfessionMatch = master.profession.toLowerCase().includes('водо');
-      } else if (lowerMessage.includes('кондиционер') || lowerMessage.includes('климат')) {
-        isProfessionMatch = master.profession.toLowerCase().includes('климат') ||
-                           master.services.some(s => s.toLowerCase().includes('кондиционер'));
-      }
-
-      // Добавляем мастера если есть опыт сервиса и соответствие профессии
-      if ((hasServiceExperience || hasGoodExperience) && (isProfessionMatch || hasServiceExperience)) {
-        serviceMasters.push(master.id);
+    locationKeywords.forEach(city => {
+      if (lowerMessage.includes(city)) {
+        this.conversationState.location = city;
+        this.conversationState.hasLocation = true;
       }
     });
 
-    return serviceMasters.slice(0, 5);
+    const serviceKeywords = [
+      { keywords: ['kotol', 'kúrenie', 'radiátor', 'vykurovani'], type: 'Plynár' },
+      { keywords: ['elektr', 'električ', 'prúd', 'svetl'], type: 'Elektrikár' },
+      { keywords: ['vod', 'potrubie', 'kohútik', 'kanalizác'], type: 'Inštalatér' },
+      { keywords: ['klimatizáci', 'vetranie'], type: 'Klimatizácie' }
+    ];
+
+    serviceKeywords.forEach(service => {
+      if (service.keywords.some(kw => lowerMessage.includes(kw))) {
+        this.conversationState.serviceType = service.type;
+        this.conversationState.hasServiceDescription = true;
+      }
+    });
   }
 
-  updateSystemPrompt(newPrompt: string): void {
-    this.systemPrompt = newPrompt;
+  private async findServiceMasters(): Promise<string[]> {
+    try {
+      const masters = await searchMastersByLocation({
+        location: this.conversationState.location,
+        profession: this.conversationState.serviceType,
+        serviceType: 'regular',
+        limit: 5
+      });
+
+      return masters.map(m => m.id);
+    } catch (error) {
+      console.error('Error finding service masters:', error);
+      return [];
+    }
   }
 
-  getSystemPrompt(): string {
-    return this.systemPrompt;
+  resetConversationState(): void {
+    this.conversationState = {
+      hasLocation: false,
+      hasServiceDescription: false
+    };
   }
 }

@@ -1,9 +1,57 @@
 import { ChatMessage, AIResponse } from '../types';
-import { getTopRatedMasters } from '../../../lib/mastersApi';
+import { callOpenRouter, OpenRouterMessage } from '../../../lib/openRouterApi';
+import { searchMastersByLocation } from '../../../lib/masterSearchApi';
 
 export class UrgentService {
-  private systemPrompt = `
-Si špecializovaný AI asistent pre AKÚTNE OPRAVY na platforme najdiMajstra.sk.
+  private conversationState: {
+    problemType?: string;
+    location?: string;
+    urgencyLevel?: 'critical' | 'high' | 'medium';
+    hasLocation: boolean;
+    hasProblemDescription: boolean;
+  } = {
+    hasLocation: false,
+    hasProblemDescription: false
+  };
+
+  private getSystemPrompt(language: 'sk' | 'en'): string {
+    if (language === 'en') {
+      return `You are a specialized AI assistant for EMERGENCY REPAIRS on the najdiMajstra.sk platform.
+
+CONTEXT: Users contact you with URGENT failures and emergencies requiring immediate intervention.
+
+YOUR TASK:
+- Help quickly diagnose the problem
+- Assess the danger level of the situation
+- Find suitable masters for emergency call
+- Provide basic safety recommendations
+
+COMMUNICATION STYLE:
+- Fast and to the point
+- Safety first, then everything else
+- Ask specific questions for quick diagnosis
+- Show understanding of urgency
+
+PRIORITIES:
+1. SAFETY above all
+2. Speed of response
+3. Master availability NOW
+4. Experience with emergency situations
+
+KEY QUESTIONS:
+- Is safety threatened?
+- Can the problem be temporarily solved?
+- Where exactly did the failure occur?
+- When is a master needed?
+
+IMPORTANT:
+- You MUST extract the location (city/region) from user messages
+- Ask for location if not provided
+- Extract problem type (elektrické/vodoinštalácia/plyn/kúrenie/etc)
+- Respond in Slovak language naturally and conversationally`;
+    }
+
+    return `Si špecializovaný AI asistent pre AKÚTNE OPRAVY na platforme najdiMajstra.sk.
 
 KONTEXT: Používatelia sa na teba obracajú s NALIEHAVÝMI poruchami a haváriami, ktoré vyžadujú okamžitý zásah.
 
@@ -23,14 +71,20 @@ PRIORITY:
 1. BEZPEČNOSŤ nadovšetko
 2. Rýchlosť reakcie
 3. Dostupnosť majstra TERAZ
-4. Skúsenosti s havárijными situáciami
+4. Skúsenosti s havárijnymi situáciami
 
 KĽÚČOVÉ OTÁZKY:
 - Je ohrozená bezpečnosť?
 - Dá sa problém dočasne vyriešiť?
 - Kde presne sa porucha stala?
 - Kedy je potrebný majster?
-`;
+
+DÔLEŽITÉ:
+- MUSÍŠ extrahovať lokalitu (mesto/región) z používateľských správ
+- Opýtaj sa na lokalitu ak nie je uvedená
+- Extrahuj typ problému (elektrické/vodoinštalácia/plyn/kúrenie/etc)
+- Odpovedaj v slovenčine prirodzene a konverzačne`;
+  }
 
   getInitialMessage(language: 'sk' | 'en' = 'sk'): string {
     if (language === 'en') {
@@ -67,191 +121,109 @@ Rozumiem, že máte naliehavý problém! Pomôžem vám rýchlo nájsť majstra 
   }
 
   async processMessage(userMessage: string, conversationHistory: ChatMessage[], language: 'sk' | 'en' = 'sk'): Promise<AIResponse> {
-    // Simulácia spracovania AI
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    try {
+      this.extractInformation(userMessage);
 
-    const lowerMessage = userMessage.toLowerCase();
-    
-    // Analýza bezpečnosti
-    const dangerKeywords = ['газ', 'дым', 'искры', 'вода', 'затопление', 'короткое замыкание'];
-    const hasDanger = dangerKeywords.some(keyword => lowerMessage.includes(keyword));
+      const messages: OpenRouterMessage[] = [
+        {
+          role: 'system',
+          content: this.getSystemPrompt(language)
+        }
+      ];
 
-    // Hľadanie vhodných majstrov
-    const urgentMasters = this.findUrgentMasters(userMessage);
+      conversationHistory.forEach(msg => {
+        if (msg.sender === 'user') {
+          messages.push({ role: 'user', content: msg.content });
+        } else if (msg.sender === 'ai') {
+          messages.push({ role: 'assistant', content: msg.content });
+        }
+      });
 
-    let response = '';
+      messages.push({ role: 'user', content: userMessage });
 
-    if (hasDanger) {
-      if (language === 'en') {
-        response = `⚠️ **ATTENTION! POTENTIALLY DANGEROUS SITUATION!**
+      const aiResponse = await callOpenRouter(messages);
 
-Immediately:
-1. Ensure safety (turn off electricity/gas/water)
-2. Ventilate the room if there are odors
-3. Do not use electrical appliances near water
+      let recommendedMasters: string[] | undefined;
 
-`;
-      } else {
-        response = `⚠️ **POZOR! POTENCIÁLNE NEBEZPEČNÁ SITUÁCIA!**
-
-Okamžite:
-1. Zabezpečte bezpečnosť (vypnite elektrinu/plyn/vodu)
-2. Vyvetrajte miestnosť ak sú cítiť pachy
-3. Nepoužívajte elektrické spotrebiče pri vode
-
-`;
+      if (this.conversationState.hasLocation && this.conversationState.hasProblemDescription) {
+        const masters = await this.findUrgentMasters();
+        if (masters.length > 0) {
+          recommendedMasters = masters;
+        }
       }
+
+      return {
+        message: aiResponse,
+        recommendedMasters
+      };
+    } catch (error) {
+      console.error('Error processing message with AI:', error);
+
+      return {
+        message: language === 'sk'
+          ? 'Prepáčte, nastala chyba pri spracovaní vašej správy. Prosím, skúste to znovu alebo kontaktujte podporu.'
+          : 'Sorry, an error occurred while processing your message. Please try again or contact support.',
+        recommendedMasters: undefined
+      };
     }
-
-    // Generovanie odpovede na základe typu problému
-    if (lowerMessage.includes('электр') || lowerMessage.includes('свет') || lowerMessage.includes('розетка')) {
-      if (language === 'en') {
-        response += `🔌 **ELECTRICAL PROBLEM**
-
-First aid:
-• Turn off the circuit breaker
-• Do not touch bare wires
-• Check if water got on the wiring
-
-`;
-      } else {
-        response += `🔌 **ELEKTRICKÝ PROBLÉM**
-
-Prvá pomoc:
-• Vypnite istič v rozvádzači
-• Nedotýkajte sa holých vodičov
-• Skontrolujte, či sa nedostala voda na elektroinštaláciu
-
-`;
-      }
-    } else if (lowerMessage.includes('вода') || lowerMessage.includes('труба') || lowerMessage.includes('кран')) {
-      if (language === 'en') {
-        response += `💧 **WATER PROBLEM**
-
-Urgent actions:
-• Turn off the main water valve
-• Remove valuables from the flood zone
-• Photograph damage for insurance
-
-`;
-      } else {
-        response += `💧 **PROBLÉM S VODOU**
-
-Naliehavé kroky:
-• Uzavrite hlavný ventil vody
-• Odstráňte cenné veci zo zóny zatopenia
-• Odfotografujte škody pre poisťovňu
-
-`;
-      }
-    } else if (lowerMessage.includes('газ') || lowerMessage.includes('котел')) {
-      if (language === 'en') {
-        response += `🔥 **GAS EQUIPMENT**
-
-CRITICALLY IMPORTANT:
-• Turn off gas at the apartment entrance
-• Open windows for ventilation
-• DO NOT turn on lights and electrical appliances
-• If you smell gas - immediately leave the premises
-
-`;
-      } else {
-        response += `🔥 **PLYNOVÉ ZARIADENIE**
-
-KRITICKY DÔLEŽITÉ:
-• Uzavrite plyn na vstupe do bytu
-• Otvorte okná na vetranie
-• NEZAPÍNAJTE svetlá a elektrické spotrebiče
-• Pri vôni plynu - okamžite opustite priestory
-
-`;
-      }
-    }
-
-    // Pridávame informácie o majstroch
-    if (urgentMasters.length > 0) {
-      if (language === 'en') {
-        response += `✅ Found ${urgentMasters.length} masters for emergency call!
-
-All of them:
-• Work with emergency calls
-• Available for urgent departure
-• Have experience with similar situations
-• Are located in your area`;
-      } else {
-        response += `✅ Našiel som ${urgentMasters.length} majstrov pre akútny výjazd!
-
-Všetci:
-• Pracujú s havárijnými výjazdmi
-• Sú dostupní pre naliehavý výjazd
-• Majú skúsenosti s podobnými situáciami
-• Nachádzajú sa vo vašom regióne`;
-      }
-    } else {
-      if (language === 'en') {
-        response += `🔍 Looking for suitable masters...
-
-Please specify:
-• In which area do you need a visit?
-• What type of work is required?`;
-      } else {
-        response += `🔍 Hľadám vhodných majstrov...
-
-Upresnite prosím:
-• V ktorom regióne potrebujete výjazd?
-• Aký typ práce je potrebný?`;
-      }
-    }
-
-    return {
-      message: response,
-      recommendedMasters: urgentMasters.length > 0 ? urgentMasters : undefined
-    };
   }
 
-  private async findUrgentMasters(userMessage: string): Promise<string[]> {
+  private extractInformation(userMessage: string): void {
     const lowerMessage = userMessage.toLowerCase();
-    const urgentMasters: string[] = [];
 
-    const masters = await getTopRatedMasters();
-    masters.forEach(master => {
-      // Проверяем доступность для экстренных вызовов
-      const hasEmergencyService = master.services.some(service => 
-        service.toLowerCase().includes('поhotovos') || 
-        service.toLowerCase().includes('24/7') ||
-        service.toLowerCase().includes('экстренн') ||
-        service.toLowerCase().includes('срочн')
-      );
+    const locationKeywords = [
+      'bratislava', 'košice', 'prešov', 'žilina', 'banská bystrica', 'nitra', 'trnava', 'trenčín',
+      'martin', 'poprad', 'prievidza', 'zvolen', 'považská bystrica', 'nové zámky', 'michalovce',
+      'komárno', 'levice', 'humenné', 'bardejov', 'liptovský mikuláš'
+    ];
 
-      // Проверяем доступность мастера
-      const isAvailable = master.available;
-
-      // Проверяем соответствие профессии
-      let isProfessionMatch = false;
-      
-      if (lowerMessage.includes('электр') || lowerMessage.includes('свет')) {
-        isProfessionMatch = master.profession.toLowerCase().includes('электр');
-      } else if (lowerMessage.includes('вода') || lowerMessage.includes('труб')) {
-        isProfessionMatch = master.profession.toLowerCase().includes('водо');
-      } else if (lowerMessage.includes('газ') || lowerMessage.includes('котел')) {
-        isProfessionMatch = master.profession.toLowerCase().includes('газ') || 
-                           master.profession.toLowerCase().includes('плын');
-      }
-
-      if ((hasEmergencyService || isAvailable) && (isProfessionMatch || hasEmergencyService)) {
-        urgentMasters.push(master.id);
+    locationKeywords.forEach(city => {
+      if (lowerMessage.includes(city)) {
+        this.conversationState.location = city;
+        this.conversationState.hasLocation = true;
       }
     });
 
-    return urgentMasters.slice(0, 5); // Максимум 5 рекомендаций
+    const problemKeywords = [
+      { keywords: ['elektr', 'električ', 'prúd', 'svetl', 'zásuvk', 'istič'], type: 'Elektrikár' },
+      { keywords: ['vod', 'potrubie', 'kohútik', 'kanalizác', 'zatápa', 'tečie'], type: 'Inštalatér' },
+      { keywords: ['plyn', 'kotol', 'kúrenie', 'radiátor'], type: 'Plynár' },
+      { keywords: ['strech', 'zateka', 'okn', 'dver'], type: 'Stavbár' }
+    ];
+
+    problemKeywords.forEach(problem => {
+      if (problem.keywords.some(kw => lowerMessage.includes(kw))) {
+        this.conversationState.problemType = problem.type;
+        this.conversationState.hasProblemDescription = true;
+      }
+    });
+
+    const criticalKeywords = ['plyn', 'dym', 'iskr', 'požiar', 'zatopa'];
+    if (criticalKeywords.some(kw => lowerMessage.includes(kw))) {
+      this.conversationState.urgencyLevel = 'critical';
+    }
   }
 
-  // Метод для настройки промпта (можно изменять для разных сценариев)
-  updateSystemPrompt(newPrompt: string): void {
-    this.systemPrompt = newPrompt;
+  private async findUrgentMasters(): Promise<string[]> {
+    try {
+      const masters = await searchMastersByLocation({
+        location: this.conversationState.location,
+        profession: this.conversationState.problemType,
+        serviceType: 'urgent',
+        limit: 5
+      });
+
+      return masters.map(m => m.id);
+    } catch (error) {
+      console.error('Error finding urgent masters:', error);
+      return [];
+    }
   }
 
-  getSystemPrompt(): string {
-    return this.systemPrompt;
+  resetConversationState(): void {
+    this.conversationState = {
+      hasLocation: false,
+      hasProblemDescription: false
+    };
   }
 }

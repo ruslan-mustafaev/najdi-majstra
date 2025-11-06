@@ -1,9 +1,56 @@
 import { ChatMessage, AIResponse } from '../types';
-import { getTopRatedMasters } from '../../../lib/mastersApi';
+import { callOpenRouter, OpenRouterMessage } from '../../../lib/openRouterApi';
+import { searchMastersByLocation } from '../../../lib/masterSearchApi';
 
 export class RealizationService {
-  private systemPrompt = `
-Si špecializovaný AI asistent pre REALIZÁCIU PROJEKTOV na platforme najdiMajstra.sk.
+  private conversationState: {
+    projectType?: string;
+    location?: string;
+    hasLocation: boolean;
+    hasProjectDescription: boolean;
+  } = {
+    hasLocation: false,
+    hasProjectDescription: false
+  };
+
+  private getSystemPrompt(language: 'sk' | 'en'): string {
+    if (language === 'en') {
+      return `You are a specialized AI assistant for PROJECT REALIZATION on the najdiMajstra.sk platform.
+
+CONTEXT: Users plan construction, repair projects, and reconstructions of various scales.
+
+YOUR TASK:
+- Help structure the project
+- Select a team of specialized masters
+- Give recommendations on work stages
+- Assess complexity and timeframes
+
+COMMUNICATION STYLE:
+- Professional and detailed
+- Systematic planning approach
+- Emphasis on quality and deadlines
+- Consultative tone
+
+PRIORITIES:
+1. Experience with similar project realization
+2. Availability of specialized master team
+3. Portfolio of completed work
+4. Meeting deadlines and budget
+
+KEY QUESTIONS:
+- What type of project is planned?
+- What scope of work?
+- Are plans/project ready?
+- What realization timeframes?
+- What budget is set?
+
+IMPORTANT:
+- Extract location (city/region) from user messages
+- Extract project type (construction/renovation/finishing/etc)
+- Respond in Slovak naturally`;
+    }
+
+    return `Si špecializovaný AI asistent pre REALIZÁCIU PROJEKTOV na platforme najdiMajstra.sk.
 
 KONTEXT: Používatelia plánujú stavebné, opravárenské projekty a rekonštrukcie rôzneho rozsahu.
 
@@ -31,7 +78,12 @@ KĽÚČOVÉ OTÁZKY:
 - Sú pripravené plány/projekt?
 - Aké termíny realizácie?
 - Aký rozpočet je stanovený?
-`;
+
+DÔLEŽITÉ:
+- Extrahuj lokalitu (mesto/región) z používateľských správ
+- Extrahuj typ projektu (stavba/rekonštrukcia/dokončovanie/etc)
+- Odpovedaj v slovenčine prirodzene`;
+  }
 
   getInitialMessage(language: 'sk' | 'en' = 'sk'): string {
     if (language === 'en') {
@@ -100,286 +152,104 @@ Na základe týchto informácií vyberiem tím profesionálov a zostavím plán 
   }
 
   async processMessage(userMessage: string, conversationHistory: ChatMessage[], language: 'sk' | 'en' = 'sk'): Promise<AIResponse> {
-    // Simulácia spracovania AI
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    try {
+      this.extractInformation(userMessage);
 
-    const lowerMessage = userMessage.toLowerCase();
-    
-    // Hľadanie vhodných majstrov pre realizáciu
-    const projectMasters = this.findProjectMasters(userMessage);
+      const messages: OpenRouterMessage[] = [
+        {
+          role: 'system',
+          content: this.getSystemPrompt(language)
+        }
+      ];
 
-    let response = '';
+      conversationHistory.forEach(msg => {
+        if (msg.sender === 'user') {
+          messages.push({ role: 'user', content: msg.content });
+        } else if (msg.sender === 'ai') {
+          messages.push({ role: 'assistant', content: msg.content });
+        }
+      });
 
-    // Analýza typu projektu
-    if (lowerMessage.includes('строительство') || lowerMessage.includes('дом')) {
-      if (language === 'en') {
-        response += `🏠 **HOUSE CONSTRUCTION**
+      messages.push({ role: 'user', content: userMessage });
 
-**Main stages:**
-1️⃣ **Preparatory** (2-4 weeks)
-   • Project development/correction
-   • Obtaining permits
-   • Site preparation
+      const aiResponse = await callOpenRouter(messages);
 
-2️⃣ **Foundation work** (2-3 weeks)
-   • Earthwork
-   • Foundation construction
-   • Waterproofing
+      let recommendedMasters: string[] | undefined;
 
-3️⃣ **Wall construction** (4-8 weeks)
-   • Masonry/frame
-   • Floors
-   • Roofing
-
-4️⃣ **Engineering systems** (3-4 weeks)
-   • Electrical
-   • Plumbing
-   • Heating
-
-5️⃣ **Finishing work** (6-10 weeks)
-   • Interior finishing
-   • Exterior finishing
-
-`;
-      } else {
-        response += `🏠 **STAVBA DOMU**
-
-**Hlavné etapy:**
-1️⃣ **Prípravná** (2-4 týždne)
-   • Vypracovanie/úprava projektu
-   • Získanie povolení
-   • Príprava pozemku
-
-2️⃣ **Základové práce** (2-3 týždne)
-   • Zemné práce
-   • Zriadenie základov
-   • Hydroizolácia
-
-3️⃣ **Stavba stien** (4-8 týždňov)
-   • Murivo/konštrukcia
-   • Stropy
-   • Strecha
-
-4️⃣ **Inžinierske systémy** (3-4 týždne)
-   • Elektrina
-   • Sanitárne zariadenia
-   • Vykurovanie
-
-5️⃣ **Dokončovacie práce** (6-10 týždňov)
-   • Vnútorné dokončenie
-   • Vonkajšie dokončenie
-
-`;
+      if (this.conversationState.hasLocation && this.conversationState.hasProjectDescription) {
+        const masters = await this.findProjectMasters();
+        if (masters.length > 0) {
+          recommendedMasters = masters;
+        }
       }
-    } else if (lowerMessage.includes('ремонт') || lowerMessage.includes('реконструкция')) {
-      response += `🔨 **КАПИТАЛЬНЫЙ РЕМОНТ**
 
-**Этапы реализации:**
-1️⃣ **Демонтаж** (1-2 недели)
-   • Снос перегородок
-   • Демонтаж старых систем
-   • Вывоз мусора
+      return {
+        message: aiResponse,
+        recommendedMasters
+      };
+    } catch (error) {
+      console.error('Error processing message with AI:', error);
 
-2️⃣ **Черновые работы** (3-4 недели)
-   • Возведение перегородок
-   • Стяжка пола
-   • Штукатурка стен
-
-3️⃣ **Инженерия** (2-3 недели)
-   • Прокладка коммуникаций
-   • Электромонтаж
-   • Сантехника
-
-4️⃣ **Чистовая отделка** (4-6 недель)
-   • Напольные покрытия
-   • Покраска/обои
-   • Установка сантехники
-
-`;
-    } else if (lowerMessage.includes('кухня') || lowerMessage.includes('ванная')) {
-      response += `🛁 **РЕМОНТ ПОМЕЩЕНИЙ**
-
-**Специфика работ:**
-• Повышенная влажность (ванная)
-• Сложные коммуникации (кухня)
-• Точные замеры для мебели
-• Качественная вентиляция
-
-**Сроки:** 2-4 недели
-**Особенности:** Нужны специалисты по плитке, сантехнике, мебели
-
-`;
-    } else if (lowerMessage.includes('офис') || lowerMessage.includes('коммерческ')) {
-      response += `🏢 **КОММЕРЧЕСКИЕ ОБЪЕКТЫ**
-
-**Особенности:**
-• Соблюдение норм безопасности
-• Минимальные простои бизнеса
-• Работа в нерабочее время
-• Согласование с управляющими компаниями
-
-**Дополнительно:**
-• Пожарная сигнализация
-• Системы безопасности
-• Специальное освещение
-
-`;
+      return {
+        message: language === 'sk'
+          ? 'Prepáčte, nastala chyba pri spracovaní vašej správy. Prosím, skúste to znovu alebo kontaktujte podporu.'
+          : 'Sorry, an error occurred while processing your message. Please try again or contact support.',
+        recommendedMasters: undefined
+      };
     }
-
-    // Všeobecné odporúčania k projektu
-    if (language === 'en') {
-      response += `📊 **PROJECT RECOMMENDATIONS:**
-
-💡 **Planning:**
-• Reserve 15-20% time buffer
-• Provide 10-15% budget reserve
-• Agree all changes in writing
-
-🔍 **Quality control:**
-• Phased work acceptance
-• Photo documentation of hidden work
-• Check compliance with project
-
-📋 **Documentation:**
-• Contracts with each contractor
-• Work completion certificates
-• Warranty obligations
-
-`;
-    } else {
-      response += `📊 **ODPORÚČANIA K PROJEKTU:**
-
-💡 **Plánovanie:**
-• Naplánujte si 15-20% časovú rezervu
-• Predpokladajte 10-15% rozpočtovú rezervu
-• Odsúhlaste všetky zmeny písomne
-
-🔍 **Kontrola kvality:**
-• Postupné preberanie prác
-• Fotodokumentácia skrytých prác
-• Kontrola súladu s projektom
-
-📋 **Dokumentácia:**
-• Zmluvy s každým dodávateľom
-• Zápisnice o vykonaných prácach
-• Záručné záväzky
-
-`;
-    }
-
-    // Informácie o majstroch
-    if (projectMasters.length > 0) {
-      if (language === 'en') {
-        response += `✅ Found ${projectMasters.length} specialists for your project!
-
-**Team includes:**
-• Experienced foremen and team leaders
-• Specialists of different profiles
-• Masters with portfolio of similar work
-• Contractors working in teams
-
-**All masters:**
-• Have project work experience
-• Provide warranties
-• Meet deadlines
-• Work under contracts`;
-      } else {
-        response += `✅ Našiel som ${projectMasters.length} špecializovaných majstrov pre váš projekt!
-
-**Tím zahŕňa:**
-• Skúsených stavbyvedúcich a brigadírov
-• Špecializovaných majstrov rôznych profilov
-• Majstrov s portfóliom podobných prác
-• Realizátorov pracujúcich v tíme
-
-**Všetci majstri:**
-• Majú skúsenosti s projektovou prácou
-• Poskytujú záruky
-• Dodržiavajú termíny
-• Pracujú na základe zmlúv`;
-      }
-    } else {
-      if (language === 'en') {
-        response += `🔍 For team selection, please specify:
-
-• Exact type and scope of project
-• Your location
-• Planned timeline
-• Budget framework
-• Special requirements`;
-      } else {
-        response += `🔍 Pre výber tímu upresnite:
-
-• Presný typ a rozsah projektu
-• Vaše umiestnenie
-• Plánované termíny
-• Rozpočtové rámce
-• Osobitné požiadavky`;
-      }
-    }
-
-    return {
-      message: response,
-      recommendedMasters: projectMasters.length > 0 ? projectMasters : undefined
-    };
   }
 
-  private async findProjectMasters(userMessage: string): Promise<string[]> {
+  private extractInformation(userMessage: string): void {
     const lowerMessage = userMessage.toLowerCase();
-    const projectMasters: string[] = [];
 
-    const masters = await getTopRatedMasters();
-    masters.forEach(master => {
-      // Проверяем опыт проектной работы
-      const hasProjectExperience = master.services.some(service => 
-        service.toLowerCase().includes('проект') || 
-        service.toLowerCase().includes('строительство') ||
-        service.toLowerCase().includes('реконструкция') ||
-        service.toLowerCase().includes('ремонт') ||
-        service.toLowerCase().includes('отделка')
-      );
+    const locationKeywords = [
+      'bratislava', 'košice', 'prešov', 'žilina', 'banská bystrica', 'nitra', 'trnava', 'trenčín',
+      'martin', 'poprad', 'prievidza', 'zvolen', 'považská bystrica', 'nové zámky', 'michalovce'
+    ];
 
-      // Предпочтение командам и опытным мастерам
-      const isTeamOrExperienced = master.teamSize === 'small-team' || 
-                                 master.experience.includes('viac ako') ||
-                                 master.experience.includes('10');
-
-      // Проверяем рейтинг (для проектов важно качество)
-      const hasGoodRating = master.rating >= 8.5;
-
-      // Проверяем соответствие типу проекта
-      let isProjectMatch = false;
-      
-      if (lowerMessage.includes('строительство') || lowerMessage.includes('дом')) {
-        isProjectMatch = master.profession.toLowerCase().includes('строител') ||
-                        master.profession.toLowerCase().includes('мурар') ||
-                        hasProjectExperience;
-      } else if (lowerMessage.includes('ремонт') || lowerMessage.includes('отделка')) {
-        isProjectMatch = master.profession.toLowerCase().includes('малиар') ||
-                        master.profession.toLowerCase().includes('отделочн') ||
-                        hasProjectExperience;
-      } else if (lowerMessage.includes('электр')) {
-        isProjectMatch = master.profession.toLowerCase().includes('электр');
-      } else if (lowerMessage.includes('сантехник')) {
-        isProjectMatch = master.profession.toLowerCase().includes('водо');
-      }
-
-      // Добавляем мастера если подходит для проектной работы
-      if ((hasProjectExperience || isTeamOrExperienced) && 
-          (isProjectMatch || hasProjectExperience) && 
-          hasGoodRating) {
-        projectMasters.push(master.id);
+    locationKeywords.forEach(city => {
+      if (lowerMessage.includes(city)) {
+        this.conversationState.location = city;
+        this.conversationState.hasLocation = true;
       }
     });
 
-    return projectMasters.slice(0, 6); // Больше мастеров для проектов
+    const projectKeywords = [
+      { keywords: ['stavba', 'dom', 'budova'], type: 'Stavbár' },
+      { keywords: ['rekonštrukc', 'prestavba', 'renováci'], type: 'Stavbár' },
+      { keywords: ['dokončova', 'omietk', 'malova'], type: 'Maľovanie' },
+      { keywords: ['elektr', 'elektroinštaláci'], type: 'Elektrikár' },
+      { keywords: ['vodoinštaláci', 'kanalizáci'], type: 'Inštalatér' }
+    ];
+
+    projectKeywords.forEach(project => {
+      if (project.keywords.some(kw => lowerMessage.includes(kw))) {
+        this.conversationState.projectType = project.type;
+        this.conversationState.hasProjectDescription = true;
+      }
+    });
   }
 
-  updateSystemPrompt(newPrompt: string): void {
-    this.systemPrompt = newPrompt;
+  private async findProjectMasters(): Promise<string[]> {
+    try {
+      const masters = await searchMastersByLocation({
+        location: this.conversationState.location,
+        profession: this.conversationState.projectType,
+        serviceType: 'realization',
+        limit: 6
+      });
+
+      return masters.map(m => m.id);
+    } catch (error) {
+      console.error('Error finding project masters:', error);
+      return [];
+    }
   }
 
-  getSystemPrompt(): string {
-    return this.systemPrompt;
+  resetConversationState(): void {
+    this.conversationState = {
+      hasLocation: false,
+      hasProjectDescription: false
+    };
   }
 }
