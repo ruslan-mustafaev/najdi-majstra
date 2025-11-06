@@ -491,7 +491,7 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
               ) : (
                 <div className="text-center py-8 text-gray-500">
                   <p>Zatiaľ žiadne recenzie</p>
-                  {!isOwnProfile && user && (
+                  {!isOwnProfile && user && !isUserMaster && (
                     <p className="text-sm mt-2">Buďte prvý, kto zanechá recenziu!</p>
                   )}
                 </div>
