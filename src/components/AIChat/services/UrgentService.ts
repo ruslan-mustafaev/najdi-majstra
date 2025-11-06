@@ -116,6 +116,7 @@ Opíš mi prosím: Čo sa pokazilo a kde sa nachádzaš (mesto)? Pomôžem ti n�
         .map(msg => msg.content)
         .join(' ') + ' ' + userMessage;
 
+      console.log(`🔍 ALL USER MESSAGES:`, allUserMessages);
       this.extractInformation(allUserMessages);
 
       console.log(`📊 Conversation state:`, {
