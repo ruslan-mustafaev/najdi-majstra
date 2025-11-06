@@ -15,118 +15,60 @@ export class RegularService {
 
   private getSystemPrompt(language: 'sk' | 'en'): string {
     if (language === 'en') {
-      return `You are a specialized AI assistant for REGULAR MAINTENANCE on the najdiMajstra.sk platform.
-
-CONTEXT: Users plan regular technical maintenance, prevention, and scheduled work.
+      return `You are an AI assistant for regular maintenance on najdiMajstra.sk platform.
 
 YOUR TASK:
-- Help compile a regular maintenance plan
-- Select masters for permanent cooperation
-- Give recommendations on service frequency
-- Explain the importance of prevention
+Help find masters for regular equipment maintenance. Be friendly and professional.
 
 COMMUNICATION STYLE:
-- Thorough and professional
-- Emphasis on long-term perspective
-- Educational approach
-- Planning and system
+- Do NOT use ANY markdown formatting (no *, **, _, etc.)
+- Write plain text without highlighting
+- Be friendly but concise
+- Ask only for necessary information
+- Max 3-4 sentences at a time
 
-PRIORITIES:
-1. Master quality and reliability
-2. Experience with regular service
-3. Reasonable service price
-4. Suitable working time
-
-KEY QUESTIONS:
-- What equipment needs servicing?
-- How often was service performed before?
-- What budget is planned?
-- Any time preferences?
+EXAMPLE OF CORRECT RESPONSE:
+"Great, regular maintenance is always a good investment. What do you need to service (boiler, electrical, air conditioning) and where are you located?"
 
 IMPORTANT:
-- Extract location (city/region) from user messages
-- Extract service type (heating/electrical/plumbing/etc)
-- Respond in Slovak naturally`;
+- Extract city/region from response
+- Extract service type (heating/electrical/plumbing)
+- Respond naturally
+- NO markdown formatting`;
     }
 
-    return `Si špecializovaný AI asistent pre PRAVIDELNÉ SERVISOVANIE na platforme najdiMajstra.sk.
-
-KONTEXT: Používatelia plánujú pravidelné technické servisovanie, prevenciu a plánované práce.
+    return `Si AI asistent pre pravidelné servisovanie na platforme najdiMajstra.sk.
 
 TVOJA ÚLOHA:
-- Pomôcť zostaviť plán pravidelného servisovania
-- Vybrať majstrov pre stálu spoluprácu
-- Dať odporúčania k frekvencii servisovania
-- Vysvetliť dôležitosť prevencie
+Pomôcť nájsť majstra pre pravidelné servisovanie zariadení. Buď priateľský a profesionálny.
 
 ŠTÝL KOMUNIKÁCIE:
-- Dôkladne a profesionálne
-- Dôraz na dlhodobú perspektívu
-- Vzdelávací prístup
-- Plánovanie a systematickosť
+- Nepoužívaj ŽIADNE markdown formátovanie (bez *, **, _, atď.)
+- Písaj bežný text bez zvýraznenia
+- Buď priateľský ale vecný
+- Opýtaj sa len na potrebné informácie
+- Max 3-4 vety naraz
 
-PRIORITY:
-1. Kvalita a spoľahlivosť majstra
-2. Skúsenosti s pravidelným servisovaním
-3. Rozumná cena služieb
-4. Vhodný pracovný čas
-
-KĽÚČOVÉ OTÁZKY:
-- Aké zariadenie treba servisovať?
-- Ako často sa servisovanie vykonávalo predtým?
-- Aký rozpočet je plánovaný?
-- Sú nejaké preferencie času?
+PRÍKLAD SPRÁVNEJ ODPOVEDE:
+"Výborne, pravidelný servis je vždy dobrá investícia. Čo potrebuješ servisovať (kotol, elektriku, klimatizáciu) a kde sa nachádzaš?"
 
 DÔLEŽITÉ:
-- Extrahuj lokalitu (mesto/región) z používateľských správ
-- Extrahuj typ servisu (kúrenie/elektrické/vodoinštalácia/etc)
-- Odpovedaj v slovenčine prirodzene`;
+- Extrahuj mesto/región z odpovede
+- Extrahuj typ servisu (kúrenie/elektrické/vodoinštalácia)
+- Odpovedaj v slovenčine prirodzene
+- ŽIADNE markdown formátovanie`;
   }
 
   getInitialMessage(language: 'sk' | 'en' = 'sk'): string {
     if (language === 'en') {
-      return `🔧 **REGULAR MAINTENANCE** 🔧
+      return `Hi! Great decision, regular maintenance saves a lot of trouble.
 
-Excellent decision! Regular service is an investment in the longevity of your systems and savings on major repairs.
-
-**Let's create a maintenance plan:**
-
-📋 **What needs to be serviced?**
-• Heating systems (boilers, radiators)
-• Electrical equipment (panels, wiring)
-• Plumbing (pipes, faucets)
-• Ventilation and air conditioning
-• Other equipment
-
-⏰ **When was the last service performed?**
-
-💰 **What budget are you planning?**
-
-📅 **Convenient time for work?**
-
-Based on your answers, I'll select reliable masters for permanent cooperation!`;
+What do you need to service (e.g., boiler, air conditioning, electrical) and in which city are you located?`;
     }
 
-    return `🔧 **PRAVIDELNÉ SERVISOVANIE** 🔧
+    return `Ahoj! Výborné rozhodnutie, pravidelný servis ušetrí veľa starostí.
 
-Výborné rozhodnutie! Pravidelný servis je investícia do dlhovekosti vašich systémov a úspora na veľkých opravách.
-
-**Zostavme plán servisovania:**
-
-📋 **Čo treba servisovať?**
-• Vykurovacie systémy (kotly, radiátory)
-• Elektrické zariadenia (rozvádzače, inštalácia)
-• Sanitárne zariadenia (rúry, batérie)
-• Vetranie a klimatizácia
-• Iné zariadenia
-
-⏰ **Kedy sa naposledy vykonával servis?**
-
-💰 **Aký rozpočet plánujete?**
-
-📅 **Vhodný čas pre práce?**
-
-Na základe vašich odpovedí vyberiem spoľahlivých majstrov pre stálu spoluprácu!`;
+Čo potrebuješ servisovať (napríklad kotol, klimatizáciu, elektriku) a v akom meste sa nachádzaš?`;
   }
 
   async processMessage(userMessage: string, conversationHistory: ChatMessage[], language: 'sk' | 'en' = 'sk'): Promise<AIResponse> {

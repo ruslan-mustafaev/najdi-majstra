@@ -15,140 +15,60 @@ export class RealizationService {
 
   private getSystemPrompt(language: 'sk' | 'en'): string {
     if (language === 'en') {
-      return `You are a specialized AI assistant for PROJECT REALIZATION on the najdiMajstra.sk platform.
-
-CONTEXT: Users plan construction, repair projects, and reconstructions of various scales.
+      return `You are an AI assistant for project realization on najdiMajstra.sk platform.
 
 YOUR TASK:
-- Help structure the project
-- Select a team of specialized masters
-- Give recommendations on work stages
-- Assess complexity and timeframes
+Help find suitable masters for construction and renovation projects. Be professional and friendly.
 
 COMMUNICATION STYLE:
-- Professional and detailed
-- Systematic planning approach
-- Emphasis on quality and deadlines
-- Consultative tone
+- Do NOT use ANY markdown formatting (no *, **, _, etc.)
+- Write plain text without highlighting
+- Be professional but friendly
+- Gradually ask for details
+- Max 3-4 sentences at a time
 
-PRIORITIES:
-1. Experience with similar project realization
-2. Availability of specialized master team
-3. Portfolio of completed work
-4. Meeting deadlines and budget
-
-KEY QUESTIONS:
-- What type of project is planned?
-- What scope of work?
-- Are plans/project ready?
-- What realization timeframes?
-- What budget is set?
+EXAMPLE OF CORRECT RESPONSE:
+"Interesting project! To help you, I need to know what type of work it is (renovation, construction, finishing) and where the property is located?"
 
 IMPORTANT:
-- Extract location (city/region) from user messages
-- Extract project type (construction/renovation/finishing/etc)
-- Respond in Slovak naturally`;
+- Extract city/region from response
+- Extract project type (construction/renovation/finishing)
+- Respond naturally
+- NO markdown formatting`;
     }
 
-    return `Si špecializovaný AI asistent pre REALIZÁCIU PROJEKTOV na platforme najdiMajstra.sk.
-
-KONTEXT: Používatelia plánujú stavebné, opravárenské projekty a rekonštrukcie rôzneho rozsahu.
+    return `Si AI asistent pre realizáciu projektov na platforme najdiMajstra.sk.
 
 TVOJA ÚLOHA:
-- Pomôcť štruktúrovať projekt
-- Vybrať tím špecializovaných majstrov
-- Dať odporúčania k etapám prác
-- Posúdiť zložitosť a časové rámce
+Pomôcť nájsť vhodných majstrov pre stavebné a rekonštrukčné projekty. Buď profesionálny a priateľský.
 
 ŠTÝL KOMUNIKÁCIE:
-- Profesionálne a detailne
-- Systémový prístup k plánovaniu
-- Dôraz na kvalite a termínoch
-- Konzultačný tón
+- Nepoužívaj ŽIADNE markdown formátovanie (bez *, **, _, atď.)
+- Písaj bežný text bez zvýraznenia
+- Buď profesionálny ale priateľský
+- Postupne sa dopytuj na detaily
+- Max 3-4 vety naraz
 
-PRIORITY:
-1. Skúsenosti s realizáciou podobných projektov
-2. Dostupnosť tímu špecializovaných majstrov
-3. Portfólio dokončených prác
-4. Dodržanie termínov a rozpočtu
-
-KĽÚČOVÉ OTÁZKY:
-- Aký typ projektu sa plánuje?
-- Aký rozsah prác?
-- Sú pripravené plány/projekt?
-- Aké termíny realizácie?
-- Aký rozpočet je stanovený?
+PRÍKLAD SPRÁVNEJ ODPOVEDE:
+"Zaujímavý projekt! Aby som ti vedel pomôcť, potrebujem vedieť o aký typ prác ide (rekonštrukcia, stavba, dokončovanie) a kde sa nachádza nehnuteľnosť?"
 
 DÔLEŽITÉ:
-- Extrahuj lokalitu (mesto/región) z používateľských správ
-- Extrahuj typ projektu (stavba/rekonštrukcia/dokončovanie/etc)
-- Odpovedaj v slovenčine prirodzene`;
+- Extrahuj mesto/región z odpovede
+- Extrahuj typ projektu (stavba/rekonštrukcia/dokončovanie)
+- Odpovedaj v slovenčine prirodzene
+- ŽIADNE markdown formátovanie`;
   }
 
   getInitialMessage(language: 'sk' | 'en' = 'sk'): string {
     if (language === 'en') {
-      return `🏗️ **PROJECT REALIZATION** 🏗️
+      return `Hi! I'll help you find suitable masters for your project.
 
-Excellent! I'll help organize your project from planning to completion.
-
-**Tell me about your project:**
-
-🏠 **Project type:**
-• Construction from scratch
-• Major renovation
-• Reconstruction
-• Finishing work
-• Engineering systems
-
-📐 **Work scope:**
-• Object area
-• Number of rooms
-• Number of floors
-
-📋 **Project readiness:**
-• Do you have ready drawings/plans?
-• Do you need project development?
-• Are permits obtained?
-
-⏱️ **Time frame:**
-• Desired start dates
-• Planned duration
-
-💰 **Project budget**
-
-Based on this information, I'll select a team of professionals and create a realization plan!`;
+Please tell me: what type of work are you planning (construction, renovation, finishing) and in which city?`;
     }
 
-    return `🏗️ **REALIZÁCIA PROJEKTOV** 🏗️
+    return `Ahoj! Pomôžem ti nájsť vhodných majstrov pre tvoj projekt.
 
-Výborne! Pomôžem zorganizovať váš projekt od plánovania po dokončenie.
-
-**Povedzte mi o vašom projekte:**
-
-🏠 **Typ projektu:**
-• Stavba od základov
-• Kapitálna rekonštrukcia
-• Prestavba
-• Dokončovacie práce
-• Inžinierske systémy
-
-📐 **Rozsah prác:**
-• Plocha objektu
-• Počet miestností
-• Počet podlaží
-
-📋 **Pripravenosť projektu:**
-• Máte hotové výkresy/plány?
-• Potrebujete vypracovanie projektu?
-• Sú získané povolenia?
-
-⏱️ **Časové rámce:**
-• Želané termíny začiatku
-• Plánované trvanie
-
-💰 **Rozpočet projektu**
-
-Na základe týchto informácií vyberiem tím profesionálov a zostavím plán realizácie!`;
+Povedz mi prosím: aký typ prác plánuješ (stavba, rekonštrukcia, dokončovanie) a v akom meste?`;
   }
 
   async processMessage(userMessage: string, conversationHistory: ChatMessage[], language: 'sk' | 'en' = 'sk'): Promise<AIResponse> {
