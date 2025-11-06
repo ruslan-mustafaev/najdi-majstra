@@ -138,11 +138,27 @@ What do you need to service (e.g., boiler, air conditioning, electrical) and in 
     } catch (error) {
       console.error('Error processing message with AI:', error);
 
+      // Even if AI fails, try to find masters if we have location and service
+      let recommendedMasters: string[] | undefined;
+      let fallbackMessage = '';
+
+      if (this.conversationState.hasLocation && this.conversationState.hasServiceDescription) {
+        console.log(`🔧 [REGULAR] AI failed, but searching for masters anyway...`);
+        const masters = await this.findServiceMasters();
+        if (masters.length > 0) {
+          recommendedMasters = masters;
+          console.log(`✅ [REGULAR] Found ${masters.length} masters without AI`);
+          fallbackMessage = language === 'sk'
+            ? `Našiel som majstrov pre pravidelný servis vo vašej lokalite. Pozrite si odporúčania nižšie!`
+            : `I found masters for regular service in your area. Check recommendations below!`;
+        }
+      }
+
       return {
-        message: language === 'sk'
-          ? 'Prepáčte, nastala chyba pri spracovaní vašej správy. Prosím, skúste to znovu alebo kontaktujte podporu.'
-          : 'Sorry, an error occurred while processing your message. Please try again or contact support.',
-        recommendedMasters: undefined
+        message: fallbackMessage || (language === 'sk'
+          ? 'Prepáčte, nastala chyba. Prosím, povedzte mi aké služby potrebujete a v akom meste?'
+          : 'Sorry, an error occurred. Please tell me what service you need and in which city?'),
+        recommendedMasters
       };
     }
   }
@@ -219,8 +235,8 @@ What do you need to service (e.g., boiler, air conditioning, electrical) and in 
     }
 
     const serviceKeywords = [
-      { keywords: ['kotol', 'kúrenie', 'radiátor', 'vykurovani'], type: 'Plynár' },
-      { keywords: ['elektr', 'električ', 'prúd', 'svetl', 'oprava'], type: 'Elektrikár' },
+      { keywords: ['kotol', 'kúrenie', 'radiátor', 'vykurovani', 'plyn'], type: 'Plynár' },
+      { keywords: ['elektr', 'prúd', 'svetl', 'oprava'], type: 'Elektrikár' },
       { keywords: ['vod', 'potrubie', 'kohútik', 'kanalizác'], type: 'Inštalatér' },
       { keywords: ['klimatizáci', 'vetranie'], type: 'Klimatizácie' }
     ];
