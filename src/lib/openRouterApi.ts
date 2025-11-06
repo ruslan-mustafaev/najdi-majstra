@@ -25,6 +25,10 @@ export async function callOpenRouter(
   messages: OpenRouterMessage[],
   model: string = 'google/gemini-2.5-flash'
 ): Promise<string> {
+  if (!API_KEY) {
+    throw new Error('VITE_OPENROUTER_API_KEY is not configured. Please add it to your .env file and restart the dev server.');
+  }
+
   try {
     const response = await fetch(OPENROUTER_API_URL, {
       method: 'POST',
