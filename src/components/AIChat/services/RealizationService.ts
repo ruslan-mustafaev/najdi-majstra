@@ -151,14 +151,28 @@ Povedz mi prosím: aký typ prác plánuješ (stavba, rekonštrukcia, dokončova
     const lowerMessage = userMessage.toLowerCase();
 
     const locationKeywords = [
-      'bratislava', 'košice', 'prešov', 'žilina', 'banská bystrica', 'nitra', 'trnava', 'trenčín',
-      'martin', 'poprad', 'prievidza', 'zvolen', 'považská bystrica', 'nové zámky', 'michalovce'
+      { name: 'bratislava', variants: ['bratislava', 'bratislave'] },
+      { name: 'košice', variants: ['košice', 'košiciach'] },
+      { name: 'prešov', variants: ['prešov', 'prešove'] },
+      { name: 'žilina', variants: ['žilina', 'žiline'] },
+      { name: 'banská bystrica', variants: ['banská bystrica', 'banskej bystrici'] },
+      { name: 'nitra', variants: ['nitra', 'nitre'] },
+      { name: 'trnava', variants: ['trnava', 'trnave'] },
+      { name: 'trenčín', variants: ['trenčín', 'trenčíne'] },
+      { name: 'martin', variants: ['martin', 'martine'] },
+      { name: 'poprad', variants: ['poprad', 'poprade'] },
+      { name: 'prievidza', variants: ['prievidza', 'prievidzi'] },
+      { name: 'zvolen', variants: ['zvolen', 'zvolene'] },
+      { name: 'považská bystrica', variants: ['považská bystrica', 'považskej bystrici'] },
+      { name: 'nové zámky', variants: ['nové zámky', 'nových zámkoch'] },
+      { name: 'michalovce', variants: ['michalovce', 'michalovciach'] }
     ];
 
-    locationKeywords.forEach(city => {
-      if (lowerMessage.includes(city)) {
-        this.conversationState.location = city;
+    locationKeywords.forEach(cityObj => {
+      if (cityObj.variants.some(variant => lowerMessage.includes(variant))) {
+        this.conversationState.location = cityObj.name;
         this.conversationState.hasLocation = true;
+        console.log(`📍 [REALIZATION] Found location: ${cityObj.name}`);
       }
     });
 
@@ -167,13 +181,17 @@ Povedz mi prosím: aký typ prác plánuješ (stavba, rekonštrukcia, dokončova
       { keywords: ['rekonštrukc', 'prestavba', 'renováci'], type: 'Stavbár' },
       { keywords: ['dokončova', 'omietk', 'malova'], type: 'Maľovanie' },
       { keywords: ['elektr', 'elektroinštaláci'], type: 'Elektrikár' },
-      { keywords: ['vodoinštaláci', 'kanalizáci'], type: 'Inštalatér' }
+      { keywords: ['vodoinštaláci', 'kanalizáci'], type: 'Inštalatér' },
+      { keywords: ['kotol', 'kúren', 'plyn'], type: 'Plynár' },
+      { keywords: ['kúpeľn', 'wc'], type: 'Inštalatér' },
+      { keywords: ['zateplen', 'fasád'], type: 'Stavbár' }
     ];
 
     projectKeywords.forEach(project => {
       if (project.keywords.some(kw => lowerMessage.includes(kw))) {
         this.conversationState.projectType = project.type;
         this.conversationState.hasProjectDescription = true;
+        console.log(`💼 [REALIZATION] Found project type: ${project.type}`);
       }
     });
   }
