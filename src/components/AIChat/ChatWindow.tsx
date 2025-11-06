@@ -28,6 +28,11 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const aiService = new AIService();
 
+  // Debug logging for recommended masters
+  useEffect(() => {
+    console.log('🎨 Recommended Masters State Updated:', recommendedMasters);
+  }, [recommendedMasters]);
+
   const serviceTypeLabels = {
     urgent: t.serviceTypes.urgent,
     regular: t.serviceTypes.regular,

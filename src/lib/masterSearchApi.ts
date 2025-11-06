@@ -24,6 +24,8 @@ export interface MasterSearchResult {
 
 export async function searchMastersByLocation(params: MasterSearchParams): Promise<MasterSearchResult[]> {
   try {
+    console.log('🔎 searchMastersByLocation called with params:', params);
+
     let query = supabase
       .from('masters')
       .select('*')
@@ -32,24 +34,31 @@ export async function searchMastersByLocation(params: MasterSearchParams): Promi
 
     if (params.location) {
       const locationLower = params.location.toLowerCase();
+      console.log(`📍 Filtering by location: "${locationLower}"`);
       query = query.or(`location.ilike.%${locationLower}%,service_area.ilike.%${locationLower}%`);
     }
 
     if (params.profession) {
+      console.log(`💼 Filtering by profession: "${params.profession}"`);
       query = query.ilike('profession', `%${params.profession}%`);
     }
 
     if (params.serviceType === 'urgent') {
+      console.log('⚡ Filtering by service_urgent = true');
       query = query.eq('service_urgent', true);
     } else if (params.serviceType === 'regular') {
+      console.log('📅 Filtering by service_regular = true');
       query = query.eq('service_regular', true);
     } else if (params.serviceType === 'realization') {
+      console.log('🏗️ Filtering by service_realization = true');
       query = query.eq('service_realization', true);
     }
 
     query = query.limit(params.limit || 10);
 
     const { data, error } = await query;
+
+    console.log('📊 Query result:', { foundMasters: data?.length || 0, error });
 
     if (error) {
       console.error('Master search error:', error);
