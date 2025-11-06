@@ -122,18 +122,26 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
 
           // Simple extraction (the AI service already did this, but we need to repeat for API call)
           const locationMatch = allMessages.toLowerCase();
-          const cities = ['bratislava', 'košice', 'prešov', 'žilina', 'banská bystrica', 'nitra', 'trnava', 'trenčín', 'veľký krtíš', 'velky krtis'];
+          console.log('📝 Full conversation text:', allMessages);
+
+          const cities = ['bratislava', 'košice', 'prešov', 'žilina', 'banská bystrica', 'banska bystrica', 'nitra', 'nitre', 'trnava', 'trenčín', 'trencin', 'veľký krtíš', 'velky krtis'];
           let foundCity = '';
           cities.forEach(city => {
-            if (locationMatch.includes(city.replace('š', 's').replace('ť', 't').replace('ž', 'z').replace('č', 'c').replace('ý', 'y'))) {
-              foundCity = city;
+            const normalizedCity = city.replace(/[šščťžýá]/g, (char) => {
+              const map: {[key: string]: string} = {'š':'s','č':'c','ť':'t','ž':'z','ý':'y','á':'a'};
+              return map[char] || char;
+            });
+            if (locationMatch.includes(city) || locationMatch.includes(normalizedCity)) {
+              foundCity = city.replace('nitre', 'nitra').replace('banska bystrica', 'banská bystrica').replace('trencin', 'trenčín');
             }
           });
+
+          console.log('📍 Found city:', foundCity);
 
           const professionKeywords = [
             { keywords: ['elektr'], type: 'Elektrikár' },
             { keywords: ['vod', 'inštalat'], type: 'Inštalatér' },
-            { keywords: ['plyn', 'kotol'], type: 'Plynár' },
+            { keywords: ['plyn', 'kotol', 'kúren'], type: 'Plynár' },
             { keywords: ['stav'], type: 'Stavbár' }
           ];
 
@@ -144,6 +152,13 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
             }
           });
 
+          console.log('🔍 Searching for masters:', {
+            foundCity,
+            foundProfession,
+            serviceType,
+            searchText: allMessages
+          });
+
           const masters = await searchMastersByLocation({
             location: foundCity,
             profession: foundProfession,
@@ -151,6 +166,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
             limit: 5
           });
 
+          console.log('✅ Found masters:', masters.length, masters);
           setRecommendedMasters(masters);
           setShowRecommendations(true); // Show recommendations when new masters are found
         } catch (error) {
