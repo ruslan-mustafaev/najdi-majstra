@@ -25,6 +25,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [recommendedMasters, setRecommendedMasters] = useState<MasterSearchResult[]>([]);
+  const [showRecommendations, setShowRecommendations] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const aiService = new AIService();
 
@@ -58,6 +59,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
         timestamp: new Date()
       }]);
       setRecommendedMasters([]); // Clear recommended masters
+      setShowRecommendations(true); // Reset visibility
     }
   }, [serviceType, language]);
 
@@ -72,10 +74,12 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
         timestamp: new Date()
       }]);
       setRecommendedMasters([]); // Clear recommended masters
+      setShowRecommendations(true); // Reset visibility
     }
     if (!isOpen) {
       // Clear everything when chat is closed
       setRecommendedMasters([]);
+      setShowRecommendations(true);
     }
   }, [isOpen, serviceType, language]);
 
@@ -148,6 +152,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
           });
 
           setRecommendedMasters(masters);
+          setShowRecommendations(true); // Show recommendations when new masters are found
         } catch (error) {
           console.error('Error loading recommended masters:', error);
         }
@@ -258,11 +263,20 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
         </div>
 
         {/* Recommended Masters Cards */}
-        {recommendedMasters.length > 0 && (
-          <div className="p-6 border-t border-gray-200 bg-gray-50">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">
-              {language === 'sk' ? 'Odporúčaní majstri:' : 'Recommended Masters:'}
-            </h3>
+        {recommendedMasters.length > 0 && showRecommendations && (
+          <div className="p-6 border-t border-gray-200 bg-gray-50 relative">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-gray-900">
+                {language === 'sk' ? 'Odporúčaní majstri:' : 'Recommended Masters:'}
+              </h3>
+              <button
+                onClick={() => setShowRecommendations(false)}
+                className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+                title={language === 'sk' ? 'Skryť odporúčania' : 'Hide recommendations'}
+              >
+                <X size={20} className="text-gray-600" />
+              </button>
+            </div>
             <div className="grid grid-cols-1 gap-4 max-h-[400px] overflow-y-auto">
               {recommendedMasters.map((master) => (
                 <div
@@ -329,6 +343,23 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
 
         {/* Input */}
         <div className="p-6 border-t border-gray-200">
+          {/* Show recommendations button if hidden */}
+          {recommendedMasters.length > 0 && !showRecommendations && (
+            <div className="mb-4">
+              <button
+                onClick={() => setShowRecommendations(true)}
+                className="w-full bg-blue-50 text-[#4169e1] px-4 py-3 rounded-xl hover:bg-blue-100 transition-colors flex items-center justify-center space-x-2 border border-blue-200"
+              >
+                <Bot size={20} />
+                <span>
+                  {language === 'sk'
+                    ? `Zobraziť ${recommendedMasters.length} odporúčaných majstrov`
+                    : `Show ${recommendedMasters.length} recommended masters`
+                  }
+                </span>
+              </button>
+            </div>
+          )}
           <div className="flex space-x-4">
             <textarea
               value={inputValue}
