@@ -73,7 +73,13 @@ Povedz mi prosím: aký typ prác plánuješ (stavba, rekonštrukcia, dokončova
 
   async processMessage(userMessage: string, conversationHistory: ChatMessage[], language: 'sk' | 'en' = 'sk'): Promise<AIResponse> {
     try {
-      this.extractInformation(userMessage);
+      // Extract information from ALL user messages in the conversation
+      const allUserMessages = conversationHistory
+        .filter(msg => msg.sender === 'user')
+        .map(msg => msg.content)
+        .join(' ') + ' ' + userMessage;
+
+      this.extractInformation(allUserMessages);
 
       const messages: OpenRouterMessage[] = [
         {

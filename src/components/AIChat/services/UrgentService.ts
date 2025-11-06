@@ -110,7 +110,13 @@ Opíš mi prosím: Čo sa pokazilo a kde sa nachádzaš (mesto)? Pomôžem ti n�
 
   async processMessage(userMessage: string, conversationHistory: ChatMessage[], language: 'sk' | 'en' = 'sk'): Promise<AIResponse> {
     try {
-      this.extractInformation(userMessage);
+      // Extract information from ALL user messages in the conversation
+      const allUserMessages = conversationHistory
+        .filter(msg => msg.sender === 'user')
+        .map(msg => msg.content)
+        .join(' ') + ' ' + userMessage;
+
+      this.extractInformation(allUserMessages);
 
       console.log(`📊 Conversation state:`, {
         hasLocation: this.conversationState.hasLocation,
