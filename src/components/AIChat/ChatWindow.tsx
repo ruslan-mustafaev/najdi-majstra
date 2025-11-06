@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Send, Bot, User, Loader2 } from 'lucide-react';
+import { X, Send, Bot, User, Loader2, Star, MapPin, Phone } from 'lucide-react';
 import { ChatMessage } from './types';
 import { AIService } from './AIService';
 import { useLanguage } from '../../hooks/useLanguage';
 import { translations } from '../../data/translations';
+import { searchMastersByLocation, MasterSearchResult } from '../../lib/masterSearchApi';
 
 interface ChatWindowProps {
   isOpen: boolean;
@@ -23,6 +24,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [recommendedMasters, setRecommendedMasters] = useState<MasterSearchResult[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const aiService = new AIService();
 
@@ -50,6 +52,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
         sender: 'ai',
         timestamp: new Date()
       }]);
+      setRecommendedMasters([]); // Clear recommended masters
     }
   }, [serviceType, language]);
 
@@ -63,6 +66,11 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
         sender: 'ai',
         timestamp: new Date()
       }]);
+      setRecommendedMasters([]); // Clear recommended masters
+    }
+    if (!isOpen) {
+      // Clear everything when chat is closed
+      setRecommendedMasters([]);
     }
   }, [isOpen, serviceType, language]);
 
@@ -93,9 +101,51 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
 
       setMessages(prev => [...prev, aiMessage]);
 
-      // If there are recommended masters, notify parent component
+      // If there are recommended masters, load their full data and display
       if (response.recommendedMasters && response.recommendedMasters.length > 0) {
         onMasterRecommendation?.(response.recommendedMasters);
+
+        // Load full master data
+        try {
+          // Extract location and profession from conversation
+          const lastUserMessages = messages.filter(m => m.sender === 'user').map(m => m.content).join(' ');
+          const allMessages = lastUserMessages + ' ' + inputValue;
+
+          // Simple extraction (the AI service already did this, but we need to repeat for API call)
+          const locationMatch = allMessages.toLowerCase();
+          const cities = ['bratislava', 'košice', 'prešov', 'žilina', 'banská bystrica', 'nitra', 'trnava', 'trenčín', 'veľký krtíš', 'velky krtis'];
+          let foundCity = '';
+          cities.forEach(city => {
+            if (locationMatch.includes(city.replace('š', 's').replace('ť', 't').replace('ž', 'z').replace('č', 'c').replace('ý', 'y'))) {
+              foundCity = city;
+            }
+          });
+
+          const professionKeywords = [
+            { keywords: ['elektr'], type: 'Elektrikár' },
+            { keywords: ['vod', 'inštalat'], type: 'Inštalatér' },
+            { keywords: ['plyn', 'kotol'], type: 'Plynár' },
+            { keywords: ['stav'], type: 'Stavbár' }
+          ];
+
+          let foundProfession = '';
+          professionKeywords.forEach(prof => {
+            if (prof.keywords.some(kw => locationMatch.includes(kw))) {
+              foundProfession = prof.type;
+            }
+          });
+
+          const masters = await searchMastersByLocation({
+            location: foundCity,
+            profession: foundProfession,
+            serviceType: serviceType,
+            limit: 5
+          });
+
+          setRecommendedMasters(masters);
+        } catch (error) {
+          console.error('Error loading recommended masters:', error);
+        }
       }
     } catch (error) {
       console.error('Error processing message:', error);
@@ -201,6 +251,76 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
           )}
           <div ref={messagesEndRef} />
         </div>
+
+        {/* Recommended Masters Cards */}
+        {recommendedMasters.length > 0 && (
+          <div className="p-6 border-t border-gray-200 bg-gray-50">
+            <h3 className="text-lg font-bold text-gray-900 mb-4">
+              {language === 'sk' ? 'Odporúčaní majstri:' : 'Recommended Masters:'}
+            </h3>
+            <div className="grid grid-cols-1 gap-4 max-h-[400px] overflow-y-auto">
+              {recommendedMasters.map((master) => (
+                <div
+                  key={master.id}
+                  className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-lg transition-shadow cursor-pointer"
+                  onClick={() => window.open(`/master/${master.slug}`, '_blank')}
+                >
+                  <div className="flex items-start space-x-4">
+                    <img
+                      src={master.profileImage}
+                      alt={master.name}
+                      className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-lg font-semibold text-gray-900 mb-1 truncate">
+                        {master.name}
+                      </h4>
+                      <p className="text-[#4169e1] font-medium mb-2">
+                        {master.profession}
+                      </p>
+                      <div className="flex items-center text-gray-600 text-sm mb-2">
+                        <MapPin size={14} className="mr-1 flex-shrink-0" />
+                        <span className="truncate">{master.location}</span>
+                      </div>
+                      <div className="flex items-center space-x-4 mb-2">
+                        <div className="flex items-center space-x-1">
+                          <Star className="text-yellow-400 fill-current" size={16} />
+                          <span className="font-medium">{master.rating}</span>
+                          <span className="text-gray-500 text-sm">({master.reviewCount})</span>
+                        </div>
+                        <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                          master.available
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-red-100 text-red-800'
+                        }`}>
+                          <div className={`w-2 h-2 rounded-full mr-1 ${
+                            master.available ? 'bg-green-500' : 'bg-red-500'
+                          }`} />
+                          {master.available ? (language === 'sk' ? 'Dostupný' : 'Available') : (language === 'sk' ? 'Obsadený' : 'Busy')}
+                        </div>
+                      </div>
+                      {master.hourlyRateMin > 0 && (
+                        <p className="text-sm text-gray-600 mb-2">
+                          {master.hourlyRateMin}€ - {master.hourlyRateMax}€ / {language === 'sk' ? 'hod' : 'hr'}
+                        </p>
+                      )}
+                      <button
+                        className="w-full bg-[#4169e1] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#3558d4] transition-colors flex items-center justify-center space-x-2"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          window.open(`/master/${master.slug}`, '_blank');
+                        }}
+                      >
+                        <Phone size={14} />
+                        <span>{language === 'sk' ? 'Zobraziť profil' : 'View Profile'}</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Input */}
         <div className="p-6 border-t border-gray-200">
