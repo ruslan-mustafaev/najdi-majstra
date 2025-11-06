@@ -138,27 +138,11 @@ Povedz mi prosím: aký typ prác plánuješ (stavba, rekonštrukcia, dokončova
     } catch (error) {
       console.error('Error processing message with AI:', error);
 
-      // Even if AI fails, try to find masters if we have location and project
-      let recommendedMasters: string[] | undefined;
-      let fallbackMessage = '';
-
-      if (this.conversationState.hasLocation && this.conversationState.hasProjectDescription) {
-        console.log(`🔧 [REALIZATION] AI failed, but searching for masters anyway...`);
-        const masters = await this.findProjectMasters();
-        if (masters.length > 0) {
-          recommendedMasters = masters;
-          console.log(`✅ [REALIZATION] Found ${masters.length} masters without AI`);
-          fallbackMessage = language === 'sk'
-            ? `Našiel som majstrov pre váš projekt. Pozrite si odporúčania nižšie!`
-            : `I found masters for your project. Check recommendations below!`;
-        }
-      }
-
       return {
-        message: fallbackMessage || (language === 'sk'
-          ? 'Prepáčte, nastala chyba. Prosím, povedzte mi aký projekt potrebujete a v akom meste?'
-          : 'Sorry, an error occurred. Please tell me what project you need and in which city?'),
-        recommendedMasters
+        message: language === 'sk'
+          ? 'Prepáčte, nastala chyba pri spracovaní vašej správy. Prosím, skúste to znovu alebo kontaktujte podporu.'
+          : 'Sorry, an error occurred while processing your message. Please try again or contact support.',
+        recommendedMasters: undefined
       };
     }
   }

@@ -175,27 +175,11 @@ Opíš mi prosím: Čo sa pokazilo a kde sa nachádzaš (mesto)? Pomôžem ti n�
     } catch (error) {
       console.error('Error processing message with AI:', error);
 
-      // Even if AI fails, try to find masters if we have location and problem
-      let recommendedMasters: string[] | undefined;
-      let fallbackMessage = '';
-
-      if (this.conversationState.hasLocation && this.conversationState.hasProblemDescription) {
-        console.log(`🔧 [URGENT] AI failed, but searching for masters anyway...`);
-        const masters = await this.findUrgentMasters();
-        if (masters.length > 0) {
-          recommendedMasters = masters;
-          console.log(`✅ [URGENT] Found ${masters.length} masters without AI`);
-          fallbackMessage = language === 'sk'
-            ? `Našiel som majstrov pre vašu naliehavú situáciu. Pozrite si odporúčania nižšie!`
-            : `I found masters for your urgent situation. Check recommendations below!`;
-        }
-      }
-
       return {
-        message: fallbackMessage || (language === 'sk'
-          ? 'Prepáčte, nastala chyba. Prosím, povedzte mi aký problém máte a v akom meste?'
-          : 'Sorry, an error occurred. Please tell me what problem you have and in which city?'),
-        recommendedMasters
+        message: language === 'sk'
+          ? 'Prepáčte, nastala chyba pri spracovaní vašej správy. Prosím, skúste to znovu alebo kontaktujte podporu.'
+          : 'Sorry, an error occurred while processing your message. Please try again or contact support.',
+        recommendedMasters: undefined
       };
     }
   }
