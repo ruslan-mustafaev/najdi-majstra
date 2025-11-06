@@ -23,7 +23,7 @@ export interface OpenRouterResponse {
 
 export async function callOpenRouter(
   messages: OpenRouterMessage[],
-  model: string = 'google/gemini-2.0-flash-exp:free'
+  model: string = 'google/gemini-2.0-flash-thinking-exp:free'
 ): Promise<string> {
   try {
     const response = await fetch(OPENROUTER_API_URL, {
