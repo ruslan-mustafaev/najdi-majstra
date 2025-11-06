@@ -200,7 +200,7 @@ export const OfferNotifications: React.FC<OfferNotificationsProps> = ({ isMaster
       const { data, error } = await supabase
         .from('masters')
         .select('slug')
-        .eq('user_id', masterId)
+        .eq('id', masterId)
         .maybeSingle();
 
       if (error) throw error;
