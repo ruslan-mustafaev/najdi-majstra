@@ -94,6 +94,13 @@ Opíš mi prosím: Čo sa pokazilo a kde sa nachádzaš (mesto)? Pomôžem ti n�
     try {
       this.extractInformation(userMessage);
 
+      console.log(`📊 Conversation state:`, {
+        hasLocation: this.conversationState.hasLocation,
+        location: this.conversationState.location,
+        hasProblemDescription: this.conversationState.hasProblemDescription,
+        problemType: this.conversationState.problemType
+      });
+
       const messages: OpenRouterMessage[] = [
         {
           role: 'system',
@@ -116,10 +123,16 @@ Opíš mi prosím: Čo sa pokazilo a kde sa nachádzaš (mesto)? Pomôžem ti n�
       let recommendedMasters: string[] | undefined;
 
       if (this.conversationState.hasLocation && this.conversationState.hasProblemDescription) {
+        console.log(`🎯 Both location and problem found! Searching for masters...`);
         const masters = await this.findUrgentMasters();
         if (masters.length > 0) {
           recommendedMasters = masters;
+          console.log(`✅ Returning ${masters.length} recommended masters`);
+        } else {
+          console.log(`⚠️ No masters found with these criteria`);
         }
+      } else {
+        console.log(`⏳ Waiting for more info. Location: ${this.conversationState.hasLocation}, Problem: ${this.conversationState.hasProblemDescription}`);
       }
 
       return {
@@ -141,18 +154,59 @@ Opíš mi prosím: Čo sa pokazilo a kde sa nachádzaš (mesto)? Pomôžem ti n�
   private extractInformation(userMessage: string): void {
     const lowerMessage = userMessage.toLowerCase();
 
+    // Main cities
     const locationKeywords = [
       'bratislava', 'košice', 'prešov', 'žilina', 'banská bystrica', 'nitra', 'trnava', 'trenčín',
       'martin', 'poprad', 'prievidza', 'zvolen', 'považská bystrica', 'nové zámky', 'michalovce',
       'komárno', 'levice', 'humenné', 'bardejov', 'liptovský mikuláš'
     ];
 
-    locationKeywords.forEach(city => {
-      if (lowerMessage.includes(city)) {
-        this.conversationState.location = city;
+    // Districts map to main cities
+    const districtMapping: { [key: string]: string } = {
+      'petržalka': 'bratislava',
+      'petrzalka': 'bratislava',
+      'rača': 'bratislava',
+      'ráča': 'bratislava',
+      'raca': 'bratislava',
+      'karlova ves': 'bratislava',
+      'karlova': 'bratislava',
+      'dúbravka': 'bratislava',
+      'dubravka': 'bratislava',
+      'lamač': 'bratislava',
+      'lamac': 'bratislava',
+      'nové mesto': 'bratislava',
+      'nove mesto': 'bratislava',
+      'staré mesto': 'bratislava',
+      'stare mesto': 'bratislava',
+      'ružinov': 'bratislava',
+      'ruzinov': 'bratislava',
+      'vrakuňa': 'bratislava',
+      'vrakuna': 'bratislava',
+      'podunajské biskupice': 'bratislava',
+      'podunajske biskupice': 'bratislava'
+    };
+
+    // Check for districts first
+    let foundLocation = false;
+    Object.keys(districtMapping).forEach(district => {
+      if (lowerMessage.includes(district)) {
+        this.conversationState.location = districtMapping[district];
         this.conversationState.hasLocation = true;
+        foundLocation = true;
+        console.log(`🗺️ Found district "${district}" → city "${districtMapping[district]}"`);
       }
     });
+
+    // If no district found, check for main cities
+    if (!foundLocation) {
+      locationKeywords.forEach(city => {
+        if (lowerMessage.includes(city)) {
+          this.conversationState.location = city;
+          this.conversationState.hasLocation = true;
+          console.log(`🗺️ Found city "${city}"`);
+        }
+      });
+    }
 
     const problemKeywords = [
       { keywords: ['elektr', 'električ', 'prúd', 'svetl', 'zásuvk', 'istič'], type: 'Elektrikár' },
@@ -165,6 +219,7 @@ Opíš mi prosím: Čo sa pokazilo a kde sa nachádzaš (mesto)? Pomôžem ti n�
       if (problem.keywords.some(kw => lowerMessage.includes(kw))) {
         this.conversationState.problemType = problem.type;
         this.conversationState.hasProblemDescription = true;
+        console.log(`🔧 Found problem type: "${problem.type}"`);
       }
     });
 
@@ -176,6 +231,12 @@ Opíš mi prosím: Čo sa pokazilo a kde sa nachádzaš (mesto)? Pomôžem ti n�
 
   private async findUrgentMasters(): Promise<string[]> {
     try {
+      console.log(`🔍 Searching masters with params:`, {
+        location: this.conversationState.location,
+        profession: this.conversationState.problemType,
+        serviceType: 'urgent'
+      });
+
       const masters = await searchMastersByLocation({
         location: this.conversationState.location,
         profession: this.conversationState.problemType,
@@ -183,9 +244,11 @@ Opíš mi prosím: Čo sa pokazilo a kde sa nachádzaš (mesto)? Pomôžem ti n�
         limit: 5
       });
 
+      console.log(`✅ Found ${masters.length} masters:`, masters.map(m => ({ id: m.id, name: m.name, profession: m.profession })));
+
       return masters.map(m => m.id);
     } catch (error) {
-      console.error('Error finding urgent masters:', error);
+      console.error('❌ Error finding urgent masters:', error);
       return [];
     }
   }
