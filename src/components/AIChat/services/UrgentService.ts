@@ -179,6 +179,60 @@ Opíš mi prosím: Čo sa pokazilo a kde sa nachádzaš (mesto)? Pomôžem ti n�
   private extractInformation(userMessage: string): void {
     const lowerMessage = userMessage.toLowerCase();
 
+    // Cities with declensions (nominative and locative forms)
+    const cityDeclensions: { [key: string]: string } = {
+      'bratislava': 'bratislava',
+      'bratislave': 'bratislava',
+      'košice': 'košice',
+      'košiciach': 'košice',
+      'prešov': 'prešov',
+      'prešove': 'prešov',
+      'žilina': 'žilina',
+      'žiline': 'žilina',
+      'zilina': 'žilina',
+      'ziline': 'žilina',
+      'banská bystrica': 'banská bystrica',
+      'banskej bystrici': 'banská bystrica',
+      'banska bystrica': 'banská bystrica',
+      'nitra': 'nitra',
+      'nitre': 'nitra',
+      'trnava': 'trnava',
+      'trnave': 'trnava',
+      'trenčín': 'trenčín',
+      'trenčíne': 'trenčín',
+      'trencin': 'trenčín',
+      'trencine': 'trenčín',
+      'martin': 'martin',
+      'martine': 'martin',
+      'poprad': 'poprad',
+      'poprade': 'poprad',
+      'prievidza': 'prievidza',
+      'prievidzi': 'prievidza',
+      'zvolen': 'zvolen',
+      'zvolene': 'zvolen',
+      'považská bystrica': 'považská bystrica',
+      'povazska bystrica': 'považská bystrica',
+      'považskej bystrici': 'považská bystrica',
+      'nové zámky': 'nové zámky',
+      'nove zamky': 'nové zámky',
+      'nových zámkoch': 'nové zámky',
+      'michalovce': 'michalovce',
+      'michalovciach': 'michalovce',
+      'komárno': 'komárno',
+      'komarno': 'komárno',
+      'komárne': 'komárno',
+      'levice': 'levice',
+      'leviciach': 'levice',
+      'humenné': 'humenné',
+      'humenne': 'humenné',
+      'humennom': 'humenné',
+      'bardejov': 'bardejov',
+      'bardejove': 'bardejov',
+      'liptovský mikuláš': 'liptovský mikuláš',
+      'liptovsky mikulas': 'liptovský mikuláš',
+      'liptovskom mikuláši': 'liptovský mikuláš'
+    };
+
     // Main cities
     const locationKeywords = [
       'bratislava', 'košice', 'prešov', 'žilina', 'banská bystrica', 'nitra', 'trnava', 'trenčín',
@@ -222,7 +276,19 @@ Opíš mi prosím: Čo sa pokazilo a kde sa nachádzaš (mesto)? Pomôžem ti n�
       }
     });
 
-    // If no district found, check for main cities
+    // If no district found, check for city declensions (including "v Nitre", "v Bratislave", etc.)
+    if (!foundLocation) {
+      Object.keys(cityDeclensions).forEach(declension => {
+        if (lowerMessage.includes(declension)) {
+          this.conversationState.location = cityDeclensions[declension];
+          this.conversationState.hasLocation = true;
+          foundLocation = true;
+          console.log(`🗺️ Found city declension "${declension}" → city "${cityDeclensions[declension]}"`);
+        }
+      });
+    }
+
+    // Fallback to basic city names
     if (!foundLocation) {
       locationKeywords.forEach(city => {
         if (lowerMessage.includes(city)) {
