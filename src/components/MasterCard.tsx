@@ -49,7 +49,7 @@ export const MasterCard: React.FC<MasterCardProps> = ({ master, featured = false
         <img
           src={master.profileImage}
           alt={master.name}
-          className="w-full h-full object-contain bg-gray-100"
+          className="w-full h-full object-cover object-center bg-gray-100"
           onError={(e) => {
             // Fallback to default avatar if image fails to load
             e.currentTarget.src = '/placeholder-avatar.svg';
