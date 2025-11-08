@@ -381,13 +381,13 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                 {!isOwnProfile && !isUserMaster && (
                   <>
                     {!user ? (
-                      <div className="flex flex-col items-end space-y-2">
-                        <p className="text-sm text-gray-600 text-right">
+                      <div className="flex flex-col sm:flex-row sm:items-center items-end space-y-2 sm:space-y-0 sm:space-x-3">
+                        <p className="text-sm text-gray-600 text-right sm:text-left">
                           Zaregistrujte sa ako klient, aby ste mohli zanechať recenziu
                         </p>
                         <button
                           onClick={onAuthRequired}
-                          className="bg-[#4169e1] text-white px-4 py-2 rounded-lg hover:bg-[#3155c7] transition-colors text-sm font-medium"
+                          className="bg-[#4169e1] text-white px-4 py-2 rounded-lg hover:bg-[#3155c7] transition-colors text-sm font-medium whitespace-nowrap"
                         >
                           Zanechať recenziu
                         </button>
