@@ -159,7 +159,7 @@ export const getProfessionOptions = (language: 'sk' | 'en' = 'sk'): FilterOption
     { value: 'Železobetónár', label: language === 'sk' ? 'Železobetónár' : 'Reinforced Concrete Worker' },
     { value: 'Stavebný robotník', label: language === 'sk' ? 'Stavebný robotník' : 'Construction Worker' },
     { value: 'Demolačník', label: language === 'sk' ? 'Demolačník' : 'Demolition Specialist' },
-    { value: 'Výkopové práce', label: language === 'sk' ? 'Výkopové práce' : 'Excavation Work' },
+    { value: 'Výkopový robotník', label: language === 'sk' ? 'Výkopový robotník' : 'Excavator Operator' },
     
     // Interiérové práce
     { value: '', label: language === 'sk' ? 'INTERIÉROVÉ PRÁCE' : 'INTERIOR WORK', isRegion: true },
@@ -170,7 +170,7 @@ export const getProfessionOptions = (language: 'sk' | 'en' = 'sk'): FilterOption
     { value: 'Tapetár', label: language === 'sk' ? 'Tapetár' : 'Wallpaper Installer' },
     { value: 'Parkettár', label: language === 'sk' ? 'Parkettár' : 'Parquet Installer' },
     { value: 'Kuchynský dizajnér', label: language === 'sk' ? 'Kuchynský dizajnér' : 'Kitchen Designer' },
-    { value: 'Nábytok na mieru', label: language === 'sk' ? 'Nábytok na mieru' : 'Custom Furniture' },
+    { value: 'Stolár', label: language === 'sk' ? 'Stolár' : 'Furniture Maker' },
     { value: 'Dekoratér', label: language === 'sk' ? 'Dekoratér' : 'Decorator' },
     { value: 'Čalúnnik', label: language === 'sk' ? 'Čalúnnik' : 'Upholsterer' },
     
@@ -180,36 +180,36 @@ export const getProfessionOptions = (language: 'sk' | 'en' = 'sk'): FilterOption
     { value: 'Vodoinštalatér', label: language === 'sk' ? 'Vodoinštalatér' : 'Plumber' },
     { value: 'Plynár', label: language === 'sk' ? 'Plynár' : 'Gas Technician' },
     { value: 'Kúrenár', label: language === 'sk' ? 'Kúrenár' : 'Heating Technician' },
-    { value: 'Klimatizácie', label: language === 'sk' ? 'Klimatizácie' : 'Air Conditioning' },
-    { value: 'Solárne systémy', label: language === 'sk' ? 'Solárne systémy' : 'Solar Systems' },
-    { value: 'Tepelné čerpadlá', label: language === 'sk' ? 'Tepelné čerpadlá' : 'Heat Pumps' },
-    { value: 'Bezpečnostné systémy', label: language === 'sk' ? 'Bezpečnostné systémy' : 'Security Systems' },
-    { value: 'Smart home', label: language === 'sk' ? 'Smart home' : 'Smart Home' },
-    { value: 'Výťahy', label: language === 'sk' ? 'Výťahy' : 'Elevators' },
-    { value: 'Bazény', label: language === 'sk' ? 'Bazény' : 'Swimming Pools' },
-    { value: 'Studne', label: language === 'sk' ? 'Studne' : 'Wells' },
+    { value: 'Klimatizačný technik', label: language === 'sk' ? 'Klimatizačný technik' : 'Air Conditioning Technician' },
+    { value: 'Technik solárnych systémov', label: language === 'sk' ? 'Technik solárnych systémov' : 'Solar Systems Technician' },
+    { value: 'Technik tepelných čerpadiel', label: language === 'sk' ? 'Technik tepelných čerpadiel' : 'Heat Pump Technician' },
+    { value: 'Technik bezpečnostných systémov', label: language === 'sk' ? 'Technik bezpečnostných systémov' : 'Security Systems Technician' },
+    { value: 'Smart home technik', label: language === 'sk' ? 'Smart home technik' : 'Smart Home Technician' },
+    { value: 'Výťahový technik', label: language === 'sk' ? 'Výťahový technik' : 'Elevator Technician' },
+    { value: 'Bazénový technik', label: language === 'sk' ? 'Bazénový technik' : 'Pool Technician' },
+    { value: 'Studniar', label: language === 'sk' ? 'Studniar' : 'Well Driller' },
     
     // Exteriérové práce
     { value: '', label: language === 'sk' ? 'EXTERIÉROVÉ PRÁCE' : 'EXTERIOR WORK', isRegion: true },
-    { value: 'Fasáda', label: language === 'sk' ? 'Fasáda' : 'Facade' },
+    { value: 'Fasádnik', label: language === 'sk' ? 'Fasádnik' : 'Facade Specialist' },
     { value: 'Záhradník', label: language === 'sk' ? 'Záhradník' : 'Gardener' },
-    { value: 'Oplotenie', label: language === 'sk' ? 'Oplotenie' : 'Fencing' },
-    { value: 'Terasy', label: language === 'sk' ? 'Terasy' : 'Terraces' },
-    { value: 'Dlažby', label: language === 'sk' ? 'Dlažby' : 'Paving' },
-    { value: 'Strešné okná', label: language === 'sk' ? 'Strešné okná' : 'Roof Windows' },
-    { value: 'Žľaby', label: language === 'sk' ? 'Žľaby' : 'Gutters' },
-    { value: 'Komíny', label: language === 'sk' ? 'Komíny' : 'Chimneys' },
-    { value: 'Pergoly', label: language === 'sk' ? 'Pergoly' : 'Pergolas' },
-    { value: 'Zimné záhrady', label: language === 'sk' ? 'Zimné záhrady' : 'Winter Gardens' },
-    { value: 'Altánky', label: language === 'sk' ? 'Altánky' : 'Gazebos' },
-    { value: 'Osvetlenie exteriéru', label: language === 'sk' ? 'Osvetlenie exteriéru' : 'Exterior Lighting' },
+    { value: 'Plotár', label: language === 'sk' ? 'Plotár' : 'Fence Installer' },
+    { value: 'Tesár terás', label: language === 'sk' ? 'Tesár terás' : 'Terrace Carpenter' },
+    { value: 'Dlažbár', label: language === 'sk' ? 'Dlažbár' : 'Paver' },
+    { value: 'Montážnik strešných okien', label: language === 'sk' ? 'Montážnik strešných okien' : 'Roof Window Installer' },
+    { value: 'Klampiar', label: language === 'sk' ? 'Klampiar' : 'Tinsmith' },
+    { value: 'Komínár', label: language === 'sk' ? 'Komínár' : 'Chimney Sweep' },
+    { value: 'Montážnik pergol', label: language === 'sk' ? 'Montážnik pergol' : 'Pergola Installer' },
+    { value: 'Montážnik zimných záhrad', label: language === 'sk' ? 'Montážnik zimných záhrad' : 'Winter Garden Installer' },
+    { value: 'Staviteľ altánkov', label: language === 'sk' ? 'Staviteľ altánkov' : 'Gazebo Builder' },
+    { value: 'Osvetľovací technik', label: language === 'sk' ? 'Osvetľovací technik' : 'Lighting Technician' },
     
     // Špecializované služby
     { value: '', label: language === 'sk' ? 'ŠPECIALIZOVANÉ SLUŽBY' : 'SPECIALIZED SERVICES', isRegion: true },
-    { value: 'Čistenie a upratovanie', label: language === 'sk' ? 'Čistenie a upratovanie' : 'Cleaning Services' },
-    { value: 'Sťahovanie', label: language === 'sk' ? 'Sťahovanie' : 'Moving Services' },
+    { value: 'Upratovač', label: language === 'sk' ? 'Upratovač' : 'Cleaner' },
+    { value: 'Sťahovák', label: language === 'sk' ? 'Sťahovák' : 'Mover' },
     { value: 'Automechanik', label: language === 'sk' ? 'Automechanik' : 'Auto Mechanic' },
-    { value: 'Fotografovanie', label: language === 'sk' ? 'Fotografovanie' : 'Photography' }
+    { value: 'Fotograf', label: language === 'sk' ? 'Fotograf' : 'Photographer' }
   ];
 
   return professions;
