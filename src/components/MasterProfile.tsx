@@ -378,7 +378,7 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                     </div>
                   )}
                 </div>
-                {!isOwnProfile && (
+                {!isOwnProfile && !isUserMaster && (
                   <>
                     {!user ? (
                       <div className="flex flex-col items-end space-y-2">
@@ -393,7 +393,7 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                         </button>
                       </div>
                     ) : (
-                      user && !isUserMaster && !reviews.some(r => r.client_id === user.id) && (
+                      !reviews.some(r => r.client_id === user.id) && (
                         <button
                           onClick={() => setShowReviewForm(true)}
                           className="bg-[#4169e1] text-white px-4 py-2 rounded-lg hover:bg-[#3155c7] transition-colors text-sm font-medium"
