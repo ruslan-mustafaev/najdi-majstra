@@ -44,7 +44,7 @@ export const MasterCard: React.FC<MasterCardProps> = ({ master, featured = false
       onClick={handleClick}
     >
       {/* Photo with availability indicator and rating */}
-      <div className="relative" style={{ height: '200px' }}>
+      <div className="relative" style={{ height: '180px' }}>
         <img
           src={master.profileImage}
           alt={master.name}
@@ -88,7 +88,7 @@ export const MasterCard: React.FC<MasterCardProps> = ({ master, featured = false
       </div>
 
       {/* Content */}
-      <div className="p-4 flex flex-col justify-between">
+      <div className="p-3 flex flex-col justify-between">
         {/* Title and location - fixed height */}
         <div className="mb-3">
           <h3 className="text-sm font-bold text-gray-900 mb-1 line-clamp-2 leading-tight">
