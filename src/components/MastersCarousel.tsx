@@ -93,7 +93,7 @@ export const MastersCarousel: React.FC<MastersCarouselProps> = ({ masters, title
             e.stopPropagation();
           }}
           style={{
-            gridAutoRows: '320px' // Принудительно задаем высоту всех строк
+            gridAutoRows: '340px' // Принудительно задаем высоту всех строк
           }}
         >
           {getCurrentPageMasters().map((master) => (
