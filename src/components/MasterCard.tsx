@@ -45,11 +45,11 @@ export const MasterCard: React.FC<MasterCardProps> = ({ master, featured = false
       style={{ height: '320px', width: '100%' }} // Принудительно задаем размеры
     >
       {/* Photo with availability indicator and rating */}
-      <div className="relative" style={{ height: '180px' }}>
+      <div className="relative bg-gray-100" style={{ height: '180px' }}>
         <img
           src={master.profileImage}
           alt={master.name}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-contain"
           onError={(e) => {
             // Fallback to default avatar if image fails to load
             e.currentTarget.src = '/placeholder-avatar.svg';
