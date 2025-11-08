@@ -88,9 +88,9 @@ export const MasterCard: React.FC<MasterCardProps> = ({ master, featured = false
       </div>
 
       {/* Content */}
-      <div className="p-4 flex flex-col" style={{ height: '160px' }}>
-        {/* Title and location - fixed height */}
-        <div style={{ height: '60px', marginBottom: '10px' }}>
+      <div className="p-4 flex flex-col justify-between" style={{ height: '160px' }}>
+        {/* Title and location */}
+        <div>
           <h3 className="text-base font-bold text-gray-900 mb-1 line-clamp-2 leading-tight">
             {master.profession} - {master.name}
           </h3>
@@ -100,15 +100,15 @@ export const MasterCard: React.FC<MasterCardProps> = ({ master, featured = false
           </div>
         </div>
 
-        {/* Experience - fixed height */}
-        <div className="text-center" style={{ height: '36px', marginBottom: '10px' }}>
+        {/* Experience */}
+        <div className="text-center">
           <div className="font-semibold text-[#4169e1] text-base">
             {master.experience}
           </div>
         </div>
 
-        {/* Button - fixed height */}
-        <div style={{ height: '40px' }}>
+        {/* Button */}
+        <div>
           <button
             className="w-full bg-[#4169e1] text-white py-2.5 rounded-lg font-medium hover:bg-[#3558d4] transition-colors text-base"
             onClick={handleClick}
