@@ -931,6 +931,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
   ];
 
   // All available professions from filter (grouped by category)
+  // IMPORTANT: This list must EXACTLY match filterOptions.ts getProfessionOptions()
   const professions = [
     // Projektové profesie
     'Architekt', 'Interiérový dizajnér', 'Krajinný architekt', 'Statik', 'Projektant',
@@ -939,23 +940,23 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
 
     // Stavebné profesie
     'Stavbyvedúci', 'Murár', 'Betónár', 'Tesár', 'Pokrývač', 'Izolatér',
-    'Železobetónár', 'Stavebný robotník', 'Demolačník', 'Výkopové práce',
+    'Železobetónár', 'Stavebný robotník', 'Demolačník', 'Výkopový robotník',
 
     // Interiérové práce
     'Maliar', 'Podlahár', 'Obkladač', 'Sadrokartónár', 'Tapetár', 'Parkettár',
-    'Kuchynský dizajnér', 'Nábytok na mieru', 'Dekoratér', 'Čalúnnik',
+    'Kuchynský dizajnér', 'Stolár', 'Dekoratér', 'Čalúnnik',
 
     // Technické profesie
-    'Elektrikár', 'Vodoinštalatér', 'Plynár', 'Kúrenár', 'Klimatizácie',
-    'Solárne systémy', 'Tepelné čerpadlá', 'Bezpečnostné systémy',
-    'Smart home', 'Výťahy', 'Bazény', 'Studne',
+    'Elektrikár', 'Vodoinštalatér', 'Plynár', 'Kúrenár', 'Klimatizačný technik',
+    'Technik solárnych systémov', 'Technik tepelných čerpadiel', 'Technik bezpečnostných systémov',
+    'Smart home technik', 'Výťahový technik', 'Bazénový technik', 'Studniar',
 
     // Exteriérové práce
-    'Fasáda', 'Záhradník', 'Oplotenie', 'Terasy', 'Dlažby', 'Strešné okná',
-    'Žľaby', 'Komíny', 'Pergoly', 'Zimné záhrady', 'Altánky', 'Osvetlenie exteriéru',
+    'Fasádnik', 'Záhradník', 'Plotár', 'Tesár terás', 'Dlažbár', 'Montážnik strešných okien',
+    'Klampiar', 'Komínár', 'Montážnik pergol', 'Montážnik zimných záhrad', 'Staviteľ altánkov', 'Osvetľovací technik',
 
     // Špecializované služby
-    'Čistenie a upratovanie', 'Sťahovanie', 'Automechanik', 'Fotografovanie'
+    'Upratovač', 'Sťahovák', 'Automechanik', 'Fotograf'
   ];
 
   const experienceLevels = [
