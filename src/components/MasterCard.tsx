@@ -42,10 +42,10 @@ export const MasterCard: React.FC<MasterCardProps> = ({ master, featured = false
         featured ? 'ring-2 ring-[#4169e1] ring-opacity-20' : ''
       }`}
       onClick={handleClick}
-      style={{ height: '340px', width: '100%' }} // Принудительно задаем размеры
+      style={{ height: '420px', width: '100%' }} // Принудительно задаем размеры
     >
       {/* Photo with availability indicator and rating */}
-      <div className="relative" style={{ height: '200px' }}>
+      <div className="relative" style={{ height: '280px' }}>
         <img
           src={master.profileImage}
           alt={master.name}
