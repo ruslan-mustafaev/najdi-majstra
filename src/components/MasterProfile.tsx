@@ -378,13 +378,31 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                     </div>
                   )}
                 </div>
-                {!isOwnProfile && user && !isUserMaster && !reviews.some(r => r.client_id === user.id) && (
-                  <button
-                    onClick={() => setShowReviewForm(true)}
-                    className="bg-[#4169e1] text-white px-4 py-2 rounded-lg hover:bg-[#3155c7] transition-colors text-sm font-medium"
-                  >
-                    Zanechať recenziu
-                  </button>
+                {!isOwnProfile && (
+                  <>
+                    {!user ? (
+                      <div className="flex flex-col items-end space-y-2">
+                        <p className="text-sm text-gray-600 text-right">
+                          Zaregistrujte sa ako klient, aby ste mohli zanechať recenziu
+                        </p>
+                        <button
+                          onClick={onAuthRequired}
+                          className="bg-[#4169e1] text-white px-4 py-2 rounded-lg hover:bg-[#3155c7] transition-colors text-sm font-medium"
+                        >
+                          Zanechať recenziu
+                        </button>
+                      </div>
+                    ) : (
+                      user && !isUserMaster && !reviews.some(r => r.client_id === user.id) && (
+                        <button
+                          onClick={() => setShowReviewForm(true)}
+                          className="bg-[#4169e1] text-white px-4 py-2 rounded-lg hover:bg-[#3155c7] transition-colors text-sm font-medium"
+                        >
+                          Zanechať recenziu
+                        </button>
+                      )
+                    )}
+                  </>
                 )}
               </div>
 
