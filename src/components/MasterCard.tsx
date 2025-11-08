@@ -44,7 +44,7 @@ export const MasterCard: React.FC<MasterCardProps> = ({ master, featured = false
       onClick={handleClick}
     >
       {/* Photo with availability indicator and rating */}
-      <div className="relative" style={{ height: '180px' }}>
+      <div className="relative" style={{ height: '240px' }}>
         <img
           src={master.profileImage}
           alt={master.name}
@@ -88,29 +88,29 @@ export const MasterCard: React.FC<MasterCardProps> = ({ master, featured = false
       </div>
 
       {/* Content */}
-      <div className="p-3 flex flex-col" style={{ height: '130px' }}>
+      <div className="p-4 flex flex-col" style={{ height: '160px' }}>
         {/* Title and location - fixed height */}
-        <div style={{ height: '50px', marginBottom: '8px' }}>
-          <h3 className="text-sm font-bold text-gray-900 mb-1 line-clamp-2 leading-tight">
+        <div style={{ height: '60px', marginBottom: '10px' }}>
+          <h3 className="text-base font-bold text-gray-900 mb-1 line-clamp-2 leading-tight">
             {master.profession} - {master.name}
           </h3>
-          <div className="flex items-center text-gray-600 text-xs">
-            <MapPin size={12} className="mr-1 flex-shrink-0" />
+          <div className="flex items-center text-gray-600 text-sm">
+            <MapPin size={14} className="mr-1 flex-shrink-0" />
             <span className="truncate">{master.location}</span>
           </div>
         </div>
 
         {/* Experience - fixed height */}
-        <div className="text-center" style={{ height: '30px', marginBottom: '8px' }}>
-          <div className="font-semibold text-[#4169e1] text-sm">
+        <div className="text-center" style={{ height: '36px', marginBottom: '10px' }}>
+          <div className="font-semibold text-[#4169e1] text-base">
             {master.experience}
           </div>
         </div>
 
         {/* Button - fixed height */}
-        <div style={{ height: '36px' }}>
+        <div style={{ height: '40px' }}>
           <button
-            className="w-full bg-[#4169e1] text-white py-2 rounded-lg font-medium hover:bg-[#3558d4] transition-colors text-sm"
+            className="w-full bg-[#4169e1] text-white py-2.5 rounded-lg font-medium hover:bg-[#3558d4] transition-colors text-base"
             onClick={handleClick}
           >
             Zobraziť profil
