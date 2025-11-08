@@ -42,10 +42,9 @@ export const MasterCard: React.FC<MasterCardProps> = ({ master, featured = false
         featured ? 'ring-2 ring-[#4169e1] ring-opacity-20' : ''
       }`}
       onClick={handleClick}
-      style={{ height: '420px', width: '100%' }} // Принудительно задаем размеры
     >
       {/* Photo with availability indicator and rating */}
-      <div className="relative" style={{ height: '280px' }}>
+      <div className="relative" style={{ height: '220px' }}>
         <img
           src={master.profileImage}
           alt={master.name}
@@ -89,9 +88,9 @@ export const MasterCard: React.FC<MasterCardProps> = ({ master, featured = false
       </div>
 
       {/* Content */}
-      <div className="p-3 flex flex-col justify-between" style={{ height: '140px' }}>
+      <div className="p-3 flex flex-col justify-between">
         {/* Title and location - fixed height */}
-        <div style={{ height: '60px' }}>
+        <div className="mb-2">
           <h3 className="text-sm font-bold text-gray-900 mb-1 line-clamp-2 leading-tight">
             {master.profession} - {master.name}
           </h3>
@@ -102,14 +101,14 @@ export const MasterCard: React.FC<MasterCardProps> = ({ master, featured = false
         </div>
 
         {/* Experience - fixed height */}
-        <div className="text-center" style={{ height: '30px' }}>
+        <div className="text-center mb-2">
           <div className="font-semibold text-[#4169e1] text-sm">
             {master.experience}
           </div>
         </div>
-        
+
         {/* Button - fixed height */}
-        <div style={{ height: '36px' }}>
+        <div>
           <button 
             className="w-full bg-[#4169e1] text-white py-2 rounded-lg font-medium hover:bg-[#3558d4] transition-colors text-sm"
             onClick={handleClick}
