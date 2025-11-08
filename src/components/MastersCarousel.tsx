@@ -86,8 +86,8 @@ export const MastersCarousel: React.FC<MastersCarouselProps> = ({ masters, title
         </div>
 
         {/* 5x5 Grid */}
-        <div 
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 h-[600px] overflow-y-auto transition-all duration-300 pr-2 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 hover:scrollbar-thumb-gray-600"
+        <div
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-8 gap-x-4 h-[600px] overflow-y-auto transition-all duration-300 pr-2 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 hover:scrollbar-thumb-gray-600"
           onWheel={(e) => {
             // Allow native scroll behavior for this container
             e.stopPropagation();

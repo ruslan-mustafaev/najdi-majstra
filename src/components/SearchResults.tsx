@@ -79,7 +79,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
       {/* Results */}
       <div className="container mx-auto px-4 py-8">
         {masters.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-y-8 gap-x-6">
             {masters.map((master) => (
               <MasterCard
                 key={master.id}
