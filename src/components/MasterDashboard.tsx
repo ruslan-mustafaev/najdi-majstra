@@ -1908,7 +1908,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                         <span>Ukladám...</span>
                       </>
                     ) : (
-                      <span>Uložiť rozvrh</span>
+                      <span>Uložiť profil</span>
                     )}
                   </button>
                 </div>
