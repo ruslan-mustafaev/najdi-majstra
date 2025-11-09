@@ -236,9 +236,8 @@ export const SubscriptionPlans: React.FC = () => {
           <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-t-2xl p-8 text-white text-center">
             <div className="flex items-center justify-center gap-2 mb-4">
               <Sparkles className="w-8 h-8" />
-              <h1 className="text-2xl font-bold">Využite teraz garantovanú dotovanú cenu</h1>
+              <h1 className="text-2xl font-bold">Nestratíte pozornosť a zákaziek bude viac.</h1>
             </div>
-            <p className="text-lg opacity-90">Nestratíte pozornosť a zákaziek bude viac.</p>
 
             <div className="mt-6 flex items-center justify-center gap-4">
               <span className="text-sm font-medium">Fakturácia:</span>
