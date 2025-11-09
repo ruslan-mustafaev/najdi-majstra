@@ -2256,6 +2256,16 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
           <div className="space-y-6">
             <h2 className="text-2xl font-bold">Platby a predplatné</h2>
 
+            {/* Info Banner */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-3">
+              <p className="text-sm text-gray-700 leading-relaxed">
+                <strong>POZOR:</strong> Po zaplatení už od 9,9€ mesačne môžete získať zákazky za tisíce €, správny majster získa certifikáciu odborníka / experta / profika, už od teraz a zvýši tak svoju dôveru v očiach nových prichádzajúcich klientov.
+              </p>
+              <p className="text-sm text-gray-700 leading-relaxed">
+                <strong>Denne na Slovensku hľadajú 10tky až 100vky ľudí niekoho, presne ako vás alebo niekoho z vášho oboru,</strong> hlavne sa nezabudnite nechať kvalitne finančne ohodnotiť ako správny Majster.
+              </p>
+            </div>
+
             {/* Current Active Plan */}
             {activeSubscription && (
               <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-500 rounded-xl p-4">
