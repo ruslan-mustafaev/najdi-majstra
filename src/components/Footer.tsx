@@ -64,8 +64,16 @@ export const Footer: React.FC = () => {
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-          <p>
+        <div className="border-t border-gray-800 mt-8 pt-8">
+          <div className="max-w-4xl mx-auto mb-6 p-4 bg-red-900/20 border border-red-600 rounded-lg">
+            <p className="text-sm text-gray-300 leading-relaxed">
+              {language === 'sk'
+                ? 'www.najdimajstra.sk je priestor kde sa stretavajú kvalitný majstri s ponukami na pracovné príležitosti. internetový priestor najdimajstra.sk nezodpovedá za žiadnu komunikáciu klienta s majstrom. Taktiež najdimajstra.sk nijako nezasahuje do dohodnutej odmeny medzi majstrom a klientom vaša dohoda je výlučne medzi vami. Neberieme si žiadne poplatky ani odmenu za vykonaná prácu. Dohoda je vaša 100% čistá odmena. Registrujte sa zdarma a pomôžte vyriešiť zákazníkom ich vzniknuté problémy za vopred dohodnutú odmenu.'
+                : 'www.najdimajstra.sk is a space where quality masters meet offers for work opportunities. The online space najdimajstra.sk is not responsible for any communication between client and master. Likewise, najdimajstra.sk does not interfere with the agreed payment between master and client - your agreement is exclusively between you. We do not take any fees or commission for work performed. The agreement is your 100% net payment. Register for free and help solve customers\' problems for a pre-agreed fee.'
+              }
+            </p>
+          </div>
+          <p className="text-center text-gray-400">
             &copy; 2025 {t.brand}. {language === 'sk' ? 'Všetky práva vyhradené.' : 'All rights reserved.'}
           </p>
         </div>
