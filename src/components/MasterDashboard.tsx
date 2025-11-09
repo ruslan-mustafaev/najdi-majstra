@@ -1179,7 +1179,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
             <div className="space-y-6">
               <div className="bg-white rounded-xl shadow-lg p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2">Vaša prezentácia</h3>
+                  <h3 className="text-xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2">Vypíšte vašu prezentáciu</h3>
                   {hasChanges && (
                     <div className="flex space-x-2">
                       <button
