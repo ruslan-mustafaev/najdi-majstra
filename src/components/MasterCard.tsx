@@ -44,7 +44,7 @@ export const MasterCard: React.FC<MasterCardProps> = ({ master, featured = false
       onClick={handleClick}
     >
       {/* Photo with availability indicator and rating */}
-      <div className="relative h-[240px] sm:h-[240px]">
+      <div className="relative h-[160px] md:h-[240px]">
         <img
           src={master.profileImage}
           alt={master.name}
@@ -56,31 +56,31 @@ export const MasterCard: React.FC<MasterCardProps> = ({ master, featured = false
         />
         
         {/* Availability indicator or Globe icon for work abroad */}
-        <div className="absolute top-3 right-3">
+        <div className="absolute top-2 right-2 md:top-3 md:right-3">
           {master.workAbroad ? (
             <div className="relative group">
-              <Globe size={18} className="text-[#4169e1] drop-shadow-lg" />
+              <Globe size={14} className="md:w-[18px] md:h-[18px] text-[#4169e1] drop-shadow-lg" />
               <div className="absolute top-full right-0 mt-2 bg-black/90 text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
                 Ochotný pracovať v zahraničí
               </div>
             </div>
           ) : (
-            <div className={`w-4 h-4 rounded-full border-2 border-white ${
+            <div className={`w-3 h-3 md:w-4 md:h-4 rounded-full border-2 border-white ${
               master.available ? 'bg-green-500' : 'bg-red-500'
             }`} />
           )}
         </div>
 
         {/* Rating badge */}
-        <div className="absolute top-3 left-3 bg-black/70 text-white px-2 py-1 rounded-full flex items-center space-x-1">
-          <Star className="text-yellow-400 fill-current" size={14} />
-          <span className="font-medium text-sm">{master.rating}</span>
-          <span className="text-xs">({master.reviewCount})</span>
+        <div className="absolute top-2 left-2 md:top-3 md:left-3 bg-black/70 text-white px-1.5 py-0.5 md:px-2 md:py-1 rounded-full flex items-center space-x-1">
+          <Star className="text-yellow-400 fill-current" size={12} />
+          <span className="font-medium text-xs md:text-sm">{master.rating}</span>
+          <span className="text-[10px] md:text-xs">({master.reviewCount})</span>
         </div>
 
-        {/* Service type indicators - новый компонент */}
-        <div className="absolute bottom-3 left-3">
-          <ServiceIndicators 
+        {/* Service type indicators */}
+        <div className="absolute bottom-2 left-2 md:bottom-3 md:left-3">
+          <ServiceIndicators
             services={serviceTypes}
             size="medium"
           />
@@ -88,21 +88,21 @@ export const MasterCard: React.FC<MasterCardProps> = ({ master, featured = false
       </div>
 
       {/* Content */}
-      <div className="p-4 sm:p-4 flex flex-col justify-between h-[180px] sm:h-[160px]">
+      <div className="p-2 md:p-4 flex flex-col justify-between h-[140px] md:h-[160px]">
         {/* Title and location */}
         <div>
-          <h3 className="text-base font-bold text-gray-900 mb-1 line-clamp-2 leading-tight">
+          <h3 className="text-xs md:text-base font-bold text-gray-900 mb-0.5 md:mb-1 line-clamp-2 leading-tight">
             {master.profession} - {master.name}
           </h3>
-          <div className="flex items-center text-gray-600 text-sm">
-            <MapPin size={14} className="mr-1 flex-shrink-0" />
+          <div className="flex items-center text-gray-600 text-[10px] md:text-sm">
+            <MapPin size={12} className="md:w-[14px] md:h-[14px] mr-1 flex-shrink-0" />
             <span className="truncate">{master.location}</span>
           </div>
         </div>
 
         {/* Experience */}
         <div className="text-center">
-          <div className="font-semibold text-[#4169e1] text-base">
+          <div className="font-semibold text-[#4169e1] text-xs md:text-base">
             {master.experience}
           </div>
         </div>
@@ -110,7 +110,7 @@ export const MasterCard: React.FC<MasterCardProps> = ({ master, featured = false
         {/* Button */}
         <div>
           <button
-            className="w-full bg-[#4169e1] text-white py-2.5 rounded-lg font-medium hover:bg-[#3558d4] transition-colors text-base"
+            className="w-full bg-[#4169e1] text-white py-1.5 md:py-2.5 rounded-lg font-medium hover:bg-[#3558d4] transition-colors text-xs md:text-base"
             onClick={handleClick}
           >
             Zobraziť profil
