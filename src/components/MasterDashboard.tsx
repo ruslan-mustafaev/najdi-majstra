@@ -64,6 +64,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
   const [showContactHoursModal, setShowContactHoursModal] = useState(false);
   const [contactHoursDisplay, setContactHoursDisplay] = useState<string>('');
   const [activeSubscription, setActiveSubscription] = useState<Subscription | null>(null);
+  const [isSubscriptionInfoOpen, setIsSubscriptionInfoOpen] = useState(false);
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('yearly');
   const [showPaymentResult, setShowPaymentResult] = useState<{show: boolean, success: boolean, message: string, planName?: string, billingPeriod?: string, isLoading?: boolean}>({show: false, success: false, message: ''});
@@ -2254,7 +2255,16 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
 
         {activeTab === 'payments' && (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold">Platby a predplatné</h2>
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold">Platby a predplatné</h2>
+              <button
+                onClick={() => setIsSubscriptionInfoOpen(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+              >
+                <Info className="w-5 h-5" />
+                Informácie o predplatnom
+              </button>
+            </div>
 
             {/* Current Active Plan */}
             {activeSubscription && (
@@ -2621,6 +2631,72 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
           </div>
         )}
       </div>
+
+      {/* Subscription Info Modal */}
+      {isSubscriptionInfoOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[9999]">
+          <div className="bg-white rounded-2xl p-8 w-full max-w-3xl mx-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-2xl font-bold text-gray-900">Informácie o predplatnom</h3>
+              <button
+                onClick={() => setIsSubscriptionInfoOpen(false)}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="space-y-6 text-gray-700">
+              <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+                <h4 className="font-bold text-lg mb-2">Srdečne ťa vítam v tvojom predplatnom.</h4>
+              </div>
+
+              <div className="space-y-4">
+                <p className="leading-relaxed">
+                  Ak práve začínaš tak profil <span className="font-semibold">Mini ZDARMA</span> je pre teba, je určený pre každého kto si chce občas viac privyrobiť, ale ak nechceš stáť na mieste, skús sa stať niekým koho ľudia vyhľadávajú sami. Odborník / Expert / Profíkom v obore.
+                </p>
+
+                <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded">
+                  <p className="font-semibold text-green-800 mb-2">✓ OVERENÉ: Odborník</p>
+                  <p className="text-sm">
+                    Ak ste v obore už viac ako rok a máte vedomosti a vlastné skúsenosti doporučujeme pre vás profil Odborníka kde získate za 12,3€ s 23%DPH mesačne plánovanie stavieb a rovnaké možnosti, ako môj kalendár kde vidíš ktorý deň máš už naplánovaný.
+                  </p>
+                </div>
+
+                <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+                  <p className="font-semibold text-blue-800 mb-2">✓ OVERENÉ: Expert</p>
+                  <p className="text-sm">
+                    Ak nechete zaostávať, ale si chceš prezentovať svoje služby viac, cez svoju prácu ktorú si robil, tak si aktivujem profil Expert pretože tieto profily sa zobrazujú v popredí a naviac je to najlepší spôsob ako si dokážeš pritiahnuť zákazníkov cez vlastné hodnotené referencie.
+                  </p>
+                </div>
+
+                <div className="bg-orange-50 border-l-4 border-orange-500 p-4 rounded">
+                  <p className="font-semibold text-orange-800 mb-2">✓ OVERENÉ: Profík</p>
+                  <p className="text-sm">
+                    Ak nechceš stáť na mieste ale chceš získať maximum získaj majstra Profíka kvalifikuj sa do vyššej kategórie pretože tu máš možnosť naviac si zadať vlastnému AI predajcovi aby ťa aktívne predával, je to najrýchlejśí spôsob získania opakovaných zákaziek v tvojom odbore.
+                  </p>
+                </div>
+
+                <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded">
+                  <p className="font-semibold text-yellow-800 mb-2">⚠ POZOR:</p>
+                  <p className="text-sm">
+                    Nech už sa staneš ktorýkoľvek remeselník alebo expert v obore, nezabúdaj na to že tvoji zákazníci sú tvoja najlepšia referencia a tu na najdiMajstra.sk, sa ti môžu odvďačiť a nechať vlastnú dobrú skúsenosť ktorá ti pomôže v tvojom podnikaní a budovaní teba alebo tvojej firmy.
+                  </p>
+                </div>
+              </div>
+
+              <div className="pt-4">
+                <button
+                  onClick={() => setIsSubscriptionInfoOpen(false)}
+                  className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+                >
+                  Zavrieť
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Payment Result Modal */}
       {showPaymentResult.show && (
