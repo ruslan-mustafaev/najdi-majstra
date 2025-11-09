@@ -146,14 +146,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setUser(session.user);
           localStorage.removeItem('masters_cache');
           localStorage.removeItem('masters_cache_timestamp');
-
-          // Redirect master to dashboard after successful sign in
-          if (session.user.user_metadata?.user_type === 'master') {
-            console.log('🔄 AUTH: Redirecting master to dashboard');
-            setTimeout(() => {
-              window.location.href = '/dashboard';
-            }, 100);
-          }
         } else if (event === 'SIGNED_OUT') {
           Object.keys(localStorage).forEach(key => {
             if ((key.includes('cache') || key.includes('master_profile_')) && !key.includes('supabase.auth')) {
