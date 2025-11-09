@@ -1779,7 +1779,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
             {/* Column 3: Calendar & Contact */}
             <div className="space-y-6">
               <div className="bg-white rounded-xl shadow-lg p-6">
-                <h3 className="text-xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2 mb-6">Váš kontakt</h3>
+                <h3 className="text-xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2 mb-6">Vyplnte váš kontakt</h3>
                 
                 {/* Availability Schedule */}
                 <div className="mb-6">
