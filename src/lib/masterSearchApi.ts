@@ -20,6 +20,8 @@ export interface MasterSearchResult {
   hourlyRateMin: number;
   hourlyRateMax: number;
   serviceArea: string;
+  subscriptionType?: string;
+  subscriptionEndDate?: string;
 }
 
 export async function searchMastersByLocation(params: MasterSearchParams): Promise<MasterSearchResult[]> {
@@ -70,10 +72,17 @@ export async function searchMastersByLocation(params: MasterSearchParams): Promi
     }
 
     const masterUserIds = data.map(m => m.user_id);
+
     const { data: reviewsData } = await supabase
       .from('master_reviews')
       .select('master_id, rating')
       .in('master_id', masterUserIds);
+
+    const { data: subscriptionsData } = await supabase
+      .from('subscriptions')
+      .select('user_id, plan_name, current_period_end, status')
+      .in('user_id', masterUserIds)
+      .eq('status', 'active');
 
     const ratingsMap = new Map();
     const reviewCountMap = new Map();
@@ -91,26 +100,77 @@ export async function searchMastersByLocation(params: MasterSearchParams): Promi
       reviewCountMap.set(masterId, ratings.length);
     });
 
-    const masters = data.map(master => ({
-      id: master.id,
-      slug: master.slug,
-      name: master.name || 'Majster',
-      profession: master.profession || 'Majster',
-      location: master.location || 'Slovensko',
-      rating: ratingsMap.get(master.user_id) || 0,
-      reviewCount: reviewCountMap.get(master.user_id) || 0,
-      available: master.is_available ?? master.is_active,
-      profileImage: master.profile_image_url || '/placeholder-avatar.svg',
-      hourlyRateMin: master.hourly_rate_min || 0,
-      hourlyRateMax: master.hourly_rate_max || 0,
-      serviceArea: master.service_area || 'lokálne'
-    }));
+    const subscriptionMap = new Map();
+    (subscriptionsData || []).forEach(sub => {
+      subscriptionMap.set(sub.user_id, {
+        planName: sub.plan_name?.toLowerCase() || 'mini',
+        endDate: sub.current_period_end
+      });
+    });
+
+    const masters = data.map(master => {
+      const subscription = subscriptionMap.get(master.user_id);
+      return {
+        id: master.id,
+        slug: master.slug,
+        name: master.name || 'Majster',
+        profession: master.profession || 'Majster',
+        location: master.location || 'Slovensko',
+        rating: ratingsMap.get(master.user_id) || 0,
+        reviewCount: reviewCountMap.get(master.user_id) || 0,
+        available: master.is_available ?? master.is_active,
+        profileImage: master.profile_image_url || '/placeholder-avatar.svg',
+        hourlyRateMin: master.hourly_rate_min || 0,
+        hourlyRateMax: master.hourly_rate_max || 0,
+        serviceArea: master.service_area || 'lokálne',
+        subscriptionType: subscription?.planName || 'mini',
+        subscriptionEndDate: subscription?.endDate
+      };
+    });
+
+    const getSubscriptionPriority = (type: string): number => {
+      const normalizedType = type.toLowerCase();
+      switch(normalizedType) {
+        case 'premier': return 1;
+        case 'expert': return 2;
+        case 'profik': return 3;
+        case 'odborník': return 3;
+        case 'profi': return 3;
+        case 'standard': return 4;
+        case 'mini': return 5;
+        default: return 6;
+      }
+    };
 
     masters.sort((a, b) => {
+      const priorityA = getSubscriptionPriority(a.subscriptionType || 'mini');
+      const priorityB = getSubscriptionPriority(b.subscriptionType || 'mini');
+
+      if (priorityA !== priorityB) {
+        return priorityA - priorityB;
+      }
+
+      if (a.subscriptionEndDate && b.subscriptionEndDate) {
+        const dateA = new Date(a.subscriptionEndDate).getTime();
+        const dateB = new Date(b.subscriptionEndDate).getTime();
+        if (dateA !== dateB) {
+          return dateB - dateA;
+        }
+      }
+
       if (b.rating !== a.rating) {
         return b.rating - a.rating;
       }
-      return b.reviewCount - a.reviewCount;
+
+      if (b.reviewCount !== a.reviewCount) {
+        return b.reviewCount - a.reviewCount;
+      }
+
+      if (a.available !== b.available) {
+        return a.available ? -1 : 1;
+      }
+
+      return 0;
     });
 
     return masters;

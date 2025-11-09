@@ -114,6 +114,13 @@ const loadFromDatabase = async () => {
       .select('master_id, rating')
       .in('master_id', masterUserIds);
 
+    // Get subscriptions for all masters
+    const { data: subscriptionsData } = await supabase
+      .from('subscriptions')
+      .select('user_id, plan_name, current_period_end, status')
+      .in('user_id', masterUserIds)
+      .eq('status', 'active');
+
     // Calculate average ratings
     const ratingsMap = new Map();
     const reviewCountMap = new Map();
@@ -131,8 +138,19 @@ const loadFromDatabase = async () => {
       reviewCountMap.set(masterId, ratings.length);
     });
 
+    // Map subscriptions by user_id
+    const subscriptionMap = new Map();
+    (subscriptionsData || []).forEach(sub => {
+      subscriptionMap.set(sub.user_id, {
+        planName: sub.plan_name?.toLowerCase() || 'mini',
+        endDate: sub.current_period_end
+      });
+    });
+
     // Преобразуем данные из базы в формат Master
-    const masters = (data || []).map(master => ({
+    const masters = (data || []).map(master => {
+      const subscription = subscriptionMap.get(master.user_id);
+      return {
       id: master.id,
       userId: master.user_id,
       slug: master.slug,
@@ -156,7 +174,8 @@ const loadFromDatabase = async () => {
       priceRange: master.hourly_rate_min && master.hourly_rate_max
         ? `${master.hourly_rate_min}-${master.hourly_rate_max} €/hod`
         : '25-45 €/hod',
-      subscriptionPlan: 'standard',
+      subscriptionPlan: subscription?.planName || 'mini',
+      subscriptionEndDate: subscription?.endDate,
       communicationStyle: master.communication_style || undefined,
       workingHours: {
         monday: '8:00 - 18:00',
@@ -193,7 +212,54 @@ const loadFromDatabase = async () => {
       socialTelegram: master.social_telegram || '',
       socialWhatsapp: master.social_whatsapp || '',
       workAbroad: master.work_abroad || false
-    }));
+    };
+    });
+
+    // Sort by subscription priority
+    const getSubscriptionPriority = (type: string): number => {
+      const normalizedType = type.toLowerCase();
+      switch(normalizedType) {
+        case 'premier': return 1;
+        case 'expert': return 2;
+        case 'profik': return 3;
+        case 'odborník': return 3;
+        case 'profi': return 3;
+        case 'standard': return 4;
+        case 'mini': return 5;
+        default: return 6;
+      }
+    };
+
+    masters.sort((a, b) => {
+      const priorityA = getSubscriptionPriority(a.subscriptionPlan || 'mini');
+      const priorityB = getSubscriptionPriority(b.subscriptionPlan || 'mini');
+
+      if (priorityA !== priorityB) {
+        return priorityA - priorityB;
+      }
+
+      if (a.subscriptionEndDate && b.subscriptionEndDate) {
+        const dateA = new Date(a.subscriptionEndDate).getTime();
+        const dateB = new Date(b.subscriptionEndDate).getTime();
+        if (dateA !== dateB) {
+          return dateB - dateA;
+        }
+      }
+
+      if (b.rating !== a.rating) {
+        return b.rating - a.rating;
+      }
+
+      if (b.reviewCount !== a.reviewCount) {
+        return b.reviewCount - a.reviewCount;
+      }
+
+      if (a.available !== b.available) {
+        return a.available ? -1 : 1;
+      }
+
+      return 0;
+    });
 
     // Сохраняем в кеш
     if (masters.length > 0) {

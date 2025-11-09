@@ -21,7 +21,8 @@ export interface Master {
   languages: string[];
   priceRange: string;
   age?: number;
-  subscriptionPlan?: 'standard' | 'professional' | 'professional-expert' | 'premier';
+  subscriptionPlan?: string;
+  subscriptionEndDate?: string;
   communicationStyle?: string;
   workingHours: {
     monday: string;
