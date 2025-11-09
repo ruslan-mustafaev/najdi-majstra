@@ -12,55 +12,22 @@ interface MastersCarouselProps {
 }
 
 export const MastersCarousel: React.FC<MastersCarouselProps> = ({ masters, title, onMasterClick }) => {
-  const [currentPage, setCurrentPage] = useState(0);
-  const [showAll, setShowAll] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(25);
   const { language } = useLanguage();
 
   const itemsPerPage = 25;
-  const totalPages = Math.ceil(masters.length / itemsPerPage);
 
   const getCurrentPageMasters = () => {
-    if (showAll) {
-      return masters;
-    }
-    const endIndex = itemsPerPage;
-    return masters.slice(0, endIndex);
+    return masters.slice(0, visibleCount);
   };
 
-  const nextPage = () => {
-    setCurrentPage(prev => Math.min(prev + 1, totalPages - 1));
+  const showMore = () => {
+    setVisibleCount(prev => prev + itemsPerPage);
   };
 
-  const prevPage = () => {
-    setCurrentPage(prev => Math.max(prev - 1, 0));
-  };
-
-  // Handle mouse wheel scroll
-  const handleWheel = (e: React.WheelEvent) => {
-    e.preventDefault();
-    if (e.deltaY > 0) {
-      // Scroll down - next page
-      nextPage();
-    } else {
-      // Scroll up - previous page  
-      prevPage();
-    }
-  };
-  
-  // Auto-rotate pages
+  // Reset visible count when masters change
   useEffect(() => {
-    if (totalPages <= 1) return;
-    
-    const interval = setInterval(() => {
-      setCurrentPage(prev => (prev >= totalPages - 1 ? 0 : prev + 1));
-    }, 8000);
-
-    return () => clearInterval(interval);
-  }, [totalPages]);
-
-  // Reset to first page when masters change
-  useEffect(() => {
-    setCurrentPage(0);
+    setVisibleCount(25);
   }, [masters]);
 
   return (
@@ -86,10 +53,10 @@ export const MastersCarousel: React.FC<MastersCarouselProps> = ({ masters, title
         </div>
 
         {/* Show more button */}
-        {!showAll && masters.length > itemsPerPage && (
+        {visibleCount < masters.length && (
           <div className="flex justify-center mt-8">
             <button
-              onClick={() => setShowAll(true)}
+              onClick={showMore}
               className="px-8 py-3 bg-[#4169e1] text-white rounded-lg font-medium hover:bg-[#3558d4] transition-colors"
             >
               Zobraziť viac
