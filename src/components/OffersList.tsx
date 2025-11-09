@@ -125,6 +125,14 @@ export const OffersList: React.FC<OffersListProps> = ({ masterId }) => {
 
   return (
     <div className="space-y-6">
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">Čo ak by vás chcel niekto využiť?</h3>
+        <p className="text-sm text-gray-700 leading-relaxed">
+          Tu vám prichádzajú priamo ponuky od klientov ktoré si môžete vytiaciť alebo stiahnuť ako záväznú objednávku, vy aj klient budete chránený. Ak vám to niekto
+          nebude chcieť poslať, budete vidieť špekuláciu už od začiatku, chráňte sa ako majster a tiež svoju prácu pred podvodníkmi. Povedzte svojim klientom aby vám
+          ako klienti poslali ponuku. Využívajte zadarmo túto službu objednávky, v zájomnej chránej komunikácií.
+        </p>
+      </div>
       <div className="flex flex-col max-md:gap-3 md:flex-row md:items-center md:justify-between">
         <h2 className="text-2xl max-md:text-xl font-bold text-gray-900">Ponuky od klientov</h2>
         <div className="flex flex-wrap gap-2">
