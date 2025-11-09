@@ -350,6 +350,15 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
 
   return (
     <div className="space-y-6">
+      {/* Info Banner */}
+      {isEditable && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <p className="text-sm text-gray-700 leading-relaxed">
+            <strong>Ako vám pomôžu Moje recenzie?</strong> Vaši klieti si vybrú práve vás ak budú mať možnosť nahliadnuť do kvality vašich prác a realizácií.
+          </p>
+        </div>
+      )}
+
       {/* Header */}
       <div className="bg-white rounded-xl shadow-lg p-6">
         <div className="flex items-center justify-between">
