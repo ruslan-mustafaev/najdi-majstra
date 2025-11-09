@@ -174,8 +174,9 @@ const loadFromDatabase = async () => {
       priceRange: master.hourly_rate_min && master.hourly_rate_max
         ? `${master.hourly_rate_min}-${master.hourly_rate_max} €/hod`
         : '25-45 €/hod',
-      subscriptionPlan: subscription?.planName || 'mini',
+      subscriptionPlan: subscription?.planName || 'free',
       subscriptionEndDate: subscription?.endDate,
+      hasActiveSubscription: !!subscription,
       communicationStyle: master.communication_style || undefined,
       workingHours: {
         monday: '8:00 - 18:00',
@@ -216,7 +217,9 @@ const loadFromDatabase = async () => {
     });
 
     // Sort by subscription priority
-    const getSubscriptionPriority = (type: string): number => {
+    const getSubscriptionPriority = (type: string, hasSubscription: boolean): number => {
+      if (!hasSubscription) return 999;
+
       const normalizedType = type.toLowerCase();
       switch(normalizedType) {
         case 'premier': return 1;
@@ -226,13 +229,13 @@ const loadFromDatabase = async () => {
         case 'profi': return 3;
         case 'standard': return 4;
         case 'mini': return 5;
-        default: return 6;
+        default: return 999;
       }
     };
 
     masters.sort((a, b) => {
-      const priorityA = getSubscriptionPriority(a.subscriptionPlan || 'mini');
-      const priorityB = getSubscriptionPriority(b.subscriptionPlan || 'mini');
+      const priorityA = getSubscriptionPriority(a.subscriptionPlan || 'free', a.hasActiveSubscription);
+      const priorityB = getSubscriptionPriority(b.subscriptionPlan || 'free', b.hasActiveSubscription);
 
       if (priorityA !== priorityB) {
         return priorityA - priorityB;

@@ -123,12 +123,15 @@ export async function searchMastersByLocation(params: MasterSearchParams): Promi
         hourlyRateMin: master.hourly_rate_min || 0,
         hourlyRateMax: master.hourly_rate_max || 0,
         serviceArea: master.service_area || 'lokálne',
-        subscriptionType: subscription?.planName || 'mini',
-        subscriptionEndDate: subscription?.endDate
+        subscriptionType: subscription?.planName || 'free',
+        subscriptionEndDate: subscription?.endDate,
+        hasActiveSubscription: !!subscription
       };
     });
 
-    const getSubscriptionPriority = (type: string): number => {
+    const getSubscriptionPriority = (type: string, hasSubscription: boolean): number => {
+      if (!hasSubscription) return 999;
+
       const normalizedType = type.toLowerCase();
       switch(normalizedType) {
         case 'premier': return 1;
@@ -138,13 +141,13 @@ export async function searchMastersByLocation(params: MasterSearchParams): Promi
         case 'profi': return 3;
         case 'standard': return 4;
         case 'mini': return 5;
-        default: return 6;
+        default: return 999;
       }
     };
 
     masters.sort((a, b) => {
-      const priorityA = getSubscriptionPriority(a.subscriptionType || 'mini');
-      const priorityB = getSubscriptionPriority(b.subscriptionType || 'mini');
+      const priorityA = getSubscriptionPriority(a.subscriptionType || 'free', a.hasActiveSubscription);
+      const priorityB = getSubscriptionPriority(b.subscriptionType || 'free', b.hasActiveSubscription);
 
       if (priorityA !== priorityB) {
         return priorityA - priorityB;

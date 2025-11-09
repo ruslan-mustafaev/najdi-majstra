@@ -23,6 +23,7 @@ export interface Master {
   age?: number;
   subscriptionPlan?: string;
   subscriptionEndDate?: string;
+  hasActiveSubscription?: boolean;
   communicationStyle?: string;
   workingHours: {
     monday: string;
