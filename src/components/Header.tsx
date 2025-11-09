@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Menu, UserPlus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { AuthModal } from './AuthModal';
 import { UserMenu } from './UserMenu';
 import { OfferNotifications } from './OfferNotifications';
@@ -9,6 +10,7 @@ import { translations } from '../data/translations';
 import { supabase } from '../lib/supabase';
 
 export const Header: React.FC = () => {
+  const navigate = useNavigate();
   const { language } = useLanguage();
   const { user } = useAuth();
   const t = translations[language];
@@ -75,8 +77,10 @@ export const Header: React.FC = () => {
   };
 
   const handleAuthSuccess = (userType: 'client' | 'master') => {
-    // This will be handled by the main App component through user state changes
-    // No additional action needed here
+    setAuthModalOpen(false);
+    if (userType === 'master') {
+      navigate('/dashboard');
+    }
   };
 
   return (
