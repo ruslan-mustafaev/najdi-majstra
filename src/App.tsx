@@ -477,7 +477,7 @@ const ProfilePage: React.FC = () => {
       <AuthModal
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
-        mode="register"
+        initialMode="register"
         userType="client"
       />
       <Footer />

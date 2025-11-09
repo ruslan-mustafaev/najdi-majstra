@@ -130,15 +130,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
     try {
       if (mode === 'login') {
-        const { error } = await signIn(formData.email, formData.password);
+        const { data, error } = await signIn(formData.email, formData.password);
         if (error) {
           setError(language === 'sk' ? 'Nesprávny email alebo heslo' : 'Invalid email or password');
         } else {
           setSuccess(language === 'sk' ? 'Úspešne prihlásený!' : 'Successfully logged in!');
+          const actualUserType = data?.user?.user_metadata?.user_type || 'client';
           setTimeout(() => {
             onClose();
             if (onAuthSuccess) {
-              onAuthSuccess(formData.userType);
+              onAuthSuccess(actualUserType);
             }
           }, 1500);
         }
@@ -160,14 +161,17 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             setError(error.message);
           }
         } else {
-          setSuccess(language === 'sk' ? 'Registrácia úspešná! Skontrolujte email pre potvrdenie.' : 'Registration successful! Check your email for confirmation.');
+          setSuccess(language === 'sk' ? 'Registrácia úspešná!' : 'Registration successful!');
           setTimeout(() => {
             if (onRegistrationSuccess) {
               onRegistrationSuccess(formData.email);
             } else {
               onClose();
             }
-          }, 2000);
+            if (onAuthSuccess) {
+              onAuthSuccess(formData.userType);
+            }
+          }, 1500);
         }
       }
     } catch (err) {
