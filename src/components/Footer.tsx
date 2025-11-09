@@ -26,9 +26,9 @@ export const Footer: React.FC = () => {
               {t.brand}
             </h3>
             <p className="text-gray-400 mb-4">
-              {language === 'sk' 
-                ? 'Najlepšia platforma pre hľadanie kvalifikovaných majstrov a expertov na Slovensku.'
-                : 'The best platform for finding qualified masters and experts in Slovakia.'
+              {language === 'sk'
+                ? 'Najlepší priestor pre vašu reklamu a propagáciu ZDARMA.'
+                : 'The best space for your advertising and promotion for FREE.'
               }
             </p>
             <div className="flex space-x-4">
