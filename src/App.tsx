@@ -297,11 +297,32 @@ const HomePage: React.FC = () => {
         
         {/* Недавно просмотренные - показываем только если нет активных фильтров */}
         {!hasActiveFilters && recentlyViewed.length > 0 && (
-          <MastersCarousel 
-            masters={recentlyViewed} 
-            title="Naposledy zobrazené"
-            onMasterClick={handleMasterClick}
-          />
+          <>
+            {/* Decorative separator */}
+            <div className="relative py-16 bg-gradient-to-b from-gray-50 via-gray-100 to-gray-50">
+              <div className="container mx-auto px-4">
+                <div className="flex items-center justify-center">
+                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-gray-400"></div>
+                  <div className="px-6">
+                    <div className="flex items-center space-x-3 bg-white px-6 py-3 rounded-full shadow-lg border border-gray-200">
+                      <div className="w-2 h-2 rounded-full bg-[#4169e1] animate-pulse"></div>
+                      <span className="text-sm font-medium text-gray-600 uppercase tracking-wider">
+                        Vaša história prehliadania
+                      </span>
+                      <div className="w-2 h-2 rounded-full bg-[#4169e1] animate-pulse"></div>
+                    </div>
+                  </div>
+                  <div className="flex-1 h-px bg-gradient-to-l from-transparent via-gray-300 to-gray-400"></div>
+                </div>
+              </div>
+            </div>
+
+            <MastersCarousel
+              masters={recentlyViewed}
+              title="Naposledy zobrazené"
+              onMasterClick={handleMasterClick}
+            />
+          </>
         )}
       </main>
       
