@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, User, Mail, Phone, MapPin, FileText, Camera, Video, Settings, Save, Eye, EyeOff, Clock, Euro, Users, Award, Globe, Facebook, Instagram, Linkedin, Youtube, Twitter, MessageCircle, CheckCircle, AlertCircle, Upload, X, Image, Play, AlertTriangle, Plus, Check, Calendar, Star, Trash2, Info, Sparkles } from 'lucide-react';
+import { ArrowLeft, User, Mail, Phone, MapPin, FileText, Camera, Video, Settings, Save, Eye, EyeOff, Clock, Euro, Users, Award, Globe, Facebook, Instagram, Linkedin, Youtube, Twitter, MessageCircle, CheckCircle, AlertCircle, Upload, X, Image, Play, AlertTriangle, Plus, Check, Calendar, Star, Trash2, Info, Sparkles, ChevronDown } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { saveMasterProfile, type MasterProfile } from '../lib/masterProfileApi';
 import { MasterPortfolio } from './MasterPortfolio';
@@ -22,6 +22,8 @@ const CircleEuroIcon = ({ size = 28, className = '', color = 'white' }: { size?:
 import * as ProjectsAPI from '../lib/projectsApi';
 import { getUserActiveSubscription, type Subscription } from '../lib/subscriptionsApi';
 import { getPlanPriceId } from '../lib/stripeConfig';
+import { getCityOptions } from '../data/filterOptions';
+import { useLanguage } from '../hooks/useLanguage';
 
 interface MasterDashboardProps {
   onBack: () => void;
@@ -30,6 +32,7 @@ interface MasterDashboardProps {
 
 export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProfileUpdate }) => {
   const { user, signOut } = useAuth();
+  const { language } = useLanguage();
   const [activeTab, setActiveTab] = useState<'profile' | 'calendar' | 'portfolio' | 'projects' | 'payments' | 'offers'>('profile');
   const [editingField, setEditingField] = useState<string | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
@@ -65,6 +68,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
   const [contactHoursDisplay, setContactHoursDisplay] = useState<string>('');
   const [activeSubscription, setActiveSubscription] = useState<Subscription | null>(null);
   const [isSubscriptionInfoOpen, setIsSubscriptionInfoOpen] = useState(false);
+  const [isLocationDropdownOpen, setIsLocationDropdownOpen] = useState(false);
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('yearly');
   const [showPaymentResult, setShowPaymentResult] = useState<{show: boolean, success: boolean, message: string, planName?: string, billingPeriod?: string, isLoading?: boolean}>({show: false, success: false, message: ''});
@@ -1266,39 +1270,55 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                       Lokalita a dostupnosť
                     </label>
                     <div className="space-y-4">
-                      <div>
-                        {editingField === 'location' ? (
-                          <div className="space-y-2">
-                            <input
-                              type="text"
-                              placeholder="Mesto/región"
-                              value={profileData.location}
-                              onChange={(e) => handleFieldChange('location', e.target.value)}
-                              className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent ${
-                                !profileData.location ? 'border-red-500 border-2' : 'border-gray-300'
-                              }`}
-                            />
-                            {!profileData.location && (
-                              <p className="text-red-600 text-sm font-medium flex items-center gap-1">
-                                <AlertTriangle size={16} />
-                                Povinné pole! Bez neho nebude váš profil viditeľný vo vyhľadávaní.
-                              </p>
-                            )}
-                          </div>
-                        ) : (
-                          <div
-                            className={`flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded border-2 transition-colors ${
-                              !profileData.location
-                                ? 'border-red-500'
-                                : 'border-transparent hover:border-gray-200'
-                            }`}
-                            onClick={() => startEditing('location')}
-                          >
-                            <MapPin size={16} className="text-gray-500" />
-                            <span>{profileData.location || 'Nevyplnené - kliknite pre úpravu'}</span>
+                      <div className="relative">
+                        <button
+                          type="button"
+                          className={`w-full px-3 py-2 rounded-lg text-gray-900 border focus:ring-2 focus:ring-[#4169e1] focus:border-transparent outline-none transition-all duration-200 text-left flex justify-between items-center ${
+                            !profileData.location ? 'border-red-500 border-2' : 'border-gray-300 hover:border-gray-400'
+                          }`}
+                          onClick={() => {
+                            setIsLocationDropdownOpen(!isLocationDropdownOpen);
+                            if (editingField !== 'location') {
+                              startEditing('location');
+                            }
+                          }}
+                        >
+                          <span className={profileData.location ? 'text-gray-900' : 'text-gray-500'}>
+                            {profileData.location || 'Mesto/región'}
+                          </span>
+                          <ChevronDown
+                            size={16}
+                            className={`text-gray-500 transition-transform duration-200 ${isLocationDropdownOpen ? 'rotate-180' : ''}`}
+                          />
+                        </button>
+
+                        {isLocationDropdownOpen && (
+                          <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-50 max-h-80 overflow-y-auto">
+                            {getCityOptions(language).map((option, index) => (
+                              <button
+                                key={index}
+                                type="button"
+                                className={`w-full px-4 py-2 text-left transition-colors duration-150 first:rounded-t-lg last:rounded-b-lg ${
+                                  option.isRegion
+                                    ? 'font-bold text-gray-900 bg-gray-100 cursor-default'
+                                    : 'hover:bg-blue-50 hover:text-[#4169e1] pl-8'
+                                }`}
+                                onClick={() => {
+                                  if (!option.isRegion && option.value) {
+                                    handleFieldChange('location', option.value);
+                                    setIsLocationDropdownOpen(false);
+                                    setHasChanges(true);
+                                  }
+                                }}
+                                disabled={option.isRegion}
+                              >
+                                {option.label}
+                              </button>
+                            ))}
                           </div>
                         )}
-                        {!profileData.location && editingField !== 'location' && (
+
+                        {!profileData.location && (
                           <p className="text-red-600 text-sm font-medium flex items-center gap-1 mt-1">
                             <AlertTriangle size={16} />
                             Povinné pole! Bez neho nebude váš profil viditeľný vo vyhľadávaní.
