@@ -2328,9 +2328,13 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
             {/* Subscription Plans Table */}
             <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
               <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 text-center">
-                <div className="inline-flex items-center gap-2 bg-white/20 px-4 py-2 rounded-full mb-3">
-                  <Sparkles className="w-5 h-5" />
-                  <span className="font-semibold">Nestratíte pozornosť a zákaziek bude viac.</span>
+                <div className="space-y-3 max-w-4xl mx-auto">
+                  <p className="text-base leading-relaxed">
+                    <strong>POZOR:</strong> Po zaplatení už od 9,9€ mesačne môžete získať zákazky za tisíce €, správny majster získa certifikáciu odborníka / experta / profika, už od teraz a zvýši tak svoju dôveru v očiach nových prichádzajúcich klientov.
+                  </p>
+                  <p className="text-base leading-relaxed">
+                    <strong>Denne na Slovensku hľadajú 10tky až 100vky ľudí niekoho, presne ako vás alebo niekoho z vášho oboru,</strong> hlavne sa nezabudnite nechať kvalitne finančne ohodnotiť ako správny Majster.
+                  </p>
                 </div>
                 {activeSubscription && (
                   <div className="mt-4 bg-white/10 backdrop-blur-sm px-4 py-3 rounded-lg">

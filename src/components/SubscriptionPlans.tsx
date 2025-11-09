@@ -234,9 +234,13 @@ export const SubscriptionPlans: React.FC = () => {
       <div className="min-h-screen bg-gray-50 pt-16">
         <div className="max-w-7xl mx-auto py-8 px-4">
           <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-t-2xl p-8 text-white text-center">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <Sparkles className="w-8 h-8" />
-              <h1 className="text-2xl font-bold">Nestratíte pozornosť a zákaziek bude viac.</h1>
+            <div className="space-y-3 max-w-4xl mx-auto mb-6">
+              <p className="text-base leading-relaxed">
+                <strong>POZOR:</strong> Po zaplatení už od 9,9€ mesačne môžete získať zákazky za tisíce €, správny majster získa certifikáciu odborníka / experta / profika, už od teraz a zvýši tak svoju dôveru v očiach nových prichádzajúcich klientov.
+              </p>
+              <p className="text-base leading-relaxed">
+                <strong>Denne na Slovensku hľadajú 10tky až 100vky ľudí niekoho, presne ako vás alebo niekoho z vášho oboru,</strong> hlavne sa nezabudnite nechať kvalitne finančne ohodnotiť ako správny Majster.
+              </p>
             </div>
 
             <div className="mt-6 flex items-center justify-center gap-4">
