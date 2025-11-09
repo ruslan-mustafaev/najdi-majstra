@@ -96,7 +96,7 @@ const loadFromDatabase = async () => {
       .select('*')
       .eq('is_active', true)
       .eq('profile_completed', true)
-      .limit(10);
+      .limit(100);
 
     if (error) {
       console.error('Database error:', {
