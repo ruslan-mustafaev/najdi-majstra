@@ -1265,63 +1265,79 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                     <label className="block text-sm font-semibold text-blue-600 mb-2">
                       Lokalita a dostupnosť
                     </label>
-                    {editingField === 'location' ? (
-                      <div className="space-y-2">
-                        <input
-                          type="text"
-                          placeholder="Mesto/región"
-                          value={profileData.location}
-                          onChange={(e) => handleFieldChange('location', e.target.value)}
-                          className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent ${
-                            !profileData.location ? 'border-red-500 border-2' : 'border-gray-300'
-                          }`}
-                        />
-                        {!profileData.location && (
-                          <p className="text-red-600 text-sm font-medium flex items-center gap-1">
-                            <AlertTriangle size={16} />
-                            Povinné pole! Bez neho nebude váš profil viditeľný vo vyhľadávaní.
-                          </p>
-                        )}
-                        <div className="space-y-2">
-                          <div className="flex items-center space-x-3">
-                            <input
-                              type="checkbox"
-                              id="available"
-                              checked={profileData.availability.available}
-                              onChange={(e) => handleNestedFieldChange('availability', 'available', e.target.checked)}
-                              className="w-4 h-4 text-[#4169e1] rounded focus:ring-[#4169e1]"
-                            />
-                            <label htmlFor="available" className="text-sm font-medium">Chcem, aby zákazníci videli môj profil</label>
-                          </div>
-                          <p className="text-xs text-gray-500 ml-7">
-                            Ak zrušíte označenie, váš profil nebude zobrazený na webovej stránke
-                          </p>
-                        </div>
-                      </div>
-                    ) : (
+                    <div className="space-y-4">
                       <div>
-                        <div
-                          className={`flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded border-2 transition-colors ${
-                            !profileData.location
-                              ? 'border-red-500'
-                              : 'border-transparent hover:border-gray-200'
-                          }`}
-                          onClick={() => startEditing('location')}
-                        >
-                          <MapPin size={16} className="text-gray-500" />
-                          <span>{profileData.location || 'Nevyplnené - kliknite pre úpravu'}</span>
-                          <div className={`w-3 h-3 rounded-full ${
-                            profileData.availability.available ? 'bg-green-500' : 'bg-red-500'
-                          }`} />
-                        </div>
-                        {!profileData.location && (
+                        {editingField === 'location' ? (
+                          <div className="space-y-2">
+                            <input
+                              type="text"
+                              placeholder="Mesto/región"
+                              value={profileData.location}
+                              onChange={(e) => handleFieldChange('location', e.target.value)}
+                              className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent ${
+                                !profileData.location ? 'border-red-500 border-2' : 'border-gray-300'
+                              }`}
+                            />
+                            {!profileData.location && (
+                              <p className="text-red-600 text-sm font-medium flex items-center gap-1">
+                                <AlertTriangle size={16} />
+                                Povinné pole! Bez neho nebude váš profil viditeľný vo vyhľadávaní.
+                              </p>
+                            )}
+                          </div>
+                        ) : (
+                          <div
+                            className={`flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded border-2 transition-colors ${
+                              !profileData.location
+                                ? 'border-red-500'
+                                : 'border-transparent hover:border-gray-200'
+                            }`}
+                            onClick={() => startEditing('location')}
+                          >
+                            <MapPin size={16} className="text-gray-500" />
+                            <span>{profileData.location || 'Nevyplnené - kliknite pre úpravu'}</span>
+                          </div>
+                        )}
+                        {!profileData.location && editingField !== 'location' && (
                           <p className="text-red-600 text-sm font-medium flex items-center gap-1 mt-1">
                             <AlertTriangle size={16} />
                             Povinné pole! Bez neho nebude váš profil viditeľný vo vyhľadávaní.
                           </p>
                         )}
                       </div>
-                    )}
+
+                      <div className="border-t pt-4">
+                        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div className="flex-1">
+                            <label htmlFor="available" className="text-sm font-medium cursor-pointer">
+                              Chcem, aby zákazníci videli môj profil
+                            </label>
+                            <p className="text-xs text-gray-500 mt-1">
+                              Ak vypnete, váš profil nebude zobrazený na webovej stránke
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newValue = !profileData.availability.available;
+                              handleNestedFieldChange('availability', 'available', newValue);
+                              setHasChanges(true);
+                            }}
+                            className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                              profileData.availability.available
+                                ? 'bg-green-500 focus:ring-green-500'
+                                : 'bg-red-500 focus:ring-red-500'
+                            }`}
+                          >
+                            <span
+                              className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${
+                                profileData.availability.available ? 'translate-x-7' : 'translate-x-1'
+                              }`}
+                            />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
                   {/* Social Media */}
@@ -1499,75 +1515,53 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                     <p className="text-xs text-gray-500 mb-3">
                       Tieto indikátory sa zobrazia na vašej profilovej fotke
                     </p>
-                    {editingField === 'services' ? (
-                      <div className="space-y-3">
-                        <label className="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg border-2 border-transparent hover:border-blue-300 transition-colors">
-                          <input
-                            type="checkbox"
-                            checked={profileData.serviceRegular}
-                            onChange={(e) => handleFieldChange('serviceRegular', e.target.checked)}
-                            className="w-5 h-5 text-blue-500 rounded focus:ring-blue-500"
-                          />
-                          <div className="flex items-center space-x-2">
-                            <div className="w-3 h-8 bg-blue-500 rounded"></div>
-                            <span className="text-sm font-medium">Pravidelný servis</span>
-                          </div>
-                        </label>
-                        <label className="flex items-center space-x-3 p-3 bg-red-50 rounded-lg border-2 border-transparent hover:border-red-300 transition-colors">
-                          <input
-                            type="checkbox"
-                            checked={profileData.serviceUrgent}
-                            onChange={(e) => handleFieldChange('serviceUrgent', e.target.checked)}
-                            className="w-5 h-5 text-red-500 rounded focus:ring-red-500"
-                          />
-                          <div className="flex items-center space-x-2">
-                            <div className="w-3 h-8 bg-red-500 rounded"></div>
-                            <span className="text-sm font-medium">Akútna porucha</span>
-                          </div>
-                        </label>
-                        <label className="flex items-center space-x-3 p-3 bg-green-50 rounded-lg border-2 border-transparent hover:border-green-300 transition-colors">
-                          <input
-                            type="checkbox"
-                            checked={profileData.serviceRealization}
-                            onChange={(e) => handleFieldChange('serviceRealization', e.target.checked)}
-                            className="w-5 h-5 text-green-500 rounded focus:ring-green-500"
-                          />
-                          <div className="flex items-center space-x-2">
-                            <div className="w-3 h-8 bg-green-500 rounded"></div>
-                            <span className="text-sm font-medium">Plánovaná realizácia</span>
-                          </div>
-                        </label>
-                      </div>
-                    ) : (
-                      <div
-                        className="cursor-pointer hover:bg-gray-50 p-3 rounded border-2 border-transparent hover:border-gray-200 transition-colors"
-                        onClick={() => startEditing('services')}
-                      >
-                        <div className="flex items-center space-x-3">
-                          {profileData.serviceRegular && (
-                            <div className="flex items-center space-x-1">
-                              <div className="w-3 h-8 bg-blue-500 rounded"></div>
-                              <span className="text-xs">Servis</span>
-                            </div>
-                          )}
-                          {profileData.serviceUrgent && (
-                            <div className="flex items-center space-x-1">
-                              <div className="w-3 h-8 bg-red-500 rounded"></div>
-                              <span className="text-xs">Porucha</span>
-                            </div>
-                          )}
-                          {profileData.serviceRealization && (
-                            <div className="flex items-center space-x-1">
-                              <div className="w-3 h-8 bg-green-500 rounded"></div>
-                              <span className="text-xs">Realizácia</span>
-                            </div>
-                          )}
-                          {!profileData.serviceRegular && !profileData.serviceUrgent && !profileData.serviceRealization && (
-                            <span className="text-gray-500">Nevyplnené - kliknite pre úpravu</span>
-                          )}
+                    <div className="space-y-3">
+                      <label className="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg border-2 border-transparent hover:border-blue-300 transition-colors cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={profileData.serviceRegular}
+                          onChange={(e) => {
+                            handleFieldChange('serviceRegular', e.target.checked);
+                            setHasChanges(true);
+                          }}
+                          className="w-5 h-5 text-blue-500 rounded focus:ring-blue-500"
+                        />
+                        <div className="flex items-center space-x-2">
+                          <div className="w-3 h-8 bg-blue-500 rounded"></div>
+                          <span className="text-sm font-medium">Pravidelný servis</span>
                         </div>
-                      </div>
-                    )}
+                      </label>
+                      <label className="flex items-center space-x-3 p-3 bg-red-50 rounded-lg border-2 border-transparent hover:border-red-300 transition-colors cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={profileData.serviceUrgent}
+                          onChange={(e) => {
+                            handleFieldChange('serviceUrgent', e.target.checked);
+                            setHasChanges(true);
+                          }}
+                          className="w-5 h-5 text-red-500 rounded focus:ring-red-500"
+                        />
+                        <div className="flex items-center space-x-2">
+                          <div className="w-3 h-8 bg-red-500 rounded"></div>
+                          <span className="text-sm font-medium">Akútna porucha</span>
+                        </div>
+                      </label>
+                      <label className="flex items-center space-x-3 p-3 bg-green-50 rounded-lg border-2 border-transparent hover:border-green-300 transition-colors cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={profileData.serviceRealization}
+                          onChange={(e) => {
+                            handleFieldChange('serviceRealization', e.target.checked);
+                            setHasChanges(true);
+                          }}
+                          className="w-5 h-5 text-green-500 rounded focus:ring-green-500"
+                        />
+                        <div className="flex items-center space-x-2">
+                          <div className="w-3 h-8 bg-green-500 rounded"></div>
+                          <span className="text-sm font-medium">Plánovaná realizácia</span>
+                        </div>
+                      </label>
+                    </div>
                   </div>
 
                   {/* Communication Style */}
