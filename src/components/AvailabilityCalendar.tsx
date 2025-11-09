@@ -216,15 +216,25 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-semibold flex items-center space-x-2">
-          <Calendar size={22} className="text-[#4169e1]" />
-          <span>{isEditable ? 'Kalendár dostupnosti' : 'Plánovanie práce'}</span>
-        </h3>
-      </div>
+    <div className="space-y-6">
+      {/* Info Banner */}
+      {isEditable && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <p className="text-sm text-gray-700 leading-relaxed">
+            <strong>Načo je kalendár dostupnosti?</strong> Udržujte si časový prehľad a dajte jasne vedieť vašim klientom kedy si vás môžu objednať na plánovanú realizáciu. Označte si jednotlivé dni či ste voľný alebo už obsadený.
+          </p>
+        </div>
+      )}
 
-      {/* Month Navigation */}
+      <div className="bg-white rounded-xl shadow-lg p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-xl font-semibold flex items-center space-x-2">
+            <Calendar size={22} className="text-[#4169e1]" />
+            <span>{isEditable ? 'Kalendár dostupnosti' : 'Plánovanie práce'}</span>
+          </h3>
+        </div>
+
+        {/* Month Navigation */}
       <div className="flex items-center justify-between mb-6">
         <button
           onClick={goToPreviousMonth}
@@ -428,6 +438,7 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 };
