@@ -21,6 +21,8 @@ export interface MasterProfile {
   hourly_rate_min?: number;
   hourly_rate_max?: number;
   certificates?: string;
+  website?: string;
+  age?: number;
   social_facebook?: string;
   social_instagram?: string;
   social_youtube?: string;
@@ -61,6 +63,8 @@ export const saveMasterProfile = async (profileData: MasterProfile): Promise<Mas
       hourly_rate_min: profileData.hourly_rate_min ?? 0,
       hourly_rate_max: profileData.hourly_rate_max ?? 0,
       certificates: profileData.certificates || '',
+      website: profileData.website || '',
+      age: profileData.age || null,
       social_facebook: profileData.social_facebook || '',
       social_instagram: profileData.social_instagram || '',
       social_youtube: profileData.social_youtube || '',

@@ -190,8 +190,15 @@ const loadFromDatabase = async () => {
       contact: {
         phone: master.phone || '+421 9xx xxx xxx',
         email: master.email || '',
-        website: '',
-        socialMedia: {}
+        website: master.website || '',
+        socialMedia: {
+          facebook: master.social_facebook || '',
+          instagram: master.social_instagram || '',
+          youtube: master.social_youtube || '',
+          tiktok: master.social_tiktok || '',
+          telegram: master.social_telegram || '',
+          whatsapp: master.social_whatsapp || ''
+        }
       },
       availability: {
         schedule: '8:00 - 18:00',
