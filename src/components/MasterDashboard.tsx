@@ -277,6 +277,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
       hourly_rate_max: profileData.hourlyRateMax ? parseFloat(profileData.hourlyRateMax) : 0,
       certificates: profileData.certificatesText,
       website: profileData.contact.website || '',
+      age: profileData.age,
       social_facebook: profileData.contact.socialMedia?.facebook || '',
       social_instagram: profileData.contact.socialMedia?.instagram || '',
       social_youtube: profileData.contact.socialMedia?.youtube || '',
@@ -1281,6 +1282,35 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                           onClick={() => startEditing('name')}
                         >
                           {profileData.name || 'Nevyplnené - kliknite pre úpravu'}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Age */}
+                  <div>
+                    <label className="block text-sm font-semibold text-blue-600 mb-2">
+                      Vek (voliteľné)
+                    </label>
+                    {editingField === 'age' ? (
+                      <div className="space-y-2">
+                        <input
+                          type="number"
+                          placeholder="Váš vek"
+                          min="18"
+                          max="99"
+                          value={profileData.age || ''}
+                          onChange={(e) => handleFieldChange('age', e.target.value ? parseInt(e.target.value) : undefined)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
+                        />
+                      </div>
+                    ) : (
+                      <div>
+                        <p
+                          className="cursor-pointer hover:bg-gray-50 p-2 rounded border-2 border-transparent hover:border-gray-200 text-gray-900 transition-colors"
+                          onClick={() => startEditing('age')}
+                        >
+                          {profileData.age ? `${profileData.age} rokov` : 'Nevyplnené - kliknite pre úpravu'}
                         </p>
                       </div>
                     )}
