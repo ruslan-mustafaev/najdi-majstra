@@ -1,13 +1,3 @@
-console.log('🔑 Loading Stripe Config...');
-console.log('Environment variables:', {
-  VITE_STRIPE_ODBORNIK_MONTHLY_PRICE_ID: import.meta.env.VITE_STRIPE_ODBORNIK_MONTHLY_PRICE_ID,
-  VITE_STRIPE_ODBORNIK_YEARLY_PRICE_ID: import.meta.env.VITE_STRIPE_ODBORNIK_YEARLY_PRICE_ID,
-  VITE_STRIPE_EXPERT_MONTHLY_PRICE_ID: import.meta.env.VITE_STRIPE_EXPERT_MONTHLY_PRICE_ID,
-  VITE_STRIPE_EXPERT_YEARLY_PRICE_ID: import.meta.env.VITE_STRIPE_EXPERT_YEARLY_PRICE_ID,
-  VITE_STRIPE_PROFIK_MONTHLY_PRICE_ID: import.meta.env.VITE_STRIPE_PROFIK_MONTHLY_PRICE_ID,
-  VITE_STRIPE_PROFIK_YEARLY_PRICE_ID: import.meta.env.VITE_STRIPE_PROFIK_YEARLY_PRICE_ID,
-  VITE_STRIPE_PREMIER_PRICE_ID: import.meta.env.VITE_STRIPE_PREMIER_PRICE_ID,
-});
 
 export const STRIPE_CONFIG = {
   publishableKey: import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '',
@@ -45,8 +35,8 @@ export const STRIPE_CONFIG = {
       name: 'Premier',
       monthlyPrice: 4979.00,
       yearlyPrice: 4979.00,
-      monthlyPriceId: import.meta.env.VITE_STRIPE_PREMIER_PRICE_ID || '',
-      yearlyPriceId: import.meta.env.VITE_STRIPE_PREMIER_PRICE_ID || '',
+      monthlyPriceId: import.meta.env.VITE_STRIPE_PREMIER_MONTHLY_PRICE_ID || '',
+      yearlyPriceId: import.meta.env.VITE_STRIPE_PREMIER_YEARLY_PRICE_ID || '',
     },
   },
 };
