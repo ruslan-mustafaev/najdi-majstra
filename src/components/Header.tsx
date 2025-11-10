@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Menu, UserPlus } from 'lucide-react';
+import { Plus, Menu, UserPlus, LogIn } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { AuthModal } from './AuthModal';
 import { UserMenu } from './UserMenu';
@@ -109,8 +109,9 @@ export const Header: React.FC = () => {
                 <>
                   <button
                     onClick={handleLoginClick}
-                    className="flex items-center space-x-2 text-white/90 hover:text-white transition-colors"
+                    className="flex items-center space-x-2 text-white/90 hover:text-white transition-colors px-3 py-2"
                   >
+                    <LogIn size={20} />
                     <span className="hidden sm:inline">{t.navigation.login}</span>
                   </button>
 
