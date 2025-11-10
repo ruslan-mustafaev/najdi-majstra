@@ -1,5 +1,4 @@
-const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
-const API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY;
+import { supabase } from './supabase';
 
 export interface OpenRouterMessage {
   role: 'system' | 'user' | 'assistant';
@@ -25,24 +24,24 @@ export async function callOpenRouter(
   messages: OpenRouterMessage[],
   model: string = 'google/gemini-2.5-flash'
 ): Promise<string> {
-  if (!API_KEY) {
-    throw new Error('VITE_OPENROUTER_API_KEY is not configured. Please add it to your .env file and restart the dev server.');
-  }
-
   try {
-    const response = await fetch(OPENROUTER_API_URL, {
+    const { data: { session } } = await supabase.auth.getSession();
+
+    if (!session) {
+      throw new Error('User is not authenticated');
+    }
+
+    const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/openrouter-chat`;
+
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${API_KEY}`,
+        'Authorization': `Bearer ${session.access_token}`,
         'Content-Type': 'application/json',
-        'HTTP-Referer': window.location.origin,
-        'X-Title': 'najdiMajstra.sk'
       },
       body: JSON.stringify({
-        model,
         messages,
-        temperature: 0.7,
-        max_tokens: 1000
+        model
       })
     });
 
@@ -51,13 +50,13 @@ export async function callOpenRouter(
       throw new Error(`OpenRouter API error: ${response.status} - ${JSON.stringify(errorData)}`);
     }
 
-    const data: OpenRouterResponse = await response.json();
+    const data = await response.json();
 
-    if (!data.choices || data.choices.length === 0) {
+    if (!data.content) {
       throw new Error('No response from OpenRouter API');
     }
 
-    return data.choices[0].message.content;
+    return data.content;
   } catch (error) {
     console.error('OpenRouter API call failed:', error);
     throw error;
