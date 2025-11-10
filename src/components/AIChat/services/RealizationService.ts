@@ -215,22 +215,28 @@ Povedz mi prosím: aký typ prác plánuješ (stavba, rekonštrukcia, dokončova
   private extractInformation(userMessage: string): void {
     const lowerMessage = userMessage.toLowerCase();
 
+    // Cities with ALL declensions (nominative, genitive, dative, accusative, locative, instrumental)
     const locationKeywords = [
-      { name: 'bratislava', variants: ['bratislava', 'bratislave'] },
-      { name: 'košice', variants: ['košice', 'košiciach'] },
-      { name: 'prešov', variants: ['prešov', 'prešove'] },
-      { name: 'žilina', variants: ['žilina', 'žiline'] },
-      { name: 'banská bystrica', variants: ['banská bystrica', 'banskej bystrici'] },
-      { name: 'nitra', variants: ['nitra', 'nitre'] },
-      { name: 'trnava', variants: ['trnava', 'trnave'] },
-      { name: 'trenčín', variants: ['trenčín', 'trenčíne'] },
-      { name: 'martin', variants: ['martin', 'martine'] },
-      { name: 'poprad', variants: ['poprad', 'poprade'] },
-      { name: 'prievidza', variants: ['prievidza', 'prievidzi'] },
-      { name: 'zvolen', variants: ['zvolen', 'zvolene'] },
-      { name: 'považská bystrica', variants: ['považská bystrica', 'považskej bystrici'] },
-      { name: 'nové zámky', variants: ['nové zámky', 'nových zámkoch'] },
-      { name: 'michalovce', variants: ['michalovce', 'michalovciach'] }
+      { name: 'bratislava', variants: ['bratislava', 'bratislavy', 'bratislave', 'bratislavu', 'bratislavou'] },
+      { name: 'košice', variants: ['košice', 'košíc', 'kosice', 'kosic', 'košiciach', 'košiciam'] },
+      { name: 'prešov', variants: ['prešov', 'prešova', 'presov', 'presova', 'prešove', 'presove'] },
+      { name: 'žilina', variants: ['žilina', 'žiliny', 'zilina', 'ziliny', 'žiline', 'ziline'] },
+      { name: 'banská bystrica', variants: ['banská bystrica', 'banskej bystrice', 'banskej bystrici', 'banska bystrica', 'banskej bystricy'] },
+      { name: 'nitra', variants: ['nitra', 'nitry', 'nitre'] },
+      { name: 'trnava', variants: ['trnava', 'trnavy', 'trnave'] },
+      { name: 'trenčín', variants: ['trenčín', 'trenčína', 'trencin', 'trencina', 'trenčíne', 'trencine'] },
+      { name: 'martin', variants: ['martin', 'martina', 'martine'] },
+      { name: 'poprad', variants: ['poprad', 'popradu', 'poprade'] },
+      { name: 'prievidza', variants: ['prievidza', 'prievidze', 'prievidzi'] },
+      { name: 'zvolen', variants: ['zvolen', 'zvolena', 'zvolene'] },
+      { name: 'považská bystrica', variants: ['považská bystrica', 'považskej bystrice', 'povazska bystrica', 'povazskej bystrice', 'považskej bystrici'] },
+      { name: 'nové zámky', variants: ['nové zámky', 'nových zámkov', 'nove zamky', 'novych zamkov', 'nových zámkoch'] },
+      { name: 'michalovce', variants: ['michalovce', 'michaloviec', 'michalovciach'] },
+      { name: 'komárno', variants: ['komárno', 'komárna', 'komarno', 'komarna', 'komárne'] },
+      { name: 'levice', variants: ['levice', 'levíc', 'leviciach'] },
+      { name: 'humenné', variants: ['humenné', 'humenného', 'humenne', 'humenneho', 'humennom'] },
+      { name: 'bardejov', variants: ['bardejov', 'bardejova', 'bardejove'] },
+      { name: 'liptovský mikuláš', variants: ['liptovský mikuláš', 'liptovského mikuláša', 'liptovsky mikulas', 'liptovského mikulasa', 'liptovskom mikuláši'] }
     ];
 
     locationKeywords.forEach(cityObj => {

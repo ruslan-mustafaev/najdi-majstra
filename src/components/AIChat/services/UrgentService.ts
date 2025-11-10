@@ -230,58 +230,133 @@ Opíš mi prosím: Čo sa pokazilo a kde sa nachádzaš (mesto)? Pomôžem ti n�
   private extractInformation(userMessage: string): void {
     const lowerMessage = userMessage.toLowerCase();
 
-    // Cities with declensions (nominative and locative forms)
+    // Cities with ALL declensions (nominative, genitive, dative, accusative, locative, instrumental)
     const cityDeclensions: { [key: string]: string } = {
+      // Bratislava - all forms
       'bratislava': 'bratislava',
-      'bratislave': 'bratislava',
+      'bratislavy': 'bratislava', // genitive: z Bratislavy
+      'bratislave': 'bratislava', // locative: v Bratislave
+      'bratislavu': 'bratislava', // accusative
+      'bratislavou': 'bratislava', // instrumental
+
+      // Košice - all forms
       'košice': 'košice',
-      'košiciach': 'košice',
+      'košíc': 'košice', // genitive: z Košíc
+      'kosice': 'košice',
+      'kosic': 'košice',
+      'košiciach': 'košice', // locative: v Košiciach
+      'košiciam': 'košice',
+
+      // Prešov - all forms
       'prešov': 'prešov',
-      'prešove': 'prešov',
+      'prešova': 'prešov', // genitive: z Prešova
+      'presov': 'prešov',
+      'presova': 'prešov',
+      'prešove': 'prešov', // locative: v Prešove
+      'presove': 'prešov',
+
+      // Žilina - all forms
       'žilina': 'žilina',
-      'žiline': 'žilina',
+      'žiliny': 'žilina', // genitive: zo Žiliny
       'zilina': 'žilina',
+      'ziliny': 'žilina',
+      'žiline': 'žilina', // locative: v Žiline
       'ziline': 'žilina',
+
+      // Banská Bystrica - all forms
       'banská bystrica': 'banská bystrica',
-      'banskej bystrici': 'banská bystrica',
+      'banskej bystrice': 'banská bystrica', // genitive: z Banskej Bystrice
+      'banskej bystrici': 'banská bystrica', // locative: v Banskej Bystrici
       'banska bystrica': 'banská bystrica',
+      'banskej bystricy': 'banská bystrica',
+
+      // Nitra - all forms
       'nitra': 'nitra',
-      'nitre': 'nitra',
+      'nitry': 'nitra', // genitive: z Nitry
+      'nitre': 'nitra', // locative: v Nitre
+
+      // Trnava - all forms
       'trnava': 'trnava',
-      'trnave': 'trnava',
+      'trnavy': 'trnava', // genitive: z Trnavy
+      'trnave': 'trnava', // locative: v Trnave
+
+      // Trenčín - all forms
       'trenčín': 'trenčín',
-      'trenčíne': 'trenčín',
+      'trenčína': 'trenčín', // genitive: z Trenčína
       'trencin': 'trenčín',
+      'trencina': 'trenčín',
+      'trenčíne': 'trenčín', // locative: v Trenčíne
       'trencine': 'trenčín',
+
+      // Martin - all forms
       'martin': 'martin',
-      'martine': 'martin',
+      'martina': 'martin', // genitive: z Martina
+      'martine': 'martin', // locative: v Martine
+
+      // Poprad - all forms
       'poprad': 'poprad',
-      'poprade': 'poprad',
+      'popradu': 'poprad', // genitive: z Popradu
+      'poprade': 'poprad', // locative: v Poprade
+
+      // Prievidza - all forms
       'prievidza': 'prievidza',
-      'prievidzi': 'prievidza',
+      'prievidze': 'prievidza', // genitive: z Prievidze
+      'prievidzi': 'prievidza', // locative: v Prievidzi
+
+      // Zvolen - all forms
       'zvolen': 'zvolen',
-      'zvolene': 'zvolen',
+      'zvolena': 'zvolen', // genitive: zo Zvolena
+      'zvolene': 'zvolen', // locative: vo Zvolene
+
+      // Považská Bystrica - all forms
       'považská bystrica': 'považská bystrica',
+      'považskej bystrice': 'považská bystrica', // genitive: z Považskej Bystrice
       'povazska bystrica': 'považská bystrica',
-      'považskej bystrici': 'považská bystrica',
+      'povazskej bystrice': 'považská bystrica',
+      'považskej bystrici': 'považská bystrica', // locative
+
+      // Nové Zámky - all forms
       'nové zámky': 'nové zámky',
+      'nových zámkov': 'nové zámky', // genitive: z Nových Zámkov
       'nove zamky': 'nové zámky',
-      'nových zámkoch': 'nové zámky',
+      'novych zamkov': 'nové zámky',
+      'nových zámkoch': 'nové zámky', // locative: v Nových Zámkoch
+
+      // Michalovce - all forms
       'michalovce': 'michalovce',
-      'michalovciach': 'michalovce',
+      'michaloviec': 'michalovce', // genitive: z Michaloviec
+      'michalovciach': 'michalovce', // locative: v Michalovciach
+
+      // Komárno - all forms
       'komárno': 'komárno',
+      'komárna': 'komárno', // genitive: z Komárna
       'komarno': 'komárno',
-      'komárne': 'komárno',
+      'komarna': 'komárno',
+      'komárne': 'komárno', // locative: v Komárne
+
+      // Levice - all forms
       'levice': 'levice',
-      'leviciach': 'levice',
+      'levíc': 'levice', // genitive: z Levíc
+      'leviciach': 'levice', // locative: v Leviciach
+
+      // Humenné - all forms
       'humenné': 'humenné',
+      'humenného': 'humenné', // genitive: z Humenného
       'humenne': 'humenné',
-      'humennom': 'humenné',
+      'humenneho': 'humenné',
+      'humennom': 'humenné', // locative: v Humennom
+
+      // Bardejov - all forms
       'bardejov': 'bardejov',
-      'bardejove': 'bardejov',
+      'bardejova': 'bardejov', // genitive: z Bardejova
+      'bardejove': 'bardejov', // locative: v Bardejove
+
+      // Liptovský Mikuláš - all forms
       'liptovský mikuláš': 'liptovský mikuláš',
+      'liptovského mikuláša': 'liptovský mikuláš', // genitive: z Liptovského Mikuláša
       'liptovsky mikulas': 'liptovský mikuláš',
-      'liptovskom mikuláši': 'liptovský mikuláš'
+      'liptovského mikulasa': 'liptovský mikuláš',
+      'liptovskom mikuláši': 'liptovský mikuláš' // locative: v Liptovskom Mikuláši
     };
 
     // Main cities
