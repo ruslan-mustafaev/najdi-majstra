@@ -177,7 +177,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
       console.error('Error processing message:', error);
       const errorMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
-        content: language === 'sk' ? 'Prepáčte, nastala chyba. Skúste to prosím znovu.' : 'Sorry, an error occurred. Please try again.',
+        content: 'Prepáčte, nastala chyba pri spracovaní vašej správy. Prosím, skúste to znovu alebo kontaktujte podporu.',
         sender: 'ai',
         timestamp: new Date()
       };
