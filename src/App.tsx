@@ -16,6 +16,7 @@ import { MasterDashboard } from './components/MasterDashboard';
 import { EmailConfirmation } from './components/EmailConfirmation';
 import { AIAssistantSettings } from './components/AIAssistantSettings';
 import { SubscriptionPlans } from './components/SubscriptionPlans';
+import { ClientOffers } from './components/ClientOffers';
 import { Master } from './data/mockData';
 import { getTopRatedMasters } from './lib/mastersApi';
 import { checkConnection } from './lib/supabase';
@@ -564,6 +565,43 @@ const AISettingsPage: React.FC = () => {
   );
 };
 
+// Страница предложений клиента
+const MyOffersPage: React.FC = () => {
+  const navigate = useNavigate();
+  const { user, loading } = useAuth();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate('/');
+    }
+  }, [user, loading, navigate]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="text-gray-600 mt-4">Načítavam...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Header />
+      <div className="container mx-auto px-4 py-8">
+        <ClientOffers />
+      </div>
+      <Footer />
+    </div>
+  );
+};
+
 // Страница результатов поиска
 const SearchPage: React.FC = () => {
   const navigate = useNavigate();
@@ -663,6 +701,9 @@ const AppContent: React.FC = () => {
 
       {/* Страница подписки */}
       <Route path="/subscription" element={<SubscriptionPlans />} />
+
+      {/* Предложения клиента */}
+      <Route path="/my-offers" element={<MyOffersPage />} />
 
       {/* Перенаправление на главную для несуществующих путей */}
       <Route path="*" element={<Navigate to="/" replace />} />

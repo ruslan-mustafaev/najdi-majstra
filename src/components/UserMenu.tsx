@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, LogOut, ChevronDown, Wrench, Sparkles } from 'lucide-react';
+import { User, LogOut, ChevronDown, Wrench, Sparkles, FileText } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useLanguage } from '../hooks/useLanguage';
 import { useNavigate } from 'react-router-dom';
@@ -24,6 +24,11 @@ export const UserMenu: React.FC = () => {
 
   const handleAISettingsClick = () => {
     navigate('/ai-settings');
+    setIsOpen(false);
+  };
+
+  const handleMyOffersClick = () => {
+    navigate('/my-offers');
     setIsOpen(false);
   };
 
@@ -71,7 +76,7 @@ export const UserMenu: React.FC = () => {
 
             {/* Menu Items */}
             <div className="py-2">
-              {isMaster && (
+              {isMaster ? (
                 <>
                   <button
                     onClick={handleDashboardClick}
@@ -89,6 +94,14 @@ export const UserMenu: React.FC = () => {
                     <span>{language === 'sk' ? 'Môj AI predajca' : 'My AI Seller'}</span>
                   </button>
                 </>
+              ) : (
+                <button
+                  onClick={handleMyOffersClick}
+                  className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 text-gray-700"
+                >
+                  <FileText size={16} />
+                  <span>{language === 'sk' ? 'Moje ponuky' : 'My Offers'}</span>
+                </button>
               )}
             </div>
 
