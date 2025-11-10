@@ -1702,8 +1702,11 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                         type="number"
                         placeholder="5"
                         min="0"
-                        value={profileData.experienceYears}
-                        onChange={(e) => handleFieldChange('experienceYears', parseInt(e.target.value) || 0)}
+                        value={profileData.experienceYears === 0 ? '' : profileData.experienceYears}
+                        onChange={(e) => {
+                          const value = e.target.value === '' ? 0 : parseInt(e.target.value);
+                          handleFieldChange('experienceYears', isNaN(value) ? 0 : value);
+                        }}
                         className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
                       />
                     ) : (
