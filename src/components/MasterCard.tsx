@@ -101,11 +101,13 @@ export const MasterCard: React.FC<MasterCardProps> = ({ master, featured = false
         </div>
 
         {/* Experience */}
-        <div className="text-center">
-          <div className="font-semibold text-[#4169e1] text-xs md:text-base">
-            {master.experience}
+        {master.experience && (
+          <div className="text-center">
+            <div className="font-semibold text-[#4169e1] text-xs md:text-base">
+              {master.experience}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Button */}
         <div>

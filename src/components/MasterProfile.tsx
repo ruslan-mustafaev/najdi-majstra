@@ -691,7 +691,7 @@ export const MasterProfile: React.FC<MasterProfileProps> = ({ master, onBack, is
                   <div>
                     <p className="font-medium">Skúsenosti</p>
                     <p className="text-gray-600 text-sm">
-                      {(master as any).experienceYears
+                      {(master as any).experienceYears && (master as any).experienceYears > 0
                         ? `${(master as any).experienceYears} rokov`
                         : master.experience || 'Neuvedené'}
                     </p>

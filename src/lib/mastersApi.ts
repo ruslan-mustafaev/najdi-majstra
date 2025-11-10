@@ -165,7 +165,7 @@ const loadFromDatabase = async () => {
       workVideos: master.work_video_url || [],
       description: master.description || '',
       services: ['Opravy', 'Inštalácie', 'Servis'],
-      experience: master.experience_years ? `${master.experience_years} rokov` : '5+ rokov',
+      experience: master.experience_years ? `${master.experience_years} rokov` : '',
       certifications: master.certificates ? [master.certificates] : ['Odborná spôsobilosť'],
       expertise: ['Všeobecné práce'],
       teamSize: 'individual' as const,
