@@ -1206,20 +1206,13 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                 </div>
 
                 <div className="space-y-4">
-                  {/* Name & Profession */}
+                  {/* Profession */}
                   <div>
                     <label className="block text-sm font-semibold text-blue-600 mb-2">
-                      Meno a profesia
+                      Profesia
                     </label>
-                    {editingField === 'name-profession' ? (
+                    {editingField === 'profession' ? (
                       <div className="space-y-2">
-                        <input
-                          type="text"
-                          placeholder="Vaše meno"
-                          value={profileData.name}
-                          onChange={(e) => handleFieldChange('name', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
-                        />
                         <select
                           value={profileData.profession}
                           onChange={(e) => handleFieldChange('profession', e.target.value)}
@@ -1247,12 +1240,9 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                               ? 'border-red-500 text-gray-900'
                               : 'border-transparent hover:border-gray-200 text-gray-900'
                           }`}
-                          onClick={() => startEditing('name-profession')}
+                          onClick={() => startEditing('profession')}
                         >
-                          {profileData.profession && profileData.name
-                            ? `${profileData.profession} - ${profileData.name}`
-                            : 'Nevyplnené - kliknite pre úpravu'
-                          }
+                          {profileData.profession || 'Nevyplnené - kliknite pre úpravu'}
                         </p>
                         {!profileData.profession && (
                           <p className="text-red-600 text-sm font-medium flex items-center gap-1 mt-1">
@@ -1260,6 +1250,33 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                             Povinné pole! Bez neho nebude váš profil viditeľný vo vyhľadávaní.
                           </p>
                         )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Name */}
+                  <div>
+                    <label className="block text-sm font-semibold text-blue-600 mb-2">
+                      Meno a priezvisko
+                    </label>
+                    {editingField === 'name' ? (
+                      <div className="space-y-2">
+                        <input
+                          type="text"
+                          placeholder="Vaše meno a priezvisko"
+                          value={profileData.name}
+                          onChange={(e) => handleFieldChange('name', e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
+                        />
+                      </div>
+                    ) : (
+                      <div>
+                        <p
+                          className="cursor-pointer hover:bg-gray-50 p-2 rounded border-2 border-transparent hover:border-gray-200 text-gray-900 transition-colors"
+                          onClick={() => startEditing('name')}
+                        >
+                          {profileData.name || 'Nevyplnené - kliknite pre úpravu'}
+                        </p>
                       </div>
                     )}
                   </div>
