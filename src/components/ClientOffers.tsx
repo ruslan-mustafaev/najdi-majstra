@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
-import { Clock, CheckCircle, XCircle, FileText, MapPin, Calendar, User } from 'lucide-react';
+import { Clock, CheckCircle, XCircle, FileText, MapPin, Calendar, User, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface Offer {
   id: string;
@@ -20,6 +21,7 @@ interface Offer {
 
 export const ClientOffers: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [offers, setOffers] = useState<Offer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'pending' | 'accepted' | 'rejected'>('all');
@@ -118,7 +120,16 @@ export const ClientOffers: React.FC = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <div className="max-w-6xl mx-auto pt-24 pb-8">
+      {/* Back button */}
+      <button
+        onClick={() => navigate('/')}
+        className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors"
+      >
+        <ArrowLeft size={20} />
+        <span className="font-medium">Späť na úvod</span>
+      </button>
+
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Moje ponuky</h1>
         <p className="text-gray-600">Prehľad vašich odoslaných ponúk majstrom</p>
