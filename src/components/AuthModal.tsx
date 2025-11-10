@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Mail, Lock, User, Phone, MapPin, Eye, EyeOff } from 'lucide-react';
+import { X, Mail, Lock, User, Phone, MapPin, Eye, EyeOff, Award } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useLanguage } from '../hooks/useLanguage';
 
@@ -234,25 +234,64 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
           {/* User Type Selection (Register only) */}
           {mode === 'register' && (
-            <div>
-              <label className="block text-gray-700 text-sm font-medium mb-2">
+            <div className="space-y-3">
+              <label className="block text-gray-700 text-sm font-medium">
                 {language === 'sk' ? 'Typ účtu *' : 'Account Type *'}
               </label>
-              <select
-                name="userType"
-                value={formData.userType}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#4169e1] focus:border-transparent outline-none"
-                required
-              >
-                <option value="client">
-                  {language === 'sk' ? 'Klient (hľadám majstra)' : 'Client (looking for master)'}
-                </option>
-                <option value="master">
-                  {language === 'sk' ? 'Majster (ponúkam služby)' : 'Master (offering services)'}
-                </option>
-              </select>
-              <p className="text-xs text-gray-500 mt-1">
+
+              <div className="relative bg-gradient-to-r from-gray-50 to-gray-100 p-1 rounded-2xl border-2 border-gray-200 shadow-inner">
+                <div className="relative flex">
+                  {/* Client Option */}
+                  <button
+                    type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, userType: 'client' }))}
+                    className={`flex-1 relative z-10 px-6 py-4 rounded-xl font-semibold text-sm transition-all duration-300 ${
+                      formData.userType === 'client'
+                        ? 'text-white'
+                        : 'text-gray-600 hover:text-gray-800'
+                    }`}
+                  >
+                    <div className="flex flex-col items-center space-y-1">
+                      <User size={24} className={formData.userType === 'client' ? 'animate-bounce' : ''} />
+                      <span>{language === 'sk' ? 'Klient' : 'Client'}</span>
+                      <span className="text-xs opacity-80">
+                        {language === 'sk' ? 'Hľadám majstra' : 'Looking for master'}
+                      </span>
+                    </div>
+                  </button>
+
+                  {/* Master Option */}
+                  <button
+                    type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, userType: 'master' }))}
+                    className={`flex-1 relative z-10 px-6 py-4 rounded-xl font-semibold text-sm transition-all duration-300 ${
+                      formData.userType === 'master'
+                        ? 'text-white'
+                        : 'text-gray-600 hover:text-gray-800'
+                    }`}
+                  >
+                    <div className="flex flex-col items-center space-y-1">
+                      <Award size={24} className={formData.userType === 'master' ? 'animate-bounce' : ''} />
+                      <span>{language === 'sk' ? 'Majster' : 'Master'}</span>
+                      <span className="text-xs opacity-80">
+                        {language === 'sk' ? 'Ponúkam služby' : 'Offering services'}
+                      </span>
+                    </div>
+                  </button>
+
+                  {/* Sliding Background */}
+                  <div
+                    className={`absolute top-0 bottom-0 w-1/2 bg-gradient-to-br from-[#4169e1] to-[#5a7bff] rounded-xl shadow-lg transition-all duration-300 ease-out ${
+                      formData.userType === 'master' ? 'translate-x-full' : 'translate-x-0'
+                    }`}
+                    style={{
+                      boxShadow: '0 4px 15px rgba(65, 105, 225, 0.4)'
+                    }}
+                  />
+                </div>
+              </div>
+
+              <p className="text-xs text-gray-500 text-center">
                 {language === 'sk' ? 'Vyberte, či hľadáte služby alebo ich ponúkate' : 'Choose whether you are looking for services or offering them'}
               </p>
             </div>
