@@ -40,11 +40,12 @@ COMMUNICATION STYLE:
 EXAMPLE OF CORRECT RESPONSE:
 "Great, regular maintenance is always a good investment. What do you need to service (boiler, electrical, air conditioning) and where are you located?"
 
-WHEN YOU HAVE ENOUGH INFORMATION:
-Say: "I found masters for regular service in your area. Check recommendations below, and feel free to continue chatting if you need another service!"
+WHEN YOU HAVE ENOUGH INFORMATION AND MASTERS FOUND:
+- If from same city: "I found masters for regular service in your area. Check recommendations below, and feel free to continue chatting!"
+- If from nearby cities: "I couldn't find masters in [city], but I found [number] masters in nearby areas who can help you. Check them below!"
 
-WHEN NO MASTERS FOUND:
-Say: "I couldn't find any available masters for this service in your area at the moment. Please try searching through the main page or try again later."
+WHEN NO MASTERS FOUND ANYWHERE:
+Say: "I couldn't find any available masters for this service at the moment. Please try searching through the main page or contact support."
 
 IMPORTANT:
 - Extract city/region from response
@@ -84,11 +85,12 @@ Odpovedz v angličtine: "I was created by the Najdimajstra Dev-Interactive team.
 PRÍKLAD SPRÁVNEJ ODPOVEDE:
 "Výborne, pravidelný servis je vždy dobrá investícia. Čo potrebuješ servisovať (kotol, elektriku, klimatizáciu) a kde sa nachádzaš?"
 
-KEĎ MÁŠ DOSTATOK INFORMÁCIÍ:
-Povedz: "Našiel som majstrov pre pravidelný servis vo vašej lokalite. Pozrite si odporúčania nižšie a pokojne pokračujte v rozhovore, ak potrebujete ďalšiu službu!"
+KEĎ MÁŠ DOSTATOK INFORMÁCIÍ A NAŠLI SA MAJSTRI:
+- Ak sú z rovnakého mesta: "Našiel som majstrov pre pravidelný servis vo vašej lokalite. Pozrite si odporúčania nižšie a pokojne pokračujte v rozhovore!"
+- Ak sú zo susedných miest: "V meste [mesto] som nenašiel dostupných majstrov, ale našiel som [počet] majstrov v okolí, ktorí vám môžu pomôcť. Pozrite si ich nižšie!"
 
-KEĎ SA NENAŠLI ŽIADNI MAJSTRI:
-Povedz: "Momentálne som nenašiel žiadnych dostupných majstrov pre túto službu v danej lokalite. Skúste prosím hľadať cez hlavnú stránku alebo to skúste o chvíľu znovu."
+KEĎ SA NENAŠLI ŽIADNI MAJSTRI NIKDE:
+Povedz: "Momentálne som nenašiel žiadnych dostupných majstrov pre túto službu. Skúste prosím hľadať cez hlavnú stránku alebo kontaktujte podporu."
 
 DÔLEŽITÉ:
 - Extrahuj mesto/región z odpovede
@@ -149,23 +151,31 @@ What do you need to service (e.g., boiler, air conditioning, electrical) and in 
 
       if (this.conversationState.hasLocation && this.conversationState.hasServiceDescription) {
         console.log(`🎯 [REGULAR] Both location and service found! Searching for masters...`);
-        const masters = await this.findServiceMasters();
-        if (masters.length > 0) {
-          recommendedMasters = masters;
-          console.log(`✅ [REGULAR] Returning ${masters.length} recommended masters`);
+        const result = await this.findServiceMastersWithContext();
 
-          // Inform AI that masters were found
-          messages.push({
-            role: 'system',
-            content: `SYSTEM: ${masters.length} masters found and will be displayed to the user. Tell them you found masters.`
-          });
+        if (result.masters.length > 0) {
+          recommendedMasters = result.masters;
+          console.log(`✅ [REGULAR] Returning ${result.masters.length} recommended masters`);
+
+          // Inform AI where the masters are from
+          if (result.fromNearby) {
+            messages.push({
+              role: 'system',
+              content: `SYSTEM: ${result.masters.length} masters found BUT NOT in ${this.conversationState.location}. They are from nearby cities/areas. Tell the user you couldn't find masters in their exact city (${this.conversationState.location}), but you found ${result.masters.length} masters in nearby areas who can help.`
+            });
+          } else {
+            messages.push({
+              role: 'system',
+              content: `SYSTEM: ${result.masters.length} masters found in ${this.conversationState.location}. Tell them you found masters in their city.`
+            });
+          }
         } else {
           console.log(`⚠️ [REGULAR] No masters found with these criteria`);
 
-          // Inform AI that NO masters were found
+          // Inform AI that NO masters were found at all
           messages.push({
             role: 'system',
-            content: 'SYSTEM: 0 masters found. Tell the user no masters are available at the moment and suggest they try the main search page.'
+            content: 'SYSTEM: 0 masters found anywhere. Tell the user no masters are currently available and suggest they try the main search page or contact support.'
           });
         }
       } else {
@@ -277,7 +287,7 @@ What do you need to service (e.g., boiler, air conditioning, electrical) and in 
     });
   }
 
-  private async findServiceMasters(): Promise<string[]> {
+  private async findServiceMastersWithContext(): Promise<{ masters: string[], fromNearby: boolean }> {
     try {
       console.log(`🔍 [REGULAR] Searching masters with params:`, {
         location: this.conversationState.location,
@@ -285,18 +295,41 @@ What do you need to service (e.g., boiler, air conditioning, electrical) and in 
         serviceType: 'regular'
       });
 
-      const masters = await searchMastersByLocation({
+      // First try: search in specific city
+      let masters = await searchMastersByLocation({
         location: this.conversationState.location,
         profession: this.conversationState.serviceType,
         serviceType: 'regular',
         limit: 5
       });
 
-      console.log(`📋 [REGULAR] Found ${masters.length} masters`);
-      return masters.map(m => m.id);
+      console.log(`✅ [REGULAR] Found ${masters.length} masters in ${this.conversationState.location}`);
+
+      // If no masters found in the specific city, try broader search
+      if (masters.length === 0) {
+        console.log(`🔍 [REGULAR] No masters in ${this.conversationState.location}, searching in nearby areas...`);
+
+        masters = await searchMastersByLocation({
+          profession: this.conversationState.serviceType,
+          serviceType: 'regular',
+          limit: 5
+        });
+
+        console.log(`✅ [REGULAR] Found ${masters.length} masters in nearby areas`);
+
+        return {
+          masters: masters.map(m => m.id),
+          fromNearby: true
+        };
+      }
+
+      return {
+        masters: masters.map(m => m.id),
+        fromNearby: false
+      };
     } catch (error) {
       console.error('[REGULAR] Error finding service masters:', error);
-      return [];
+      return { masters: [], fromNearby: false };
     }
   }
 

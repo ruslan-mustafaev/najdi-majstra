@@ -40,11 +40,12 @@ COMMUNICATION STYLE:
 EXAMPLE OF CORRECT RESPONSE:
 "Interesting project! To help you, I need to know what type of work it is (renovation, construction, finishing) and where the property is located?"
 
-WHEN YOU HAVE ENOUGH INFORMATION:
-Say: "I found suitable masters for your project in your area. Check recommendations below, and feel free to ask if you need masters for another project!"
+WHEN YOU HAVE ENOUGH INFORMATION AND MASTERS FOUND:
+- If from same city: "I found suitable masters for your project in your area. Check recommendations below, and feel free to ask if you need another project!"
+- If from nearby cities: "I couldn't find masters in [city], but I found [number] masters in nearby areas who can help you. Check them below!"
 
-WHEN NO MASTERS FOUND:
-Say: "I couldn't find any available masters for this project in your area at the moment. Please try searching through the main page or try again later."
+WHEN NO MASTERS FOUND ANYWHERE:
+Say: "I couldn't find any available masters for this project at the moment. Please try searching through the main page or contact support."
 
 IMPORTANT:
 - Extract city/region from response
@@ -84,11 +85,12 @@ Odpovedz v angličtine: "I was created by the Najdimajstra Dev-Interactive team.
 PRÍKLAD SPRÁVNEJ ODPOVEDE:
 "Zaujímavý projekt! Aby som ti vedel pomôcť, potrebujem vedieť o aký typ prác ide (rekonštrukcia, stavba, dokončovanie) a kde sa nachádza nehnuteľnosť?"
 
-KEĎ MÁŠ DOSTATOK INFORMÁCIÍ:
-Povedz: "Našiel som vhodných majstrov pre váš projekt vo vašej lokalite. Pozrite si odporúčania nižšie a pokojne sa opýtajte, ak potrebujete majstrov na iný projekt!"
+KEĎ MÁŠ DOSTATOK INFORMÁCIÍ A NAŠLI SA MAJSTRI:
+- Ak sú z rovnakého mesta: "Našiel som vhodných majstrov pre váš projekt vo vašej lokalite. Pozrite si odporúčania nižšie a pokojne sa opýtajte!"
+- Ak sú zo susedných miest: "V meste [mesto] som nenašiel dostupných majstrov, ale našiel som [počet] majstrov v okolí, ktorí vám môžu pomôcť. Pozrite si ich nižšie!"
 
-KEĎ SA NENAŠLI ŽIADNI MAJSTRI:
-Povedz: "Momentálne som nenašiel žiadnych dostupných majstrov pre tento projekt v danej lokalite. Skúste prosím hľadať cez hlavnú stránku alebo to skúste o chvíľu znovu."
+KEĎ SA NENAŠLI ŽIADNI MAJSTRI NIKDE:
+Povedz: "Momentálne som nenašiel žiadnych dostupných majstrov pre tento projekt. Skúste prosím hľadať cez hlavnú stránku alebo kontaktujte podporu."
 
 DÔLEŽITÉ:
 - Extrahuj mesto/región z odpovede
@@ -149,23 +151,31 @@ Povedz mi prosím: aký typ prác plánuješ (stavba, rekonštrukcia, dokončova
 
       if (this.conversationState.hasLocation && this.conversationState.hasProjectDescription) {
         console.log(`🎯 [REALIZATION] Both location and project found! Searching for masters...`);
-        const masters = await this.findProjectMasters();
-        if (masters.length > 0) {
-          recommendedMasters = masters;
-          console.log(`✅ [REALIZATION] Returning ${masters.length} recommended masters`);
+        const result = await this.findProjectMastersWithContext();
 
-          // Inform AI that masters were found
-          messages.push({
-            role: 'system',
-            content: `SYSTEM: ${masters.length} masters found and will be displayed to the user. Tell them you found masters.`
-          });
+        if (result.masters.length > 0) {
+          recommendedMasters = result.masters;
+          console.log(`✅ [REALIZATION] Returning ${result.masters.length} recommended masters`);
+
+          // Inform AI where the masters are from
+          if (result.fromNearby) {
+            messages.push({
+              role: 'system',
+              content: `SYSTEM: ${result.masters.length} masters found BUT NOT in ${this.conversationState.location}. They are from nearby cities/areas. Tell the user you couldn't find masters in their exact city (${this.conversationState.location}), but you found ${result.masters.length} masters in nearby areas who can help.`
+            });
+          } else {
+            messages.push({
+              role: 'system',
+              content: `SYSTEM: ${result.masters.length} masters found in ${this.conversationState.location}. Tell them you found masters in their city.`
+            });
+          }
         } else {
           console.log(`⚠️ [REALIZATION] No masters found with these criteria`);
 
-          // Inform AI that NO masters were found
+          // Inform AI that NO masters were found at all
           messages.push({
             role: 'system',
-            content: 'SYSTEM: 0 masters found. Tell the user no masters are available at the moment and suggest they try the main search page.'
+            content: 'SYSTEM: 0 masters found anywhere. Tell the user no masters are currently available and suggest they try the main search page or contact support.'
           });
         }
       } else {
@@ -239,19 +249,49 @@ Povedz mi prosím: aký typ prác plánuješ (stavba, rekonštrukcia, dokončova
     });
   }
 
-  private async findProjectMasters(): Promise<string[]> {
+  private async findProjectMastersWithContext(): Promise<{ masters: string[], fromNearby: boolean }> {
     try {
-      const masters = await searchMastersByLocation({
+      console.log(`🔍 [REALIZATION] Searching masters with params:`, {
+        location: this.conversationState.location,
+        profession: this.conversationState.projectType,
+        serviceType: 'realization'
+      });
+
+      // First try: search in specific city
+      let masters = await searchMastersByLocation({
         location: this.conversationState.location,
         profession: this.conversationState.projectType,
         serviceType: 'realization',
         limit: 6
       });
 
-      return masters.map(m => m.id);
+      console.log(`✅ [REALIZATION] Found ${masters.length} masters in ${this.conversationState.location}`);
+
+      // If no masters found in the specific city, try broader search
+      if (masters.length === 0) {
+        console.log(`🔍 [REALIZATION] No masters in ${this.conversationState.location}, searching in nearby areas...`);
+
+        masters = await searchMastersByLocation({
+          profession: this.conversationState.projectType,
+          serviceType: 'realization',
+          limit: 6
+        });
+
+        console.log(`✅ [REALIZATION] Found ${masters.length} masters in nearby areas`);
+
+        return {
+          masters: masters.map(m => m.id),
+          fromNearby: true
+        };
+      }
+
+      return {
+        masters: masters.map(m => m.id),
+        fromNearby: false
+      };
     } catch (error) {
       console.error('Error finding project masters:', error);
-      return [];
+      return { masters: [], fromNearby: false };
     }
   }
 

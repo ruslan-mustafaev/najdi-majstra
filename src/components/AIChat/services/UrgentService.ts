@@ -46,11 +46,12 @@ You: "Hi! What is broken and in which city are you located?"
 User: "My electricity is broken in Bratislava"
 You: "I understand, electrical problem in Bratislava. Is the whole house down or just part?"
 
-WHEN YOU HAVE ENOUGH INFORMATION:
-Say: "I found available masters in your area. Check recommendations below, and feel free to ask me anything else!"
+WHEN YOU HAVE ENOUGH INFORMATION AND MASTERS FOUND:
+- If from same city: "I found available masters in your area. Check recommendations below, and feel free to ask me anything else!"
+- If from nearby cities: "I couldn't find masters in [city], but I found [number] masters in nearby areas who can help you. Check them below!"
 
-WHEN NO MASTERS FOUND:
-Say: "I couldn't find any available masters for this service in your area at the moment. Please try searching through the main page or try again later."
+WHEN NO MASTERS FOUND ANYWHERE:
+Say: "I couldn't find any available masters for this service at the moment. Please try searching through the main page or contact support."
 
 IMPORTANT:
 - Extract city/region from user response
@@ -96,11 +97,12 @@ Ty: "Ahoj! Čo sa pokazilo a v akom meste sa nachádzaš?"
 Používateľ: "Pokazila sa mi elektrina v Bratislave"
 Ty: "Rozumiem, problém s elektrinou v Bratislave. Nefunguje celý dom alebo len časť?"
 
-KEĎ MÁŠ DOSTATOK INFORMÁCIÍ:
-Povedz: "Našiel som dostupných majstrov vo vašej lokalite. Pozrite si odporúčania nižšie a pokojne sa ma opýtajte na čokoľvek ďalšie!"
+KEĎ MÁŠ DOSTATOK INFORMÁCIÍ A NAŠLI SA MAJSTRI:
+- Ak sú z rovnakého mesta: "Našiel som dostupných majstrov vo vašej lokalite. Pozrite si odporúčania nižšie a pokojne sa ma opýtajte na čokoľvek ďalšie!"
+- Ak sú zo susedných miest: "V meste [mesto] som nenašiel dostupných majstrov, ale našiel som [počet] majstrov v okolí, ktorí vám môžu pomôcť. Pozrite si ich nižšie!"
 
-KEĎ SA NENAŠLI ŽIADNI MAJSTRI:
-Povedz: "Momentálne som nenašiel žiadnych dostupných majstrov pre túto službu v danej lokalite. Skúste prosím hľadať cez hlavnú stránku alebo to skúste o chvíľu znovu."
+KEĎ SA NENAŠLI ŽIADNI MAJSTRI NIKDE:
+Povedz: "Momentálne som nenašiel žiadnych dostupných majstrov pre túto službu. Skúste prosím hľadať cez hlavnú stránku alebo kontaktujte podporu."
 
 DÔLEŽITÉ:
 - Extrahuj mesto/región z odpovede používateľa
@@ -163,28 +165,34 @@ Opíš mi prosím: Čo sa pokazilo a kde sa nachádzaš (mesto)? Pomôžem ti n�
       messages.push({ role: 'user', content: userMessage });
 
       let recommendedMasters: string[] | undefined;
-      let mastersFound = false;
 
       if (this.conversationState.hasLocation && this.conversationState.hasProblemDescription) {
         console.log(`🎯 Both location and problem found! Searching for masters...`);
-        const masters = await this.findUrgentMasters();
-        if (masters.length > 0) {
-          recommendedMasters = masters;
-          mastersFound = true;
-          console.log(`✅ Returning ${masters.length} recommended masters`);
+        const result = await this.findUrgentMastersWithContext();
 
-          // Inform AI that masters were found
-          messages.push({
-            role: 'system',
-            content: `SYSTEM: ${masters.length} masters found and will be displayed to the user. Tell them you found masters.`
-          });
+        if (result.masters.length > 0) {
+          recommendedMasters = result.masters;
+          console.log(`✅ Returning ${result.masters.length} recommended masters`);
+
+          // Inform AI where the masters are from
+          if (result.fromNearby) {
+            messages.push({
+              role: 'system',
+              content: `SYSTEM: ${result.masters.length} masters found BUT NOT in ${this.conversationState.location}. They are from nearby cities/areas. Tell the user you couldn't find masters in their exact city (${this.conversationState.location}), but you found ${result.masters.length} masters in nearby areas who can help.`
+            });
+          } else {
+            messages.push({
+              role: 'system',
+              content: `SYSTEM: ${result.masters.length} masters found in ${this.conversationState.location}. Tell them you found masters in their city.`
+            });
+          }
         } else {
           console.log(`⚠️ No masters found with these criteria`);
 
-          // Inform AI that NO masters were found
+          // Inform AI that NO masters were found at all
           messages.push({
             role: 'system',
-            content: 'SYSTEM: 0 masters found. Tell the user no masters are available at the moment and suggest they try the main search page.'
+            content: 'SYSTEM: 0 masters found anywhere. Tell the user no masters are currently available and suggest they try the main search page or contact support.'
           });
         }
       } else {
@@ -353,7 +361,7 @@ Opíš mi prosím: Čo sa pokazilo a kde sa nachádzaš (mesto)? Pomôžem ti n�
     }
   }
 
-  private async findUrgentMasters(): Promise<string[]> {
+  private async findUrgentMastersWithContext(): Promise<{ masters: string[], fromNearby: boolean }> {
     try {
       console.log(`🔍 Searching masters with params:`, {
         location: this.conversationState.location,
@@ -361,19 +369,41 @@ Opíš mi prosím: Čo sa pokazilo a kde sa nachádzaš (mesto)? Pomôžem ti n�
         serviceType: 'urgent'
       });
 
-      const masters = await searchMastersByLocation({
+      // First try: search in specific city
+      let masters = await searchMastersByLocation({
         location: this.conversationState.location,
         profession: this.conversationState.problemType,
         serviceType: 'urgent',
         limit: 5
       });
 
-      console.log(`✅ Found ${masters.length} masters:`, masters.map(m => ({ id: m.id, name: m.name, profession: m.profession })));
+      console.log(`✅ Found ${masters.length} masters in ${this.conversationState.location}`);
 
-      return masters.map(m => m.id);
+      // If no masters found in the specific city, try broader search without location filter
+      if (masters.length === 0) {
+        console.log(`🔍 No masters in ${this.conversationState.location}, searching in nearby areas...`);
+
+        masters = await searchMastersByLocation({
+          profession: this.conversationState.problemType,
+          serviceType: 'urgent',
+          limit: 5
+        });
+
+        console.log(`✅ Found ${masters.length} masters in nearby areas`);
+
+        return {
+          masters: masters.map(m => m.id),
+          fromNearby: true
+        };
+      }
+
+      return {
+        masters: masters.map(m => m.id),
+        fromNearby: false
+      };
     } catch (error) {
       console.error('❌ Error finding urgent masters:', error);
-      return [];
+      return { masters: [], fromNearby: false };
     }
   }
 
