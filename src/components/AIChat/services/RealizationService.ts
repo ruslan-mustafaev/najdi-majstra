@@ -17,6 +17,16 @@ export class RealizationService {
     if (language === 'en') {
       return `You are an AI assistant for project realization on najdiMajstra.sk platform.
 
+🚨 ABSOLUTELY CRITICAL RULE 🚨
+NEVER, UNDER ANY CIRCUMSTANCES, WRITE MESSAGES AS IF YOU WERE THE CLIENT!
+
+FORBIDDEN EXAMPLES:
+❌ "Hi. I need to renovate my house..."
+❌ "Hello, I want to build..."
+❌ Any sentences that start from the client's perspective
+
+YOU ARE AN ASSISTANT - YOU ANSWER QUESTIONS, NOT CREATE THEM!
+
 YOUR TASK:
 Help find suitable masters for construction and renovation projects. Be professional and friendly.
 
@@ -33,6 +43,9 @@ EXAMPLE OF CORRECT RESPONSE:
 WHEN YOU HAVE ENOUGH INFORMATION:
 Say: "I found suitable masters for your project in your area. Check recommendations below, and feel free to ask if you need masters for another project!"
 
+WHEN NO MASTERS FOUND:
+Say: "I couldn't find any available masters for this project in your area at the moment. Please try searching through the main page or try again later."
+
 IMPORTANT:
 - Extract city/region from response
 - Extract project type (construction/renovation/finishing)
@@ -43,6 +56,16 @@ IMPORTANT:
 
     return `Si AI asistent pre realizáciu projektov na platforme najdiMajstra.sk.
 Bol si vytvorený tímom Najdimajstra Dev-Interactive team.
+
+🚨 ABSOLÚTNE KRITICKÉ PRAVIDLO 🚨
+NIKDY, ZA ŽIADNYCH OKOLNOSTÍ, NEPIŠ SPRÁVY AKO KEBY SI BOL KLIENT!
+
+ZAKÁZANÉ PRÍKLADY:
+❌ "Ahoj. Potrebujem zrekonštruovať dom..."
+❌ "Dobrý deň, chcem postaviť..."
+❌ Akékoľvek vety, ktoré začínajú z pohľadu klienta
+
+SI ASISTENT - ODPOVEDÁŠ NA OTÁZKY, NIE ICH VYMÝŠĽAŠ!
 
 TVOJA ÚLOHA:
 Pomôcť nájsť vhodných majstrov pre stavebné a rekonštrukčné projekty. Buď profesionálny a priateľský.
@@ -63,6 +86,9 @@ PRÍKLAD SPRÁVNEJ ODPOVEDE:
 
 KEĎ MÁŠ DOSTATOK INFORMÁCIÍ:
 Povedz: "Našiel som vhodných majstrov pre váš projekt vo vašej lokalite. Pozrite si odporúčania nižšie a pokojne sa opýtajte, ak potrebujete majstrov na iný projekt!"
+
+KEĎ SA NENAŠLI ŽIADNI MAJSTRI:
+Povedz: "Momentálne som nenašiel žiadnych dostupných majstrov pre tento projekt v danej lokalite. Skúste prosím hľadať cez hlavnú stránku alebo to skúste o chvíľu znovu."
 
 DÔLEŽITÉ:
 - Extrahuj mesto/región z odpovede
@@ -119,8 +145,6 @@ Povedz mi prosím: aký typ prác plánuješ (stavba, rekonštrukcia, dokončova
 
       messages.push({ role: 'user', content: userMessage });
 
-      const aiResponse = await callOpenRouter(messages);
-
       let recommendedMasters: string[] | undefined;
 
       if (this.conversationState.hasLocation && this.conversationState.hasProjectDescription) {
@@ -129,12 +153,26 @@ Povedz mi prosím: aký typ prác plánuješ (stavba, rekonštrukcia, dokončova
         if (masters.length > 0) {
           recommendedMasters = masters;
           console.log(`✅ [REALIZATION] Returning ${masters.length} recommended masters`);
+
+          // Inform AI that masters were found
+          messages.push({
+            role: 'system',
+            content: `SYSTEM: ${masters.length} masters found and will be displayed to the user. Tell them you found masters.`
+          });
         } else {
           console.log(`⚠️ [REALIZATION] No masters found with these criteria`);
+
+          // Inform AI that NO masters were found
+          messages.push({
+            role: 'system',
+            content: 'SYSTEM: 0 masters found. Tell the user no masters are available at the moment and suggest they try the main search page.'
+          });
         }
       } else {
         console.log(`⏳ [REALIZATION] Waiting for more info. Location: ${this.conversationState.hasLocation}, Project: ${this.conversationState.hasProjectDescription}`);
       }
+
+      const aiResponse = await callOpenRouter(messages);
 
       return {
         message: aiResponse,
