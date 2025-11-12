@@ -1222,8 +1222,8 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                         <select
                           value={profileData.profession}
                           onChange={(e) => handleFieldChange('profession', e.target.value)}
-                          className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent ${
-                            !profileData.profession ? 'border-red-500 border-2' : 'border-gray-300'
+                          className={`w-full px-3 py-2 border-2 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent shadow-sm ${
+                            !profileData.profession ? 'border-red-500' : 'border-gray-400'
                           }`}
                         >
                           <option value="">Vyberte profesiu</option>
@@ -1272,7 +1272,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                           placeholder="Vaše meno a priezvisko"
                           value={profileData.name}
                           onChange={(e) => handleFieldChange('name', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
+                          className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent shadow-sm"
                         />
                       </div>
                     ) : (
@@ -1301,7 +1301,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                           max="99"
                           value={profileData.age || ''}
                           onChange={(e) => handleFieldChange('age', e.target.value ? parseInt(e.target.value) : undefined)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
+                          className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent shadow-sm"
                         />
                       </div>
                     ) : (
@@ -1325,8 +1325,8 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                       <div className="relative">
                         <button
                           type="button"
-                          className={`w-full px-3 py-2 rounded-lg text-gray-900 border focus:ring-2 focus:ring-[#4169e1] focus:border-transparent outline-none transition-all duration-200 text-left flex justify-between items-center ${
-                            !profileData.location ? 'border-red-500 border-2' : 'border-gray-300 hover:border-gray-400'
+                          className={`w-full px-3 py-2 rounded-lg text-gray-900 border-2 focus:ring-2 focus:ring-[#4169e1] focus:border-transparent shadow-sm outline-none transition-all duration-200 text-left flex justify-between items-center ${
+                            !profileData.location ? 'border-red-500' : 'border-gray-400 hover:border-[#4169e1]'
                           }`}
                           onClick={() => {
                             setIsLocationDropdownOpen(!isLocationDropdownOpen);
@@ -1345,7 +1345,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                         </button>
 
                         {isLocationDropdownOpen && (
-                          <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-50 max-h-80 overflow-y-auto">
+                          <div className="absolute top-full left-0 right-0 mt-1 bg-white border-2 border-gray-400 rounded-lg shadow-lg z-50 max-h-80 overflow-y-auto">
                             {getCityOptions(language).map((option, index) => (
                               <button
                                 key={index}
@@ -1428,7 +1428,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                             ...profileData.contact.socialMedia,
                             facebook: e.target.value
                           })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent text-sm"
+                          className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent shadow-sm text-sm"
                         />
                         <input
                           type="url"
@@ -1438,7 +1438,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                             ...profileData.contact.socialMedia,
                             instagram: e.target.value
                           })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent text-sm"
+                          className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent shadow-sm text-sm"
                         />
                         <input
                           type="url"
@@ -1448,7 +1448,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                             ...profileData.contact.socialMedia,
                             youtube: e.target.value
                           })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent text-sm"
+                          className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent shadow-sm text-sm"
                         />
                         <input
                           type="url"
@@ -1458,7 +1458,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                             ...profileData.contact.socialMedia,
                             tiktok: e.target.value
                           })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent text-sm"
+                          className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent shadow-sm text-sm"
                         />
                         <input
                           type="url"
@@ -1468,7 +1468,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                             ...profileData.contact.socialMedia,
                             telegram: e.target.value
                           })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent text-sm"
+                          className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent shadow-sm text-sm"
                         />
                         <input
                           type="url"
@@ -1478,7 +1478,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                             ...profileData.contact.socialMedia,
                             whatsapp: e.target.value
                           })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent text-sm"
+                          className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent shadow-sm text-sm"
                         />
                       </div>
                     ) : (
@@ -1521,8 +1521,8 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                           onChange={(e) => handleFieldChange('description', e.target.value)}
                           maxLength={1000}
                           rows={4}
-                          className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent ${
-                            profileData.description.trim().length < 20 ? 'border-red-500 border-2' : 'border-gray-300'
+                          className={`w-full px-3 py-2 border-2 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent shadow-sm ${
+                            profileData.description.trim().length < 20 ? 'border-red-500' : 'border-gray-400'
                           }`}
                         />
                         {profileData.description.trim().length < 20 && (
@@ -1567,7 +1567,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                         max="80"
                         value={profileData.age || ''}
                         onChange={(e) => handleFieldChange('age', e.target.value ? parseInt(e.target.value) : undefined)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
+                        className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent shadow-sm"
                       />
                     ) : (
                       <p 
@@ -1646,7 +1646,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                         <select
                           value={profileData.communicationStyle}
                           onChange={(e) => handleFieldChange('communicationStyle', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
+                          className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent shadow-sm"
                         >
                           <option value="">Vyberte štýl komunikácie</option>
                           <option value="Profesionálne a vecne">Profesionálne a vecne</option>
@@ -1676,7 +1676,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                         <select
                           value={profileData.workAbroad ? 'yes' : 'no'}
                           onChange={(e) => handleFieldChange('workAbroad', e.target.value === 'yes')}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
+                          className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent shadow-sm"
                         >
                           <option value="no">Nie, nepracujem v zahraničí</option>
                           <option value="yes">Áno, súhlasím pracovať v zahraničí</option>
@@ -1707,7 +1707,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                           const value = e.target.value === '' ? 0 : parseInt(e.target.value);
                           handleFieldChange('experienceYears', isNaN(value) ? 0 : value);
                         }}
-                        className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
+                        className="w-24 px-3 py-2 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent shadow-sm"
                       />
                     ) : (
                       <p
@@ -1768,7 +1768,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                       <select
                         value={profileData.serviceArea}
                         onChange={(e) => handleFieldChange('serviceArea', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
+                        className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent shadow-sm"
                       >
                         <option value="lokálne">Lokálne</option>
                         <option value="lokálne + 50km">Lokálne + 50km</option>
@@ -1796,7 +1796,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                           placeholder="25"
                           value={profileData.hourlyRateMin}
                           onChange={(e) => handleFieldChange('hourlyRateMin', e.target.value)}
-                          className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
+                          className="w-24 px-3 py-2 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent shadow-sm"
                         />
                         <span className="text-gray-600">-</span>
                         <input
@@ -1804,7 +1804,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                           placeholder="45"
                           value={profileData.hourlyRateMax}
                           onChange={(e) => handleFieldChange('hourlyRateMax', e.target.value)}
-                          className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
+                          className="w-24 px-3 py-2 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent shadow-sm"
                         />
                         <span className="text-gray-600">€/hod</span>
                       </div>
@@ -1831,7 +1831,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                         value={profileData.certificatesText}
                         onChange={(e) => handleFieldChange('certificatesText', e.target.value)}
                         rows={5}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
+                        className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent shadow-sm"
                       />
                     ) : (
                       <p
@@ -1882,7 +1882,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                         placeholder="+421 9xx xxx xxx"
                         value={profileData.contact.phone}
                         onChange={(e) => handleNestedFieldChange('contact', 'phone', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
+                        className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent shadow-sm"
                       />
                     ) : (
                       <div 
@@ -1926,7 +1926,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                         placeholder="www.vasa-stranka.sk"
                         value={profileData.contact.website}
                         onChange={(e) => handleNestedFieldChange('contact', 'website', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
+                        className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent shadow-sm"
                       />
                     ) : (
                       <div 
@@ -2015,7 +2015,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                         type="text"
                         value={deleteConfirmationText}
                         onChange={(e) => setDeleteConfirmationText(e.target.value)}
-                        className="w-full px-3 py-2 border border-red-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border-2 border-red-400 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent shadow-sm"
                         placeholder="Napíšte ZMAZAŤ"
                       />
                       <div className="flex space-x-3">
@@ -2221,7 +2221,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                             }
                           }}
                           placeholder="Pridať novú úlohu..."
-                          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
+                          className="flex-1 px-3 py-2 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent shadow-sm"
                         />
                         <button
                           onClick={() => addNote(selectedProject, activePhase, newNoteText)}
@@ -2896,7 +2896,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                     }
                   }}
                   placeholder="Zadajte názov projektu..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent"
+                  className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent shadow-sm"
                   autoFocus
                 />
               </div>
