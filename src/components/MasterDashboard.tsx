@@ -1241,10 +1241,10 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                     ) : (
                       <div>
                         <p
-                          className={`cursor-pointer hover:bg-gray-50 p-2 rounded border-2 transition-colors ${
+                          className={`cursor-pointer p-3 rounded-lg border-4 transition-colors bg-white shadow-sm ${
                             !profileData.profession
                               ? 'border-red-500 text-gray-900'
-                              : 'border-transparent hover:border-gray-200 text-gray-900'
+                              : 'border-cyan-400 hover:border-cyan-500 text-gray-900'
                           }`}
                           onClick={() => startEditing('profession')}
                         >
@@ -1278,7 +1278,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                     ) : (
                       <div>
                         <p
-                          className="cursor-pointer hover:bg-gray-50 p-2 rounded border-2 border-transparent hover:border-gray-200 text-gray-900 transition-colors"
+                          className="cursor-pointer p-3 rounded-lg border-4 border-cyan-400 hover:border-cyan-500 text-gray-900 transition-colors bg-white shadow-sm"
                           onClick={() => startEditing('name')}
                         >
                           {profileData.name || 'Nevyplnené - kliknite pre úpravu'}
@@ -1307,7 +1307,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                     ) : (
                       <div>
                         <p
-                          className="cursor-pointer hover:bg-gray-50 p-2 rounded border-2 border-transparent hover:border-gray-200 text-gray-900 transition-colors"
+                          className="cursor-pointer p-3 rounded-lg border-4 border-cyan-400 hover:border-cyan-500 text-gray-900 transition-colors bg-white shadow-sm"
                           onClick={() => startEditing('age')}
                         >
                           {profileData.age ? `${profileData.age} rokov` : 'Nevyplnené - kliknite pre úpravu'}
@@ -1483,7 +1483,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                       </div>
                     ) : (
                       <div
-                        className="cursor-pointer hover:bg-gray-50 p-2 rounded border-2 border-transparent hover:border-gray-200 transition-colors"
+                        className="cursor-pointer p-3 rounded-lg border-4 border-cyan-400 hover:border-cyan-500 transition-colors bg-white shadow-sm"
                         onClick={() => startEditing('social')}
                       >
                         {profileData.contact.socialMedia && Object.values(profileData.contact.socialMedia).some(v => v) ? (
@@ -1535,10 +1535,10 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                     ) : (
                       <div>
                         <p
-                          className={`text-gray-700 cursor-pointer hover:bg-gray-50 p-2 rounded border-2 transition-colors min-h-[2.5rem] ${
+                          className={`text-gray-900 cursor-pointer p-3 rounded-lg border-4 transition-colors min-h-[2.5rem] bg-white shadow-sm ${
                             profileData.description.trim().length < 20
                               ? 'border-red-500'
-                              : 'border-transparent hover:border-gray-200'
+                              : 'border-cyan-400 hover:border-cyan-500'
                           }`}
                           onClick={() => startEditing('description')}
                         >
@@ -1570,8 +1570,8 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                         className="w-full px-3 py-2 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent shadow-sm"
                       />
                     ) : (
-                      <p 
-                        className="text-gray-900 cursor-pointer hover:bg-gray-50 p-2 rounded border-2 border-transparent hover:border-gray-200 transition-colors"
+                      <p
+                        className="text-gray-900 cursor-pointer p-3 rounded-lg border-4 border-cyan-400 hover:border-cyan-500 transition-colors bg-white shadow-sm"
                         onClick={() => startEditing('age')}
                       >
                         {profileData.age ? `${profileData.age} rokov` : 'Nevyplnené - kliknite pre úpravu'}
@@ -1658,7 +1658,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                       </div>
                     ) : (
                       <p
-                        className="text-gray-700 cursor-pointer hover:bg-gray-50 p-2 rounded border-2 border-transparent hover:border-gray-200 transition-colors"
+                        className="text-gray-900 cursor-pointer p-3 rounded-lg border-4 border-cyan-400 hover:border-cyan-500 transition-colors bg-white shadow-sm"
                         onClick={() => startEditing('communicationStyle')}
                       >
                         {profileData.communicationStyle || 'Nevyplnené - kliknite pre úpravu'}
@@ -1684,7 +1684,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                       </div>
                     ) : (
                       <p
-                        className="text-gray-700 cursor-pointer hover:bg-gray-50 p-2 rounded border-2 border-transparent hover:border-gray-200 transition-colors"
+                        className="text-gray-900 cursor-pointer p-3 rounded-lg border-4 border-cyan-400 hover:border-cyan-500 transition-colors bg-white shadow-sm"
                         onClick={() => startEditing('workAbroad')}
                       >
                         {profileData.workAbroad ? 'Áno, súhlasím pracovať v zahraničí' : 'Nie, nepracujem v zahraničí'}
@@ -1711,7 +1711,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                       />
                     ) : (
                       <p
-                        className="text-gray-700 cursor-pointer hover:bg-gray-50 p-2 rounded border-2 border-transparent hover:border-gray-200 transition-colors"
+                        className="text-gray-900 cursor-pointer p-3 rounded-lg border-4 border-cyan-400 hover:border-cyan-500 transition-colors bg-white shadow-sm"
                         onClick={() => startEditing('experienceYears')}
                       >
                         {profileData.experienceYears ? `${profileData.experienceYears} rokov` : 'Nevyplnené - kliknite pre úpravu'}
@@ -1751,7 +1751,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                       </div>
                     ) : (
                       <p
-                        className="text-gray-700 cursor-pointer hover:bg-gray-50 p-2 rounded border-2 border-transparent hover:border-gray-200 transition-colors"
+                        className="text-gray-900 cursor-pointer p-3 rounded-lg border-4 border-cyan-400 hover:border-cyan-500 transition-colors bg-white shadow-sm"
                         onClick={() => startEditing('teamType')}
                       >
                         {profileData.teamType || 'Nevyplnené - kliknite pre úpravu'}
@@ -1776,7 +1776,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                       </select>
                     ) : (
                       <p
-                        className="text-gray-700 cursor-pointer hover:bg-gray-50 p-2 rounded border-2 border-transparent hover:border-gray-200 transition-colors"
+                        className="text-gray-900 cursor-pointer p-3 rounded-lg border-4 border-cyan-400 hover:border-cyan-500 transition-colors bg-white shadow-sm"
                         onClick={() => startEditing('serviceArea')}
                       >
                         {profileData.serviceArea || 'Nevyplnené - kliknite pre úpravu'}
@@ -1810,7 +1810,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                       </div>
                     ) : (
                       <p
-                        className="text-gray-700 cursor-pointer hover:bg-gray-50 p-2 rounded border-2 border-transparent hover:border-gray-200 transition-colors"
+                        className="text-gray-900 cursor-pointer p-3 rounded-lg border-4 border-cyan-400 hover:border-cyan-500 transition-colors bg-white shadow-sm"
                         onClick={() => startEditing('hourlyRateRange')}
                       >
                         {profileData.hourlyRateMin && profileData.hourlyRateMax
@@ -1835,7 +1835,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                       />
                     ) : (
                       <p
-                        className="text-gray-700 cursor-pointer hover:bg-gray-50 p-2 rounded border-2 border-transparent hover:border-gray-200 transition-colors whitespace-pre-wrap"
+                        className="text-gray-900 cursor-pointer p-3 rounded-lg border-4 border-cyan-400 hover:border-cyan-500 transition-colors bg-white shadow-sm whitespace-pre-wrap"
                         onClick={() => startEditing('certificatesText')}
                       >
                         {profileData.certificatesText || 'Nevyplnené - kliknite pre úpravu'}
@@ -1886,7 +1886,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                       />
                     ) : (
                       <div 
-                        className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded border-2 border-transparent hover:border-gray-200 transition-colors"
+                        className="flex items-center space-x-2 cursor-pointer p-3 rounded-lg border-4 border-cyan-400 hover:border-cyan-500 transition-colors bg-white shadow-sm"
                         onClick={() => startEditing('phone')}
                       >
                         <Phone size={16} className="text-gray-500" />
@@ -1930,7 +1930,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                       />
                     ) : (
                       <div 
-                        className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded border-2 border-transparent hover:border-gray-200 transition-colors"
+                        className="flex items-center space-x-2 cursor-pointer p-3 rounded-lg border-4 border-cyan-400 hover:border-cyan-500 transition-colors bg-white shadow-sm"
                         onClick={() => startEditing('website')}
                       >
                         <Globe size={16} className="text-gray-500" />
