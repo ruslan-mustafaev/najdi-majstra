@@ -2819,6 +2819,13 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
               </div>
 
               <div className="pt-4">
+                <div className="mb-6">
+                  <img
+                    src="/banner1.png"
+                    alt="Banner"
+                    className="w-full h-auto rounded-lg shadow-md"
+                  />
+                </div>
                 <button
                   onClick={() => setIsSubscriptionInfoOpen(false)}
                   className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
