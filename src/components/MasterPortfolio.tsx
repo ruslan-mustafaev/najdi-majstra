@@ -354,7 +354,7 @@ export const MasterPortfolio: React.FC<MasterPortfolioProps> = ({
       {isEditable && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <p className="text-sm text-gray-700 leading-relaxed">
-            <strong>Ako vám pomôžu Moje recenzie?</strong> Vaši klieti si vybrú práve vás ak budú mať možnosť nahliadnuť do kvality vašich prác a realizácií.
+            <strong>Ako vám pomôžu Moje recenzie?</strong> Vaši klienti si vybrú práve vás ak budú mať možnosť nahliadnuť do kvality vašich prác a realizácií.
           </p>
         </div>
       )}
