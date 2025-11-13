@@ -134,6 +134,8 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
     age?: number;
     location: string;
     description: string;
+    descriptionBenefits: string;
+    descriptionReasons: string;
     experience: string;
     services: string;
     expertise: string;
@@ -176,6 +178,8 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
     profession: user?.user_metadata?.profession || '',
     location: user?.user_metadata?.location || '',
     description: user?.user_metadata?.description || '',
+    descriptionBenefits: '',
+    descriptionReasons: '',
     experience: user?.user_metadata?.experience || '',
     services: '',
     expertise: '',
@@ -219,6 +223,13 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
   setIsSaving(true);
 
   try {
+    // Объединяем все три поля описания в одно
+    const combinedDescription = [
+      profileData.description,
+      profileData.descriptionBenefits,
+      profileData.descriptionReasons
+    ].filter(text => text.trim()).join('\n\n');
+
     // Проверяем заполненность обязательных полей для profile_completed
     const hasProfileImage = profileData.profileImageUrl && profileData.profileImageUrl !== '/placeholder-avatar.svg';
 
@@ -238,7 +249,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
       profileData.name.trim().length > 0 &&
       profileData.profession.trim().length > 0 &&
       profileData.location.trim().length > 0 &&
-      profileData.description.trim().length >= 20 &&
+      combinedDescription.trim().length >= 20 &&
       hasProfileImage &&
       workImagesCount > 0;
 
@@ -247,7 +258,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
       if (!profileData.name.trim()) missingFields.push('Meno');
       if (!profileData.profession.trim()) missingFields.push('Profesia');
       if (!profileData.location.trim()) missingFields.push('Lokácia');
-      if (profileData.description.trim().length < 20) missingFields.push('Popis (minimálne 20 znakov)');
+      if (combinedDescription.trim().length < 20) missingFields.push('Popis (minimálne 20 znakov)');
       if (!hasProfileImage) missingFields.push('Profilová fotka');
       if (workImagesCount === 0) missingFields.push('Aspoň 1 fotka práce');
 
@@ -261,7 +272,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
       email: profileData.contact.email,
       phone: profileData.contact.phone,
       location: profileData.location,
-      description: profileData.description,
+      description: combinedDescription,
       communication_style: profileData.communicationStyle,
       work_abroad: profileData.workAbroad,
       is_active: profileData.availability.available,
@@ -1515,18 +1526,66 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                     </p>
 
                     {editingField === 'description' ? (
-                      <div className="space-y-2 mb-4">
-                        <textarea
-                          placeholder="Programujem Najdi Majstra"
-                          value={profileData.description}
-                          onChange={(e) => handleFieldChange('description', e.target.value)}
-                          maxLength={1000}
-                          rows={4}
-                          className={`w-full px-3 py-2 border-2 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent shadow-sm ${
-                            profileData.description.trim().length < 20 ? 'border-red-500' : 'border-gray-400'
-                          }`}
-                        />
-                        {profileData.description.trim().length < 20 && (
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          <textarea
+                            placeholder="Programujem Najdi Majstra"
+                            value={profileData.description}
+                            onChange={(e) => {
+                              const newDescription = e.target.value;
+                              setProfileData(prev => ({
+                                ...prev,
+                                description: newDescription
+                              }));
+                              setHasChanges(true);
+                            }}
+                            maxLength={1000}
+                            rows={4}
+                            className={`w-full px-3 py-2 border-2 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent shadow-sm ${
+                              (profileData.description + '\n\n' + profileData.descriptionBenefits + '\n\n' + profileData.descriptionReasons).trim().length < 20 ? 'border-red-500' : 'border-gray-400'
+                            }`}
+                          />
+                        </div>
+
+                        <div className="bg-orange-50 border-l-4 border-orange-400 p-3 rounded">
+                          <p className="text-sm text-gray-700 font-medium mb-2">
+                            Ukážte verejne 2-5... výhod ktoré získa váš klient alebo zákazník, napíšte mu prečo by si mal zákazník vybrať práve vás!
+                          </p>
+                          <textarea
+                            placeholder="Napríklad: Rýchla reakcia, Kvalitná práca za dobrú cenu, Dlhoročné skúsenosti..."
+                            value={profileData.descriptionBenefits}
+                            onChange={(e) => {
+                              setProfileData(prev => ({
+                                ...prev,
+                                descriptionBenefits: e.target.value
+                              }));
+                              setHasChanges(true);
+                            }}
+                            className="w-full px-3 py-2 border-2 border-[#4169e1] rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent shadow-sm text-sm"
+                            rows={3}
+                          />
+                        </div>
+
+                        <div className="bg-orange-50 border-l-4 border-orange-400 p-3 rounded">
+                          <p className="text-sm text-gray-700 font-medium mb-2">
+                            Napíšte 3-5 dôvodov alebo faktov a dajte vedieť prečo vy ste ten dôvod pre svojho zákazníka.
+                          </p>
+                          <textarea
+                            placeholder="Napríklad: Som z vašej lokality, Budete spokojný vyriešim všetko na kľúč, Lepšia cena v porovnaní pomer cena výkon..."
+                            value={profileData.descriptionReasons}
+                            onChange={(e) => {
+                              setProfileData(prev => ({
+                                ...prev,
+                                descriptionReasons: e.target.value
+                              }));
+                              setHasChanges(true);
+                            }}
+                            className="w-full px-3 py-2 border-2 border-[#4169e1] rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent shadow-sm text-sm"
+                            rows={3}
+                          />
+                        </div>
+
+                        {(profileData.description + '\n\n' + profileData.descriptionBenefits + '\n\n' + profileData.descriptionReasons).trim().length < 20 && (
                           <p className="text-red-600 text-sm font-medium flex items-center gap-1">
                             <AlertTriangle size={16} />
                             Povinné pole! Minimum 20 znakov. Bez neho nebude váš profil viditeľný vo vyhľadávaní.
@@ -1536,16 +1595,18 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                     ) : (
                       <div className="mb-4">
                         <p
-                          className={`text-gray-900 cursor-pointer p-3 rounded-lg border-2 transition-colors min-h-[2.5rem] bg-white shadow-sm ${
-                            profileData.description.trim().length < 20
+                          className={`text-gray-900 cursor-pointer p-3 rounded-lg border-2 transition-colors min-h-[2.5rem] bg-white shadow-sm whitespace-pre-wrap ${
+                            (profileData.description + '\n\n' + profileData.descriptionBenefits + '\n\n' + profileData.descriptionReasons).trim().length < 20
                               ? 'border-red-500'
                               : 'border-[#4169e1] hover:border-[#3558d4]'
                           }`}
                           onClick={() => startEditing('description')}
                         >
-                          {profileData.description || 'Nevyplnené - kliknite pre úpravu'}
+                          {[profileData.description, profileData.descriptionBenefits, profileData.descriptionReasons]
+                            .filter(text => text.trim())
+                            .join('\n\n') || 'Nevyplnené - kliknite pre úpravu'}
                         </p>
-                        {profileData.description.trim().length < 20 && (
+                        {(profileData.description + '\n\n' + profileData.descriptionBenefits + '\n\n' + profileData.descriptionReasons).trim().length < 20 && (
                           <p className="text-red-600 text-sm font-medium flex items-center gap-1 mt-1">
                             <AlertTriangle size={16} />
                             Povinné pole! Minimum 20 znakov. Bez neho nebude váš profil viditeľný vo vyhľadávaní.
@@ -1553,30 +1614,6 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                         )}
                       </div>
                     )}
-
-                    <div className="space-y-3">
-                      <div className="bg-orange-50 border-l-4 border-orange-400 p-3 rounded">
-                        <p className="text-sm text-gray-700 font-medium mb-2">
-                          Ukážte verejne 2-5... výhod ktoré získa váš klient alebo zákazník, napíšte mu prečo by si mal zákazník vybrať práve vás!
-                        </p>
-                        <textarea
-                          placeholder="Napríklad: Rýchla reakcia, Kvalitná práca za dobrú cenu, Dlhoročné skúsenosti..."
-                          className="w-full px-3 py-2 border-2 border-[#4169e1] rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent shadow-sm text-sm"
-                          rows={3}
-                        />
-                      </div>
-
-                      <div className="bg-orange-50 border-l-4 border-orange-400 p-3 rounded">
-                        <p className="text-sm text-gray-700 font-medium mb-2">
-                          Napíšte 3-5 dôvodov alebo faktov a dajte vedieť prečo vy ste ten dôvod pre svojho zákazníka.
-                        </p>
-                        <textarea
-                          placeholder="Napríklad: Som z vašej lokality, Budete spokojný vyriešim všetko na kľúč, Lepšia cena v porovnaní pomer cena výkon..."
-                          className="w-full px-3 py-2 border-2 border-[#4169e1] rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent shadow-sm text-sm"
-                          rows={3}
-                        />
-                      </div>
-                    </div>
                   </div>
 
                   {/* Age */}
