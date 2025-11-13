@@ -1,18 +1,6 @@
-import type { Handler, HandlerEvent, HandlerContext } from "@netlify/functions";
-
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
-interface OpenRouterMessage {
-  role: 'system' | 'user' | 'assistant';
-  content: string;
-}
-
-interface RequestBody {
-  messages: OpenRouterMessage[];
-  model?: string;
-}
-
-const handler: Handler = async (event: HandlerEvent, context: HandlerContext) => {
+exports.handler = async (event, context) => {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
@@ -46,7 +34,7 @@ const handler: Handler = async (event: HandlerEvent, context: HandlerContext) =>
   }
 
   try {
-    const body: RequestBody = JSON.parse(event.body || '{}');
+    const body = JSON.parse(event.body || '{}');
     const { messages, model = 'google/gemini-2.5-flash' } = body;
 
     if (!messages || !Array.isArray(messages)) {
@@ -114,10 +102,8 @@ const handler: Handler = async (event: HandlerEvent, context: HandlerContext) =>
       headers: corsHeaders,
       body: JSON.stringify({
         error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error.message || 'Unknown error'
       }),
     };
   }
 };
-
-export { handler };
