@@ -393,7 +393,10 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
               {/* Accept button */}
               <div className="pt-4 border-t border-gray-200">
                 <button
-                  onClick={() => setShowCookiePolicy(false)}
+                  onClick={() => {
+                    setCookiesAccepted(true);
+                    setShowCookiePolicy(false);
+                  }}
                   className="w-full bg-[#4169e1] text-white py-3 rounded-lg font-semibold hover:bg-[#3558d4] transition-colors"
                 >
                   Rozumiem a súhlasím
