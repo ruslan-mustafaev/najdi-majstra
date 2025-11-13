@@ -150,13 +150,28 @@ Povedz mi prosím: aký typ prác plánuješ (stavba, rekonštrukcia, dokončova
         }
       ];
 
-      conversationHistory.forEach(msg => {
-        if (msg.sender === 'user') {
-          messages.push({ role: 'user', content: msg.content });
-        } else if (msg.sender === 'ai') {
-          messages.push({ role: 'assistant', content: msg.content });
-        }
-      });
+      // Add initial greeting to conversation history if this is the first user message
+      const isFirstUserMessage = conversationHistory.filter(msg => msg.sender === 'user').length === 0;
+
+      if (isFirstUserMessage) {
+        const initialGreeting = language === 'sk'
+          ? 'Ahoj! Plánujete realizovať väčší projekt? Skvelé!\n\nPovedzte mi prosím: Aký typ projektu chcete realizovať (stavba, rekonštrukcia, dokončenie...) a v akom meste?'
+          : 'Hi! Are you planning a larger project? Great!\n\nPlease tell me: What type of project do you want to realize (construction, renovation, completion...) and in which city?';
+
+        messages.push({
+          role: 'assistant',
+          content: initialGreeting
+        });
+      } else {
+        // Add conversation history for subsequent messages
+        conversationHistory.forEach(msg => {
+          if (msg.sender === 'user') {
+            messages.push({ role: 'user', content: msg.content });
+          } else if (msg.sender === 'ai') {
+            messages.push({ role: 'assistant', content: msg.content });
+          }
+        });
+      }
 
       messages.push({ role: 'user', content: userMessage });
 

@@ -150,13 +150,28 @@ What do you need to service (e.g., boiler, air conditioning, electrical) and in 
         }
       ];
 
-      conversationHistory.forEach(msg => {
-        if (msg.sender === 'user') {
-          messages.push({ role: 'user', content: msg.content });
-        } else if (msg.sender === 'ai') {
-          messages.push({ role: 'assistant', content: msg.content });
-        }
-      });
+      // Add initial greeting to conversation history if this is the first user message
+      const isFirstUserMessage = conversationHistory.filter(msg => msg.sender === 'user').length === 0;
+
+      if (isFirstUserMessage) {
+        const initialGreeting = language === 'sk'
+          ? 'Ahoj! Chcete pravidelný servis vášho zariadenia? To je skvelá voľba!\n\nPovedzte mi prosím: Čo potrebujete servisovať (kotol, elektrina, klimatizácia...) a v akom meste sa nachádzate?'
+          : 'Hi! Do you want regular maintenance of your equipment? That\'s a great choice!\n\nPlease tell me: What do you need to service (boiler, electricity, air conditioning...) and in which city are you located?';
+
+        messages.push({
+          role: 'assistant',
+          content: initialGreeting
+        });
+      } else {
+        // Add conversation history for subsequent messages
+        conversationHistory.forEach(msg => {
+          if (msg.sender === 'user') {
+            messages.push({ role: 'user', content: msg.content });
+          } else if (msg.sender === 'ai') {
+            messages.push({ role: 'assistant', content: msg.content });
+          }
+        });
+      }
 
       messages.push({ role: 'user', content: userMessage });
 

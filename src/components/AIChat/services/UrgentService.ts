@@ -165,13 +165,28 @@ Opíš mi prosím: Čo sa pokazilo a kde sa nachádzaš (mesto)? Pomôžem ti n�
         }
       ];
 
-      conversationHistory.forEach(msg => {
-        if (msg.sender === 'user') {
-          messages.push({ role: 'user', content: msg.content });
-        } else if (msg.sender === 'ai') {
-          messages.push({ role: 'assistant', content: msg.content });
-        }
-      });
+      // Add initial greeting to conversation history if this is the first user message
+      const isFirstUserMessage = conversationHistory.filter(msg => msg.sender === 'user').length === 0;
+
+      if (isFirstUserMessage) {
+        const initialGreeting = language === 'sk'
+          ? 'Ahoj! Rozumiem, že máš naliehavý problém a potrebuješ rýchlu pomoc.\n\n⚠️ Ak je ohrozený život - okamžite volaj 112!\n\nOpíš mi prosím: Čo sa pokazilo a kde sa nachádzaš (mesto)? Pomôžem ti nájsť dostupného majstra.'
+          : 'Hi! I understand you have an urgent problem and need quick help.\n\n⚠️ If life is at risk - call 112 immediately!\n\nPlease describe: What broke and where are you located (city)? I will help you find an available master.';
+
+        messages.push({
+          role: 'assistant',
+          content: initialGreeting
+        });
+      } else {
+        // Add conversation history for subsequent messages
+        conversationHistory.forEach(msg => {
+          if (msg.sender === 'user') {
+            messages.push({ role: 'user', content: msg.content });
+          } else if (msg.sender === 'ai') {
+            messages.push({ role: 'assistant', content: msg.content });
+          }
+        });
+      }
 
       messages.push({ role: 'user', content: userMessage });
 
