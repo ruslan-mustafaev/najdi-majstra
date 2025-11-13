@@ -2394,7 +2394,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                   className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
                 >
                   <Info className="w-5 h-5" />
-                  Informácie o výhodách
+                  Informácie o výhodách tu.
                 </button>
               </div>
             </div>
