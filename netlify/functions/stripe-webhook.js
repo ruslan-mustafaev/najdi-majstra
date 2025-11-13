@@ -67,14 +67,21 @@ exports.handler = async (event, context) => {
             planType = 'premier';
           }
 
+          const billingPeriod = priceId.includes('YEARLY') || priceId.includes('yearly') ? 'yearly' : 'monthly';
+          const amountPaid = subscription.items.data[0]?.price.unit_amount ? subscription.items.data[0].price.unit_amount / 100 : 0;
+          const currency = subscription.items.data[0]?.price.currency || 'eur';
+
           const { error } = await supabase
             .from('subscriptions')
             .upsert({
               user_id: userId,
               stripe_subscription_id: subscriptionId,
               stripe_customer_id: session.customer,
-              plan_type: planType,
+              plan_name: planType,
+              billing_period: billingPeriod,
               status: 'active',
+              amount_paid: amountPaid,
+              currency: currency.toUpperCase(),
               current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
               current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
               cancel_at_period_end: subscription.cancel_at_period_end,
