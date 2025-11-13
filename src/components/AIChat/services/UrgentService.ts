@@ -182,15 +182,27 @@ Opíš mi prosím: Čo sa pokazilo a kde sa nachádzaš (mesto)? Pomôžem ti n�
 
         if (result.masters.length > 0) {
           recommendedMasters = result.masters;
-          console.log(`✅ Returning ${result.masters.length} recommended masters`);
+          console.log(`✅ Returning ${result.masters.length} recommended masters (type: ${result.serviceType})`);
 
-          // Inform AI where the masters are from
-          if (result.fromNearby) {
+          // Inform AI where the masters are from and what type
+          if (result.serviceType === 'alternative') {
+            // Masters from same city but do regular/realization service
+            const msg = language === 'sk'
+              ? `SYSTEM: Našiel si ${result.masters.length} majstrov v meste ${this.conversationState.location}, ale nie sú to majstri pre akútne poruchy. Sú to majstri pre pravidelný servis a plánovanú realizáciu. Povedz používateľovi: "V Nitre som nenašiel majstrov pre akútne poruchy, ale našiel som ${result.masters.length} ${this.conversationState.problemType?.toLowerCase()} v meste ${this.conversationState.location}, ktorí sa venujú pravidelnému servisu a plánovanej realizácii. Možno by vám mohli pomôcť aj v naliehavej situácii. Pozrite si ich nižšie!"`
+              : `SYSTEM: You found ${result.masters.length} masters in ${this.conversationState.location}, but they are not urgent service masters. They do regular service and planned realization. Tell the user: "I didn't find urgent service masters in ${this.conversationState.location}, but I found ${result.masters.length} ${this.conversationState.problemType?.toLowerCase()} who do regular service and planned realization. Maybe they could help in urgent situation too. Check them below!"`;
+
+            messages.push({
+              role: 'system',
+              content: msg
+            });
+          } else if (result.fromNearby) {
+            // Urgent masters from nearby cities
             messages.push({
               role: 'system',
               content: `SYSTEM: ${result.masters.length} masters found BUT NOT in ${this.conversationState.location}. They are from nearby cities/areas. Tell the user you couldn't find masters in their exact city (${this.conversationState.location}), but you found ${result.masters.length} masters in nearby areas who can help.`
             });
           } else {
+            // Urgent masters from the same city
             messages.push({
               role: 'system',
               content: `SYSTEM: ${result.masters.length} masters found in ${this.conversationState.location}. Tell them you found masters in their city.`
@@ -446,7 +458,7 @@ Opíš mi prosím: Čo sa pokazilo a kde sa nachádzaš (mesto)? Pomôžem ti n�
     }
   }
 
-  private async findUrgentMastersWithContext(): Promise<{ masters: string[], fromNearby: boolean }> {
+  private async findUrgentMastersWithContext(): Promise<{ masters: string[], fromNearby: boolean, serviceType?: string }> {
     try {
       console.log(`🔍 Searching masters with params:`, {
         location: this.conversationState.location,
@@ -454,7 +466,7 @@ Opíš mi prosím: Čo sa pokazilo a kde sa nachádzaš (mesto)? Pomôžem ti n�
         serviceType: 'urgent'
       });
 
-      // First try: search in specific city
+      // Step 1: Search for urgent masters in the specific city
       let masters = await searchMastersByLocation({
         location: this.conversationState.location,
         profession: this.conversationState.problemType,
@@ -462,29 +474,64 @@ Opíš mi prosím: Čo sa pokazilo a kde sa nachádzaš (mesto)? Pomôžem ti n�
         limit: 5
       });
 
-      console.log(`✅ Found ${masters.length} masters in ${this.conversationState.location}`);
+      console.log(`✅ Found ${masters.length} urgent masters in ${this.conversationState.location}`);
 
-      // If no masters found in the specific city, try broader search without location filter
-      if (masters.length === 0) {
-        console.log(`🔍 No masters in ${this.conversationState.location}, searching in nearby areas...`);
-
-        masters = await searchMastersByLocation({
-          profession: this.conversationState.problemType,
-          serviceType: 'urgent',
-          limit: 5
-        });
-
-        console.log(`✅ Found ${masters.length} masters in nearby areas`);
-
+      if (masters.length > 0) {
         return {
           masters: masters.map(m => m.id),
-          fromNearby: true
+          fromNearby: false,
+          serviceType: 'urgent'
         };
       }
 
+      // Step 2: No urgent masters in the city, try regular/realization masters in the SAME city
+      console.log(`🔍 No urgent masters in ${this.conversationState.location}, trying regular/realization masters in same city...`);
+
+      const regularMasters = await searchMastersByLocation({
+        location: this.conversationState.location,
+        profession: this.conversationState.problemType,
+        serviceType: 'regular',
+        limit: 3
+      });
+
+      const realizationMasters = await searchMastersByLocation({
+        location: this.conversationState.location,
+        profession: this.conversationState.problemType,
+        serviceType: 'realization',
+        limit: 3
+      });
+
+      // Combine and deduplicate
+      const allLocalMasters = [...regularMasters, ...realizationMasters];
+      const uniqueLocalMasters = Array.from(
+        new Map(allLocalMasters.map(m => [m.id, m])).values()
+      );
+
+      console.log(`✅ Found ${uniqueLocalMasters.length} regular/realization masters in ${this.conversationState.location}`);
+
+      if (uniqueLocalMasters.length > 0) {
+        return {
+          masters: uniqueLocalMasters.slice(0, 5).map(m => m.id),
+          fromNearby: false,
+          serviceType: 'alternative'
+        };
+      }
+
+      // Step 3: No masters in the city at all, try urgent masters in nearby areas
+      console.log(`🔍 No masters in ${this.conversationState.location}, searching urgent masters in nearby areas...`);
+
+      masters = await searchMastersByLocation({
+        profession: this.conversationState.problemType,
+        serviceType: 'urgent',
+        limit: 5
+      });
+
+      console.log(`✅ Found ${masters.length} urgent masters in nearby areas`);
+
       return {
         masters: masters.map(m => m.id),
-        fromNearby: false
+        fromNearby: true,
+        serviceType: 'urgent'
       };
     } catch (error) {
       console.error('❌ Error finding urgent masters:', error);
