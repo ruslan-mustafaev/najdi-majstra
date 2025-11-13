@@ -374,7 +374,7 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
                 </p>
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <p className="font-medium">Najdi-majstra.sk</p>
-                  <p>Email: podpora@najdi-majstra.sk</p>
+                  <p>Email: podpora@najdimajstra.sk</p>
                 </div>
               </div>
 
