@@ -35,8 +35,8 @@ export const STRIPE_CONFIG = {
       name: 'Premier',
       monthlyPrice: 4979.00,
       yearlyPrice: 4979.00,
-      monthlyPriceId: import.meta.env.VITE_STRIPE_PREMIER_MONTHLY_PRICE_ID || '',
-      yearlyPriceId: import.meta.env.VITE_STRIPE_PREMIER_YEARLY_PRICE_ID || '',
+      monthlyPriceId: import.meta.env.VITE_STRIPE_PREMIER_PRICE_ID || '',
+      yearlyPriceId: import.meta.env.VITE_STRIPE_PREMIER_PRICE_ID || '',
     },
   },
 };
