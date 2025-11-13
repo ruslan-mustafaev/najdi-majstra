@@ -1,6 +1,7 @@
 import { ChatMessage, AIResponse } from '../types';
 import { callOpenRouter, OpenRouterMessage } from '../../../lib/openRouterApi';
 import { searchMastersByLocation } from '../../../lib/masterSearchApi';
+import { extractProfessionType } from './professionKeywords';
 
 export class RegularService {
   private conversationState: {
@@ -266,20 +267,13 @@ What do you need to service (e.g., boiler, air conditioning, electrical) and in 
       });
     }
 
-    const serviceKeywords = [
-      { keywords: ['kotol', 'kúrenie', 'radiátor', 'vykurovani'], type: 'Plynár' },
-      { keywords: ['elektr', 'električ', 'prúd', 'svetl', 'oprava'], type: 'Elektrikár' },
-      { keywords: ['vod', 'potrubie', 'kohútik', 'kanalizác'], type: 'Inštalatér' },
-      { keywords: ['klimatizáci', 'vetranie'], type: 'Klimatizácie' }
-    ];
-
-    serviceKeywords.forEach(service => {
-      if (service.keywords.some(kw => lowerMessage.includes(kw))) {
-        this.conversationState.serviceType = service.type;
-        this.conversationState.hasServiceDescription = true;
-        console.log(`🔧 [REGULAR] Found service type: "${service.type}"`);
-      }
-    });
+    // Extract profession type using shared keywords
+    const professionType = extractProfessionType(lowerMessage);
+    if (professionType) {
+      this.conversationState.serviceType = professionType;
+      this.conversationState.hasServiceDescription = true;
+      console.log(`🔧 [REGULAR] Found service type: "${professionType}"`);
+    }
   }
 
   private async findServiceMastersWithContext(): Promise<{ masters: string[], fromNearby: boolean }> {

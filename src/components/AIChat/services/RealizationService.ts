@@ -1,6 +1,7 @@
 import { ChatMessage, AIResponse } from '../types';
 import { callOpenRouter, OpenRouterMessage } from '../../../lib/openRouterApi';
 import { searchMastersByLocation } from '../../../lib/masterSearchApi';
+import { extractProfessionType } from './professionKeywords';
 
 export class RealizationService {
   private conversationState: {
@@ -247,24 +248,13 @@ Povedz mi prosím: aký typ prác plánuješ (stavba, rekonštrukcia, dokončova
       }
     });
 
-    const projectKeywords = [
-      { keywords: ['stavba', 'dom', 'budova'], type: 'Stavbár' },
-      { keywords: ['rekonštrukc', 'prestavba', 'renováci'], type: 'Stavbár' },
-      { keywords: ['dokončova', 'omietk', 'malova'], type: 'Maľovanie' },
-      { keywords: ['elektr', 'elektroinštaláci'], type: 'Elektrikár' },
-      { keywords: ['vodoinštaláci', 'kanalizáci'], type: 'Inštalatér' },
-      { keywords: ['kotol', 'kúren', 'plyn'], type: 'Plynár' },
-      { keywords: ['kúpeľn', 'wc'], type: 'Inštalatér' },
-      { keywords: ['zateplen', 'fasád'], type: 'Stavbár' }
-    ];
-
-    projectKeywords.forEach(project => {
-      if (project.keywords.some(kw => lowerMessage.includes(kw))) {
-        this.conversationState.projectType = project.type;
-        this.conversationState.hasProjectDescription = true;
-        console.log(`💼 [REALIZATION] Found project type: ${project.type}`);
-      }
-    });
+    // Extract profession type using shared keywords
+    const professionType = extractProfessionType(lowerMessage);
+    if (professionType) {
+      this.conversationState.projectType = professionType;
+      this.conversationState.hasProjectDescription = true;
+      console.log(`💼 [REALIZATION] Found project type: "${professionType}"`);
+    }
   }
 
   private async findProjectMastersWithContext(): Promise<{ masters: string[], fromNearby: boolean }> {

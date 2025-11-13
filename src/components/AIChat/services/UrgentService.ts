@@ -1,6 +1,7 @@
 import { ChatMessage, AIResponse } from '../types';
 import { callOpenRouter, OpenRouterMessage } from '../../../lib/openRouterApi';
 import { searchMastersByLocation } from '../../../lib/masterSearchApi';
+import { extractProfessionType } from './professionKeywords';
 
 export class UrgentService {
   private conversationState: {
@@ -437,20 +438,13 @@ Opíš mi prosím: Čo sa pokazilo a kde sa nachádzaš (mesto)? Pomôžem ti n�
       });
     }
 
-    const problemKeywords = [
-      { keywords: ['elektr', 'električ', 'prúd', 'svetl', 'zásuvk', 'istič'], type: 'Elektrikár' },
-      { keywords: ['vod', 'potrubie', 'kohútik', 'kanalizác', 'zatápa', 'tečie'], type: 'Inštalatér' },
-      { keywords: ['plyn', 'kotol', 'kúrenie', 'radiátor'], type: 'Plynár' },
-      { keywords: ['strech', 'zateka', 'okn', 'dver'], type: 'Stavbár' }
-    ];
-
-    problemKeywords.forEach(problem => {
-      if (problem.keywords.some(kw => lowerMessage.includes(kw))) {
-        this.conversationState.problemType = problem.type;
-        this.conversationState.hasProblemDescription = true;
-        console.log(`🔧 Found problem type: "${problem.type}"`);
-      }
-    });
+    // Extract profession type using shared keywords
+    const professionType = extractProfessionType(lowerMessage);
+    if (professionType) {
+      this.conversationState.problemType = professionType;
+      this.conversationState.hasProblemDescription = true;
+      console.log(`🔧 Found problem type: "${professionType}"`);
+    }
 
     const criticalKeywords = ['plyn', 'dym', 'iskr', 'požiar', 'zatopa'];
     if (criticalKeywords.some(kw => lowerMessage.includes(kw))) {
