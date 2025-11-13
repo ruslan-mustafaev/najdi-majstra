@@ -189,8 +189,8 @@ Opíš mi prosím: Čo sa pokazilo a kde sa nachádzaš (mesto)? Pomôžem ti n�
           if (result.serviceType === 'alternative') {
             // Masters from same city but do regular/realization service
             const msg = language === 'sk'
-              ? `SYSTEM: Našiel si ${result.masters.length} majstrov v meste ${this.conversationState.location}, ale nie sú to majstri pre akútne poruchy. Sú to majstri pre pravidelný servis a plánovanú realizáciu. Povedz používateľovi: "V Nitre som nenašiel majstrov pre akútne poruchy, ale našiel som ${result.masters.length} ${this.conversationState.problemType?.toLowerCase()} v meste ${this.conversationState.location}, ktorí sa venujú pravidelnému servisu a plánovanej realizácii. Možno by vám mohli pomôcť aj v naliehavej situácii. Pozrite si ich nižšie!"`
-              : `SYSTEM: You found ${result.masters.length} masters in ${this.conversationState.location}, but they are not urgent service masters. They do regular service and planned realization. Tell the user: "I didn't find urgent service masters in ${this.conversationState.location}, but I found ${result.masters.length} ${this.conversationState.problemType?.toLowerCase()} who do regular service and planned realization. Maybe they could help in urgent situation too. Check them below!"`;
+              ? `SYSTEM: Našiel si ${result.masters.length} majstrov v meste ${this.conversationState.location}, ale nie sú to majstri pre akútne poruchy. Sú to majstri pre pravidelný servis a plánovanú realizáciu. Povedz používateľovi: "V meste ${this.conversationState.location} som nenašiel majstrov pre akútne poruchy, ale našiel som ${result.masters.length} ${this.conversationState.problemType?.toLowerCase()} v tom istom meste, ktorí sa venujú pravidelnému servisu a plánovanej realizácii. Možno by vám mohli pomôcť aj v naliehavej situácii. Pozrite si ich nižšie!"`
+              : `SYSTEM: You found ${result.masters.length} masters in ${this.conversationState.location}, but they are not urgent service masters. They do regular service and planned realization. Tell the user: "I didn't find urgent service masters in ${this.conversationState.location}, but I found ${result.masters.length} ${this.conversationState.problemType?.toLowerCase()} in the same city who do regular service and planned realization. Maybe they could help in urgent situation too. Check them below!"`;
 
             messages.push({
               role: 'system',
@@ -198,15 +198,23 @@ Opíš mi prosím: Čo sa pokazilo a kde sa nachádzaš (mesto)? Pomôžem ti n�
             });
           } else if (result.fromNearby) {
             // Urgent masters from nearby cities
+            const msg = language === 'sk'
+              ? `SYSTEM: ${result.masters.length} majstrov našlo sa, ALE NIE v meste ${this.conversationState.location}. Sú z okolitých miest. Povedz používateľovi: "V meste ${this.conversationState.location} som nenašiel dostupných majstrov, ale našiel som ${result.masters.length} majstra/ov v okolí, ktorí vám môžu pomôcť. Pozrite si ich nižšie!"`
+              : `SYSTEM: ${result.masters.length} masters found BUT NOT in ${this.conversationState.location}. They are from nearby cities/areas. Tell the user you couldn't find masters in their exact city (${this.conversationState.location}), but you found ${result.masters.length} masters in nearby areas who can help.`;
+
             messages.push({
               role: 'system',
-              content: `SYSTEM: ${result.masters.length} masters found BUT NOT in ${this.conversationState.location}. They are from nearby cities/areas. Tell the user you couldn't find masters in their exact city (${this.conversationState.location}), but you found ${result.masters.length} masters in nearby areas who can help.`
+              content: msg
             });
           } else {
             // Urgent masters from the same city
+            const msg = language === 'sk'
+              ? `SYSTEM: ${result.masters.length} majstrov našlo sa v meste ${this.conversationState.location}. Povedz im že si našiel majstrov v ich meste. Napríklad: "Našiel som ${result.masters.length} dostupných majstrov vo vašej lokalite. Pozrite si ich nižšie!"`
+              : `SYSTEM: ${result.masters.length} masters found in ${this.conversationState.location}. Tell them you found masters in their city.`;
+
             messages.push({
               role: 'system',
-              content: `SYSTEM: ${result.masters.length} masters found in ${this.conversationState.location}. Tell them you found masters in their city.`
+              content: msg
             });
           }
         } else {
@@ -369,14 +377,24 @@ Opíš mi prosím: Čo sa pokazilo a kde sa nachádzaš (mesto)? Pomôžem ti n�
       'liptovského mikuláša': 'liptovský mikuláš', // genitive: z Liptovského Mikuláša
       'liptovsky mikulas': 'liptovský mikuláš',
       'liptovského mikulasa': 'liptovský mikuláš',
-      'liptovskom mikuláši': 'liptovský mikuláš' // locative: v Liptovskom Mikuláši
+      'liptovskom mikuláši': 'liptovský mikuláš', // locative: v Liptovskom Mikuláši
+
+      // Veľký Krtíš - all forms
+      'veľký krtíš': 'veľký krtíš',
+      'velky krtis': 'veľký krtíš',
+      'krtíš': 'veľký krtíš',
+      'krtis': 'veľký krtíš',
+      'krtíši': 'veľký krtíš', // locative: v Krtíši
+      'krtisi': 'veľký krtíš',
+      'veľkom krtíši': 'veľký krtíš',
+      'velkom krtisi': 'veľký krtíš'
     };
 
     // Main cities
     const locationKeywords = [
       'bratislava', 'košice', 'prešov', 'žilina', 'banská bystrica', 'nitra', 'trnava', 'trenčín',
       'martin', 'poprad', 'prievidza', 'zvolen', 'považská bystrica', 'nové zámky', 'michalovce',
-      'komárno', 'levice', 'humenné', 'bardejov', 'liptovský mikuláš'
+      'komárno', 'levice', 'humenné', 'bardejov', 'liptovský mikuláš', 'veľký krtíš', 'krtíš'
     ];
 
     // Districts map to main cities
@@ -438,12 +456,14 @@ Opíš mi prosím: Čo sa pokazilo a kde sa nachádzaš (mesto)? Pomôžem ti n�
       });
     }
 
-    // Extract profession type using shared keywords
-    const professionType = extractProfessionType(lowerMessage);
-    if (professionType) {
-      this.conversationState.problemType = professionType;
-      this.conversationState.hasProblemDescription = true;
-      console.log(`🔧 Found problem type: "${professionType}"`);
+    // Extract profession type using shared keywords (only if not already set)
+    if (!this.conversationState.hasProblemDescription) {
+      const professionType = extractProfessionType(lowerMessage);
+      if (professionType) {
+        this.conversationState.problemType = professionType;
+        this.conversationState.hasProblemDescription = true;
+        console.log(`🔧 Found problem type: "${professionType}"`);
+      }
     }
 
     const criticalKeywords = ['plyn', 'dym', 'iskr', 'požiar', 'zatopa'];

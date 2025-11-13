@@ -24,7 +24,7 @@ export const professionKeywords: ProfessionKeyword[] = [
   { keywords: ['autorsk', 'dozor', 'author'], type: 'Autorský dozor' },
 
   // Stavebné profesie
-  { keywords: ['stavbyved', 'stavbár', 'stavba', 'murovanie', 'dom', 'construction manager'], type: 'Stavbyvedúci' },
+  { keywords: ['stavbyved', 'stavbár', 'stavba', 'murovanie', 'construction manager'], type: 'Stavbyvedúci' },
   { keywords: ['murár', 'múr', 'tehla', 'murovanie', 'mason'], type: 'Murár' },
   { keywords: ['betón', 'concrete', 'zabetonov'], type: 'Betónár' },
   { keywords: ['tesár', 'drevo', 'krov', 'carpenter'], type: 'Tesár' },
@@ -84,15 +84,31 @@ export const professionKeywords: ProfessionKeyword[] = [
 
 /**
  * Extract profession type from user message
+ * Returns the FIRST matching profession (order matters!)
  */
 export function extractProfessionType(message: string): string | undefined {
   const lowerMessage = message.toLowerCase();
 
+  // Find all matching professions
+  const matches: { type: string; keywordLength: number }[] = [];
+
   for (const profession of professionKeywords) {
-    if (profession.keywords.some(kw => lowerMessage.includes(kw))) {
-      return profession.type;
+    for (const keyword of profession.keywords) {
+      if (lowerMessage.includes(keyword)) {
+        matches.push({
+          type: profession.type,
+          keywordLength: keyword.length
+        });
+        break; // Stop checking other keywords for this profession
+      }
     }
   }
 
-  return undefined;
+  if (matches.length === 0) {
+    return undefined;
+  }
+
+  // Return the profession with the longest matching keyword (most specific)
+  matches.sort((a, b) => b.keywordLength - a.keywordLength);
+  return matches[0].type;
 }
