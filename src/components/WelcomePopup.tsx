@@ -373,7 +373,7 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
                   práva, kontaktujte nás na:
                 </p>
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="font-medium">Najdi-majstra.sk</p>
+                  <p className="font-medium">najdimajstra.sk</p>
                   <p>Email: podpora@najdimajstra.sk</p>
                 </div>
               </div>
