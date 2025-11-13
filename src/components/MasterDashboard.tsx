@@ -1508,11 +1508,38 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                     <label className="block text-sm font-semibold text-blue-600 mb-2">
                       Čo robíte a ponúkate (max 1000 znakov)
                     </label>
-                    <p className="text-sm text-gray-600 mb-2">
-                      1. Opíšte konkrétne to s čím viete pomôcť vašemu zákazníkovy.<br/>
-                      2. Vypíšte všetko čo robíte, všetky slová podľa ktorých<br/>
-                      by vás vedel váš zákazník vyhľadať
-                    </p>
+                    <div className="space-y-3 mb-3">
+                      <p className="text-sm text-gray-600">
+                        1. Opíšte konkrétne to s čím viete pomôcť vašemu zákazníkovy.<br/>
+                        2. Vypíšte všetko čo robíte, všetky slová podľa ktorých<br/>
+                        by vás vedel váš zákazník vyhľadať
+                      </p>
+
+                      <div className="bg-orange-50 border-l-4 border-orange-400 p-3 rounded">
+                        <p className="text-sm text-gray-700 font-medium">
+                          Ukážte verejne 2-5... výhod ktoré získa váš klient alebo zákazník, napíšte mu prečo by si mal zákazník vybrať práve vás!
+                        </p>
+                      </div>
+
+                      <div className="bg-blue-50 border-l-4 border-blue-500 p-3 rounded">
+                        <p className="text-sm text-gray-700 font-semibold mb-1">Okno zarámované na písanie</p>
+                      </div>
+
+                      <div className="bg-orange-50 border-l-4 border-orange-400 p-3 rounded">
+                        <p className="text-sm text-gray-700 font-medium">
+                          Napíšte 3-5 dôvodov alebo faktov a dajte vedieť prečo vy ste ten dôvod pre svojho zákazníka.
+                        </p>
+                      </div>
+
+                      <div className="bg-blue-50 border-l-4 border-blue-500 p-3 rounded">
+                        <p className="text-sm text-gray-700 font-semibold mb-1">Okno zarámované na písanie - Napríkald:</p>
+                        <p className="text-sm text-gray-600 italic">
+                          Som z vašej lokality<br/>
+                          Budete spokojný vyriešim všetko na kľúč<br/>
+                          Lepšia cena v porovnaní pomer cena výkon
+                        </p>
+                      </div>
+                    </div>
                     {editingField === 'description' ? (
                       <div className="space-y-2">
                         <textarea
