@@ -16,13 +16,13 @@ const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPAB
 // Map price IDs to plan names - hardcoded because env vars are not available in edge functions
 function getPlanNameFromPriceId(priceId: string): { name: string; period: string } {
   const priceMap: Record<string, { name: string; period: string }> = {
-    'price_1SNKxAFUTMN3g7t4IS59w1Gc': { name: 'odbornik', period: 'monthly' },
-    'price_1SNKy0FUTMN3g7t4galvKNXt': { name: 'odbornik', period: 'yearly' },
-    'price_1SNKzGFUTMN3g7t4ObLLtlRB': { name: 'expert', period: 'monthly' },
-    'price_1SNKziFUTMN3g7t4iGisNalD': { name: 'expert', period: 'yearly' },
-    'price_1SNL0GFUTMN3g7t4rjg6nsBA': { name: 'profik', period: 'monthly' },
-    'price_1SNL0kFUTMN3g7t4s0OM3Zzq': { name: 'profik', period: 'yearly' },
-    'price_1SNL1QFUTMN3g7t4uk4b9Gry': { name: 'premier', period: 'yearly' },
+    'price_1ST4awFUTMN3g7t4I0yRPrjl': { name: 'odbornik', period: 'monthly' },
+    'price_1ST4d2FUTMN3g7t4MT2RBIFs': { name: 'odbornik', period: 'yearly' },
+    'price_1ST4gLFUTMN3g7t4aLl6w2Ys': { name: 'expert', period: 'monthly' },
+    'price_1ST4h5FUTMN3g7t4mGBq1rkk': { name: 'expert', period: 'yearly' },
+    'price_1ST4rTFUTMN3g7t4qONhKZvd': { name: 'profik', period: 'monthly' },
+    'price_1ST4rsFUTMN3g7t45h4Tiuic': { name: 'profik', period: 'yearly' },
+    'price_1ST4sbFUTMN3g7t4r26LHm9u': { name: 'premier', period: 'lifetime' },
   };
 
   const result = priceMap[priceId] || { name: 'unknown', period: 'monthly' };
