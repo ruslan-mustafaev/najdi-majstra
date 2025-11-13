@@ -124,15 +124,35 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
           const locationMatch = allMessages.toLowerCase();
           console.log('📝 Full conversation text:', allMessages);
 
-          const cities = ['bratislava', 'košice', 'prešov', 'žilina', 'banská bystrica', 'banska bystrica', 'nitra', 'nitre', 'trnava', 'trenčín', 'trencin', 'veľký krtíš', 'velky krtis'];
+          // Map city forms to canonical names
+          const cityMap: { [key: string]: string } = {
+            'bratislava': 'Bratislava',
+            'bratislave': 'Bratislava',
+            'košice': 'Košice',
+            'kosice': 'Košice',
+            'košiciach': 'Košice',
+            'prešov': 'Prešov',
+            'presov': 'Prešov',
+            'prešove': 'Prešov',
+            'žilina': 'Žilina',
+            'zilina': 'Žilina',
+            'žiline': 'Žilina',
+            'banská bystrica': 'Banská Bystrica',
+            'banska bystrica': 'Banská Bystrica',
+            'banskej bystrici': 'Banská Bystrica',
+            'nitra': 'Nitra',
+            'nitre': 'Nitra',
+            'trnava': 'Trnava',
+            'trnave': 'Trnava',
+            'trenčín': 'Trenčín',
+            'trencin': 'Trenčín',
+            'trenčíne': 'Trenčín',
+          };
+
           let foundCity = '';
-          cities.forEach(city => {
-            const normalizedCity = city.replace(/[šščťžýá]/g, (char) => {
-              const map: {[key: string]: string} = {'š':'s','č':'c','ť':'t','ž':'z','ý':'y','á':'a'};
-              return map[char] || char;
-            });
-            if (locationMatch.includes(city) || locationMatch.includes(normalizedCity)) {
-              foundCity = city.replace('nitre', 'nitra').replace('banska bystrica', 'banská bystrica').replace('trencin', 'trenčín');
+          Object.keys(cityMap).forEach(cityForm => {
+            if (locationMatch.includes(cityForm)) {
+              foundCity = cityMap[cityForm];
             }
           });
 
