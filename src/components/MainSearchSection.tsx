@@ -300,29 +300,29 @@ export const MainSearchSection: React.FC<MainSearchSectionProps> = ({ onFiltersC
             </p>
 
             <div className="flex flex-wrap justify-center gap-4 mb-12">
-              <button 
-                onClick={() => handleServiceButtonClick('urgent')}
-                className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 flex items-center space-x-2 shadow-lg hover:shadow-xl hover:scale-105 hover:-translate-y-1 backdrop-blur-sm border border-white/10"
-                style={{ pointerEvents: 'auto' }}
-              >
-                <Zap size={20} />
-                <span>Akútna porucha</span>
-              </button>
-              <button 
-                onClick={() => handleServiceButtonClick('regular')}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 flex items-center space-x-2 shadow-lg hover:shadow-xl hover:scale-105 hover:-translate-y-1 backdrop-blur-sm border border-white/10"
-                style={{ pointerEvents: 'auto' }}
-              >
-                <Settings size={20} />
-                <span>Pravidelný servis</span>
-              </button>
-              <button 
+              <button
                 onClick={() => handleServiceButtonClick('realization')}
                 className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 flex items-center space-x-2 shadow-lg hover:shadow-xl hover:scale-105 hover:-translate-y-1 backdrop-blur-sm border border-white/10"
                 style={{ pointerEvents: 'auto' }}
               >
                 <Wrench size={20} />
-                <span>Plánovaná realizácia</span>
+                <span>hľadám realizátora</span>
+              </button>
+              <button
+                onClick={() => handleServiceButtonClick('urgent')}
+                className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 flex items-center space-x-2 shadow-lg hover:shadow-xl hover:scale-105 hover:-translate-y-1 backdrop-blur-sm border border-white/10"
+                style={{ pointerEvents: 'auto' }}
+              >
+                <Zap size={20} />
+                <span>mám poruchu</span>
+              </button>
+              <button
+                onClick={() => handleServiceButtonClick('regular')}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 flex items-center space-x-2 shadow-lg hover:shadow-xl hover:scale-105 hover:-translate-y-1 backdrop-blur-sm border border-white/10"
+                style={{ pointerEvents: 'auto' }}
+              >
+                <Settings size={20} />
+                <span>potrebujem servis</span>
               </button>
             </div>
           </div>
