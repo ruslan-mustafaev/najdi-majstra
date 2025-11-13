@@ -33,7 +33,7 @@ exports.handler = async (event, context) => {
 
   try {
     const body = JSON.parse(event.body || '{}');
-    const { price_id, success_url, cancel_url, customer_email, user_id } = body;
+    const { price_id, success_url, cancel_url, customer_email, user_id, mode } = body;
 
     if (!price_id) {
       return {
@@ -51,7 +51,7 @@ exports.handler = async (event, context) => {
           quantity: 1,
         },
       ],
-      mode: 'subscription',
+      mode: mode || 'subscription',
       success_url: success_url || `${process.env.URL || event.headers.origin}/subscription?success=true`,
       cancel_url: cancel_url || `${process.env.URL || event.headers.origin}/subscription?canceled=true`,
       metadata: {

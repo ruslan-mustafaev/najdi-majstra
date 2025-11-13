@@ -93,23 +93,17 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
     const checkoutMode = planKey === 'premier' ? 'payment' : 'subscription';
 
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-
-      if (!session) {
-        alert('Musíte sa prihlásiť pre výber plánu');
-        return;
-      }
-
-      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/stripe-checkout`, {
+      const response = await fetch('/.netlify/functions/stripe-checkout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`,
         },
         body: JSON.stringify({
           price_id: priceId,
           success_url: `${currentUrl}/dashboard?tab=payments&success=true&plan=${planKey}`,
           cancel_url: `${currentUrl}/dashboard?tab=payments&canceled=true`,
+          customer_email: user.email,
+          user_id: user.id,
           mode: checkoutMode,
         }),
       });
