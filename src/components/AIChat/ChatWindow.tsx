@@ -4,7 +4,8 @@ import { ChatMessage } from './types';
 import { AIService } from './AIService';
 import { useLanguage } from '../../hooks/useLanguage';
 import { translations } from '../../data/translations';
-import { searchMastersByLocation, MasterSearchResult } from '../../lib/masterSearchApi';
+import { MasterSearchResult } from '../../lib/masterSearchApi';
+import { supabase } from '../../lib/supabase';
 
 interface ChatWindowProps {
   isOpen: boolean;
@@ -114,81 +115,66 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
       if (response.recommendedMasters && response.recommendedMasters.length > 0) {
         onMasterRecommendation?.(response.recommendedMasters);
 
-        // Load full master data
+        // Load full master data by IDs returned from AI service
         try {
-          // Extract location and profession from conversation
-          const lastUserMessages = messages.filter(m => m.sender === 'user').map(m => m.content).join(' ');
-          const allMessages = lastUserMessages + ' ' + inputValue;
+          const { data: mastersData, error } = await supabase
+            .from('masters')
+            .select('*')
+            .in('id', response.recommendedMasters);
 
-          // Simple extraction (the AI service already did this, but we need to repeat for API call)
-          const locationMatch = allMessages.toLowerCase();
-          console.log('📝 Full conversation text:', allMessages);
+          if (error) {
+            console.error('Error loading masters:', error);
+            return;
+          }
 
-          // Map city forms to canonical names
-          const cityMap: { [key: string]: string } = {
-            'bratislava': 'Bratislava',
-            'bratislave': 'Bratislava',
-            'košice': 'Košice',
-            'kosice': 'Košice',
-            'košiciach': 'Košice',
-            'prešov': 'Prešov',
-            'presov': 'Prešov',
-            'prešove': 'Prešov',
-            'žilina': 'Žilina',
-            'zilina': 'Žilina',
-            'žiline': 'Žilina',
-            'banská bystrica': 'Banská Bystrica',
-            'banska bystrica': 'Banská Bystrica',
-            'banskej bystrici': 'Banská Bystrica',
-            'nitra': 'Nitra',
-            'nitre': 'Nitra',
-            'trnava': 'Trnava',
-            'trnave': 'Trnava',
-            'trenčín': 'Trenčín',
-            'trencin': 'Trenčín',
-            'trenčíne': 'Trenčín',
-          };
+          if (!mastersData || mastersData.length === 0) {
+            console.log('⚠️ No master data found for IDs:', response.recommendedMasters);
+            return;
+          }
 
-          let foundCity = '';
-          Object.keys(cityMap).forEach(cityForm => {
-            if (locationMatch.includes(cityForm)) {
-              foundCity = cityMap[cityForm];
+          // Get reviews for rating calculation
+          const masterUserIds = mastersData.map(m => m.user_id);
+          const { data: reviewsData } = await supabase
+            .from('master_reviews')
+            .select('master_id, rating')
+            .in('master_id', masterUserIds);
+
+          // Calculate ratings
+          const ratingsMap = new Map();
+          const reviewCountMap = new Map();
+
+          (reviewsData || []).forEach(review => {
+            if (!ratingsMap.has(review.master_id)) {
+              ratingsMap.set(review.master_id, []);
             }
+            ratingsMap.get(review.master_id).push(review.rating);
           });
 
-          console.log('📍 Found city:', foundCity);
-
-          const professionKeywords = [
-            { keywords: ['elektr'], type: 'Elektrikár' },
-            { keywords: ['vod', 'inštalat'], type: 'Inštalatér' },
-            { keywords: ['plyn', 'kotol', 'kúren'], type: 'Plynár' },
-            { keywords: ['stav'], type: 'Stavbár' }
-          ];
-
-          let foundProfession = '';
-          professionKeywords.forEach(prof => {
-            if (prof.keywords.some(kw => locationMatch.includes(kw))) {
-              foundProfession = prof.type;
-            }
+          ratingsMap.forEach((ratings, masterId) => {
+            const avgRating = ratings.reduce((sum: number, r: number) => sum + r, 0) / ratings.length;
+            ratingsMap.set(masterId, Math.round(avgRating * 10) / 10);
+            reviewCountMap.set(masterId, ratings.length);
           });
 
-          console.log('🔍 Searching for masters:', {
-            foundCity,
-            foundProfession,
-            serviceType,
-            searchText: allMessages
-          });
+          // Transform to MasterSearchResult format
+          const masters = mastersData.map(master => ({
+            id: master.id,
+            slug: master.slug,
+            name: master.name || 'Majster',
+            profession: master.profession || 'Majster',
+            location: master.location || 'Slovensko',
+            rating: ratingsMap.get(master.user_id) || 0,
+            reviewCount: reviewCountMap.get(master.user_id) || 0,
+            available: master.is_available ?? master.is_active,
+            profileImage: master.profile_image_url || '/placeholder-avatar.svg',
+            hourlyRateMin: master.hourly_rate_min || 0,
+            hourlyRateMax: master.hourly_rate_max || 0,
+            serviceArea: master.service_area || 'lokálne'
+          }));
 
-          const masters = await searchMastersByLocation({
-            location: foundCity,
-            profession: foundProfession,
-            serviceType: serviceType,
-            limit: 5
-          });
-
-          console.log('✅ Found masters:', masters.length, masters);
+          console.log('✅ Loaded master details:', masters.length, masters);
           setRecommendedMasters(masters);
-          setShowRecommendations(true); // Show recommendations when new masters are found
+          setShowRecommendations(true);
         } catch (error) {
           console.error('Error loading recommended masters:', error);
         }
