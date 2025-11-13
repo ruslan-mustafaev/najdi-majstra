@@ -52,6 +52,13 @@ exports.handler = async (event, context) => {
           const subscription = await stripe.subscriptions.retrieve(subscriptionId);
           const priceId = subscription.items.data[0]?.price.id;
 
+          console.log('=== WEBHOOK DEBUG ===');
+          console.log('Received Price ID:', priceId);
+          console.log('ODBORNIK_MONTHLY:', process.env.VITE_STRIPE_ODBORNIK_MONTHLY_PRICE_ID);
+          console.log('ODBORNIK_YEARLY:', process.env.VITE_STRIPE_ODBORNIK_YEARLY_PRICE_ID);
+          console.log('EXPERT_MONTHLY:', process.env.VITE_STRIPE_EXPERT_MONTHLY_PRICE_ID);
+          console.log('EXPERT_YEARLY:', process.env.VITE_STRIPE_EXPERT_YEARLY_PRICE_ID);
+
           let planType = 'mini';
           if (priceId === process.env.VITE_STRIPE_ODBORNIK_MONTHLY_PRICE_ID ||
               priceId === process.env.VITE_STRIPE_ODBORNIK_YEARLY_PRICE_ID) {
@@ -66,6 +73,8 @@ exports.handler = async (event, context) => {
                      priceId === process.env.VITE_STRIPE_PREMIER_YEARLY_PRICE_ID) {
             planType = 'premier';
           }
+
+          console.log('Determined plan type:', planType);
 
           const billingPeriod = priceId.includes('YEARLY') || priceId.includes('yearly') ? 'yearly' : 'monthly';
           const amountPaid = subscription.items.data[0]?.price.unit_amount ? subscription.items.data[0].price.unit_amount / 100 : 0;
