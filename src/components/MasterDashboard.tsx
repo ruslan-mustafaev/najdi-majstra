@@ -2386,15 +2386,17 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
 
         {activeTab === 'payments' && (
           <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold">Platby a predplatné</h2>
-              <button
-                onClick={() => setIsSubscriptionInfoOpen(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-              >
-                <Info className="w-5 h-5" />
-                Informácie o predplatnom
-              </button>
+            <div className="flex items-start justify-between">
+              <div className="space-y-3">
+                <h2 className="text-2xl font-bold">Platby a predplatné</h2>
+                <button
+                  onClick={() => setIsSubscriptionInfoOpen(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                >
+                  <Info className="w-5 h-5" />
+                  Informácie o výhodách
+                </button>
+              </div>
             </div>
 
             {/* Current Active Plan */}
@@ -2768,7 +2770,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[9999]">
           <div className="bg-white rounded-2xl p-8 w-full max-w-3xl mx-4 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-2xl font-bold text-gray-900">Informácie o predplatnom</h3>
+              <h3 className="text-2xl font-bold text-gray-900">Informácie o výhodách</h3>
               <button
                 onClick={() => setIsSubscriptionInfoOpen(false)}
                 className="text-gray-400 hover:text-gray-600 transition-colors"
