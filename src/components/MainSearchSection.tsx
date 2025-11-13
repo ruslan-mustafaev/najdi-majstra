@@ -306,7 +306,7 @@ export const MainSearchSection: React.FC<MainSearchSectionProps> = ({ onFiltersC
                 style={{ pointerEvents: 'auto' }}
               >
                 <Wrench size={20} />
-                <span>hľadám realizátora</span>
+                <span>Hľadám realizátora</span>
               </button>
               <button
                 onClick={() => handleServiceButtonClick('urgent')}
@@ -314,7 +314,7 @@ export const MainSearchSection: React.FC<MainSearchSectionProps> = ({ onFiltersC
                 style={{ pointerEvents: 'auto' }}
               >
                 <Zap size={20} />
-                <span>mám poruchu</span>
+                <span>Mám poruchu</span>
               </button>
               <button
                 onClick={() => handleServiceButtonClick('regular')}
@@ -322,7 +322,7 @@ export const MainSearchSection: React.FC<MainSearchSectionProps> = ({ onFiltersC
                 style={{ pointerEvents: 'auto' }}
               >
                 <Settings size={20} />
-                <span>potrebujem servis</span>
+                <span>Potrebujem servis</span>
               </button>
             </div>
           </div>
