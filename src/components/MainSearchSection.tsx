@@ -293,10 +293,10 @@ export const MainSearchSection: React.FC<MainSearchSectionProps> = ({ onFiltersC
         <div className="container mx-auto px-4 relative z-10" style={{ pointerEvents: 'none' }}>
           <div className="text-center max-w-4xl mx-auto mb-12">
             <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight drop-shadow-lg">
-              Najväčší slovenský predajca majstrov a expertov v stavebníctve
+              Váš Najväčší slovenský predajca majstrov a expertov v stavebníctve
             </h2>
             <p className="text-xl md:text-2xl text-white/90 mb-8 drop-shadow-md">
-              Rýchlo, lacno a jednoducho nájdite kvalifikovaného odborníka zo svojej lokality
+              Nájsť majstra do 1 minúty? Áno! Registrácia ZDARMA
             </p>
 
             <div className="flex flex-wrap justify-center gap-4 mb-12">
