@@ -1,4 +1,10 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const { createClient } = require('@supabase/supabase-js');
+
+const supabase = createClient(
+  process.env.VITE_SUPABASE_URL,
+  process.env.VITE_SUPABASE_ANON_KEY
+);
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -43,6 +49,31 @@ exports.handler = async (event, context) => {
       };
     }
 
+    let customerId = null;
+
+    if (user_id && mode !== 'payment') {
+      const { data: existingCustomer } = await supabase
+        .from('stripe_customers')
+        .select('customer_id')
+        .eq('user_id', user_id)
+        .maybeSingle();
+
+      if (existingCustomer?.customer_id) {
+        customerId = existingCustomer.customer_id;
+
+        const subscriptions = await stripe.subscriptions.list({
+          customer: customerId,
+          status: 'active',
+          limit: 100,
+        });
+
+        for (const subscription of subscriptions.data) {
+          console.log(`Canceling existing subscription: ${subscription.id}`);
+          await stripe.subscriptions.cancel(subscription.id);
+        }
+      }
+    }
+
     const sessionParams = {
       payment_method_types: ['card'],
       line_items: [
@@ -59,7 +90,9 @@ exports.handler = async (event, context) => {
       },
     };
 
-    if (customer_email) {
+    if (customerId) {
+      sessionParams.customer = customerId;
+    } else if (customer_email) {
       sessionParams.customer_email = customer_email;
     }
 
