@@ -1508,13 +1508,53 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                     <label className="block text-sm font-semibold text-blue-600 mb-2">
                       Čo robíte a ponúkate (max 1000 znakov)
                     </label>
-                    <div className="space-y-3 mb-3">
-                      <p className="text-sm text-gray-600">
-                        1. Opíšte konkrétne to s čím viete pomôcť vašemu zákazníkovy.<br/>
-                        2. Vypíšte všetko čo robíte, všetky slová podľa ktorých<br/>
-                        by vás vedel váš zákazník vyhľadať
-                      </p>
+                    <p className="text-sm text-gray-600 mb-3">
+                      1. Opíšte konkrétne to s čím viete pomôcť vašemu zákazníkovy.<br/>
+                      2. Vypíšte všetko čo robíte, všetky slová podľa ktorých<br/>
+                      by vás vedel váš zákazník vyhľadať
+                    </p>
 
+                    {editingField === 'description' ? (
+                      <div className="space-y-2 mb-4">
+                        <textarea
+                          placeholder="Programujem Najdi Majstra"
+                          value={profileData.description}
+                          onChange={(e) => handleFieldChange('description', e.target.value)}
+                          maxLength={1000}
+                          rows={4}
+                          className={`w-full px-3 py-2 border-2 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent shadow-sm ${
+                            profileData.description.trim().length < 20 ? 'border-red-500' : 'border-gray-400'
+                          }`}
+                        />
+                        {profileData.description.trim().length < 20 && (
+                          <p className="text-red-600 text-sm font-medium flex items-center gap-1">
+                            <AlertTriangle size={16} />
+                            Povinné pole! Minimum 20 znakov. Bez neho nebude váš profil viditeľný vo vyhľadávaní.
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="mb-4">
+                        <p
+                          className={`text-gray-900 cursor-pointer p-3 rounded-lg border-2 transition-colors min-h-[2.5rem] bg-white shadow-sm ${
+                            profileData.description.trim().length < 20
+                              ? 'border-red-500'
+                              : 'border-[#4169e1] hover:border-[#3558d4]'
+                          }`}
+                          onClick={() => startEditing('description')}
+                        >
+                          {profileData.description || 'Nevyplnené - kliknite pre úpravu'}
+                        </p>
+                        {profileData.description.trim().length < 20 && (
+                          <p className="text-red-600 text-sm font-medium flex items-center gap-1 mt-1">
+                            <AlertTriangle size={16} />
+                            Povinné pole! Minimum 20 znakov. Bez neho nebude váš profil viditeľný vo vyhľadávaní.
+                          </p>
+                        )}
+                      </div>
+                    )}
+
+                    <div className="space-y-3">
                       <div className="bg-orange-50 border-l-4 border-orange-400 p-3 rounded">
                         <p className="text-sm text-gray-700 font-medium mb-2">
                           Ukážte verejne 2-5... výhod ktoré získa váš klient alebo zákazník, napíšte mu prečo by si mal zákazník vybrať práve vás!
@@ -1537,45 +1577,6 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                         />
                       </div>
                     </div>
-                    {editingField === 'description' ? (
-                      <div className="space-y-2">
-                        <textarea
-                          placeholder="Opíšte svoju prácu a služby..."
-                          value={profileData.description}
-                          onChange={(e) => handleFieldChange('description', e.target.value)}
-                          maxLength={1000}
-                          rows={4}
-                          className={`w-full px-3 py-2 border-2 rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent shadow-sm ${
-                            profileData.description.trim().length < 20 ? 'border-red-500' : 'border-gray-400'
-                          }`}
-                        />
-                        {profileData.description.trim().length < 20 && (
-                          <p className="text-red-600 text-sm font-medium flex items-center gap-1">
-                            <AlertTriangle size={16} />
-                            Povinné pole! Minimum 20 znakov. Bez neho nebude váš profil viditeľný vo vyhľadávaní.
-                          </p>
-                        )}
-                      </div>
-                    ) : (
-                      <div>
-                        <p
-                          className={`text-gray-900 cursor-pointer p-3 rounded-lg border-2 transition-colors min-h-[2.5rem] bg-white shadow-sm ${
-                            profileData.description.trim().length < 20
-                              ? 'border-red-500'
-                              : 'border-[#4169e1] hover:border-[#3558d4]'
-                          }`}
-                          onClick={() => startEditing('description')}
-                        >
-                          {profileData.description || 'Nevyplnené - kliknite pre úpravu'}
-                        </p>
-                        {profileData.description.trim().length < 20 && (
-                          <p className="text-red-600 text-sm font-medium flex items-center gap-1 mt-1">
-                            <AlertTriangle size={16} />
-                            Povinné pole! Minimum 20 znakov. Bez neho nebude váš profil viditeľný vo vyhľadávaní.
-                          </p>
-                        )}
-                      </div>
-                    )}
                   </div>
 
                   {/* Age */}
