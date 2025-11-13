@@ -47,17 +47,17 @@ export const SubscriptionPlans: React.FC = () => {
         return;
       }
 
-      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/stripe-checkout`, {
+      const response = await fetch('/.netlify/functions/stripe-checkout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`,
         },
         body: JSON.stringify({
           price_id: priceId,
           success_url: `${currentUrl}/subscription?success=true`,
           cancel_url: `${currentUrl}/subscription?canceled=true`,
-          mode: 'subscription',
+          customer_email: user.email,
+          user_id: user.id,
         }),
       });
 
