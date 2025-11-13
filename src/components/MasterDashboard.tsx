@@ -1516,28 +1516,25 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                       </p>
 
                       <div className="bg-orange-50 border-l-4 border-orange-400 p-3 rounded">
-                        <p className="text-sm text-gray-700 font-medium">
+                        <p className="text-sm text-gray-700 font-medium mb-2">
                           Ukážte verejne 2-5... výhod ktoré získa váš klient alebo zákazník, napíšte mu prečo by si mal zákazník vybrať práve vás!
                         </p>
-                      </div>
-
-                      <div className="bg-blue-50 border-l-4 border-blue-500 p-3 rounded">
-                        <p className="text-sm text-gray-700 font-semibold mb-1">Okno zarámované na písanie</p>
+                        <textarea
+                          placeholder="Napríklad: Rýchla reakcia, Kvalitná práca za dobrú cenu, Dlhoročné skúsenosti..."
+                          className="w-full px-3 py-2 border-2 border-[#4169e1] rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent shadow-sm text-sm"
+                          rows={3}
+                        />
                       </div>
 
                       <div className="bg-orange-50 border-l-4 border-orange-400 p-3 rounded">
-                        <p className="text-sm text-gray-700 font-medium">
+                        <p className="text-sm text-gray-700 font-medium mb-2">
                           Napíšte 3-5 dôvodov alebo faktov a dajte vedieť prečo vy ste ten dôvod pre svojho zákazníka.
                         </p>
-                      </div>
-
-                      <div className="bg-blue-50 border-l-4 border-blue-500 p-3 rounded">
-                        <p className="text-sm text-gray-700 font-semibold mb-1">Okno zarámované na písanie - Napríkald:</p>
-                        <p className="text-sm text-gray-600 italic">
-                          Som z vašej lokality<br/>
-                          Budete spokojný vyriešim všetko na kľúč<br/>
-                          Lepšia cena v porovnaní pomer cena výkon
-                        </p>
+                        <textarea
+                          placeholder="Napríklad: Som z vašej lokality, Budete spokojný vyriešim všetko na kľúč, Lepšia cena v porovnaní pomer cena výkon..."
+                          className="w-full px-3 py-2 border-2 border-[#4169e1] rounded-lg focus:ring-2 focus:ring-[#4169e1] focus:border-transparent shadow-sm text-sm"
+                          rows={3}
+                        />
                       </div>
                     </div>
                     {editingField === 'description' ? (
