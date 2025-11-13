@@ -402,14 +402,24 @@ Opíš mi prosím: Čo sa pokazilo a kde sa nachádzaš (mesto)? Pomôžem ti n�
       'krtíši': 'veľký krtíš', // locative: v Krtíši
       'krtisi': 'veľký krtíš',
       'veľkom krtíši': 'veľký krtíš',
-      'velkom krtisi': 'veľký krtíš'
+      'velkom krtisi': 'veľký krtíš',
+
+      // Bánovce nad Bebravou - all forms
+      'bánovce nad bebravou': 'bánovce nad bebravou',
+      'banovce nad bebravou': 'bánovce nad bebravou',
+      'bánovciach nad bebravou': 'bánovce nad bebravou', // locative: v Bánovciach nad Bebravou
+      'banovciach nad bebravou': 'bánovce nad bebravou',
+      'bánovce': 'bánovce nad bebravou',
+      'banovce': 'bánovce nad bebravou',
+      'bánov': 'bánovce nad bebravou'
     };
 
     // Main cities
     const locationKeywords = [
       'bratislava', 'košice', 'prešov', 'žilina', 'banská bystrica', 'nitra', 'trnava', 'trenčín',
       'martin', 'poprad', 'prievidza', 'zvolen', 'považská bystrica', 'nové zámky', 'michalovce',
-      'komárno', 'levice', 'humenné', 'bardejov', 'liptovský mikuláš', 'veľký krtíš', 'krtíš'
+      'komárno', 'levice', 'humenné', 'bardejov', 'liptovský mikuláš', 'veľký krtíš', 'krtíš',
+      'bánovce nad bebravou', 'bánovce', 'banovce'
     ];
 
     // Districts map to main cities

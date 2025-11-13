@@ -42,7 +42,8 @@ export async function searchMastersByLocation(params: MasterSearchParams): Promi
 
     if (params.profession) {
       console.log(`💼 Filtering by profession: "${params.profession}"`);
-      query = query.ilike('profession', `%${params.profession}%`);
+      // Search in both old 'profession' field and new 'primary_profession' field
+      query = query.or(`profession.ilike.%${params.profession}%,primary_profession.ilike.%${params.profession}%`);
     }
 
     if (params.serviceType === 'urgent') {
