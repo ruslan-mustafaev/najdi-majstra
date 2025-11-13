@@ -235,7 +235,7 @@ export const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose, onU
               <div>
                 <h4 className="text-lg font-semibold text-gray-900 mb-3">1. Úvod</h4>
                 <p className="mb-2">
-                  Platforma Najdi-majstra.sk (ďalej len „Platforma") rešpektuje vaše súkromie a zaväzuje sa chrániť
+                  Platforma najdimajstra.sk (ďalej len „Platforma") rešpektuje vaše súkromie a zaväzuje sa chrániť
                   vaše osobné údaje v súlade s nariadením GDPR (General Data Protection Regulation - Všeobecné
                   nariadenie o ochrane údajov) a príslušnými zákonmi Slovenskej republiky.
                 </p>
