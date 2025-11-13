@@ -32,7 +32,6 @@ function getPlanNameFromPriceId(priceId: string): { name: string; period: string
 
 Deno.serve(async (req) => {
   try {
-    // Handle OPTIONS request for CORS preflight
     if (req.method === 'OPTIONS') {
       return new Response(null, { status: 204 });
     }
@@ -41,17 +40,14 @@ Deno.serve(async (req) => {
       return new Response('Method not allowed', { status: 405 });
     }
 
-    // get the signature from the header
     const signature = req.headers.get('stripe-signature');
 
     if (!signature) {
       return new Response('No signature found', { status: 400 });
     }
 
-    // get the raw body
     const body = await req.text();
 
-    // verify the webhook signature
     let event: Stripe.Event;
 
     try {
@@ -81,7 +77,6 @@ async function handleEvent(event: Stripe.Event) {
     return;
   }
 
-  // for one time payments, we only listen for the checkout.session.completed event
   if (event.type === 'payment_intent.succeeded' && event.data.object.invoice === null) {
     return;
   }
@@ -106,12 +101,10 @@ async function handleEvent(event: Stripe.Event) {
     if (isSubscription) {
       console.info(`Starting subscription sync for customer: ${customerId}`);
 
-      // If this is a checkout.session.completed event, extract subscription info immediately
       if (event.type === 'checkout.session.completed') {
         const session = stripeData as Stripe.Checkout.Session;
         if (session.subscription) {
           console.info(`Checkout completed with subscription: ${session.subscription}`);
-          // Wait a bit for Stripe to finalize the subscription
           await new Promise(resolve => setTimeout(resolve, 1000));
         }
       }
@@ -119,7 +112,6 @@ async function handleEvent(event: Stripe.Event) {
       await syncCustomerFromStripe(customerId);
     } else if (mode === 'payment' && payment_status === 'paid') {
       try {
-        // Extract the necessary information from the session
         const session = stripeData as Stripe.Checkout.Session;
         const {
           id: checkout_session_id,
@@ -129,7 +121,6 @@ async function handleEvent(event: Stripe.Event) {
           currency,
         } = session;
 
-        // Insert the order into the stripe_orders table
         const { error: orderError } = await supabase.from('stripe_orders').insert({
           checkout_session_id,
           payment_intent_id: payment_intent,
@@ -147,8 +138,6 @@ async function handleEvent(event: Stripe.Event) {
         }
         console.info(`Successfully processed one-time payment for session: ${checkout_session_id}`);
 
-        // For Premier plan (one-time payment), create a lifetime subscription
-        // Get the price ID from line items
         const lineItems = await stripe.checkout.sessions.listLineItems(checkout_session_id);
         if (lineItems.data.length > 0) {
           const priceId = lineItems.data[0].price?.id;
@@ -156,7 +145,6 @@ async function handleEvent(event: Stripe.Event) {
             const planInfo = getPlanNameFromPriceId(priceId);
             console.info(`One-time payment for plan: ${planInfo.name}`);
 
-            // Get user_id from stripe_customers table
             const { data: customerData, error: customerError } = await supabase
               .from('stripe_customers')
               .select('user_id')
@@ -168,7 +156,6 @@ async function handleEvent(event: Stripe.Event) {
               return;
             }
 
-            // Create/update subscription record for lifetime access
             const { data: existingSub } = await supabase
               .from('subscriptions')
               .select('id')
@@ -186,7 +173,6 @@ async function handleEvent(event: Stripe.Event) {
             };
 
             if (existingSub) {
-              // Update existing subscription
               const { error } = await supabase
                 .from('subscriptions')
                 .update({
@@ -201,7 +187,6 @@ async function handleEvent(event: Stripe.Event) {
                 console.info(`Updated lifetime subscription for user ${customerData.user_id}: plan=${planInfo.name}`);
               }
             } else {
-              // Insert new subscription
               const { error } = await supabase
                 .from('subscriptions')
                 .insert({
@@ -224,10 +209,8 @@ async function handleEvent(event: Stripe.Event) {
   }
 }
 
-// based on the excellent https://github.com/t3dotgg/stripe-recommendations
 async function syncCustomerFromStripe(customerId: string) {
   try {
-    // fetch latest subscription data from Stripe
     const subscriptions = await stripe.subscriptions.list({
       customer: customerId,
       limit: 1,
@@ -235,7 +218,6 @@ async function syncCustomerFromStripe(customerId: string) {
       expand: ['data.default_payment_method'],
     });
 
-    // TODO verify if needed
     if (subscriptions.data.length === 0) {
       console.info(`No active subscriptions found for customer: ${customerId}`);
       const { error: noSubError } = await supabase.from('stripe_subscriptions').upsert(
@@ -255,14 +237,12 @@ async function syncCustomerFromStripe(customerId: string) {
       return;
     }
 
-    // assumes that a customer can only have a single subscription
     const subscription = subscriptions.data[0];
     const priceId = subscription.items.data[0].price.id;
     const planInfo = getPlanNameFromPriceId(priceId);
 
     console.info(`Processing subscription for customer ${customerId}, plan: ${planInfo.name}, status: ${subscription.status}`);
 
-    // store subscription state in stripe_subscriptions table
     const { error: subError } = await supabase.from('stripe_subscriptions').upsert(
       {
         customer_id: customerId,
@@ -289,7 +269,6 @@ async function syncCustomerFromStripe(customerId: string) {
       throw new Error('Failed to sync subscription in database');
     }
 
-    // Get user_id from stripe_customers table
     const { data: customerData, error: customerError } = await supabase
       .from('stripe_customers')
       .select('user_id')
@@ -301,12 +280,9 @@ async function syncCustomerFromStripe(customerId: string) {
       return;
     }
 
-    // Calculate amount paid
     const amountPaid = subscription.items.data[0].price.unit_amount ? subscription.items.data[0].price.unit_amount / 100 : 0;
     const currency = subscription.items.data[0].price.currency || 'eur';
 
-    // Store in subscriptions table for easy access
-    // First, check if subscription exists
     const { data: existingSub } = await supabase
       .from('subscriptions')
       .select('id')
@@ -316,7 +292,6 @@ async function syncCustomerFromStripe(customerId: string) {
     let userSubError;
 
     if (existingSub) {
-      // Update existing subscription
       const { error } = await supabase
         .from('subscriptions')
         .update({
@@ -334,7 +309,6 @@ async function syncCustomerFromStripe(customerId: string) {
         .eq('user_id', customerData.user_id);
       userSubError = error;
     } else {
-      // Insert new subscription
       const { error } = await supabase
         .from('subscriptions')
         .insert({
