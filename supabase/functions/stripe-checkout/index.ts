@@ -200,7 +200,7 @@ Deno.serve(async (req) => {
     }
 
     // create Checkout Session
-    const session = await stripe.checkout.sessions.create({
+    const sessionParams: any = {
       customer: customerId,
       payment_method_types: ['card'],
       line_items: [
@@ -212,7 +212,23 @@ Deno.serve(async (req) => {
       mode,
       success_url,
       cancel_url,
-    });
+    };
+
+    if (mode === 'payment') {
+      sessionParams.payment_intent_data = {
+        statement_descriptor: 'najdiMajstra',
+      };
+    }
+
+    if (mode === 'subscription') {
+      sessionParams.subscription_data = {
+        metadata: {
+          user_id: user.id,
+        },
+      };
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionParams);
 
     console.log(`Created checkout session ${session.id} for customer ${customerId}`);
 
