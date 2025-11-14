@@ -72,6 +72,8 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('yearly');
   const [showPaymentResult, setShowPaymentResult] = useState<{show: boolean, success: boolean, message: string, planName?: string, billingPeriod?: string, isLoading?: boolean}>({show: false, success: false, message: ''});
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [isCanceling, setIsCanceling] = useState(false);
 
   const handleSelectPlan = async (planKey: 'odbornik' | 'expert' | 'profik' | 'premier') => {
     if (!user) {
@@ -125,6 +127,46 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
     } catch (error) {
       console.error('Error creating checkout:', error);
       alert('Chyba pri vytváraní platby');
+    }
+  };
+
+  const handleCancelSubscription = async () => {
+    if (!user) return;
+
+    setIsCanceling(true);
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (!session) {
+        alert('Musíte sa prihlásiť');
+        return;
+      }
+
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/stripe-cancel-subscription`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        alert(`Predplatné bude zrušené ku koncu obdobia: ${new Date(data.cancel_at).toLocaleDateString('sk-SK')}`);
+
+        const subscription = await getUserActiveSubscription(user.id);
+        setActiveSubscription(subscription);
+        setShowCancelModal(false);
+      } else {
+        alert('Chyba pri zrušení predplatného: ' + (data.error || 'Neznáma chyba'));
+      }
+    } catch (error) {
+      console.error('Error canceling subscription:', error);
+      alert('Chyba pri zrušení predplatného');
+    } finally {
+      setIsCanceling(false);
     }
   };
 
@@ -2423,11 +2465,26 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                         {activeSubscription.current_period_end &&
                           ` • Platné do ${new Date(activeSubscription.current_period_end).toLocaleDateString('sk-SK')}`}
                       </p>
+                      {activeSubscription.status === 'canceling' && (
+                        <p className="text-xs text-orange-600 font-semibold mt-1">
+                          ⚠️ Predplatné bude zrušené ku koncu obdobia
+                        </p>
+                      )}
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-2xl font-bold text-green-600">{activeSubscription.amount_paid}€</p>
-                    <p className="text-xs text-gray-500">Zaplatené</p>
+                  <div className="flex flex-col items-end gap-2">
+                    <div className="text-right">
+                      <p className="text-2xl font-bold text-green-600">{activeSubscription.amount_paid}€</p>
+                      <p className="text-xs text-gray-500">Zaplatené</p>
+                    </div>
+                    {activeSubscription.billing_period !== 'lifetime' && activeSubscription.status !== 'canceling' && activeSubscription.plan_name.toLowerCase() !== 'mini' && (
+                      <button
+                        onClick={() => setShowCancelModal(true)}
+                        className="text-xs text-red-600 hover:text-red-700 underline transition-colors"
+                      >
+                        Zrušiť predplatné
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -3271,6 +3328,77 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                   </>
                 );
               })()}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Cancel Subscription Modal */}
+      {showCancelModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="bg-red-100 text-red-600 rounded-full p-3">
+                <AlertTriangle className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900">Zrušiť predplatné</h3>
+            </div>
+
+            <div className="space-y-4">
+              <p className="text-gray-700">
+                Naozaj chcete zrušiť vaše predplatné?
+              </p>
+
+              <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
+                <p className="text-sm text-yellow-800">
+                  <strong>Upozornenie:</strong> Predplatné zostane aktívne až do konca aktuálneho obdobia. Po uplynutí tohto obdobia stratíte prístup k prémiom funkciám.
+                </p>
+              </div>
+
+              {activeSubscription && (
+                <div className="bg-gray-50 p-4 rounded-lg space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Aktuálny plán:</span>
+                    <span className="font-semibold text-gray-900">
+                      {activeSubscription.plan_name.toLowerCase() === 'odbornik' ? 'Odborník' :
+                       activeSubscription.plan_name.toLowerCase() === 'expert' ? 'Expert' :
+                       activeSubscription.plan_name.toLowerCase() === 'profik' ? 'Profik' : activeSubscription.plan_name}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Platné do:</span>
+                    <span className="font-semibold text-gray-900">
+                      {activeSubscription.current_period_end ?
+                        new Date(activeSubscription.current_period_end).toLocaleDateString('sk-SK') :
+                        'N/A'}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  onClick={() => setShowCancelModal(false)}
+                  disabled={isCanceling}
+                  className="flex-1 px-4 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-colors disabled:opacity-50"
+                >
+                  Ponechať predplatné
+                </button>
+                <button
+                  onClick={handleCancelSubscription}
+                  disabled={isCanceling}
+                  className="flex-1 px-4 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {isCanceling ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      Ruším...
+                    </>
+                  ) : (
+                    'Zrušiť predplatné'
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>
