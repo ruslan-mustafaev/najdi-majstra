@@ -2490,30 +2490,6 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
               </div>
             )}
 
-            {/* Billing Period Toggle */}
-            <div className="flex items-center justify-center gap-4 bg-gray-100 p-3 rounded-xl">
-              <span className={`text-sm font-medium ${billingPeriod === 'monthly' ? 'text-gray-900' : 'text-gray-500'}`}>
-                Mesačne
-              </span>
-              <button
-                onClick={() => setBillingPeriod(billingPeriod === 'monthly' ? 'yearly' : 'monthly')}
-                className={`relative w-14 h-7 rounded-full transition-colors ${
-                  billingPeriod === 'yearly' ? 'bg-blue-600' : 'bg-gray-400'
-                }`}
-              >
-                <span
-                  className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full transition-transform ${
-                    billingPeriod === 'yearly' ? 'translate-x-7' : ''
-                  }`}
-                />
-              </button>
-              <span className={`text-sm font-medium ${billingPeriod === 'yearly' ? 'text-gray-900' : 'text-gray-500'}`}>
-                Ročne
-              </span>
-              <span className="ml-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                Ušetríte až 17%
-              </span>
-            </div>
 
             {/* Subscription Plans Table */}
             <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
@@ -2746,7 +2722,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                   <tfoot>
                     <tr className="bg-gray-100">
                       <td className="px-3 py-2 font-semibold text-gray-900 text-xs">
-                        Vyberte váš plán
+                        Mesačne
                       </td>
                       <td className="px-2 py-2 border-l border-gray-300">
                         <button disabled className="w-full bg-green-600 text-white font-semibold py-1.5 px-3 rounded-lg text-xs cursor-not-allowed opacity-90">
@@ -2754,46 +2730,141 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                         </button>
                       </td>
                       <td className="px-2 py-2 border-l border-gray-300">
-                        {activeSubscription?.plan_name?.toLowerCase() === 'odbornik' ? (
+                        {activeSubscription?.plan_name?.toLowerCase() === 'odbornik' && activeSubscription?.billing_period === 'monthly' ? (
                           <button disabled className="w-full bg-green-600 text-white font-semibold py-1.5 px-3 rounded-lg text-xs cursor-not-allowed opacity-90">
                             Aktivný
                           </button>
                         ) : (
                           <button
-                            onClick={() => handleSelectPlan('odbornik')}
+                            onClick={() => {
+                              setBillingPeriod('monthly');
+                              setTimeout(() => handleSelectPlan('odbornik'), 100);
+                            }}
                             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 px-3 rounded-lg transition-all transform hover:scale-105 text-xs"
                           >
-                            Vybrať
+                            9,90€
                           </button>
                         )}
                       </td>
                       <td className="px-2 py-2 border-l border-gray-300">
-                        {activeSubscription?.plan_name?.toLowerCase() === 'expert' ? (
+                        {activeSubscription?.plan_name?.toLowerCase() === 'expert' && activeSubscription?.billing_period === 'monthly' ? (
                           <button disabled className="w-full bg-green-600 text-white font-semibold py-1.5 px-3 rounded-lg text-xs cursor-not-allowed opacity-90">
                             Aktivný
                           </button>
                         ) : (
                           <button
-                            onClick={() => handleSelectPlan('expert')}
+                            onClick={() => {
+                              setBillingPeriod('monthly');
+                              setTimeout(() => handleSelectPlan('expert'), 100);
+                            }}
                             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 px-3 rounded-lg transition-all transform hover:scale-105 text-xs"
                           >
-                            Vybrať
+                            19,90€
                           </button>
                         )}
                       </td>
                       <td className="px-2 py-2 border-l border-gray-300 bg-orange-50">
-                        {activeSubscription?.plan_name?.toLowerCase() === 'profik' ? (
+                        {activeSubscription?.plan_name?.toLowerCase() === 'profik' && activeSubscription?.billing_period === 'monthly' ? (
                           <button disabled className="w-full bg-green-600 text-white font-semibold py-1.5 px-3 rounded-lg text-xs cursor-not-allowed opacity-90">
                             Aktivný
                           </button>
                         ) : (
                           <button
-                            onClick={() => handleSelectPlan('profik')}
+                            onClick={() => {
+                              setBillingPeriod('monthly');
+                              setTimeout(() => handleSelectPlan('profik'), 100);
+                            }}
                             className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold py-1.5 px-3 rounded-lg transition-all transform hover:scale-105 shadow-lg text-xs"
                           >
-                            Vybrať
+                            25,50€
                           </button>
                         )}
+                      </td>
+                      <td className="px-2 py-2 border-l border-gray-300">
+                        <span className="text-xs text-gray-400">-</span>
+                      </td>
+                    </tr>
+                    <tr className="bg-gray-100">
+                      <td className="px-3 py-2 font-semibold text-gray-900 text-xs">
+                        Ročne <span className="text-green-600">(ušetríte 17%)</span>
+                      </td>
+                      <td className="px-2 py-2 border-l border-gray-300">
+                        <button disabled className="w-full bg-green-600 text-white font-semibold py-1.5 px-3 rounded-lg text-xs cursor-not-allowed opacity-90">
+                          Aktivný
+                        </button>
+                      </td>
+                      <td className="px-2 py-2 border-l border-gray-300">
+                        {activeSubscription?.plan_name?.toLowerCase() === 'odbornik' && activeSubscription?.billing_period === 'yearly' ? (
+                          <button disabled className="w-full bg-green-600 text-white font-semibold py-1.5 px-3 rounded-lg text-xs cursor-not-allowed opacity-90">
+                            Aktivný
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => {
+                              setBillingPeriod('yearly');
+                              setTimeout(() => handleSelectPlan('odbornik'), 100);
+                            }}
+                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 px-3 rounded-lg transition-all transform hover:scale-105 text-xs"
+                          >
+                            99,00€
+                          </button>
+                        )}
+                      </td>
+                      <td className="px-2 py-2 border-l border-gray-300">
+                        {activeSubscription?.plan_name?.toLowerCase() === 'expert' && activeSubscription?.billing_period === 'yearly' ? (
+                          <button disabled className="w-full bg-green-600 text-white font-semibold py-1.5 px-3 rounded-lg text-xs cursor-not-allowed opacity-90">
+                            Aktivný
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => {
+                              setBillingPeriod('yearly');
+                              setTimeout(() => handleSelectPlan('expert'), 100);
+                            }}
+                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 px-3 rounded-lg transition-all transform hover:scale-105 text-xs"
+                          >
+                            195,00€
+                          </button>
+                        )}
+                      </td>
+                      <td className="px-2 py-2 border-l border-gray-300 bg-orange-50">
+                        {activeSubscription?.plan_name?.toLowerCase() === 'profik' && activeSubscription?.billing_period === 'yearly' ? (
+                          <button disabled className="w-full bg-green-600 text-white font-semibold py-1.5 px-3 rounded-lg text-xs cursor-not-allowed opacity-90">
+                            Aktivný
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => {
+                              setBillingPeriod('yearly');
+                              setTimeout(() => handleSelectPlan('profik'), 100);
+                            }}
+                            className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold py-1.5 px-3 rounded-lg transition-all transform hover:scale-105 shadow-lg text-xs"
+                          >
+                            225,00€
+                          </button>
+                        )}
+                      </td>
+                      <td className="px-2 py-2 border-l border-gray-300">
+                        <span className="text-xs text-gray-400">-</span>
+                      </td>
+                    </tr>
+                    <tr className="bg-gray-100">
+                      <td className="px-3 py-2 font-semibold text-gray-900 text-xs">
+                        Doživotne
+                      </td>
+                      <td className="px-2 py-2 border-l border-gray-300">
+                        <button disabled className="w-full bg-green-600 text-white font-semibold py-1.5 px-3 rounded-lg text-xs cursor-not-allowed opacity-90">
+                          Aktivný
+                        </button>
+                      </td>
+                      <td className="px-2 py-2 border-l border-gray-300">
+                        <span className="text-xs text-gray-400">-</span>
+                      </td>
+                      <td className="px-2 py-2 border-l border-gray-300">
+                        <span className="text-xs text-gray-400">-</span>
+                      </td>
+                      <td className="px-2 py-2 border-l border-gray-300 bg-orange-50">
+                        <span className="text-xs text-gray-400">-</span>
                       </td>
                       <td className="px-2 py-2 border-l border-gray-300">
                         {activeSubscription?.plan_name?.toLowerCase() === 'premier' ? (
@@ -2805,7 +2876,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
                             onClick={() => handleSelectPlan('premier')}
                             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 px-3 rounded-lg transition-all transform hover:scale-105 text-xs"
                           >
-                            Vybrať
+                            4 979€
                           </button>
                         )}
                       </td>
@@ -2815,7 +2886,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onBack, onProf
               </div>
 
               <div className="p-4 bg-gray-50 text-center text-xs text-gray-600 border-t border-gray-200">
-                Automatické {billingPeriod === 'monthly' ? 'mesačné' : 'ročné'} predplatné. Systém vám automaticky vyšle faktúru.
+                Automatické predplatné. Systém vám automaticky vyšle faktúru.
               </div>
             </div>
           </div>
