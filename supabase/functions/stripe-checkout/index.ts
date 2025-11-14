@@ -122,9 +122,11 @@ Deno.serve(async (req) => {
 
       console.log(`Created new Stripe customer ${newCustomer.id} for user ${user.id}`);
 
-      const { error: createCustomerError } = await supabase.from('stripe_customers').insert({
+      const { error: createCustomerError } = await supabase.from('stripe_customers').upsert({
         user_id: user.id,
         customer_id: newCustomer.id,
+      }, {
+        onConflict: 'user_id',
       });
 
       if (createCustomerError) {
